@@ -15,7 +15,7 @@
 ## 仓库结构
 
 ```
-    BUAA-software-engineering-2024
+BUAA-software-engineering-2024
     ├─Document      过程性文档
     │  ├─Image      图片
     │  └─Weekly     周报文件夹
