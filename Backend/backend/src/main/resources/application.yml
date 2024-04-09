@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://122.9.45.57:3306/hxt?useUnicode=true&characterEncoding=utf8
+    username: hxt
+    password: ruangong-0602-g1
