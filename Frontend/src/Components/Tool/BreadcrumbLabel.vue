@@ -24,7 +24,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* 控制整个面包屑组建的高度 */
 .breadcrumbLabel {
     display: flex;
