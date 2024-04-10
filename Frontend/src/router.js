@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
+import NoticeCenter from "./Components/Notice/NoticeCenter.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -10,6 +11,11 @@ const router = createRouter({
         {
             path: '',
             redirect: '/MainPage'
+        },
+        {
+            path:'/NoticeCenter',
+            component:NoticeCenter,
+
         },
         {
             path: '/MainPage',
