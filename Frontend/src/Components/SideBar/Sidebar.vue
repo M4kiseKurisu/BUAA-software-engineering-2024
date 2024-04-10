@@ -16,7 +16,7 @@
 
             <!-- 设置个人中心子菜单内容：用户信息，用户设置 -->
             <el-menu-item index="/MainPage/Personal_Center/Personal_Information">用户信息</el-menu-item>
-            <el-menu-item index="1-2">用户设置</el-menu-item>
+            <el-menu-item index="/MainPage/Personal_Center/Personal_Information_Change">用户设置</el-menu-item>
         </el-sub-menu>
 
         <!-- 侧边栏第二个元素是学业模块 -->

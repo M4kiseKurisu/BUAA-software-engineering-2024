@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
+import PersonalInformationChange from "./Pages/PersonalCenter/PersonalInformationChange.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -20,8 +21,12 @@ const router = createRouter({
                     redirect: '/MainPage/Personal_Center/Personal_Information',
                     children: [
                         {
-                          path: 'Personal_Information',
-                          component: PersonalInformation,
+                            path: 'Personal_Information',
+                            component: PersonalInformation,
+                        },
+                        {
+                            path: 'Personal_Information_Change',
+                            component: PersonalInformationChange,
                         }
                     ]
                 }
