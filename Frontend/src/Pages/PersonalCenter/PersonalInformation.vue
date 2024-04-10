@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- 学习小组团体单元 -->
-                <div v-for="item in groupList">
+                <div v-for="item in groupListSort">
                     <StudyGroupCard 
                         :title="item.title"
                         :amount="item.amount"
@@ -114,6 +114,14 @@
                     <div class="favorates-header-1">关注用户</div>
                     <div class="favorates-header-2">查看更多</div>
                 </div>
+
+                <div v-for="item in followingListSort">
+                    <FollowingCard
+                        :username="item.username"
+                        :signature="item.signature"
+                        :avatar="item.avatar"
+                    />
+                </div>
             </div>
 
             <!-- 我的打卡信息 -->
@@ -123,7 +131,23 @@
                     <div class="favorates-header-1">我的打卡</div>
                     <div class="favorates-header-2">查看更多</div>
                 </div>
+
+                <PosterCard :month="this.poster.month" :pictures="this.poster.pictures"/>
             </div>
+
+            <!-- 站内通知信息 -->
+            <div class="notices-container">
+                <!-- 站内通知头部信息 -->
+                <div class="notices-header-container">
+                    <div class="favorates-header-1">站内通知</div>
+                    <div class="favorates-header-2">查看更多</div>
+                </div>
+
+                <div v-for="item in noticeListSort">
+                    <NoticeCard :notice="item"/>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -138,6 +162,12 @@ import { Calendar, School, Message, User } from '@element-plus/icons-vue'
 import FavorateCard from "../../Components/Group/FavorateCardInPersonalInformation.vue"
 //引入学习团体单元
 import StudyGroupCard from "../../Components/Group/StudyGroupCardInPersonalInformation.vue"
+//引入关注用户单元
+import FollowingCard from "../../Components/Group/FollowingCardInPersonalInformation.vue"
+//引入个人打卡单元
+import PosterCard from "../../Components/Group/PosterCardInPersonalInformation.vue"
+//引入站内消息单元
+import NoticeCard from "../../Components/Group/NoticeCardInPersonalInformation.vue"
 
 export default {
     components: {
@@ -148,6 +178,9 @@ export default {
         User,
         FavorateCard,
         StudyGroupCard,
+        FollowingCard,
+        PosterCard,
+        NoticeCard,
     },
     data() {
         return {
@@ -217,7 +250,50 @@ export default {
                     amount: 65,
                     avatar: "./src/Images/testAvatar.jpg",
                 },
-            ]
+            ],
+
+            //以下是用来测试关注用户板块的数组
+            followingList: [
+                {
+                    //关注用户1
+                    username: "M4kiseKurisu1",
+                    signature: "好好做好软工作业是命运石之门的选择！",
+                    avatar: "./src/Images/testAvatar.jpg",
+                },
+                {
+                    //关注用户2
+                    username: "M4kiseKurisu2",
+                    signature: "好好做好软工作业是命运石之门的选择！",
+                    avatar: "./src/Images/testAvatar.jpg",
+                },
+                {
+                    //关注用户3
+                    username: "M4kiseKurisu3",
+                    signature: "好好做好软工作业是命运石之门的选择！",
+                    avatar: "./src/Images/testAvatar.jpg",
+                },
+                {
+                    //关注用户4
+                    username: "M4kiseKurisu4",
+                    signature: "好好做好软工作业是命运石之门的选择！",
+                    avatar: "./src/Images/testAvatar.jpg",
+                },
+            ],
+
+            //以下是用来测试个人打卡板块的元素
+            poster: {
+                month: 2,
+                pictures: ["./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg",
+                           "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", 
+                           "./src/Images/testAvatar.jpg"],
+            },
+
+            //以下是用来测试站内通知板块的数组
+            noticeList: [
+                "通知对象A 通知内容ABCDABCD (通知对象B)",
+                "通知对象A 长通知内容ABCDABCDABCDABCDABCDABCDABCDABCD (通知对象B)",
+                "通知对象A 中等长度通知内容ABCDABCDABCDABCDABCDABCD",
+            ],
         }
     }, 
     computed: {
@@ -229,9 +305,17 @@ export default {
             //分离收藏帖子列表的四五六个帖子
             return (this.favorateList.length <= 3) ? null : this.favorateList.slice(3, 6);
         },
-        groupList() {
+        groupListSort() {
             //分离学习群体列表的前四个内容
             return (this.groupList.length === 0) ? null : this.groupList.slice(0, 4);
+        },
+        followingListSort() {
+            //分离关注用户的前四个内容
+            return (this.followingList.length === 0) ? null : this.followingList.slice(0, 4);
+        },
+        noticeListSort() {
+            //分离站内通知的前四个内容
+            return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 5);
         }
     }
 }
@@ -391,6 +475,7 @@ export default {
     height: 80px;
     justify-content: space-between;
     display: flex;
+    margin-right: 29px;
 }
 
 /* 我的打卡模块位置 */
@@ -401,6 +486,18 @@ export default {
 
 .my-poster-header-container {
     height: 90px;
+    justify-content: space-between;
+    display: flex;
+}
+
+/* 站内通知模块位置 */
+.notices-container {
+    width: 23%;
+    margin-left: 53px;
+}
+
+.notices-header-container {
+    height: 87px;
     justify-content: space-between;
     display: flex;
 }
