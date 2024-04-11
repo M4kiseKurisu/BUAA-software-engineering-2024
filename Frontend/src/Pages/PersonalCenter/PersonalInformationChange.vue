@@ -50,41 +50,86 @@
 
         </div>
 
-        <!-- 左侧基本信息更改栏位 -->
-        <div class="left-container">
-            <div class="left-container-header">基础信息更改</div>
+        <div class="down-information-container">
+            <!-- 左侧基本信息更改栏位 -->
+            <div class="left-container">
+                <div class="left-container-header">基础信息更改</div>
 
-            <div class="information-change-left-row">
-                <div class="information-sign">用户昵称</div>
-                <input type="text" class="input-type-1" v-model="inputUsername" :placeholder=this.username>
+                <div class="information-change-left-row">
+                    <div class="information-sign">用户昵称</div>
+                    <input type="text" class="input-type-1" v-model="inputUsername" :placeholder=this.username>
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">登陆账号</div>
+                    <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">专业</div>
+                    <input type="text" class="input-type-1" v-model="inputMajority" :placeholder=this.majority>
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">入学时间</div>
+                    <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.entryTime>
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">个人签名</div>
+                    <textarea type="text" class="input-type-2" v-model="inputSignature" :placeholder=this.signature />
+                </div>
+
+                <div class="button-container">
+                    <button class="button-left">保存</button>
+                    <button class="button-right">重置</button>
+                </div>
+
             </div>
 
-            <div class="information-change-left-row">
-                <div class="information-sign">登陆账号</div>
-                <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
-            </div>
+            <!-- 右侧基本信息更改栏位 -->
+            <div class="right-container">
 
-            <div class="information-change-left-row">
-                <div class="information-sign">专业</div>
-                <input type="text" class="input-type-1" v-model="inputMajority" :placeholder=this.majority>
-            </div>
+                <div class="right-container-header">
+                    <button class="button-choose">更改密码</button>
+                    <button class="button-not-choose-1">邮箱认证</button>
+                    <button class="button-not-choose-1">手机号认证</button>
+                </div>
 
-            <div class="information-change-left-row">
-                <div class="information-sign">入学时间</div>
-                <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.entryTime>
-            </div>
+                <div class="right-content-container">
 
-            <div class="information-change-left-row">
-                <div class="information-sign">个人签名</div>
-                <textarea type="text" class="input-type-2" v-model="inputSignature" :placeholder=this.signature />
-            </div>
+                    <div class="information-change-left-row">
+                        <div class="information-sign">登陆账号</div>
+                        <input type="text" class="input-type-1" v-model="inputUsername" :placeholder=this.username>
+                    </div>
 
-            <div class="button-container">
-                <button class="button-left">保存</button>
-                <button class="button-right">重置</button>
+                    <div class="information-change-left-row">
+                        <div class="information-sign">旧密码</div>
+                        <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                    </div>
+
+                    <div class="information-change-left-row">
+                        <div class="information-sign">新密码</div>
+                        <input type="text" class="input-type-1" v-model="inputMajority" :placeholder=this.majority>
+                    </div>
+
+                    <div class="information-change-left-row">
+                        <div class="information-sign">再次输入新密码</div>
+                        <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.entryTime>
+                    </div>
+
+                    <div class="button-container">
+                        <button class="button-left">保存</button>
+                        <button class="button-right">重置</button>
+                    </div>
+
+                </div>
+                
+
             </div>
 
         </div>
+        
 
     </div>
 </template>
@@ -180,6 +225,10 @@ export default {
     margin-left: 224px;
 }
 
+.down-information-container {
+    display: flex;
+}
+
 .left-container {
     width: 42%;
 }
@@ -272,5 +321,44 @@ textarea::placeholder {
     background-color: #f7f8fa;
     color: #4e5969;
     border: none;
+}
+
+.right-container {
+    width: 47%;
+}
+
+.right-container-header {
+    height: 94px;
+    display: flex;
+}
+
+.button-choose {
+    width: 88px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #f2f3f8;
+    color: #1f63ff;
+    font-size: 14px;
+    border: none;
+    margin-right: 5px;
+    margin-top: 42px;
+    margin-left: 118px;
+}
+
+.button-not-choose-1 {
+    width: 88px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    color: #4e5969;
+    font-size: 14px;
+    border: none;
+    margin-right: -7px;
+    margin-top: 42px;
+}
+
+.right-content-container {
+    width: 485px;
+    margin-left: 103px;
 }
 </style>
