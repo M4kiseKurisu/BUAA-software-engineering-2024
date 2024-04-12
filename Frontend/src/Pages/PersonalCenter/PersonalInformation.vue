@@ -1,7 +1,22 @@
 <template>
     <!-- 此容器是为了设定宽度，让内部的所有元素都可以使用百分比宽度 -->
     <div class="page-container">
+      <div class="favorate_dialog">
+        <el-dialog class="fa_dialog" v-model="show_favorate" :visible.sync="show_favorate" width="60%" center>
+          <div class="favorate_container">
+            <Favorate class="favorate"></Favorate>
+          </div>
 
+        </el-dialog>
+      </div>
+      <div class="following_user_dialog">
+        <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" width="50%" center>
+          <div>
+            <Following_user></Following_user>
+          </div>
+
+        </el-dialog>
+      </div>
         <!-- 此处为面包屑组件 -->
         <div class="breadcrumb"><BreadcrumbLabel :routeNames="route" /></div>
 
@@ -42,18 +57,19 @@
                     <div class="personal-sign-font">{{ this.userSign }}</div>
                 </div>
             </div>
-            
+
         </el-card>
 
         <div class="favorate-and-study-group-container">
-
             <!-- 收藏文章展示模块 -->
             <div class="favorates-container">
                 <!-- 收藏板块头部信息 -->
                 <div class="favorates-header-container">
                     <div class="favorates-header-1">收藏帖子</div>
-                    <div class="favorates-header-2">查看更多</div>
+                    <el-button @click="toggle_favorate()" class="favorates-header-2">查看更多</el-button>
+
                 </div>
+
 
                 <!-- 收藏板块正文信息 -->
                 <div class="favorates-cards-container">
@@ -61,7 +77,7 @@
                     <!-- 按顺序输出前三个用户收藏文章卡片 -->
                     <el-row :gutter="26">
                         <el-col :span="8" v-for="item in group1">
-                            <FavorateCard 
+                            <FavorateCard
                                 :title="item.title"
                                 :content="item.content"
                                 :avatarSrc="item.avatarSrc"
@@ -73,7 +89,7 @@
                     <!-- 按顺序输出四五六个用户收藏文章卡片 -->
                     <el-row v-if="this.group2 != null" :gutter="26" class="second-card-row">
                         <el-col :span="8" v-for="item in group2">
-                            <FavorateCard 
+                            <FavorateCard
                                 :title="item.title"
                                 :content="item.content"
                                 :avatarSrc="item.avatarSrc"
@@ -94,7 +110,7 @@
 
                 <!-- 学习小组团体单元 -->
                 <div v-for="item in groupListSort">
-                    <StudyGroupCard 
+                    <StudyGroupCard
                         :title="item.title"
                         :amount="item.amount"
                         :avatar="item.avatar"
@@ -103,7 +119,7 @@
             </div>
 
         </div>
-        
+
         <!-- 第二行的三个板块的信息 -->
         <div class="other-information-group-container">
 
@@ -112,7 +128,7 @@
                 <!-- 关注用户头部信息 -->
                 <div class="following-user-header-container">
                     <div class="favorates-header-1">关注用户</div>
-                    <div class="favorates-header-2">查看更多</div>
+                    <el-button class="favorates-header-2" @click="toggle_following_user()">查看更多</el-button>
                 </div>
 
                 <div v-for="item in followingListSort">
@@ -168,7 +184,8 @@ import FollowingCard from "../../Components/Group/FollowingCardInPersonalInforma
 import PosterCard from "../../Components/Group/PosterCardInPersonalInformation.vue"
 //引入站内消息单元
 import NoticeCard from "../../Components/Group/NoticeCardInPersonalInformation.vue"
-
+import Favorate from "@/Pages/PersonalCenter/MoreDetails/Favorate.vue"
+import Following_user from "@/Pages/PersonalCenter/MoreDetails/Following_user.vue";
 export default {
     components: {
         BreadcrumbLabel,
@@ -181,6 +198,8 @@ export default {
         FollowingCard,
         PosterCard,
         NoticeCard,
+        Favorate,
+        Following_user,
     },
     data() {
         return {
@@ -192,30 +211,33 @@ export default {
             email: "21373343@buaa.edu.cn",  //测试的邮箱信息
             userSign: "好好做好软工作业是命运石之门的选择！", //测试的个人签名信息
 
+            //收藏界面可视化
+            show_favorate:false,
+            show_userfollowing:false,
             //以下是用来测试收藏帖子板块的数组
             favorateList: [
-                {  
+                {
                     //收藏帖子1
                     title: "收藏帖子A标题",
                     content: "收藏帖子A简介：ABCDABCDABCDABCD",
                     avatarSrc: "./src/Images/testAvatar.jpg",
                     writerName: "MakiseKurisuA",
                 },
-                {  
+                {
                     //收藏帖子2
                     title: "收藏帖子B标题",
                     content: "收藏帖子B简介：ABCDABCDABCDABCD",
                     avatarSrc: "./src/Images/testAvatar.jpg",
                     writerName: "MakiseKurisuB",
                 },
-                {  
+                {
                     //收藏帖子3
                     title: "收藏帖子C标题",
                     content: "收藏帖子C简介：ABCDABCDABCDABCD",
                     avatarSrc: "./src/Images/testAvatar.jpg",
                     writerName: "MakiseKurisuC",
                 },
-                {  
+                {
                     //收藏帖子4
                     title: "收藏帖子D标题",
                     content: "收藏帖子D简介：ABCDABCDABCDABCD",
@@ -284,7 +306,7 @@ export default {
             poster: {
                 month: 2,
                 pictures: ["./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg",
-                           "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", 
+                           "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg", "./src/Images/testAvatar.jpg",
                            "./src/Images/testAvatar.jpg"],
             },
 
@@ -295,7 +317,15 @@ export default {
                 "通知对象A 中等长度通知内容ABCDABCDABCDABCDABCDABCD",
             ],
         }
-    }, 
+    },
+    methods: {
+      toggle_favorate() {
+        this.show_favorate = true;
+      },
+      toggle_following_user() {
+        this.show_userfollowing = true;
+      }
+    },
     computed: {
         group1() {
             //分离收藏帖子列表的前三个帖子
@@ -322,6 +352,34 @@ export default {
 </script>
 
 <style scoped>
+
+.favorate_dialog {
+
+  justify-content: center; /* 水平居中 */
+}
+
+/* 可以根据需要调整宽度 */
+.fa_dialog{
+
+  justify-content: center; /* 水平居中 */
+
+}
+
+.favorate{
+  display: block;
+  justify-content: center; /* 水平居中 */
+  text-align: center;
+  left:auto;
+}
+
+.favorate_container{
+  width: 100%;
+  margin-left: 100px;
+  justify-content: center;
+  text-align: center;
+  left:auto;
+}
+
 /* 设定界面宽度真实值 */
 .page-container {
     width: calc(100vw - 205px);

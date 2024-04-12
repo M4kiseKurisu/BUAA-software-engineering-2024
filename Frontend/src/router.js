@@ -4,6 +4,7 @@ import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
 import PersonalInformationChange from "./Pages/PersonalCenter/PersonalInformationChange.vue"
+import Favorate from "@/Pages/PersonalCenter/MoreDetails/Favorate.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -11,6 +12,10 @@ const router = createRouter({
         {
             path: '',
             redirect: '/MainPage'
+        },
+        {
+            path:'/fa',
+            component:Favorate
         },
         {
             path: '/MainPage',
@@ -33,6 +38,6 @@ const router = createRouter({
             ]
         }
     ]
-})  
+})
 
 export default router;
