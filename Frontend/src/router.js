@@ -4,7 +4,9 @@ import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
 import PersonalInformationChange from "./Pages/PersonalCenter/PersonalInformationChange.vue"
-import Favorate from "@/Pages/PersonalCenter/MoreDetails/Favorate.vue";
+import Favorate from "./Pages/PersonalCenter/MoreDetails/Favorate.vue";
+
+import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -32,6 +34,16 @@ const router = createRouter({
                         {
                             path: 'Personal_Information_Change',
                             component: PersonalInformationChange,
+                        }
+                    ]
+                },
+                {
+                    path: 'Course_Center',
+                    redirect: '/MainPage/Course_Center/Personal_Course',
+                    children: [
+                        {
+                            path: 'Personal_Course',
+                            component: PersonalCourse,
                         }
                     ]
                 }
