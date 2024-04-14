@@ -1,8 +1,8 @@
 <template>
-    <div class="container">
-        <el-button plain @click="centerDialogVisible = true">
+    <div class="NoticeCenterContainer">
+        <!-- <el-button plain @click="centerDialogVisible = true">
             Click to open the Dialog
-        </el-button>
+        </el-button> -->
 
         <el-dialog v-model="centerDialogVisible" width="800px" height="1000px" center>
             <div class="bar">
@@ -78,7 +78,7 @@ import DirectMessage from './DirectMessage.vue';
 export default {
     data() {
         return {
-            centerDialogVisible: false,
+            centerDialogVisible: true,
             noticeChoice: 1,
             currentPage1: 1,
             currentPage2: 1,
@@ -109,7 +109,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.NoticeCenterContainer {
     display: flex;
     /* justify-content: center; */
     /* align-items: center; */

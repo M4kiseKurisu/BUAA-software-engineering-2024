@@ -4,7 +4,7 @@ import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
 import NoticeCenter from "./Components/Notice/NoticeCenter.vue"
-
+import PersonalChat from "./Components/Chat/PersonalChat.vue"
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -16,6 +16,10 @@ const router = createRouter({
             path:'/NoticeCenter',
             component:NoticeCenter,
 
+        },
+        {
+            path: '/ChatCenter',
+            component: PersonalChat,
         },
         {
             path: '/MainPage',
