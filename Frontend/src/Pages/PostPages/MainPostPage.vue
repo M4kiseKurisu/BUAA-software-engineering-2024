@@ -55,17 +55,42 @@
             </div>
 
             <div class="post-main-content">
-                12312312312312312
+                此处为正文，存在额外的段间距。以下为随机文字：<br>
+                计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。这些编码器也可以与其他模块有效组合，以实现下游任务，例如图像生成（例如，DALL·E）。虽然在视觉和语言编码器方面取得了很大进展，但计算机视觉领域包含了远远超出这个范围的问题，对于其中的许多问题，都不存在充足的训练数据。
             </div>
 
+            <div class="post-main-content">
+                注意，如果存在图片，图片和文字之间应该存在间隔：<br>
+                Task任务。我们首先将prompt提示的思想将NLP迁移到分割，其中一个prompt提示可以是一组前景/背景点，粗略的框或掩码，自由形式的文本，或者，一般来说，任何指示在图像中分割什么的信息。然后，promptable segmentation task可提示分割任务是给定任何提示返回有效的分割掩码。<br>
+                Related tasks 相关任务。 分割是一个广泛的领域：有interactive segmentation交互式分割，edge detection边缘检测，super pixelization超像素化，object proposal generation对象建议生成，foreground segmentation前景分割，semantic segmentation语义分割，instance segmentation实例分割，panoptic segmentation全景分割等。我们的可提示分割任务的目标是产生一个广泛的模型。
+            </div>
 
+            <div class="post-main-end-line">
+                <button class="post-grey-button-below">展开共ZZ条评论</button>
+                <button class="post-grey-button-below">去评论</button>
+                <div class="post-time-show-font">发帖时间：YY-MM-DD hh-mm</div>
+            </div>
+        </div>
 
+        <!-- 评论帖子发布位置 -->
+        <div class="post-reply-writing-container">
 
+            <!-- 评论者头像及评论内容输入框 -->
+            <div class="post-reply-first-line">
+                <!-- 回复者头像 -->
+                <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
 
+                <!-- 回复编辑框 -->
+                <el-input
+                    v-model="this.ReplyTextarea"
+                    style="margin-left: 18px"
+                    :rows="5"
+                    type="textarea"
+                    placeholder="请输入您的评论"
+                />
+            </div>
 
-
-
-
+            <button class="send-reply-button-css">发布评论</button>
         </div>
     </div>
 </template>
@@ -85,6 +110,7 @@ export default {
         return {
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             avatarPicture: "./src/Images/testAvatar.jpg",  //作者头像
+            ReplyTextarea: "",  //回复内容监听
         }
     }
 }
@@ -108,6 +134,7 @@ export default {
     margin-left: 80px;
     margin-right: 80px;
     padding-top: 36px;
+    padding-bottom: 36px;
     background-color: white;
     border-radius: 2px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);;
@@ -199,6 +226,7 @@ export default {
 .post-more-information-line {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 46px;
 }
 
 .post-more-information-left {
@@ -235,9 +263,67 @@ export default {
 
 .post-main-content {
     width: 88%;
-    height: 200px;
-    background-color: #165dff;
+    overflow: hidden;
+    word-wrap: break-word;
+    color: #101010;
     margin-left: 6%;
+    margin-bottom: 20px;
+    line-height: 32px;
 }
 
+.post-main-end-line {
+    display: flex;
+    margin-left: 91px;
+}
+
+.post-grey-button-below {
+    height: 36px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border: none;
+    border-radius: 0px;
+    background-color: #e5e6eb;
+    font-size: 16px;
+    color: #86909c;
+    margin-right: 16px;
+}
+
+.post-time-show-font {
+    height: 25px;
+    font-size: 16px;
+    color: #86909c;
+    margin-top: 8px;
+}
+
+.post-reply-writing-container {
+    margin-top: 39px;
+    margin-left: 80px;
+    margin-right: 80px;
+    padding-top: 30px;
+    padding-bottom: 17px;
+    background-color: white;
+    border-radius: 2px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.post-reply-first-line {
+    display: flex;
+    margin-left: 61px;
+    margin-right: 61px;
+}
+
+.send-reply-button-css {
+    border-radius: 4px;
+    border: none;
+    background-color: #165dff;
+    color: white;
+    font-size: 14px;
+    height: 30px;
+    width: 80px;
+    align-self: flex-end;
+    margin-top: 17px;
+    margin-right: 81px;
+}
 </style>
