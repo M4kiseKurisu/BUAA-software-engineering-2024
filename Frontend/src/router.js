@@ -3,6 +3,10 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
+<<<<<<< HEAD
+=======
+
+>>>>>>> local
 import NoticeCenter from "./Components/Notice/NoticeCenter.vue"
 import PersonalChat from "./Components/Chat/PersonalChat.vue"
 import PersonalInformationChange from "./Pages/PersonalCenter/PersonalInformationChange.vue"
