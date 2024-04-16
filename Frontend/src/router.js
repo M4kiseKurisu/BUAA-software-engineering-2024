@@ -11,6 +11,8 @@ import Favorate from "./Pages/PersonalCenter/MoreDetails/Favorate.vue";
 
 import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
+import PostPage from "./Pages/PostPages/MainPostPage.vue"
+
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -54,6 +56,10 @@ const router = createRouter({
                         {
                             path: 'Personal_Course',
                             component: PersonalCourse,
+                        },
+                        {
+                            path: 'PostPage',
+                            component: PostPage,
                         }
                     ]
                 }

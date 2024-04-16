@@ -29,7 +29,7 @@
 
             <!-- 设置学业模块子菜单内容：课程信息，课程论坛 -->
             <el-menu-item index="/MainPage/Course_Center/Personal_Course">课程论坛</el-menu-item>
-            <el-menu-item index="2-2">论坛内容2</el-menu-item>
+            <el-menu-item index="/MainPage/Course_Center/PostPage">论坛内容2</el-menu-item>
         </el-sub-menu>
 
     </el-menu>
