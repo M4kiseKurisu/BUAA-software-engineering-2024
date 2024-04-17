@@ -1,4 +1,5 @@
 package com.hxt.backend.controller;
+import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.UploadResponse;
 import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
@@ -15,10 +16,17 @@ public class UploadController {
     
     @Autowired
     private ObsService obsService;
-    private ImageService imageService = new ImageService();
     
-    @RequestMapping ( "/upload")
-    public UploadResponse uploadImage(@RequestParam("file") MultipartFile file) {
+    @Autowired
+    private ImageService imageService;
+    
+    @RequestMapping (value="/upload")
+    public UploadResponse uploadImage(
+            @RequestParam(name = "file", required = false) MultipartFile file
+    ) {
+        if (file == null) {
+            return new UploadResponse(false, "文件为空", "");
+        }
         // 上传文件到云服务器并返回图片在云服务器上的 URL
         String url = obsService.uploadFile(file);
         
