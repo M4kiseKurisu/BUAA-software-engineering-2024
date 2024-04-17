@@ -5,7 +5,7 @@
 
     <div class="main-postpage-container">
         <!-- 帖子正文部分 -->
-        <div style="display: flex;width: 100%;height: 150px;background-color: antiquewhite;">
+        <div style="display: flex;width: 100%;height: 150px;background-color: white;border-bottom: 1px solid darkgray;">
             <div style="width: 60%;height: 100%;">
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;margin-left: 7%;">
                     <span style="font-size: xx-large;font-weight: bold;">{{ courseName }}讨论区</span>
@@ -26,23 +26,92 @@
                         </el-button-group>
                     </span>
                     <span style="padding-left: 3%;">
-                        <el-select v-model="sortKind" style="width: 150px" >
-                            <el-option  key="热门" >热门</el-option>
-                            <el-option  key="最新" >最新</el-option>
+                        <el-select v-model="sortKind" style="width: 150px">
+                            <el-option sortKind="热门">热门</el-option>
+                            <el-option sortKind="最新">最新</el-option>
                         </el-select>
                     </span>
                 </div>
             </div>
-            <div style="width: 40%; height: 100%;display: flex; align-items: row-reverse;">
+            <div style="width: 40%; height: 100%;">
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;">
-                    <div style="width: 100%;height: fit-content;display: flex;align-items: row-reverse;">
-                        <el-button text>查看相关课程界面</el-button>
+                    <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
+                        <span style="padding-right: 7%;"><el-button text type="primary"
+                                style="font-size: large;">查看相关课程界面</el-button></span>
+                    </div>
+                </div>
+                <div style="width: 100%;height: 45%;display: flex;align-items: center;">
+                    <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
+                        <span>
+                            <el-select v-model="value" placeholder="选择标签" style="width: 120px">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </span>
+                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 240px"
+                                placeholder="输入关键词" /></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain>模块内搜索</el-button></span>
                     </div>
                 </div>
             </div>
         </div>
-        <div>
-
+        <div style="width: 100%;height: fit-content;background-color: white;display: flex;">
+            <div style="width: 75%;height: fit-content;border-right: 1px solid darkgray;">
+                <PostItem></PostItem>
+                <PostItem></PostItem>
+                <PostItem></PostItem>
+                <PostItem></PostItem>
+                <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
+                    <el-pagination background layout="prev, pager, next" :page-count="total"
+                        style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />
+                </div>
+            </div>
+            <div style="width: 25%; ">
+                <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
+                    板块更新时间:&ensp;{{ updateTime }}
+                </div>
+                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
+                    <div style="width: 25%;font-size: larger;">
+                        创建者:
+                    </div>
+                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem></ManagerItem>
+                    </div>
+                </div>
+                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
+                    <div style="width: 25%;font-size: larger;">
+                        相关教师:
+                    </div>
+                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem></ManagerItem>
+                    </div>
+                </div>
+                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
+                    <div style="width: 25%;font-size: larger;">
+                        相关助教:
+                    </div>
+                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem></ManagerItem>
+                        <ManagerItem></ManagerItem>
+                    </div>
+                </div>
+                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
+                    <div style="width: 25%;font-size: larger;">
+                        热门作者:
+                    </div>
+                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem></ManagerItem>
+                        <ManagerItem></ManagerItem>
+                        <ManagerItem></ManagerItem>
+                        <ManagerItem></ManagerItem>
+                        <ManagerItem></ManagerItem>
+                    </div>
+                </div>
+                <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
+                    <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary"
+                            style="font-size: large;">查看详情</el-button></span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -50,10 +119,13 @@
 <script>
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
-
+import PostItem from "./PostItem.vue";
+import ManagerItem from "./ManagerItem.vue";
 export default {
     components: {
         BreadcrumbLabel,
+        PostItem,
+        ManagerItem,
     },
     data() {
         return {
@@ -63,7 +135,10 @@ export default {
             postNum: 20,
             subscripNum: 30,
             kindSelect: 1,
-            sortKind: "热门",
+            searchWord: "",
+            total: 20,
+            currentPage: 1,
+            updateTime: "2077.7.7.77",
         }
     },
     methods: {
@@ -75,7 +150,10 @@ export default {
         },
         selectThree() {
             this.kindSelect = 3;
-        }
+        },
+        handleCurrentChange(val) {
+            this.currentPage = val;
+        },
     }
 }
 </script>
@@ -90,28 +168,5 @@ export default {
 .main-postpage-container {
     width: calc(100vw - 205px);
     background-color: rgba(247, 248, 250, 0.7);
-}
-
-.post-main-content-container {
-    margin-left: 80px;
-    margin-right: 80px;
-    padding-top: 36px;
-    background-color: white;
-    border-radius: 2px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-    ;
-}
-
-.post-main-title {
-    font-size: 24px;
-    color: #101010;
-    height: 34px;
-    margin-left: 60px;
-    margin-bottom: 30px;
-}
-
-.el-divider--horizontal {
-    border-top: 1px solid #e5e6eb !important;
-    margin: 0px !important;
 }
 </style>

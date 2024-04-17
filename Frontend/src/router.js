@@ -12,6 +12,7 @@ import Favorate from "./Pages/PersonalCenter/MoreDetails/Favorate.vue";
 import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
 import PostPage from "./Pages/PostPages/MainPostPage.vue"
+import PostCenter from "./Pages/PostCenter/PostCenter.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -60,7 +61,11 @@ const router = createRouter({
                         {
                             path: 'PostPage',
                             component: PostPage,
-                        }
+                        },
+                        {
+                            path: 'PostCenter',
+                            component: PostCenter,
+                        },
                     ]
                 }
             ]
