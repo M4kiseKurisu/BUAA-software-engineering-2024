@@ -7,10 +7,7 @@
         <!-- 以下模块包含上边栏右侧全部信息 -->
         <div class="header-right">
 
-            <!-- 上边栏右侧第一个图标负责搜索（未实现） -->
-            <div class="circle-bound">
-                <el-icon color="#bbbbbb" :size="21"><Search /></el-icon>
-            </div>
+            <NoticeCenter />
 
             <!-- 上边栏最右侧为头像 -->
             <div class="avatar">
@@ -25,14 +22,16 @@
 
 <script>
 import { Search } from '@element-plus/icons-vue'
-
+import NoticeCenter from '../Notice/NoticeCenter.vue';
 export default {
     components: {
         Search,
+        NoticeCenter,
     },
     data() {
         return {
             avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
+            //showNotice : 0,
         }
     }
 }

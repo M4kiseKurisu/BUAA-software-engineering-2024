@@ -29,6 +29,8 @@ const router = createRouter({
         {
             path: '/ChatCenter',
             component: PersonalChat,
+        },
+        {
             path:'/fa',
             component:Favorate
         },

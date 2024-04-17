@@ -1,6 +1,6 @@
 <template>
     <div class="personContainer">
-        <el-avatar :size="70" src="./src/Images/testAvatar.jpg" />
+        <el-avatar :size="70" src="./src/Images/testAvatar.jpg" shape="square"/>
         <span style="font-size: x-large;font-weight: bold;padding-left: 10px;">
             {{ name }}
         </span>
