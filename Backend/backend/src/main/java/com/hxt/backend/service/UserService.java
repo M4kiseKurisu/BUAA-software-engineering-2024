@@ -35,6 +35,17 @@ public class UserService {
         return -1;
     }
 
+    public boolean checkPassword(Integer id, String password) {
+        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        User user = userMapper.selectUserById(id);
+        return md5.equals(user.getPassword());
+    }
+
+    public void resetPassword(Integer id, String password) {
+        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        userMapper.resetPassword(id, md5);
+    }
+
     public String setToken(Integer id) {
         String token = RandomStringUtils.randomAlphanumeric(64);
         Integer timestamp = Math.toIntExact(System.currentTimeMillis() / 1000);
@@ -42,12 +53,31 @@ public class UserService {
         return token;
     }
 
+    public boolean setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone) {
+        boolean nameSuccess = name == null || userMapper.updateName(id, name) > 0;
+        boolean majorSuccess = major == null || userMapper.updateMajor(id, major) > 0;
+        boolean yearSuccess = year == null || userMapper.updateYear(id, year) > 0;
+        boolean signSuccess = sign == null || userMapper.updateSign(id, sign) > 0;
+        boolean phoneSuccess = phone == null || userMapper.updatePhone(id, phone) > 0;
+        return nameSuccess && majorSuccess && yearSuccess && signSuccess && phoneSuccess;
+    }
+
     public void resetToken(Integer id) {
         userMapper.resetToken(id);
     }
 
-    public boolean checkToken() {
-        return false;
+    public int checkToken(Integer id, String token) {
+        User user = userMapper.selectUserById(id);
+        if (token.equals(user.getToken())) {
+            Integer timestamp = Math.toIntExact(System.currentTimeMillis() / 1000);
+            int time = user.getTokenTime() - timestamp;
+            if (time >= 86400) {    //  token过期时间为86400s，即24小时
+                resetToken(id);
+                return -1;
+            }
+            return 1;
+        }
+        return -2;
     }
 
     public boolean lengthCheck(String s, int min, int max) {
