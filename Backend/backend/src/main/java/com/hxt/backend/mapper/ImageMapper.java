@@ -14,4 +14,10 @@ public interface ImageMapper {
 
     @Select("SELECT url from image where image_id = #{id}")
     String getImage(Integer id);
+    
+    @Select("SELECT * from image where image_id = #{id}")
+    Image seekImage(Integer id);
+    
+    @Delete("DELETE FROM image WHERE image_id = #{id}")
+    int deleteImage(Integer id);
 }
