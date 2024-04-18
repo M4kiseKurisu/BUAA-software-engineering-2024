@@ -78,7 +78,6 @@
             <scope>test</scope>
         </dependency>
 
-
 		<dependency>
 			<groupId>com.squareup.okio</groupId>
 			<artifactId>okio</artifactId>
