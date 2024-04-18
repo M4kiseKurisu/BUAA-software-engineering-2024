@@ -57,6 +57,9 @@ public interface UserMapper {
     @Update("UPDATE user_info SET password = #{password} WHERE user_id = #{id}")
     int resetPassword(Integer id, String password);
 
+    @Select("select user_id from user_info;")
+    List<Integer> selectAllUserId();  
+  
     //  用户关注表
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO user_follow (user_id, follow_id, time) VALUES (#{userId}, #{followId}, NOW())")
