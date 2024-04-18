@@ -78,11 +78,17 @@
             <scope>test</scope>
         </dependency>
 
+		<dependency>
+			<groupId>com.squareup.okio</groupId>
+			<artifactId>okio</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
 		<!--华为云OBS对象存储管理-->
 		<dependency>
 			<groupId>com.huaweicloud</groupId>
 			<artifactId>esdk-obs-java</artifactId>
-			<version>3.0.3</version>
+			<version>3.20.6.1</version>
 		</dependency>
 
 	</dependencies>
@@ -92,6 +98,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.4</version>
 			</plugin>
 		</plugins>
 	</build>

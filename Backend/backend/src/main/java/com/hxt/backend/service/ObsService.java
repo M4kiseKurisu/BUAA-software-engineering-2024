@@ -25,7 +25,7 @@ public class ObsService {
             //创建唯一新文件名
             String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
             InputStream inputStream = file.getInputStream();
-            
+            System.out.println(fileName);
             //创建云服务器
             obsClient= new ObsClient(accessKey, secretKey, endpoint);
             PutObjectResult result = obsClient.putObject(bucketName, fileName, inputStream);
@@ -33,6 +33,7 @@ public class ObsService {
             if (result != null) {
                 return result.getObjectUrl(); // 返回 url
             }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
