@@ -38,4 +38,6 @@ public class User {
     private String token;
 
     private Integer tokenTime;
+
+    private Integer headId;
 }

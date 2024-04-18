@@ -1,14 +1,20 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.FollowResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,7 +77,8 @@ public class UserController {
     @RequestMapping("/user/login")
     public LoginResponse login(
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "password", required = false) String password
+            @RequestParam(name = "password", required = false) String password,
+            HttpServletResponse response
     ) {
         if (name == null)  {
             return new LoginResponse(false, -1, "未填写用户名！", "");
@@ -82,27 +89,38 @@ public class UserController {
         }
         int id = userService.checkPassword(name, password);
         if (id > 0) {
+            Cookie cookie = new Cookie("user_id",String.valueOf(id));
+            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
             return new LoginResponse(true, id, "", userService.setToken(id));
         } else {
             return new LoginResponse(false, id, "用户名或密码错误！", "");
         }
     }
 
+
     @RequestMapping("/user/logout")
-    public BasicInfoResponse logout(@RequestParam(name = "id") Integer id) {
-        if (id == null) {
-            return new BasicInfoResponse(false, "用户id为空！");
+    public BasicInfoResponse logout(@CookieValue(name = "user_id", defaultValue = "") String user_id) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, "用户未登录！");
         }
+        int id = Integer.parseInt(user_id);
         userService.resetToken(id);
         return new BasicInfoResponse(true, "");
     }
 
+    //无需token验证，改为通过cookie获取用户id，但函数先保留，等待组会时再商议
     @RequestMapping("/user/check")
     public BasicInfoResponse tokenCheck(
-            @RequestParam(name = "id", required = false) Integer id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "token", required = false) String token
     ) {
-        if (id == null || token == null) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        Integer id = Integer.parseInt(user_id);
+        if (token == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         int i = userService.checkToken(id, token);
@@ -113,34 +131,58 @@ public class UserController {
         return new BasicInfoResponse(success, info);
     }
 
+    @RequestMapping("/user/info")
+    public UserInfoResponse getUserInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new UserInfoResponse(null);
+        }
+        return userService.getUserInfo(Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/head")
+    public BasicInfoResponse getUserHead(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        String url = userService.getUserHead(Integer.parseInt(user_id));
+        if (url == null) {
+            return new BasicInfoResponse(false, "该用户未设置头像！");
+        }
+        return new BasicInfoResponse(true, url);
+    }
+
     @RequestMapping("/user/password/update")
     public BasicInfoResponse setPassword(
-            @RequestParam(name = "id", required = false) Integer id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "old_password", required = false) String op,
             @RequestParam(name = "new_password", required = false) String np
     ) {
-        if (id == null || op == null || np == null) {
+        if (user_id.isEmpty() || op == null || np == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
-        } else if (!userService.checkPassword(id, op)) {
+        } else if (!userService.checkPassword(Integer.parseInt(user_id), op)) {
             return new BasicInfoResponse(false, "旧密码错误！");
         } else if (!userService.lengthCheck(np, 6, 18)) {
             return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
-            userService.resetPassword(id, np);
+            userService.resetPassword(Integer.parseInt(user_id), np);
             return new BasicInfoResponse(true, "");
         }
     }
 
     @RequestMapping("/user/update")
     public BasicInfoResponse setUserInfo(
-            @RequestParam(name = "id", required = false) Integer id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "major", required = false) String major,
             @RequestParam(name = "enrollment_year", required = false) Integer year,
             @RequestParam(name = "sign", required = false) String sign,
             @RequestParam(name = "phone", required = false) String phone
     ) {
-        if (id == null) {
+        if (user_id.isEmpty()) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         if (!(name == null || userService.lengthCheck(name, 0, 16))
@@ -157,8 +199,31 @@ public class UserController {
                 return new BasicInfoResponse(false, "手机号格式不正确！");
             }
         }
-        boolean res = userService.setUserInfo(id, name, major, year, sign, phone);
+        boolean res = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
         String info = res? "" : "修改发生错误，请稍后再试！";
         return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/user/unfollow")
+    public BasicInfoResponse unfollowUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "unfollow_id", required = false) Integer unfollow_id
+    ) {
+        if (user_id.isEmpty() || unfollow_id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        boolean success = userService.unfollowUser(Integer.parseInt(user_id), unfollow_id);
+        String info = success? "" : "发生错误，未进行任何修改！";
+        return new BasicInfoResponse(success, info);
+    }
+
+    @RequestMapping("/user/following")
+    public FollowResponse getFollowInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new FollowResponse(-1, new ArrayList<>());
+        }
+        return userService.getFollow(Integer.parseInt(user_id));
     }
 }

@@ -1,30 +1,35 @@
 <template>
-    <div class="NoticeCenterContainer">
-        <!-- <el-button plain @click="centerDialogVisible = true">
+    <!-- <el-button plain @click="centerDialogVisible = true">
             Click to open the Dialog
         </el-button> -->
 
-        <el-dialog v-model="centerDialogVisible" width="800px" height="1000px" center>
-            <div class="bar">
-                <div class="buttonContainer" :class="{ active: noticeChoice === 1 }" @click='noticeChoice = 1'>
-                    <img src="../../Images/私信.png">
-                    <span style="font-weight: bolder;">私信消息</span>
-                </div>
-                <div class="buttonContainer" :class="{ active: noticeChoice === 2 }" @click='noticeChoice = 2'>
-                    <img src="../../Images/评论回复.png">
-                    <span style="font-weight: bolder;">回复我的</span>
-                </div>
-                <div class="buttonContainer" :class="{ active: noticeChoice === 3 }" @click='noticeChoice = 3'>
-                    <img src="../../Images/审核.png">
-                    <span style="font-weight: bolder;">申请信息</span>
-                </div>
-                <div class="buttonContainer" :class="{ active: noticeChoice === 4 }" @click='noticeChoice = 4'>
-                    <img src="../../Images/系统通知.png">
-                    <span style="font-weight: bolder;">系统通知</span>
-                </div>
-            </div>
+    <!-- 上边栏右侧第一个图标负责搜索（未实现） -->
+    <div class="notice-circle-bound" @click="centerDialogVisible = true;this.haveNotice = 0;">
+        <img src="../../Images/无通知.png" alt="" v-if="haveNotice == 0">
+        <img src="../../Images/有通知.png" alt="" v-if="haveNotice == 1">
+    </div>
 
-            <!-- <template #footer>
+    <el-dialog v-model="this.centerDialogVisible" width="800px" height="1000px" center>
+        <div class="bar">
+            <div class="buttonContainer" :class="{ active: noticeChoice === 1 }" @click='noticeChoice = 1'>
+                <img src="../../Images/私信.png">
+                <span style="font-weight: bolder;">私信消息</span>
+            </div>
+            <div class="buttonContainer" :class="{ active: noticeChoice === 2 }" @click='noticeChoice = 2'>
+                <img src="../../Images/评论回复.png">
+                <span style="font-weight: bolder;">回复我的</span>
+            </div>
+            <div class="buttonContainer" :class="{ active: noticeChoice === 3 }" @click='noticeChoice = 3'>
+                <img src="../../Images/审核.png">
+                <span style="font-weight: bolder;">申请信息</span>
+            </div>
+            <div class="buttonContainer" :class="{ active: noticeChoice === 4 }" @click='noticeChoice = 4'>
+                <img src="../../Images/系统通知.png">
+                <span style="font-weight: bolder;">系统通知</span>
+            </div>
+        </div>
+
+        <!-- <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="centerDialogVisible = false">Cancel</el-button>
                     <el-button type="primary" @click="centerDialogVisible = false">
@@ -32,53 +37,52 @@
                     </el-button>
                 </div>
             </template> -->
-            <div class="noticeList" v-if="noticeChoice == 1">
-                <DirectMessage></DirectMessage>
-                <DirectMessage></DirectMessage>
-                <DirectMessage></DirectMessage>
-                <DirectMessage></DirectMessage>
-                <DirectMessage></DirectMessage>
-                <DirectMessage></DirectMessage>
-            </div>
-            <div class="noticeList" v-if="noticeChoice == 2">
+        <div class="noticeList" v-if="noticeChoice == 1">
+            <DirectMessage></DirectMessage>
+            <DirectMessage></DirectMessage>
+            <DirectMessage></DirectMessage>
+            <DirectMessage></DirectMessage>
+            <DirectMessage></DirectMessage>
+            <DirectMessage></DirectMessage>
+        </div>
+        <div class="noticeList" v-if="noticeChoice == 2">
 
-            </div>
-            <div class="noticeList" v-if="noticeChoice == 3">
+        </div>
+        <div class="noticeList" v-if="noticeChoice == 3">
 
-            </div>
-            <div class="noticeList" v-if="noticeChoice == 4">
+        </div>
+        <div class="noticeList" v-if="noticeChoice == 4">
 
-            </div>
-            <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 1">
-                <el-pagination background layout="prev, pager, next" :page-count="total1"
-                    style="position: absolute; right: 0;" @current-change="handleCurrentChange1" />
-                <span>{{ currentPage1 }}</span>
-            </div>
-            <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 2">
-                <el-pagination background layout="prev, pager, next" :page-count="total2"
-                    style="position: absolute; right: 0;" @current-change="handleCurrentChange2" />
-                <span>{{ currentPage2 }}</span>
-            </div>
-            <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 3">
-                <el-pagination background layout="prev, pager, next" :page-count="total3"
-                    style="position: absolute; right: 0;" @current-change="handleCurrentChange3" />
-                <span>{{ currentPage3 }}</span>
-            </div>
-            <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 4">
-                <el-pagination background layout="prev, pager, next" :page-count="total4"
-                    style="position: absolute; right: 0;" @current-change="handleCurrentChange4" />
-                <span>{{ currentPage4 }}</span>
-            </div>
-        </el-dialog>
-    </div>
+        </div>
+        <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 1">
+            <el-pagination background layout="prev, pager, next" :page-count="total1" style="position: absolute; right: 0;"
+                @current-change="handleCurrentChange1" />
+            <span>{{ currentPage1 }}</span>
+        </div>
+        <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 2">
+            <el-pagination background layout="prev, pager, next" :page-count="total2" style="position: absolute; right: 0;"
+                @current-change="handleCurrentChange2" />
+            <span>{{ currentPage2 }}</span>
+        </div>
+        <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 3">
+            <el-pagination background layout="prev, pager, next" :page-count="total3" style="position: absolute; right: 0;"
+                @current-change="handleCurrentChange3" />
+            <span>{{ currentPage3 }}</span>
+        </div>
+        <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 4">
+            <el-pagination background layout="prev, pager, next" :page-count="total4" style="position: absolute; right: 0;"
+                @current-change="handleCurrentChange4" />
+            <span>{{ currentPage4 }}</span>
+        </div>
+    </el-dialog>
 </template>
 
 <script>
+import { intersection } from 'lodash';
 import DirectMessage from './DirectMessage.vue';
 export default {
     data() {
         return {
-            centerDialogVisible: true,
             noticeChoice: 1,
             currentPage1: 1,
             currentPage2: 1,
@@ -88,6 +92,8 @@ export default {
             total2: 1,
             total3: 1,
             total4: 1,
+            centerDialogVisible: false,
+            haveNotice : 1,
         };
     },
     methods: {
@@ -109,12 +115,16 @@ export default {
 </script>
 
 <style scoped>
-.NoticeCenterContainer {
+.notice-circle-bound {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #f2f3f5;
+    border-radius: 16px;
+    margin-top: 14px;
+    margin-right: 16px;
+    justify-content: center;
+    align-items: center;
     display: flex;
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* 垂直居中 */
-    /* 设置容器的高度，这里使用视口高度作为示例 */
 }
 
 .bar {
@@ -148,4 +158,5 @@ export default {
 .noticeList {
     width: 100%;
     height: 600px;
-}</style>
+}
+</style>

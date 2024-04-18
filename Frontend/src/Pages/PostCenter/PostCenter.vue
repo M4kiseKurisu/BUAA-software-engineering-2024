@@ -4,6 +4,14 @@
     </div>
 
     <div class="main-postpage-container">
+      <!-- 管理界面弹出窗 -->
+      <div class="creator_dialog">
+        <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%">
+          <div class="creator_container">
+            <CreatorOfPostCenter></CreatorOfPostCenter>
+          </div>
+        </el-dialog>
+      </div>
         <!-- 帖子正文部分 -->
         <div style="display: flex;width: 100%;height: 150px;background-color: white;border-bottom: 1px solid darkgray;">
             <div style="width: 60%;height: 100%;">
@@ -108,7 +116,8 @@
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                    <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary"
+
+                    <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary" @click="toggle_Creator()"
                             style="font-size: large;">查看详情</el-button></span>
                 </div>
             </div>
@@ -121,14 +130,18 @@
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 import PostItem from "./PostItem.vue";
 import ManagerItem from "./ManagerItem.vue";
+import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
 export default {
     components: {
+
         BreadcrumbLabel,
         PostItem,
         ManagerItem,
+        CreatorOfPostCenter
     },
     data() {
         return {
+            show_Creator:false,
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             courseName: "软件工程",
             courseId: 1,
@@ -142,6 +155,9 @@ export default {
         }
     },
     methods: {
+        toggle_Creator() {
+          this.show_Creator = true;
+        },
         selectOne() {
             this.kindSelect = 1;
         },

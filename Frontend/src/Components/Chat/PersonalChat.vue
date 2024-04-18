@@ -2,13 +2,20 @@
     <div class="chatContainer">
         <div class="aside">
             <div class="chatBar">
-
+                <div class = "chatKindChose" :class="{ active: chatKindChose === 1 }" 
+                style="width: 50%;height: 100%;display: flex;justify-content: center;align-items: center;" @click = "chosePersonChat">
+                    <img src="../../Images/私聊.png" alt="">
+                </div>
+                <div class = "chatKindChose" :class="{ active: chatKindChose === 2 }"  @click = "choseGroupChat"
+                style="width: 50%;height: 100%;display: flex;justify-content: center;align-items: center;" >
+                    <img src="../../Images/群聊.png" alt="">
+                </div>
             </div>
             <div style="height: 94%;">
-                <div style="display: flex; width: 100%;align-items: center;height: 5%;">
+                <div style="display: flex; width: 100%;align-items: center;height: 5%;background-color: azure;">
                     <el-input v-model="nameKeyWord" style="width: 100%; margin-top: 5px;" placeholder="Please input"
                         clearable />
-                    <div style="background-color: aliceblue;margin-top: 5px;">
+                    <div style="background-color: white;margin-top: 5px;">
                         <img src="../../Images/搜索.png">
                     </div>
                 </div>
@@ -48,7 +55,7 @@
                 <ChatMessage :senderId="999"></ChatMessage>
             </el-scrollbar>
             <div class="footer">
-                <el-input v-model="textinput" style="width: 100%;margin-left: 5px;" :autosize="{ minRows: 1, maxRows: 10 }" type="textarea"
+                <el-input v-model="textinput" style="width: 100%;margin-left: 5px;" :autosize="{ minRows: 1, maxRows: 10 }"  size="large"
                     placeholder="Please input" @keyup.enter.native="send" />
                     <el-button type="primary" style="margin-left: 5px;margin-right: 5px;">发送 &#x2708;</el-button>
             </div>
@@ -68,6 +75,7 @@ export default {
             time: '2022.2.2.2',
             textinput: '',
             nameKeyWord: '',
+            chatKindChose: 1,
         }
     },
     methods: {
@@ -77,6 +85,12 @@ export default {
             /* 清空输入框 */
             this.textinput = '';
         },
+        chosePersonChat(){
+            this.chatKindChose = 1;
+        },
+        choseGroupChat(){
+            this.chatKindChose = 2;
+        }
     },
     components: {
         ChatMessage,
@@ -94,7 +108,7 @@ export default {
 .aside {
     width: 18%;
     height: 100%;
-    background-color: rgb(196, 224, 248);
+    background-color:white;
 }
 
 .chatBar {
@@ -102,7 +116,7 @@ export default {
     height: 6%;
     display: flex;
     justify-content: center;
-    background-color: beige;
+    background-color: white;
 }
 
 .header {
@@ -113,14 +127,17 @@ export default {
     font-weight: bolder;
     width: 100%;
     height: 6%;
-    background-color: beige;
+    background-color:azure;
 }
 
 .footer {
     width: 100%;
-    background-color: rgb(66, 79, 91);
+    background-color: rgb(213, 221, 228);
     height: 6%;
     display: flex;
     align-items: center;
+}
+.chatKindChose.active{
+    background-color: rgb(218, 234, 234);
 }
 </style>

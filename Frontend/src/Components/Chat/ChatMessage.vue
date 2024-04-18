@@ -1,6 +1,6 @@
 <template>
     <div v-if="senderId != meId" class="container-o">
-        <div class="" style="padding-right: 5px;padding-top: 7px;">
+        <div class="" style="padding-right: 5px;padding-top: 5px;">
             <el-avatar :size="55" src="./src/Images/私信.png" />
         </div>
         <div style="width: 100%;">
@@ -13,7 +13,7 @@
         </div>
     </div>
     <div v-if="senderId == meId" class="container-m">
-        <div class="" style="padding-left: 5px;padding-top: 7px;">
+        <div class="" style="padding-left: 5px;padding-top: 5px;">
             <el-avatar :size="55" src="./src/Images/私信.png" />
         </div>
         <div style="width: 100%;display: flex;flex-direction: column;align-items: end;">
@@ -35,11 +35,11 @@ export default {
     data() {
         return {
             headImg: '',
-            senderName: 'huazhi',
+            senderName: '也是中文名',
             content: 'hello hxt!',
             time: '2022.2.2.2',
             meId: 999,
-            meName: 'fyb',
+            meName: '中文名',
         }
     },
     methods: {
@@ -48,6 +48,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 .message-bubble-o {
     display: flex;
     background-color: #e0e0e0;
@@ -59,7 +61,7 @@ export default {
 }
 
 .message-content-o {
-    font-weight: bold;
+    font-size: large;
     color: black;
 }
 
@@ -75,17 +77,19 @@ export default {
 }
 
 .message-content-m {
-    font-weight: bold;
+    font-size: large;
     color: black;
 }
 
 .container-o {
     display: flex;
+    margin-left: 10px;
 }
 
 .container-m {
     display: flex;
     flex-direction: row-reverse;
+    margin-right: 10px;
 }
 
 .headContainer {
