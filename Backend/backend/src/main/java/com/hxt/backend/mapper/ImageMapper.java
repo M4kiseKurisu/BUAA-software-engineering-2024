@@ -11,4 +11,7 @@ public interface ImageMapper {
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO image (url)" + " VALUES (#{url})")
     int insertImage(String url);
+
+    @Select("SELECT url from image where image_id = #{id}")
+    String getImage(Integer id);
 }
