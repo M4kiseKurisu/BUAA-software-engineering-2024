@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div class="headContainer"><el-avatar :size="70" src="./src/Images/私信.png" />
+    <div class="container" >
+        <div class="headContainer"><el-avatar :size="60" src="./src/Images/私信.png" />
         </div>
         <div style="margin-left: 10px;">
             <div class="senderContainer">

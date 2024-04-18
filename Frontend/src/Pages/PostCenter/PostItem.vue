@@ -11,7 +11,7 @@
                     <span style="margin-right: 10px;"><el-tag type="primary" size="large" style="font-size: 1em;font-weight: bold">Tag 2</el-tag></span>
                 </div>
             </div>
-            <div style="width: 60%;height: 30%;margin-left: 20px;color: darkgrey;">
+            <div style="width: 60%;height: 30%;margin-left: 20px;color: darkgrey;word-wrap: break-word;overflow: hidden;">
                     {{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}
                     {{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}
             </div>
