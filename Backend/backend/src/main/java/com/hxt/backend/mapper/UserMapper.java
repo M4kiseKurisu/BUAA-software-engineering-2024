@@ -4,6 +4,9 @@ import com.hxt.backend.entity.User;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.ibatis.annotations.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM user_info WHERE account = #{name}")
@@ -51,4 +54,7 @@ public interface UserMapper {
 
     @Update("UPDATE user_info SET password = #{password} WHERE user_id = #{id}")
     int resetPassword(Integer id, String password);
+
+    @Select("select user_id from user_info;")
+    List<Integer> selectAllUserId();
 }
