@@ -13,6 +13,7 @@ import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
 import PostPage from "./Pages/PostPages/MainPostPage.vue"
 import PostCenter from "./Pages/PostCenter/PostCenter.vue"
+import CourseSection from "@/Pages/CourseCenter/CourseSection.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -29,8 +30,6 @@ const router = createRouter({
         {
             path: '/ChatCenter',
             component: PersonalChat,
-            path:'/fa',
-            component:Favorate
         },
         {
             path: '/MainPage',
@@ -66,8 +65,13 @@ const router = createRouter({
                             path: 'PostCenter',
                             component: PostCenter,
                         },
+                        {
+                            path:'/CourseSection',
+                            component:CourseSection,
+                        },
                     ]
-                }
+                },
+
             ]
         }
     ]
