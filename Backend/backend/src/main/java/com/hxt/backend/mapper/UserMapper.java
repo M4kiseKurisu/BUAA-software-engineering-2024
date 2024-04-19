@@ -1,7 +1,6 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.User;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -26,6 +25,9 @@ public interface UserMapper {
             @Result(column = "head_id", property = "headId")
     })
     User selectUserById(Integer id);
+
+    @Select("SELECT account FROM user_info WHERE user_id = #{id}")
+    String getUserNameById(Integer id);
 
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time)" +
@@ -68,15 +70,37 @@ public interface UserMapper {
     @Delete("DELETE FROM user_follow WHERE user_id = #{userId} AND follow_id = #{followId}")
     int unfollowUser(Integer userId, Integer followId);
 
-    @Select("SELECT follow_id FROM user_follow WHERE user_id = #{id}")
+    @Select("SELECT follow_id FROM user_follow WHERE user_id = #{id} ORDER BY uf_id DESC")
     List<Integer> getFollow(Integer id);    //  关注
 
     @Select("SELECT COUNT(*) FROM user_follow WHERE user_id = #{id}")
     int getFollowCount(Integer id);
 
-    @Select("SELECT follow_id FROM user_follow WHERE follow_id = #{id}")
-    List<Integer> getFollowed(Integer id);  //  被关注，备用
+    @Select("SELECT follow_id FROM user_follow WHERE follow_id = #{id} ORDER BY uf_id DESC")
+    List<Integer> getFollower(Integer id);  //  被关注，备用
 
     @Select("SELECT COUNT(*) FROM user_follow WHERE follow_id = #{id}")
-    int getFollowedCount(Integer id);
+    int getFollowerCount(Integer id);
+
+    //  用户收藏表
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO collect (user_id, post_id) VALUES (#{userId}, #{postId})")
+    int CollectPost(Integer userId, Integer postId);
+
+    @Select("SELECT post_id FROM collect WHERE user_id = #{userId} ORDER BY collect_id DESC")
+    List<Integer> getCollect(Integer userId);
+
+    @Select("SELECT COUNT(*) FROM collect WHERE post_id = #{postId}")
+    int getCollectedCount(Integer postId);
+
+    //板块关注表
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO section_follow (user_id, section_id) VALUES (#{userId}, #{sectionId})")
+    int focusSection(Integer userId, Integer sectionId);
+
+    @Select("SELECT section_id FROM section_follow WHERE user_id = #{userId} ORDER BY sf_id DESC")
+    List<Integer> getFocus(Integer userId);
+
+    @Select("SELECT COUNT(*) FROM section_follow WHERE section_id = #{sectionId}")
+    int getFocusCount(Integer sectionId);
 }

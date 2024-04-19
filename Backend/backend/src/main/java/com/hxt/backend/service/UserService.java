@@ -1,11 +1,17 @@
 package com.hxt.backend.service;
 
+import com.hxt.backend.entity.Post;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.mapper.ImageMapper;
 import com.hxt.backend.mapper.PostMapper;
+import com.hxt.backend.mapper.SectionMapper;
 import com.hxt.backend.mapper.UserMapper;
-import com.hxt.backend.response.FollowResponse;
 import com.hxt.backend.response.UserInfoResponse;
+import com.hxt.backend.response.list.PostListResponse;
+import com.hxt.backend.response.list.SectionListResponse;
+import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.singleInfo.PostResponse;
+import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -24,8 +30,11 @@ public class UserService {
     private UserMapper userMapper;
     @Resource
     private ImageMapper imageMapper;
+    @Resource
     private PostMapper postMapper;
-    private String defaultHeadUrl = "";
+    @Resource
+    private SectionMapper sectionMapper;
+    private final String defaultHeadUrl = "";
 
     public Integer register(String name, String email, String phone,
                             String major, Integer year, String password) {
@@ -65,25 +74,62 @@ public class UserService {
         return imageMapper.getImage(user.getHeadId());
     }
 
-    public FollowResponse getFollow(Integer id) {
+    public UserListResponse getFollow(Integer id) {
         List<Integer> followIds = userMapper.getFollow(id);
-        FollowResponse followResponse = new FollowResponse(followIds.size(), new ArrayList<>());
+        UserListResponse userListResponse = new UserListResponse(followIds.size(), new ArrayList<>());
         for (Integer followId : followIds) {
             User user = userMapper.selectUserById(followId);
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("name", user.getName());
-            map.put("user_id", user.getUserId());
-            if (user.getHeadId() == null) {
-                map.put("user_avatar", defaultHeadUrl);
-            } else {
-                map.put("user_avatar", imageMapper.getImage(user.getHeadId()));
+            if (user != null) {
+                UserSocialInfoResponse u = new UserSocialInfoResponse(
+                        user.getName(),
+                        user.getUserId(),
+                        (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
+                        userMapper.getFollowCount(user.getUserId()),
+                        userMapper.getFollowerCount(user.getUserId()),
+                        postMapper.getUserPostNum(user.getUserId()),
+                        postMapper.getUserCommentNum(user.getUserId()),
+                        user.getSign()
+                );
+                userListResponse.getUser().add(u);
             }
-            map.put("following_count", userMapper.getFollowCount(user.getUserId()));
-            map.put("post_count", postMapper.getPostNum(user.getUserId()));
-            map.put("sign", user.getSign());
-            followResponse.getFollowing().add(map);
         }
-        return followResponse;
+        return userListResponse;
+    }
+
+    public PostListResponse getFavorite(Integer id) {
+        List<Integer> favorites = userMapper.getCollect(id);
+        PostListResponse postListResponse = new PostListResponse(favorites.size(), new ArrayList<>());
+        for (Integer favorite : favorites) {
+            Post post = postMapper.getPostById(favorite);
+            if (post != null) {
+                PostResponse postResponse = new PostResponse(
+                        post.getPostId(),
+                        post.getTitle(),
+                        post.getContent(),
+                        userMapper.getUserNameById(post.getPublisherId()),
+                        post.getPublisherId(),
+                        sectionMapper.getSectionNameById(post.getSectionId()),
+                        postMapper.getTagNames(post.getPostId())
+                );
+                postListResponse.getPosts().add(postResponse);
+            }
+        }
+        return postListResponse;
+    }
+
+    public SectionListResponse getSection(Integer id) {
+        List<Integer> focuses = userMapper.getFocus(id);
+        SectionListResponse sectionListResponse = new SectionListResponse(focuses.size(), new ArrayList<>());
+        for (Integer focus : focuses) {
+            String name = sectionMapper.getSectionNameById(focus);
+            if (name != null) {
+                HashMap<String, Object> sec = new HashMap<>();
+                sec.put("section_name", name);
+                sec.put("section_id", focus);
+                sectionListResponse.getSections().add(sec);
+            }
+        }
+        return sectionListResponse;
     }
 
     public void resetPassword(Integer id, String password) {
