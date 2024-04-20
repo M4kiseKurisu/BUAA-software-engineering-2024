@@ -1,9 +1,12 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
-import com.hxt.backend.response.FollowResponse;
 import com.hxt.backend.response.LoginResponse;
 import com.hxt.backend.response.UserInfoResponse;
+import com.hxt.backend.response.list.PostListResponse;
+import com.hxt.backend.response.list.SectionListResponse;
+import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import com.hxt.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -141,6 +144,15 @@ public class UserController {
         return userService.getUserInfo(Integer.parseInt(user_id));
     }
 
+    public UserSocialInfoResponse getUserSocialInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new UserSocialInfoResponse();
+        }
+        return userService.getUserSocialInfo(Integer.parseInt(user_id));
+    }
+
     @RequestMapping("/user/head")
     public BasicInfoResponse getUserHead(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
@@ -153,6 +165,16 @@ public class UserController {
             return new BasicInfoResponse(false, "该用户未设置头像！");
         }
         return new BasicInfoResponse(true, url);
+    }
+
+    @RequestMapping("/user/favorites")
+    public PostListResponse getUserFavorite(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
+        return userService.getFavorite(Integer.parseInt(user_id));
     }
 
     @RequestMapping("/user/password/update")
@@ -218,12 +240,22 @@ public class UserController {
     }
 
     @RequestMapping("/user/following")
-    public FollowResponse getFollowInfo(
+    public UserListResponse getFollowInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         if (user_id.isEmpty()) {
-            return new FollowResponse(-1, new ArrayList<>());
+            return new UserListResponse(-1, new ArrayList<>());
         }
         return userService.getFollow(Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/focus")
+    public SectionListResponse getFocusInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new SectionListResponse(-1, new ArrayList<>());
+        }
+        return userService.getSection(Integer.parseInt(user_id));
     }
 }
