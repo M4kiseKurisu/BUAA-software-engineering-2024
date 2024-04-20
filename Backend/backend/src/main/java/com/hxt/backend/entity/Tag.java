@@ -7,15 +7,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "image")
+@Table(name = "tag")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-
-public class Image {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer imageId;
-    private String url;
+    private Integer tagId;
+    private String name;
 }

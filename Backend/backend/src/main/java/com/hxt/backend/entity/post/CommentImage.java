@@ -1,4 +1,4 @@
-package com.hxt.backend.entity;
+package com.hxt.backend.entity.post;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,15 +7,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "image")
+@Table(name = "comment_image")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-
-public class Image {
+public class CommentImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer ciId;
+    private Integer commentId;
     private Integer imageId;
-    private String url;
 }

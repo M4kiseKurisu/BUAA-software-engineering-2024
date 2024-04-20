@@ -40,6 +40,7 @@ public class MessageController {
         return null;
     }
 
+    /*
     @GetMapping("/message.apply")
     public ApplyMessageResponse getApply(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
@@ -50,6 +51,8 @@ public class MessageController {
         Integer id = Integer.parseInt(user_id);
         return null;
     }
+    */
+    
 
     @GetMapping("/message/notice")
     public NoticeMessageResponse getNotice(
