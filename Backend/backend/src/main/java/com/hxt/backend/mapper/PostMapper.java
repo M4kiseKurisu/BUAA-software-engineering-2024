@@ -103,6 +103,7 @@ public interface PostMapper {
     @Insert("INSERT INTO comment_image (comment_id, image_id) VALUES (#{commentId}, #{imageId})")
     int insertCommentImage(Integer commentId, Integer imageId);
     
+    
     //获取某评论的所有图片的id
     @Select("SELECT image_id from comment_image where comment_id = #{id} ORDER BY ci_id ASC")
     List<Integer> getImageIdByComment(Integer id);
