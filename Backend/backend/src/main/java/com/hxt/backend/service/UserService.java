@@ -74,23 +74,28 @@ public class UserService {
         return imageMapper.getImage(user.getHeadId());
     }
 
+    public UserSocialInfoResponse getUserSocialInfo(Integer id) {
+        User user = userMapper.selectUserById(id);
+        if (user == null) return new UserSocialInfoResponse();
+        return new UserSocialInfoResponse(
+                user.getName(),
+                user.getUserId(),
+                (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
+                userMapper.getFollowCount(user.getUserId()),
+                userMapper.getFollowerCount(user.getUserId()),
+                postMapper.getUserPostNum(user.getUserId()),
+                postMapper.getUserCommentNum(user.getUserId()),
+                user.getSign()
+        );
+    }
+
     public UserListResponse getFollow(Integer id) {
         List<Integer> followIds = userMapper.getFollow(id);
         UserListResponse userListResponse = new UserListResponse(followIds.size(), new ArrayList<>());
         for (Integer followId : followIds) {
-            User user = userMapper.selectUserById(followId);
-            if (user != null) {
-                UserSocialInfoResponse u = new UserSocialInfoResponse(
-                        user.getName(),
-                        user.getUserId(),
-                        (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
-                        userMapper.getFollowCount(user.getUserId()),
-                        userMapper.getFollowerCount(user.getUserId()),
-                        postMapper.getUserPostNum(user.getUserId()),
-                        postMapper.getUserCommentNum(user.getUserId()),
-                        user.getSign()
-                );
-                userListResponse.getUser().add(u);
+            UserSocialInfoResponse response = getUserSocialInfo(followId);
+            if (response != null) {
+                userListResponse.getUser().add(response);
             }
         }
         return userListResponse;
