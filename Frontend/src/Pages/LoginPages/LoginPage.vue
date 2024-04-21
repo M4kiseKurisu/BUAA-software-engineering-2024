@@ -1,4 +1,3 @@
-
 <template>
     <div class="LoginPage">
         <div class="LoginPageContainer">
@@ -79,6 +78,7 @@
 
 <script>
 import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 export default {
     data() {
@@ -114,8 +114,8 @@ export default {
 
             axios({
                 method: "POST",
-                url: "/user/register",
-                data: content
+                url: "/api/user/register",
+                data: content,
             }).then((result) => {
                 console.log(result);
                 if(result.success) {
@@ -134,7 +134,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../src/Images/loginBackground.png");
+    background-image: url("../../../src/Images/loginBackground.png");
     background-size: cover;
     background-position: center;
 }
@@ -210,8 +210,8 @@ export default {
 }
 
 .input-type-1:focus {
-    outline: none; 
-    border: none; 
+    outline: none;
+    border: none;
 }
 
 .button-container {
