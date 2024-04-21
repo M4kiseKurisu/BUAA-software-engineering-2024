@@ -192,6 +192,22 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/user/password/forget")
+    public BasicInfoResponse setForgottenPassword(
+            @RequestParam(name = "account", required = false) String account,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "password", required = false) String np
+    ) {
+        if (account == null || name == null || email == null || np == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!userService.lengthCheck(np, 6, 18)) {
+            return new BasicInfoResponse(false, "密码过长或过短！");
+        } else {
+            return userService.resetForgottenPassword(account, name, email, np);
+        }
+    }
+
     @RequestMapping("/user/update")
     public BasicInfoResponse setUserInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
@@ -218,9 +234,8 @@ public class UserController {
                 return new BasicInfoResponse(false, "手机号格式不正确！");
             }
         }
-        boolean res = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
-        String info = res? "" : "修改发生错误，请稍后再试！";
-        return new BasicInfoResponse(res, info);
+        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
+        return new BasicInfoResponse(info.isEmpty(), info);
     }
 
     @RequestMapping("/user/unfollow")
