@@ -1,7 +1,7 @@
 package com.hxt.backend.service;
 
-import com.hxt.backend.entity.Post;
 import com.hxt.backend.entity.User;
+import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.mapper.ImageMapper;
 import com.hxt.backend.mapper.PostMapper;
 import com.hxt.backend.mapper.SectionMapper;
@@ -105,16 +105,16 @@ public class UserService {
         List<Integer> favorites = userMapper.getCollect(id);
         PostListResponse postListResponse = new PostListResponse(favorites.size(), new ArrayList<>());
         for (Integer favorite : favorites) {
-            Post post = postMapper.getPostById(favorite);
+            Post post = postMapper.getPost(favorite);
             if (post != null) {
                 PostResponse postResponse = new PostResponse(
                         post.getPostId(),
                         post.getTitle(),
                         post.getContent(),
-                        userMapper.getUserNameById(post.getPublisherId()),
-                        post.getPublisherId(),
+                        userMapper.getUserNameById(post.getAuthorId()),
+                        post.getAuthorId(),
                         sectionMapper.getSectionNameById(post.getSectionId()),
-                        postMapper.getTagNames(post.getPostId())
+                        postMapper.getTagNameByPost(post.getPostId())
                 );
                 postListResponse.getPosts().add(postResponse);
             }

@@ -13,13 +13,17 @@ import java.util.List;
 // 数据库查询接口
 public interface PostMapper {
 
-    @Select("SELECT COUNT(*) FROM post WHERE user_id = #{userId}")
-    int getPostNum(int userId);
-    
+    //  帖子统计信息
+    @Select("SELECT COUNT(*) FROM post WHERE author_id = #{userId}")
+    int getUserPostNum(int userId);
+
+    //  回帖统计信息
+    @Select("SELECT COUNT(*) FROM comment WHERE author_id = #{userId}")
+    int getUserCommentNum(int userId);
     
     //插入新帖子
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO post (title, content, category, section_id, publisher_id, like_count, " +
+    @Insert("INSERT INTO post (title, content, category, section_id, author_id, like_count, " +
             "collect_count, comment_count, view_count, time)" +
             " VALUES (#{title}, #{content}, #{category}, #{sectionId}, #{authorId}, #{likeCount}, " +
             "#{collectCount}, #{commentCount}, #{viewCount}, #{postTime})")
@@ -69,9 +73,9 @@ public interface PostMapper {
     //获取某帖子的所有Tag的id
     @Select("SELECT tag_id from post_tag where post_id = #{id} ORDER BY pt_id ASC")
     List<Integer> getTagIdByPost(Integer id);
-    
-    
-    
+
+    @Select("SELECT name from tag join post_tag pt on tag.tag_id = pt.tag_id where post_id = #{id} ORDER BY pt_id")
+    List<String> getTagNameByPost(Integer id);
     //评论
     
     //添加评论
