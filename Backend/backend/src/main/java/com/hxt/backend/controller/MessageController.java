@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-
+/*
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
+
     private final MessageService messageService;
 
 
@@ -69,3 +70,5 @@ public class MessageController {
     }
 
 }
+*/
+
