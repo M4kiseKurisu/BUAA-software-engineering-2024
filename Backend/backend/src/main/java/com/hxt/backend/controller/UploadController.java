@@ -6,6 +6,7 @@ import com.hxt.backend.response.UploadResponse;
 import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.ResourceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -18,17 +19,17 @@ import org.springframework.core.io.UrlResource;
 
 
 @RestController
-
+@RequiredArgsConstructor
 public class UploadController {
     
-    @Autowired
-    private ObsService obsService;
     
-    @Autowired
-    private ImageService imageService;
+    private final ObsService obsService;
     
-    @Autowired
-    private ResourceService resourceService;
+    
+    private final ImageService imageService;
+    
+    
+    private final ResourceService resourceService;
     
     @RequestMapping (value="/posts/write/uploadImage")
     public UploadResponse uploadImage(
