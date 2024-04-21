@@ -2,16 +2,19 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.UserInfoResponse;
+import com.hxt.backend.response.list.PostListResponse;
+import com.hxt.backend.response.list.SectionListResponse;
+import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import com.hxt.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,7 +110,7 @@ public class UserController {
         return new BasicInfoResponse(true, "");
     }
 
-    //无需token验证，改为通过cookie获取用户id
+    //无需token验证，改为通过cookie获取用户id，但函数先保留，等待组会时再商议
     @RequestMapping("/user/check")
     public BasicInfoResponse tokenCheck(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
@@ -126,6 +129,49 @@ public class UserController {
                 (i == -1)? "token过期！" :
                         (i == -2)? "token不正确！" : "服务器错误！";
         return new BasicInfoResponse(success, info);
+    }
+
+    @RequestMapping("/user/info")
+    public UserInfoResponse getUserInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new UserInfoResponse(null);
+        }
+        return userService.getUserInfo(Integer.parseInt(user_id));
+    }
+
+    public UserSocialInfoResponse getUserSocialInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new UserSocialInfoResponse();
+        }
+        return userService.getUserSocialInfo(Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/head")
+    public BasicInfoResponse getUserHead(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        String url = userService.getUserHead(Integer.parseInt(user_id));
+        if (url == null) {
+            return new BasicInfoResponse(false, "该用户未设置头像！");
+        }
+        return new BasicInfoResponse(true, url);
+    }
+
+    @RequestMapping("/user/favorites")
+    public PostListResponse getUserFavorite(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
+        return userService.getFavorite(Integer.parseInt(user_id));
     }
 
     @RequestMapping("/user/password/update")
@@ -175,5 +221,38 @@ public class UserController {
         boolean res = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
         String info = res? "" : "修改发生错误，请稍后再试！";
         return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/user/unfollow")
+    public BasicInfoResponse unfollowUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "unfollow_id", required = false) Integer unfollow_id
+    ) {
+        if (user_id.isEmpty() || unfollow_id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        boolean success = userService.unfollowUser(Integer.parseInt(user_id), unfollow_id);
+        String info = success? "" : "发生错误，未进行任何修改！";
+        return new BasicInfoResponse(success, info);
+    }
+
+    @RequestMapping("/user/following")
+    public UserListResponse getFollowInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new UserListResponse(-1, new ArrayList<>());
+        }
+        return userService.getFollow(Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/focus")
+    public SectionListResponse getFocusInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new SectionListResponse(-1, new ArrayList<>());
+        }
+        return userService.getSection(Integer.parseInt(user_id));
     }
 }

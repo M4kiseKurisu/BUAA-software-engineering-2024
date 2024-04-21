@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
+import LoginPage from "./Pages/LoginPages/LoginPage.vue"
+
 import MainPage from "./Pages/MainPageContainer.vue"
 
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
@@ -13,13 +15,18 @@ import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
 import PostPage from "./Pages/PostPages/MainPostPage.vue"
 import PostCenter from "./Pages/PostCenter/PostCenter.vue"
+import CourseSection from "@/Pages/CourseCenter/CourseSection.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
             path: '',
-            redirect: '/MainPage'
+            redirect: '/LoginPage'
+        },
+        {
+            path: '/LoginPage',
+            component:LoginPage,
         },
         {
             path:'/NoticeCenter',
@@ -29,10 +36,6 @@ const router = createRouter({
         {
             path: '/ChatCenter',
             component: PersonalChat,
-        },
-        {
-            path:'/fa',
-            component:Favorate
         },
         {
             path: '/MainPage',
@@ -68,8 +71,13 @@ const router = createRouter({
                             path: 'PostCenter',
                             component: PostCenter,
                         },
+                        {
+                            path:'/CourseSection',
+                            component:CourseSection,
+                        },
                     ]
-                }
+                },
+
             ]
         }
     ]
