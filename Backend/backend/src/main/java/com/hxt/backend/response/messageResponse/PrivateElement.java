@@ -5,15 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ReplyMessageResponse {
-    private Boolean success;
-    private String info;
-    private Integer reply_count;
-    private ArrayList<ReplyElement> reply_list;
+public class PrivateElement {
+    private Integer message_sender_id;
+    private Integer message_receiver_id;
+    private String message_content;
+    private String message_time;
+    private Boolean is_read;
 }
