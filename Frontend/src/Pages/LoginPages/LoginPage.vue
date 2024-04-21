@@ -133,7 +133,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../src/Images/loginBackground.png");
+    background-image: url("../../../src/Images/loginBackground.png");
     background-size: cover;
     background-position: center;
 }
@@ -209,8 +209,8 @@ export default {
 }
 
 .input-type-1:focus {
-    outline: none; 
-    border: none; 
+    outline: none;
+    border: none;
 }
 
 .button-container {
