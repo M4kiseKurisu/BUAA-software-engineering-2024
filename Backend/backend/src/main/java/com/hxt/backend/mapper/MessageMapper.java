@@ -1,6 +1,8 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.message.ManagerNotice;
+import com.hxt.backend.entity.message.PrivateChat;
+import com.hxt.backend.entity.message.PrivateMessage;
 import com.hxt.backend.entity.message.UserNotice;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -40,4 +42,28 @@ public interface MessageMapper {
     @Update("UPDATE user_system_notice SET is_read = true WHERE receiver_id = #{id};")
     int updateUserSystemNoticeIsRead(Integer id);
 
+    // 私聊表部分
+
+    // 获取用户私聊列表
+    @Select("select * from private_chat where receiver_id = #{id} or sender_id = #{id};")
+    List<PrivateChat> selectPrivateChatListByUserId(Integer id);
+
+    // 发送新消息后更新私聊列表
+
+
+
+    // 私信表部分
+
+    // 获取用户间私信信息
+    @Select("select * from private_message where (receiver_id = #{id1} and sender_id = #{id2}) or (receiver_id = #{id2} and sender_id = #{id1});")
+    List<PrivateMessage> selectPrivateMessageListByUserId(Integer id1, Integer id2);
+
+    // 发送新的私信
+    @Insert("insert into private_message (content, sender_id, receiver_id, send_time, is_read) \n" +
+            "values (#{content}, #{sender}, #{receiver}, #{time}, false)")
+    int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content);
+
+    // 更新私信阅读状态
+    @Update("update private_message set is_read = true where sender_id = #{sender} and receiver_id = #{receiver};")
+    int updatePrivateMessageIsRead(Integer sender, Integer receiver);
 }

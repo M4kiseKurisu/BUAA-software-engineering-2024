@@ -16,28 +16,82 @@ public class MessageController {
 
 
     @GetMapping("/message/chats")
-    public ChatListResponse getChatList() {
-        return null;
+    public ChatListResponse getChats(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.equals("")) {
+            return new ChatListResponse(false,"用户未登录",0,null);
+        }
+        Integer id = Integer.parseInt(user_id);
+        ArrayList<ChatElement> list = messageService.getChatList(id);
+        if (list.isEmpty()) {
+            return new ChatListResponse(true,"暂无聊天记录",0,list);
+        }
+        else {
+            return new ChatListResponse(true,"", list.size(), list);
+        }
     }
 
     @GetMapping("/message/private")
     public PrivateMessageResponse getPrivate(
-            @RequestParam(name = "receiver_id", required = false) Integer receiver_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "receiver_id", defaultValue = "", required = false) String receiver_id
     ) {
-        return null;
+        if (user_id.equals("")) {
+            return new PrivateMessageResponse(false,"",0,null);
+        }
+        if (receiver_id.equals("")) {
+            return new PrivateMessageResponse(false,"缺少请求参数",0,null);
+        }
+        Integer id = Integer.parseInt(user_id);
+        Integer receiver = Integer.parseInt(receiver_id);
+        ArrayList<PrivateElement> list = messageService.getPrivateMessage(id, receiver);
+        if (list.isEmpty()) {
+            return new PrivateMessageResponse(true,"无聊天记录",0,list);
+        }
+        else {
+            return new PrivateMessageResponse(true,"",list.size(),list);
+        }
     }
 
     @PostMapping("/message/private")
     public BasicInfoResponse sendPrivate(
-            @RequestParam(name = "receiver_id", required = false) Integer receiver_id,
-            @RequestParam(name = "content", required = false) String content
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "receiver_id",  defaultValue = "", required = false) String receiver_id,
+            @RequestParam(name = "content",  defaultValue = "", required = false) String content
     ) {
-        return null;
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false,"用户未登录");
+        }
+        if (receiver_id.equals("") || content.equals("")) {
+            return new BasicInfoResponse(false,"缺少请求参数");
+        }
+        Integer id = Integer.parseInt(user_id);
+        Integer receiver = Integer.parseInt(receiver_id);
+        Boolean status = messageService.sendPrivateMessage(id, receiver, content);
+        if (status) {
+            return new BasicInfoResponse(true,"");
+        }
+        else {
+            return new BasicInfoResponse(false,"服务器错误");
+        }
     }
 
     @GetMapping("/message/reply")
-    public ReplyMessageResponse getReply() {
-        return null;
+    public ReplyMessageResponse getReply(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.equals("")) {
+            return new ReplyMessageResponse(false,"用户未登录",0,null);
+        }
+        Integer id = Integer.parseInt(user_id);
+        ArrayList<ReplyElement> list = messageService.getReplyMessage(id);
+        if (list.isEmpty()) {
+            return new ReplyMessageResponse(true,"暂未收到回复",0,list);
+        }
+        else {
+            return new ReplyMessageResponse(true,"", list.size(), list);
+        }
     }
 
     @GetMapping("/message.apply")
@@ -48,7 +102,13 @@ public class MessageController {
             return new ApplyMessageResponse(false,"用户未登录",0,null);
         }
         Integer id = Integer.parseInt(user_id);
-        return null;
+        ArrayList<ApplyElement> list = messageService.getApplyMessage(id);
+        if (list.isEmpty()) {
+            return new ApplyMessageResponse(true,"暂无申请信息",0,list);
+        }
+        else {
+            return new ApplyMessageResponse(true,"", list.size(), list);
+        }
     }
 
     @GetMapping("/message/notice")
