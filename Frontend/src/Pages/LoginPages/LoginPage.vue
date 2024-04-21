@@ -78,6 +78,7 @@
 
 <script>
 import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 export default {
     data() {
@@ -114,7 +115,7 @@ export default {
             axios({
                 method: "POST",
                 url: "/api/user/register",
-                data: content
+                data: content,
             }).then((result) => {
                 console.log(result);
                 if(result.success) {
