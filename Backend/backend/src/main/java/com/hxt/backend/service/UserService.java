@@ -74,6 +74,14 @@ public class UserService {
         }
         return imageMapper.getImage(user.getHeadId());
     }
+    
+    public void setUserHead(Integer user_id, Integer head_id) {
+        User user = userMapper.selectUserById(user_id);
+        if (user.getUserId() == null) {
+            return;
+        }
+        userMapper.updateHead(user_id, head_id);
+    }
 
     public UserSocialInfoResponse getUserSocialInfo(Integer id) {
         User user = userMapper.selectUserById(id);

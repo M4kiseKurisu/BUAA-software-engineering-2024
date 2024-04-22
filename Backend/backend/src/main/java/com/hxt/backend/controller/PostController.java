@@ -73,7 +73,7 @@ public class PostController {
         return postResponse;
     }
     
-    @RequestMapping (value="/posts/writePost")
+    @RequestMapping (value="/posts/write")
     public BasicInfoResponse writePost(
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "author_id", required = false) Integer author_id
@@ -84,7 +84,8 @@ public class PostController {
         return new BasicInfoResponse(true, "发帖成功");
     }
     
-    @RequestMapping (value="/posts/post/writeComment")
+    
+    @RequestMapping (value="/posts/post/comment")
     public BasicInfoResponse writeComment(
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @RequestParam(name = "author_id", required = false) Integer author_id
@@ -95,7 +96,7 @@ public class PostController {
         return new BasicInfoResponse(true, "评论成功");
     }
     
-    @RequestMapping (value="/posts/post/writeReply")
+    @RequestMapping (value="/posts/post/reply")
     public BasicInfoResponse writeReply(
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @RequestParam(name = "comment_id", required = false) Integer comment_id,
