@@ -16,6 +16,7 @@ import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 import PostPage from "./Pages/PostPages/MainPostPage.vue"
 import PostCenter from "./Pages/PostCenter/PostCenter.vue"
 import CourseSection from "@/Pages/CourseCenter/CourseSection.vue"
+import CreatePost from "./Pages/PostPages/CreatePost.vue"
 
 import CreateCourseSection from "@/Pages/CourseCenter/CreateCourseSection.vue";
 
@@ -81,14 +82,16 @@ const router = createRouter({
                         },
                         {
                             path: '/CreateCourseSection',
-                            component:CreateCourseSection,
+                            component: CreateCourseSection,
                         },
                         {
-
                             path: '/ShowPersonalInformation',
-                            component : ShowPersonalInformation,
+                            component: ShowPersonalInformation,
                         },
-
+                        {
+                            path: 'CreatePost',
+                            component: CreatePost,
+                        },
                     ]
                 },
 
