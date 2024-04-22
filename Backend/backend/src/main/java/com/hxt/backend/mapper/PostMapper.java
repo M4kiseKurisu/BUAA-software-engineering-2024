@@ -33,8 +33,8 @@ public interface PostMapper {
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, content, category, section_id, author_id, like_count, " +
             "collect_count, comment_count, view_count, time)" +
-            " VALUES (#{title}, #{content}, #{category}, #{sectionId}, #{authorId}, #{likeCount}, " +
-            "#{collectCount}, #{commentCount}, #{viewCount}, #{postTime})")
+            " VALUES (#{title}, #{content}, #{category}, #{section_id}, #{authorId}, #{like_count}, " +
+            "#{collect_count}, #{comment_count}, #{view_count}, #{postTime})")
     int insertPost(Post post);
     /*
     int insertPost(String title, String content, Integer category, Integer sectionId, Integer authorId,
@@ -117,6 +117,10 @@ public interface PostMapper {
     @Result(column = "time", property = "commentTime")
     Comment getCommentById(Integer id);
     
+    //根据评论id获取帖子id
+    @Select("SELECT post_id from comment where comment_id = #{id}")
+    Integer getPostIdByCommentId(Integer id);
+    
     //获取某帖子的所有评论(正序)
     @Select("SELECT * from comment where post_id = #{id} ORDER BY time ASC, comment_id ASC")
     @Result(column = "time", property = "commentTime")
@@ -164,9 +168,19 @@ public interface PostMapper {
     @Delete("DELETE FROM reply WHERE reply_id = #{id}")
     int deleteReply(Integer id);
     
+    
+    
     //获取某评论的所有回复
     @Select("SELECT * from reply where comment_id = #{id} ORDER BY time ASC")
     @Result(column = "time", property = "replyTime")
     List<Reply> getReplyByCommentId(Integer id);
     
+    //根据回复id获取回复
+    @Select("SELECT * from reply where reply_id = #{id}")
+    @Result(column = "time", property = "replyTime")
+    Reply getReplyById(Integer id);
+    
+    //根据回复id获取评论id
+    @Select("SELECT comment_id from reply where reply_id = #{id}")
+    Integer getCommentIdByReplyId(Integer id);
 }
