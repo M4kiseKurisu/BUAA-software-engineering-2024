@@ -46,7 +46,8 @@
             <DirectMessage></DirectMessage>
         </div>
         <div class="noticeList" v-if="noticeChoice == 2">
-
+            <ReplyNotice></ReplyNotice>
+            <ReplyNotice></ReplyNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 3">
 
@@ -55,22 +56,22 @@
 
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 1">
-            <el-pagination background layout="prev, pager, next" :page-count="total1" style="position: absolute; right: 0;"
+            <el-pagination background layout="prev, pager, next" :page-size="6" :total = "total1" style="position: absolute; right: 0;"
                 @current-change="handleCurrentChange1" />
             <span>{{ currentPage1 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 2">
-            <el-pagination background layout="prev, pager, next" :page-count="total2" style="position: absolute; right: 0;"
+            <el-pagination background layout="prev, pager, next" :page-size="6" :total = "total2" style="position: absolute; right: 0;"
                 @current-change="handleCurrentChange2" />
             <span>{{ currentPage2 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 3">
-            <el-pagination background layout="prev, pager, next" :page-count="total3" style="position: absolute; right: 0;"
+            <el-pagination background layout="prev, pager, next" :page-size="6" :total = "total3" style="position: absolute; right: 0;"
                 @current-change="handleCurrentChange3" />
             <span>{{ currentPage3 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 4">
-            <el-pagination background layout="prev, pager, next" :page-count="total4" style="position: absolute; right: 0;"
+            <el-pagination background layout="prev, pager, next" :page-size="6" :total = "total4" style="position: absolute; right: 0;"
                 @current-change="handleCurrentChange4" />
             <span>{{ currentPage4 }}</span>
         </div>
@@ -78,11 +79,14 @@
 </template>
 
 <script>
-import { intersection } from 'lodash';
+import ReplyNotice from './ReplyNotice.vue';
 import DirectMessage from './DirectMessage.vue';
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     data() {
         return {
+            meId: 1,
             noticeChoice: 1,
             currentPage1: 1,
             currentPage2: 1,
@@ -94,6 +98,7 @@ export default {
             total4: 1,
             centerDialogVisible: false,
             haveNotice : 1,
+            allDirectMessage : '',
         };
     },
     methods: {
@@ -109,8 +114,22 @@ export default {
         handleCurrentChange4(val) {
             this.currentPage4 = val;
         },
+        getDirectMessage(){
+            axios({
+                method:"GET",
+                url: "api/message/private",
+                data: this.meId,
+            }).then((result) => {
+                this.total1 = result.message_count ;
+                this.allDirectMessage = result.message_list;
+                this.noticeChoice = 1;
+            })
+        },
     },
-    components: { DirectMessage }
+    components: { 
+        DirectMessage,
+        ReplyNotice,
+    }
 }
 </script>
 
