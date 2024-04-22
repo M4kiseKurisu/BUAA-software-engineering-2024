@@ -15,7 +15,8 @@ import PersonalCourse from "./Pages/CourseCenter/PersonalCourseCenter.vue"
 
 import PostPage from "./Pages/PostPages/MainPostPage.vue"
 import PostCenter from "./Pages/PostCenter/PostCenter.vue"
-import CourseSection from "@/Pages/CourseCenter/CourseSection.vue";
+import CourseSection from "@/Pages/CourseCenter/CourseSection.vue"
+import CreateCourseSection from "@/Pages/CourseCenter/CreateCourseSection.vue";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -75,6 +76,10 @@ const router = createRouter({
                             path:'/CourseSection',
                             component:CourseSection,
                         },
+                        {
+                            path: '/CreateCourseSection',
+                            component:CreateCourseSection,
+                        }
                     ]
                 },
 
