@@ -28,14 +28,14 @@
                 <!-- 头像信息 -->
                 <el-avatar :size="86" :src="avatarPicture"/>
                 <!-- 昵称信息 -->
-                <div class="nickname">{{ this.nickName }}</div>
+                <div class="nickname">{{ this.username }}</div>
 
                 <!-- 学届，专业，邮箱信息（在同一行） -->
                 <div class="information-line2-container">
                     <!-- 学届信息 -->
                     <div class="sub-information-line2-container">
                         <el-icon><Calendar :size="17" color="#101010"/></el-icon>
-                        <div class="sub-information-line2-font">{{ this.entryYear }}</div>
+                        <div class="sub-information-line2-font">{{ this.signTime }}</div>
                     </div>
 
                     <!-- 专业信息 -->
@@ -54,7 +54,7 @@
                 <!-- 个人签名信息 -->
                 <div class="personal-sign-container">
                     <el-icon><User :size="17" color="#101010"/></el-icon>
-                    <div class="personal-sign-font">{{ this.userSign }}</div>
+                    <div class="personal-sign-font">{{ this.signature }}</div>
                 </div>
             </div>
 
@@ -74,29 +74,38 @@
                 <!-- 收藏板块正文信息 -->
                 <div class="favorates-cards-container">
 
-                    <!-- 按顺序输出前三个用户收藏文章卡片 -->
-                    <el-row :gutter="26">
-                        <el-col :span="8" v-for="item in group1">
-                            <FavorateCard
-                                :title="item.title"
-                                :content="item.content"
-                                :avatarSrc="item.avatarSrc"
-                                :writerName="item.writerName"
-                            />
-                        </el-col>
-                    </el-row>
+                    <div v-if="this.favorateList.length != 0">
+                        <!-- 按顺序输出前三个用户收藏文章卡片 -->
+                        <el-row :gutter="26">
+                            <el-col :span="8" v-for="item in group1">
+                                <FavorateCard
+                                    :postId="item.post_id"
+                                    :title="item.post_title"
+                                    :content="item.post_content"
+                                    :writerId="item.author_id"
+                                    :writerName="item.author_name"
+                                />
+                            </el-col>
+                        </el-row>
 
-                    <!-- 按顺序输出四五六个用户收藏文章卡片 -->
-                    <el-row v-if="this.group2 != null" :gutter="26" class="second-card-row">
-                        <el-col :span="8" v-for="item in group2">
-                            <FavorateCard
-                                :title="item.title"
-                                :content="item.content"
-                                :avatarSrc="item.avatarSrc"
-                                :writerName="item.writerName"
-                            />
-                        </el-col>
-                    </el-row>
+                        <!-- 按顺序输出四五六个用户收藏文章卡片 -->
+                        <el-row v-if="this.group2 != null" :gutter="26" class="second-card-row">
+                            <el-col :span="8" v-for="item in group2">
+                                <FavorateCard
+                                    :postId="item.post_id"
+                                    :title="item.post_title"
+                                    :content="item.post_content"
+                                    :writerId="item.author_id"
+                                    :writerName="item.author_name"
+                                />
+                            </el-col>
+                        </el-row>
+                    </div>
+
+                    <div v-else>
+                        <div class="no-favorate-card-tip">目前您还没有收藏的文章~</div>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -170,6 +179,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { useStore } from 'vuex'
+
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 // 引入图标
@@ -204,47 +217,19 @@ export default {
     data() {
         return {
             route: ["个人中心", "用户信息"],  //本界面要显示的面包屑信息
-            avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
-            nickName: "M4kiseKurisu", //测试的昵称信息
-            entryYear: "2021",  //测试的学届信息
-            majority: "计算机学院",  //测试的专业信息
-            email: "21373343@buaa.edu.cn",  //测试的邮箱信息
-            userSign: "好好做好软工作业是命运石之门的选择！", //测试的个人签名信息
+            avatarPicture: "",  //头像信息
+            username: "", //昵称信息
+            signTime: "",  //测试的学届信息
+            majority: "",  //专业信息
+            email: "",  //邮箱信息
+            signature: "", //个人签名信息
 
             //收藏界面可视化
             show_favorate:false,
             show_userfollowing:false,
+
             //以下是用来测试收藏帖子板块的数组
-            favorateList: [
-                {
-                    //收藏帖子1
-                    title: "收藏帖子A标题",
-                    content: "收藏帖子A简介：ABCDABCDABCDABCD",
-                    avatarSrc: "./src/Images/testAvatar.jpg",
-                    writerName: "MakiseKurisuA",
-                },
-                {
-                    //收藏帖子2
-                    title: "收藏帖子B标题",
-                    content: "收藏帖子B简介：ABCDABCDABCDABCD",
-                    avatarSrc: "./src/Images/testAvatar.jpg",
-                    writerName: "MakiseKurisuB",
-                },
-                {
-                    //收藏帖子3
-                    title: "收藏帖子C标题",
-                    content: "收藏帖子C简介：ABCDABCDABCDABCD",
-                    avatarSrc: "./src/Images/testAvatar.jpg",
-                    writerName: "MakiseKurisuC",
-                },
-                {
-                    //收藏帖子4
-                    title: "收藏帖子D标题",
-                    content: "收藏帖子D简介：ABCDABCDABCDABCD",
-                    avatarSrc: "./src/Images/testAvatar.jpg",
-                    writerName: "MakiseKurisuD",
-                }
-            ],
+            favorateList: [],
 
             //以下是用来测试学习小组板块的数组
             groupList: [
@@ -319,12 +304,13 @@ export default {
         }
     },
     methods: {
-      toggle_favorate() {
-        this.show_favorate = true;
-      },
-      toggle_following_user() {
-        this.show_userfollowing = true;
-      }
+        toggle_favorate() {
+            this.show_favorate = true;
+        },
+        toggle_following_user() {
+            this.show_userfollowing = true;
+        },
+
     },
     computed: {
         group1() {
@@ -347,6 +333,41 @@ export default {
             //分离站内通知的前四个内容
             return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 5);
         }
+    },
+    mounted() {
+        // 获取基本信息
+        axios({
+            method: "GET",
+            url: "/api/user/info",
+        }).then((result) => {
+            console.log(result);
+            this.username = (result.data.name != "") ? result.data.name : result.data.account;
+            this.signTime = (result.data.enrollment_year != "") ? result.data.enrollment_year : "未设定";
+            this.email = result.data.email;
+            this.majority = (result.data.major != "") ? result.data.major : "未设定";      
+            this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
+        })
+
+        // 获取头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head",
+            params: {
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+        }).then((result) => {
+            console.log(result)
+            this.avatarPicture = result.data.info;
+        })
+
+        // 获取收藏帖子信息
+        axios({
+            method: "GET",
+            url: "/api/user/favorites"
+        }).then((result) => {
+            console.log(result);
+            this.favorateList = result.data.posts;
+        })
     }
 }
 </script>
@@ -464,6 +485,7 @@ export default {
 
 .favorate-and-study-group-container {
     display: flex;
+    height: 360px;
 }
 
 /* 收藏帖子模块位置 */
@@ -477,6 +499,7 @@ export default {
     margin-left: 40px;
     justify-content: space-between;
     display: flex;
+    border: none;
 }
 
 /* 收藏帖子模块标题样式 */
@@ -493,6 +516,7 @@ export default {
     color: #165dff;
     height: 20px;
     margin-top: 41px;
+    border: none;
 }
 
 /* 收藏帖子正文部分样式 */
@@ -558,5 +582,10 @@ export default {
     height: 87px;
     justify-content: space-between;
     display: flex;
+}
+
+.no-favorate-card-tip {
+    font-size: 15px;
+    color: #86909c;
 }
 </style>
