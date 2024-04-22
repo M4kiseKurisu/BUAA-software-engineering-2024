@@ -82,7 +82,7 @@ const router = createRouter({
                         {
                             path: '/CreateCourseSection',
                             component:CreateCourseSection,
-                        }
+                        },
                         {
 
                             path: '/ShowPersonalInformation',
