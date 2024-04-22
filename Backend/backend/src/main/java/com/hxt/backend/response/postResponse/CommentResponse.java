@@ -25,11 +25,11 @@ public class CommentResponse {
     private List<ReplyResponse> replies;
     
     public CommentResponse(Comment comment) {
-        this.comment_id = comment.getCommentId();
-        this.comment_author_id = comment.getAuthorId();
+        this.comment_id = comment.getComment_id();
+        this.comment_author_id = comment.getAuthor_id();
         this.comment_content = comment.getContent();
         this.comment_create_time = comment.getCommentTime().toString();
-        this.comment_like_count = comment.getLikeCount();
-        this.comment_reply_count = comment.getReplyCount();
+        this.comment_like_count = comment.getLike_count();
+        this.comment_reply_count = comment.getReply_count();
     }
 }

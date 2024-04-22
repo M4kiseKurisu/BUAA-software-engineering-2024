@@ -6,6 +6,7 @@ import com.hxt.backend.mapper.ImageMapper;
 import com.hxt.backend.mapper.PostMapper;
 import com.hxt.backend.mapper.SectionMapper;
 import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
@@ -38,7 +39,7 @@ public class UserService {
 
     public Integer register(String name, String email, String phone,
                             String major, Integer year, String password) {
-        if (userMapper.selectUserByName(name) != null) {
+        if (userMapper.selectUserByAccount(name) != null || userMapper.selectUserByName(name) != null) {
             return -1;
         }
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
@@ -47,7 +48,7 @@ public class UserService {
 
     public Integer checkPassword(String name, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        User user = userMapper.selectUserByName(name);
+        User user = userMapper.selectUserByAccount(name);
         System.out.println(user);
         if (md5.equals(user.getPassword())) {
             return user.getUserId();
@@ -72,6 +73,14 @@ public class UserService {
             return null;
         }
         return imageMapper.getImage(user.getHeadId());
+    }
+    
+    public void setUserHead(Integer user_id, Integer head_id) {
+        User user = userMapper.selectUserById(user_id);
+        if (user.getUserId() == null) {
+            return;
+        }
+        userMapper.updateHead(user_id, head_id);
     }
 
     public UserSocialInfoResponse getUserSocialInfo(Integer id) {
@@ -108,13 +117,13 @@ public class UserService {
             Post post = postMapper.getPost(favorite);
             if (post != null) {
                 PostResponse postResponse = new PostResponse(
-                        post.getPostId(),
+                        post.getPost_id(),
                         post.getTitle(),
                         post.getContent(),
                         userMapper.getUserNameById(post.getAuthorId()),
                         post.getAuthorId(),
-                        sectionMapper.getSectionNameById(post.getSectionId()),
-                        postMapper.getTagNameByPost(post.getPostId())
+                        sectionMapper.getSectionNameById(post.getSection_id()),
+                        postMapper.getTagNameByPost(post.getPost_id())
                 );
                 postListResponse.getPosts().add(postResponse);
             }
@@ -142,6 +151,16 @@ public class UserService {
         userMapper.resetPassword(id, md5);
     }
 
+    public BasicInfoResponse resetForgottenPassword
+            (String account, String name, String email, String np) {
+        User user = userMapper.selectUserByAccount(account);
+        if (!user.getName().equals(name) || !user.getEmail().equals(email)) {
+            return new BasicInfoResponse(false, "信息验证不通过！");
+        }
+        resetPassword(user.getUserId(), np);
+        return new BasicInfoResponse(true, "");
+    }
+
     public String setToken(Integer id) {
         String token = RandomStringUtils.randomAlphanumeric(64);
         Integer timestamp = Math.toIntExact(System.currentTimeMillis() / 1000);
@@ -149,13 +168,17 @@ public class UserService {
         return token;
     }
 
-    public boolean setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone) {
+    public String setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone) {
+        if (userMapper.selectUserByName(name) != null) {
+            return "用户昵称重名！";
+        }
         boolean nameSuccess = name == null || userMapper.updateName(id, name) > 0;
         boolean majorSuccess = major == null || userMapper.updateMajor(id, major) > 0;
         boolean yearSuccess = year == null || userMapper.updateYear(id, year) > 0;
         boolean signSuccess = sign == null || userMapper.updateSign(id, sign) > 0;
         boolean phoneSuccess = phone == null || userMapper.updatePhone(id, phone) > 0;
-        return nameSuccess && majorSuccess && yearSuccess && signSuccess && phoneSuccess;
+        return (nameSuccess && majorSuccess && yearSuccess && signSuccess && phoneSuccess)?
+                "" : "服务器错误！";
     }
 
     public boolean unfollowUser(Integer userId, Integer followId) {

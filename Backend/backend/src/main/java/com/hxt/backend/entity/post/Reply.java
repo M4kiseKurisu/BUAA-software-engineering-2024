@@ -17,12 +17,12 @@ import java.sql.Timestamp;
 public class Reply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer replyId;
-    private Integer commentId; //所属评论id
-    private Integer repliedAuthorId; //被回复用户id
-    private Integer authorId;
+    private Integer reply_id;
+    private Integer comment_id; //所属评论id
+    private Integer replied_author_id; //被回复用户id
+    private Integer author_id;
     private String content;
     private Timestamp replyTime;
-    private Integer likeCount;
+    private Integer like_count;
     
 }
