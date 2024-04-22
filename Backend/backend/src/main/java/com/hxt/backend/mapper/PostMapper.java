@@ -44,6 +44,11 @@ public interface PostMapper {
     
     //获取帖子
     @Select("SELECT * from post where post_id = #{id}")
+    @Results({
+            @Result(column = "post_id", property = "postId", id = true),
+            @Result(column = "time", property = "postTime"),
+            @Result(column = "publisher_id", property = "authorId")
+    })
     Post getPost(Integer id);
     
     //更新帖子浏览数
@@ -99,15 +104,18 @@ public interface PostMapper {
     
     //获取某帖子的所有评论(正序)
     @Select("SELECT * from comment where post_id = #{id} ORDER BY time ASC, comment_id ASC")
+    @Result(column = "time", property = "commentTime")
     List<Comment> getCommentSortByTimeAsc(Integer id);
     
     //获取某帖子的所有评论(倒序)
     @Select("SELECT * from comment where post_id = #{id} ORDER BY time DESC, comment_id DESC")
+    @Result(column = "time", property = "commentTime")
     List<Comment> getCommentSortByTimeDesc(Integer id);
     
     //获取某帖子的所有评论(热度)
     @Select("SELECT * from comment where post_id = #{id} ORDER BY " +
             "(like_count + reply_count * 2) DESC, comment_id DESC")
+    @Result(column = "time", property = "commentTime")
     List<Comment> getCommentSortByHotAsc(Integer id);
     
     //评论-图片
@@ -143,6 +151,7 @@ public interface PostMapper {
     
     //获取某评论的所有回复
     @Select("SELECT * from reply where comment_id = #{id} ORDER BY time ASC")
+    @Result(column = "time", property = "replyTime")
     List<Reply> getReplyByCommentId(Integer id);
     
 }

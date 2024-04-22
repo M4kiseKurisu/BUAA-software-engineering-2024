@@ -17,16 +17,16 @@ import java.sql.Timestamp;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer postId;
+    private Integer post_id;
     private String title;
     private String content;
     private Integer category; //帖子类型 0：普通，1：资源
-    private Integer sectionId;
+    private Integer section_id;
     private Integer authorId; //发帖人id
-    private Integer likeCount; //点赞数
-    private Integer collectCount; //收藏数
-    private Integer commentCount;
-    private Integer viewCount;
+    private Integer like_count; //点赞数
+    private Integer collect_count; //收藏数
+    private Integer comment_count;
+    private Integer view_count;
     private Timestamp postTime;
     
 }

@@ -13,6 +13,10 @@ public interface TagMapper {
     int insertTag(String name);
     
     @Select("SELECT * from tag where tag_id = #{id}")
+    @Results({
+            @Result(column = "tag_id", property = "tagId", id = true),
+            @Result(column = "name", property = "name")
+    })
     Tag getTag(Integer id);
     
     @Delete("DELETE FROM tag WHERE tag_id = #{id}")

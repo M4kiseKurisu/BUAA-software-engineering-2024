@@ -31,13 +31,29 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 import { StarFilled } from '@element-plus/icons-vue'
 
 export default {
+    data() {
+        return {
+            avatarSrc: "",
+        }
+    },
     components: {
         StarFilled, 
     },
-    props: ["title", "content", "avatarSrc", "writerName"],
+    props: ["postId", "title", "content", "writerId", "writerName"],
+    mounted() {
+        // 获取作者头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head"
+        }).then((result) => {
+            this.avatarSrc = result.data.info;
+        })
+    }
 }
 </script>
 
@@ -59,7 +75,7 @@ export default {
 
 /* 定义文章标题样式，注意抵消el-card自带的20px padding */
 .title {
-    font-size: 14px;
+    font-size: 14px !important;
     height: 20px;
     color: #101010;
 }
