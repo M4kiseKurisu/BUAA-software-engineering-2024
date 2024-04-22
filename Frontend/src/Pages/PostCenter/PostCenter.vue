@@ -69,6 +69,7 @@
                 <PostItem></PostItem>
                 <PostItem></PostItem>
                 <PostItem></PostItem>
+                <PostItem></PostItem>
                 <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
                     <el-pagination background layout="prev, pager, next" :page-count="total"
                         style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />

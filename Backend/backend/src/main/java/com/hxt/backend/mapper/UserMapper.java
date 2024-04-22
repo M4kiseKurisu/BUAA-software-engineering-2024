@@ -15,6 +15,15 @@ public interface UserMapper {
             @Result(column = "token_time", property = "tokenTime"),
             @Result(column = "head_id", property = "headId")
     })
+    User selectUserByAccount(String name);
+
+    @Select("SELECT * FROM user_info WHERE name = #{name}")
+    @Results({
+            @Result(column = "user_id", property = "userId", id = true),
+            @Result(column = "graduate_year", property = "graduateYear"),
+            @Result(column = "token_time", property = "tokenTime"),
+            @Result(column = "head_id", property = "headId")
+    })
     User selectUserByName(String name);
 
     @Select("SELECT * FROM user_info WHERE user_id = #{id}")
@@ -26,12 +35,12 @@ public interface UserMapper {
     })
     User selectUserById(Integer id);
 
-    @Select("SELECT account FROM user_info WHERE user_id = #{id}")
+    @Select("SELECT name FROM user_info WHERE user_id = #{id}")
     String getUserNameById(Integer id);
 
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time)" +
-            " VALUES (#{name}, '', #{email}, #{phone}, #{major}, #{year}, #{password}, 0)")
+            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0)")
     int insertUser(String name, String email, String phone,
                    String major, Integer year, String password);
 
