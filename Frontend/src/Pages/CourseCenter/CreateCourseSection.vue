@@ -3,96 +3,99 @@
     <div class="breadcrumb">
       <BreadcrumbLabel :routeNames="route" />
     </div>
-    <div class="create-cs-container">
-      <div class="write-in-cs-inf">
-        <div class="title-container">
-          <span class="title">新建课程</span>
-        </div>
-        <div class="input-container">
-          <div class="inf-input">
-            <div class="form-group">
-              <span class="prompt-before-input">课程名称:</span>
-              <div class="name-input-container">
-                <el-input v-model="course.name"></el-input>
+    <div class="content-container">
+      <div class="create-cs-container">
+        <div class="write-in-cs-inf">
+          <div class="title-container">
+            <span class="title">新建课程</span>
+          </div>
+          <div class="input-container">
+            <div class="inf-input">
+              <div class="form-group">
+                <span class="prompt-before-input">课程名称:</span>
+                <div class="name-input-container">
+                  <el-input v-model="course.name"></el-input>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <span class="prompt-before-input">课程类型:</span>
-              <div class="name-input-container">
-                <el-input v-model="course.type"></el-input>
+              <div class="form-group">
+                <span class="prompt-before-input">课程类型:</span>
+                <div class="name-input-container">
+                  <el-input v-model="course.type"></el-input>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <span class="prompt-before-input">学分:</span>
-              <div style="max-width: 80px">
-                <el-input v-model="course.credits"></el-input>
+              <div class="form-group">
+                <span class="prompt-before-input">学分:</span>
+                <div style="max-width: 80px">
+                  <el-input v-model="course.credits"></el-input>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <span class="prompt-before-input">开课院系:</span>
-              <div class="name-input-container">
-                <el-input v-model="course.college"></el-input>
+              <div class="form-group">
+                <span class="prompt-before-input">开课院系:</span>
+                <div class="name-input-container">
+                  <el-input v-model="course.college"></el-input>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <span class="prompt-before-input">课程容量:</span>
-              <el-input-number v-model="course.capacity"></el-input-number>
-            </div>
+              <div class="form-group">
+                <span class="prompt-before-input">课程容量:</span>
+                <el-input-number v-model="course.capacity"></el-input-number>
+              </div>
 
-            <div class="form-group">
-              <span class="prompt-before-input">课程描述:</span>
-              <el-input
-                  type="textarea"
-                  :rows="3" :autosize="{ minRows: 3 }" v-model="course.description">
-              </el-input>
-            </div>
-            <div class="form-group">
-              <span class="prompt-before-input">标签:</span>
-              <div class="tag-in-container">
-                <el-tag
-                    v-for="tag in dynamicTags"
-                    :key="tag"
-                    closable
-                    :disable-transitions="false"
-                    @close="handleClose(tag)"
-                >
-                  {{ tag }}
-                </el-tag>
+              <div class="form-group">
+                <span class="prompt-before-input">课程描述:</span>
                 <el-input
-                    v-if="inputVisible"
-                    ref="InputRef"
-                    v-model="inputValue"
-                    class="w-20"
-                    @keyup.enter="handleInputConfirm"
-                    @blur="handleInputConfirm"
-                    style="width: 100px"
-                />
-                <el-button v-else class="button-new-tag" @click="showInput">
-                  + New Tag
-                </el-button>
+                    type="textarea"
+                    :rows="3" :autosize="{ minRows: 3 }" v-model="course.description">
+                </el-input>
+              </div>
+              <div class="form-group">
+                <span class="prompt-before-input">标签:</span>
+                <div class="tag-in-container">
+                  <el-tag
+                      v-for="tag in dynamicTags"
+                      :key="tag"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                      v-if="inputVisible"
+                      ref="InputRef"
+                      v-model="inputValue"
+                      class="w-20"
+                      @keyup.enter="handleInputConfirm"
+                      @blur="handleInputConfirm"
+                      style="width: 100px"
+                  />
+                  <el-button v-else class="button-new-tag" @click="showInput">
+                    + New Tag
+                  </el-button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="png-input">
-            <el-upload
-                v-model:file-list="fileList"
-                action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-            >
-              <el-icon><Plus /></el-icon>
-            </el-upload>
+            <div class="png-input">
+              <el-upload
+                  v-model:file-list="fileList"
+                  action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+              >
+                <el-icon><Plus /></el-icon>
+              </el-upload>
 
-            <el-dialog v-model="dialogVisible">
-              <img w-full :src="dialogImageUrl" alt="Preview Image" />
-            </el-dialog>
+              <el-dialog v-model="dialogVisible">
+                <img w-full :src="dialogImageUrl" alt="Preview Image" />
+              </el-dialog>
+            </div>
           </div>
+
+          <button @click="submitCourse" class="submit-button">提交</button>
         </div>
-
-        <button @click="submitCourse" class="submit-button">提交</button>
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -164,7 +167,12 @@ export default defineComponent({
   margin-left: 20px;
   margin-bottom: 17px;
 }
-
+.content-container{
+  display: flex;
+  flex-direction: column; /* 将子元素垂直排列 */
+  align-items: center; /* 水平居中对齐 */
+  //margin-left: -200px;
+}
 .create-cs-container{
   display: flex;
   justify-content: center;
@@ -188,11 +196,12 @@ export default defineComponent({
 }
 
 .inf-input{
-  width: 800px;
+  width: 1700px;
 }
 .input-container{
   display: flex;
   justify-content: space-between;
+  //width: 100vw;
 }
 
 .form-group {
