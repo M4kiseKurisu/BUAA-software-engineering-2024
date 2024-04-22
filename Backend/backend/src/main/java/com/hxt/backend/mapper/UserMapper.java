@@ -58,6 +58,9 @@ public interface UserMapper {
 
     @Update("UPDATE user_info SET phonenum = #{phone} WHERE user_id = #{id}")
     int updatePhone(Integer id, String phone);
+    
+    @Update("UPDATE user_info SET head_id = #{headId} WHERE user_id = #{id}")
+    int updateHead(Integer id, Integer headId);
 
     @Update("UPDATE user_info SET token = #{token}, token_time = #{time} WHERE user_id = #{id}")
     int setToken(Integer id, String token, Integer time);

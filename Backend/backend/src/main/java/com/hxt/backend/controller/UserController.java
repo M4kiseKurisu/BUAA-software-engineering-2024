@@ -2,17 +2,25 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.UploadResponse;
 import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
+import com.hxt.backend.service.ImageService;
+import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +32,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    
+    private final ObsService obsService;
+    
+    private final ImageService imageService;
     private String emailPattern = "([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}";
     private String phonePattern = "^\\d+";
     private String hasEmptyResponse = "信息填写不完整！";
@@ -162,6 +174,37 @@ public class UserController {
             return new BasicInfoResponse(false, "该用户未设置头像！");
         }
         return new BasicInfoResponse(true, url);
+    }
+    
+    @RequestMapping (value="/user/uploadHead")
+    public BasicInfoResponse uploadUserHead(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "file", required = false) MultipartFile file
+    ) {
+        
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        
+        if (file == null) {
+            return new BasicInfoResponse(false, "图片为空");
+        }
+        // 上传文件到云服务器并返回图片在云服务器上的 URL
+        String url = obsService.uploadFile(file);
+        
+        // 将图片的 URL 保存到数据库
+        Integer response = imageService.uploadImage(url);
+        
+        // 将图片id存入 user 表
+        Integer headId = imageService.getImageIdByUrl(url);
+        userService.setUserHead(Integer.parseInt(user_id), headId);
+        
+        // 返回
+        boolean isSuccess = (response == 1);
+        String info = isSuccess ? "上传成功！" :
+                response == -1? "上传出错，请重新上传！" : "服务器错误！";
+        
+        return new BasicInfoResponse(isSuccess, info);
     }
 
     @RequestMapping("/user/favorites")

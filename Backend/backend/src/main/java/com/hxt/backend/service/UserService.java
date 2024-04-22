@@ -74,6 +74,14 @@ public class UserService {
         }
         return imageMapper.getImage(user.getHeadId());
     }
+    
+    public void setUserHead(Integer user_id, Integer head_id) {
+        User user = userMapper.selectUserById(user_id);
+        if (user.getUserId() == null) {
+            return;
+        }
+        userMapper.updateHead(user_id, head_id);
+    }
 
     public UserSocialInfoResponse getUserSocialInfo(Integer id) {
         User user = userMapper.selectUserById(id);
@@ -109,13 +117,13 @@ public class UserService {
             Post post = postMapper.getPost(favorite);
             if (post != null) {
                 PostResponse postResponse = new PostResponse(
-                        post.getPostId(),
+                        post.getPost_id(),
                         post.getTitle(),
                         post.getContent(),
                         userMapper.getUserNameById(post.getAuthorId()),
                         post.getAuthorId(),
-                        sectionMapper.getSectionNameById(post.getSectionId()),
-                        postMapper.getTagNameByPost(post.getPostId())
+                        sectionMapper.getSectionNameById(post.getSection_id()),
+                        postMapper.getTagNameByPost(post.getPost_id())
                 );
                 postListResponse.getPosts().add(postResponse);
             }

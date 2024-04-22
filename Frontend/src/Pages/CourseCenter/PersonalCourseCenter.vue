@@ -3,9 +3,11 @@
 
         <!-- 此处为面包屑组件 -->
         <div class="breadcrumb"><BreadcrumbLabel :routeNames="route" /></div>
-
+        <div class="title-button">
+          <div class="personal-course-title">板块广场</div>
+          <button class="submit-button" @click="goToCreateCourseSection">创建课程板块</button>
+        </div>
         <!-- 此处为界面标题 -->
-        <div class="personal-course-title">板块广场</div>
 
         <!-- 此处为界面上方走马灯
         <el-image :src="this.poster" :fit="fit" class="personal-course-carousel"/> -->
@@ -72,7 +74,7 @@
             <div class="personal-course-right-container">
 
                 <div class="right-first-line-container">
-                    <div class="left-start-items"> 
+                    <div class="left-start-items">
                         <div class="right-header">热门板块</div>
                         <div class="right-selector">
                             <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
@@ -86,7 +88,7 @@
                         </div>
                     </div>
 
-                    <div class="right-start-items"> 
+                    <div class="right-start-items">
                         <div class="right-selector2">
                             <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
                                 <el-option
@@ -112,7 +114,7 @@
                 <div v-for="item in sectionFor" class="course-card-row">
                     <el-row :gutter="54">
                         <!-- 单个关注课程信息 -->
-                        <el-col :span="12" ><CourseCard 
+                        <el-col :span="12" ><CourseCard
                             :sectionId="this.sectionCardTest.sectionId"
                             :sectionName="this.sectionCardTest.sectionName"
                             :sectionFollowerCount="this.sectionCardTest.sectionFollowerCount"
@@ -121,7 +123,7 @@
                             :sectionType="this.sectionCardTest.sectionType"
                         /></el-col>
                         <!-- 单个关注课程信息 -->
-                        <el-col :span="12" ><CourseCard 
+                        <el-col :span="12" ><CourseCard
                             :sectionId="this.sectionCardTest.sectionId"
                             :sectionName="this.sectionCardTest.sectionName"
                             :sectionFollowerCount="this.sectionCardTest.sectionFollowerCount"
@@ -135,7 +137,7 @@
                 <div class="pagination-in-right-course-center">
                     <el-pagination :pager-count="6" layout="prev, pager, next" :total="100" />
                 </div>
-                
+
 
             </div>
 
@@ -152,18 +154,18 @@ import CourseCard from "../../Components/Group/PersonalCourseCardInCourseCenter.
 
 export default {
     components: {
-        BreadcrumbLabel, 
-        CourseCard, 
-    }, 
+        BreadcrumbLabel,
+        CourseCard,
+    },
     data() {
         return {
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             poster: "./src/Images/buaaPoster1.jpg", //本页面要展示的图片
-            // carouselList: ["./src/Images/testPoster.jpg", 
-            //                "./src/Images/testPoster.jpg", 
-            //                "./src/Images/testPoster.jpg", 
-            //                "./src/Images/testPoster.jpg", 
-            //                "./src/Images/testPoster.jpg", 
+            // carouselList: ["./src/Images/testPoster.jpg",
+            //                "./src/Images/testPoster.jpg",
+            //                "./src/Images/testPoster.jpg",
+            //                "./src/Images/testPoster.jpg",
+            //                "./src/Images/testPoster.jpg",
             //                "./src/Images/testPoster.jpg"],  //本界面要展示的走马灯图片测试
             avatarPicture: "./src/Images/testAvatar.jpg",  //本界面要展示的头像图片测试
             username: "M4kiseKurisu",  //本界面要展示的昵称信息
@@ -188,15 +190,20 @@ export default {
             sortValue: "",
             tagInput: "",
             sectionCardTest: {  //测试热门板块卡片
-                sectionId: 1, 
+                sectionId: 1,
                 sectionName: "软件工程",
-                sectionFollowerCount: "186", 
-                sectionIntroduction: "软件工程真的是一门好课！软件工程真的是一门好课！", 
+                sectionFollowerCount: "186",
+                sectionIntroduction: "软件工程真的是一门好课！软件工程真的是一门好课！",
                 sectionAcademy: "计算机学院",
                 sectionType: "一般专业课",
             },
             sectionFor: [1, 2, 3, 4],
         }
+    },
+    methods: {
+      goToCreateCourseSection() {
+        this.$router.push({ path: '/CreateCourseSection' });
+      }
     },
     computed: {
         group1() {  //分离个人关注的一二个板块
@@ -235,7 +242,24 @@ export default {
     margin-left: 38px;
     margin-top: 29px;
 }
-
+.title-button{
+  display: flex;
+  justify-content: space-between;
+}
+.submit-button {
+  display: block;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100px;
+  height: 40px;
+  margin-right: 200px;
+  margin-top: 29px;
+}
 .personal-course-carousel {
     width: 82%;
     margin-left: 9%;
