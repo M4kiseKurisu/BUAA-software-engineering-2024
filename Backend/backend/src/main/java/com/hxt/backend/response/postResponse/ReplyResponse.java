@@ -20,11 +20,11 @@ public class ReplyResponse {
     private Integer reply_like_count;
     
     public ReplyResponse(Reply reply) {
-        this.reply_id = reply.getReplyId();
-        this.replied_author_id = reply.getRepliedAuthorId();
-        this.reply_author_id = reply.getAuthorId();
+        this.reply_id = reply.getReply_id();
+        this.replied_author_id = reply.getReplied_author_id();
+        this.reply_author_id = reply.getAuthor_id();
         this.reply_content = reply.getContent();
         this.reply_create_time = reply.getReplyTime().toString();
-        this.reply_like_count = reply.getLikeCount();
+        this.reply_like_count = reply.getLike_count();
     }
 }
