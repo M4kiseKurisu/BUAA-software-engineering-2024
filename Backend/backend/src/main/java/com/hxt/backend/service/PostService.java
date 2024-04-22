@@ -137,7 +137,7 @@ public class PostService {
             CommentResponse commentResponse = new CommentResponse(comment);
             
             //获取评论者的名称和头像
-            Integer authorId = comment.getAuthorId();
+            Integer authorId = comment.getAuthor_id();
             String authorName = userMapper.selectUserById(authorId).getName();
             String authorHead = imageMapper.getImage(userMapper.selectUserById(authorId).getHeadId());
             commentResponse.setComment_author_name(authorName);
@@ -164,13 +164,13 @@ public class PostService {
             commentResponse.setComment_resources(resourceMap);
             
             //获取评论的回复
-            List<Reply> replies = postMapper.getReplyByCommentId(comment.getCommentId());
+            List<Reply> replies = postMapper.getReplyByCommentId(comment.getComment_id());
             List<ReplyResponse> replyResponses = new ArrayList<>();
             for (Reply reply : replies) {
                 ReplyResponse replyResponse = new ReplyResponse(reply);
                 
                 //获取回复者的名称和头像
-                Integer replyAuthorId = reply.getAuthorId();
+                Integer replyAuthorId = reply.getAuthor_id();
                 String replyAuthorName = userMapper.selectUserById(replyAuthorId).getName();
                 String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
@@ -186,7 +186,7 @@ public class PostService {
     }
     
     public void updateViewCount(Integer post_id) {
-        Integer newViewCount = postMapper.getPost(post_id).getViewCount() + 1;
+        Integer newViewCount = postMapper.getPost(post_id).getView_count() + 1;
         postMapper.updateViewCount(post_id, newViewCount);
     }
 }

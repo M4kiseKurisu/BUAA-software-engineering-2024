@@ -2,17 +2,25 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.UploadResponse;
 import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
+import com.hxt.backend.service.ImageService;
+import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +32,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    
+    private final ObsService obsService;
+    
+    private final ImageService imageService;
     private String emailPattern = "([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}";
     private String phonePattern = "^\\d+";
     private String hasEmptyResponse = "信息填写不完整！";
@@ -163,6 +175,37 @@ public class UserController {
         }
         return new BasicInfoResponse(true, url);
     }
+    
+    @RequestMapping (value="/user/uploadHead")
+    public BasicInfoResponse uploadUserHead(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "file", required = false) MultipartFile file
+    ) {
+        
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        
+        if (file == null) {
+            return new BasicInfoResponse(false, "图片为空");
+        }
+        // 上传文件到云服务器并返回图片在云服务器上的 URL
+        String url = obsService.uploadFile(file);
+        
+        // 将图片的 URL 保存到数据库
+        Integer response = imageService.uploadImage(url);
+        
+        // 将图片id存入 user 表
+        Integer headId = imageService.getImageIdByUrl(url);
+        userService.setUserHead(Integer.parseInt(user_id), headId);
+        
+        // 返回
+        boolean isSuccess = (response == 1);
+        String info = isSuccess ? "上传成功！" :
+                response == -1? "上传出错，请重新上传！" : "服务器错误！";
+        
+        return new BasicInfoResponse(isSuccess, info);
+    }
 
     @RequestMapping("/user/favorites")
     public PostListResponse getUserFavorite(
@@ -192,6 +235,22 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/user/password/forget")
+    public BasicInfoResponse setForgottenPassword(
+            @RequestParam(name = "account", required = false) String account,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "password", required = false) String np
+    ) {
+        if (account == null || name == null || email == null || np == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!userService.lengthCheck(np, 6, 18)) {
+            return new BasicInfoResponse(false, "密码过长或过短！");
+        } else {
+            return userService.resetForgottenPassword(account, name, email, np);
+        }
+    }
+
     @RequestMapping("/user/update")
     public BasicInfoResponse setUserInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
@@ -218,9 +277,8 @@ public class UserController {
                 return new BasicInfoResponse(false, "手机号格式不正确！");
             }
         }
-        boolean res = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
-        String info = res? "" : "修改发生错误，请稍后再试！";
-        return new BasicInfoResponse(res, info);
+        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
+        return new BasicInfoResponse(info.isEmpty(), info);
     }
 
     @RequestMapping("/user/unfollow")
