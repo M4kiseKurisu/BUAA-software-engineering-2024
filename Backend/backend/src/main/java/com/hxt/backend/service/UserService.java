@@ -117,13 +117,13 @@ public class UserService {
             Post post = postMapper.getPost(favorite);
             if (post != null) {
                 PostResponse postResponse = new PostResponse(
-                        post.getPostId(),
+                        post.getPost_id(),
                         post.getTitle(),
                         post.getContent(),
                         userMapper.getUserNameById(post.getAuthorId()),
                         post.getAuthorId(),
-                        sectionMapper.getSectionNameById(post.getSectionId()),
-                        postMapper.getTagNameByPost(post.getPostId())
+                        sectionMapper.getSectionNameById(post.getSection_id()),
+                        postMapper.getTagNameByPost(post.getPost_id())
                 );
                 postListResponse.getPosts().add(postResponse);
             }
