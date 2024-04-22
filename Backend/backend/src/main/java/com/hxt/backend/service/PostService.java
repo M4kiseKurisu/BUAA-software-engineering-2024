@@ -229,20 +229,32 @@ public class PostService {
         return postMapper.insertCommentResource(commentId, resourceId);
     }
     
+    public Integer deleteComment(Integer id) {
+        if (postMapper.getCommentById(id) == null) {
+            return -1;
+        }
+        return postMapper.deleteComment(id);
+    }
+    
     public void updateViewCount(Integer post_id) {
         Integer newViewCount = postMapper.getPost(post_id).getView_count() + 1;
         postMapper.updateViewCount(post_id, newViewCount);
     }
     
-    public void updatePostCommentCount(Integer post_id) {
-        Integer newCommentCount = postMapper.getPost(post_id).getComment_count() + 1;
+    public void updatePostCommentCount(Integer post_id, Integer op) {
+        Integer newCommentCount = postMapper.getPost(post_id).getComment_count() + op;
         postMapper.updateViewCount(post_id, newCommentCount);
     }
     
-    public void updateCommentReplyCount(Integer comment_id) {
-        Integer newCommentCount = postMapper.getCommentById(comment_id).getReply_count() + 1;
+    public void updateCommentReplyCount(Integer comment_id, Integer op) {
+        Integer newCommentCount = postMapper.getCommentById(comment_id).getReply_count() + op;
         postMapper.updateViewCount(comment_id, newCommentCount);
     }
+    
+    public Integer getCommentIdByReplyId(Integer replyId) {
+        return postMapper.getCommentIdByReplyId(replyId);
+    }
+    
     
     // 创建回复
     public Integer createReply(Integer commentId, Integer repliedAuthorId, Integer authorId, String content) {
@@ -251,5 +263,12 @@ public class PostService {
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
+    }
+    
+    public Integer deleteReply(Integer id) {
+        if (postMapper.getReplyById(id) == null) {
+            return -1;
+        }
+        return postMapper.deleteReply(id);
     }
 }

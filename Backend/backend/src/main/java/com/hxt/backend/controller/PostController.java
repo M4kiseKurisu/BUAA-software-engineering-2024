@@ -126,13 +126,16 @@ public class PostController {
     
     @RequestMapping (value="/posts/delete")
     public BasicInfoResponse deletePost(
-            @RequestParam(name = "section_id", required = false) Integer section_id,
-            @RequestParam(name = "author_id", required = false) Integer author_id
-            //待完善
+            @RequestParam(name = "post_id", required = false) Integer post_id
+            
     ) {
-        //待完善
+        Integer res = postService.deletePost(post_id);
         
-        return new BasicInfoResponse(true, "发帖成功");
+        if (res == -1) {
+            return new BasicInfoResponse(false, "所选帖子不存在");
+        }
+        
+        return new BasicInfoResponse(true, "删帖成功");
     }
     
     @RequestMapping (value="/posts/comment")
@@ -167,9 +170,23 @@ public class PostController {
         }
         
         //帖子评论数 +1
-        postService.updatePostCommentCount(post_id);
+        postService.updatePostCommentCount(post_id, 1);
         
         return new BasicInfoResponse(true, "评论成功");
+    }
+    
+    @RequestMapping (value="/posts/comment/delete")
+    public BasicInfoResponse deleteComment(
+            @RequestParam(name = "comment_id", required = false) Integer comment_id
+    
+    ) {
+        Integer res = postService.deleteComment(comment_id);
+        
+        if (res == -1) {
+            return new BasicInfoResponse(false, "所选评论不存在");
+        }
+        
+        return new BasicInfoResponse(true, "删除评论成功");
     }
     
     @RequestMapping (value="/posts/reply")
@@ -189,13 +206,35 @@ public class PostController {
         }
         
         // 该评论的回复数 +1
-        postService.updateCommentReplyCount(comment_id);
+        postService.updateCommentReplyCount(comment_id, 1);
         
         // 该帖子的评论数 +1
-        postService.updatePostCommentCount(post_id);
+        postService.updatePostCommentCount(post_id, 1);
         
         return new BasicInfoResponse(true, "回复成功");
     }
     
+    /*
+    @RequestMapping (value="/posts/reply/delete")
+    public BasicInfoResponse deleteReply(
+            @RequestParam(name = "reply_id", required = false) Integer reply_id
     
+    ) {
+        Integer comment_id = postService.getCommentIdByReplyId(reply_id);
+        Integer post_id = postService.getPostIdByCommentId(comment_id);
+        Integer res = postService.deleteReply(reply_id);
+        
+        if (res == -1) {
+            return new BasicInfoResponse(false, "所选评论不存在");
+        }
+    
+        // 该评论的回复数 +1
+        postService.updateCommentReplyCount(comment_id, 1);
+    
+        // 该帖子的评论数 +1
+        postService.updatePostCommentCount(post_id, 1);
+        
+        return new BasicInfoResponse(true, "删除评论成功");
+    }
+    */
 }
