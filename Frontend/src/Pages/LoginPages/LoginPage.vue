@@ -116,6 +116,7 @@ export default {
                         message: "登录成功！",
                         type: 'success',
                     });
+                    this.$store.commit("userLogin", result.data);
                     this.$router.push({ path: "MainPage/Personal_Center" });
                 } else {
                     // 登录失败

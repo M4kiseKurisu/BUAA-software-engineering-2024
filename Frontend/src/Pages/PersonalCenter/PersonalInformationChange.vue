@@ -81,6 +81,10 @@
                 </div>
 
                 <div class="button-container">
+                    <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+                        <button class="button-changeavatar">选择头像</button>
+                    </el-upload>
+                    <button class="button-changeavatar" @click="uploadAvatar">上传头像</button>
                     <button class="button-left" @click="ChangeInformation">保存</button>
                     <button class="button-right" @click="emptyInformation">重置</button>
                 </div>
@@ -152,7 +156,7 @@ export default {
     data() {
         return {
             route: ["个人中心", "用户设置"],  //本界面要显示的面包屑信息
-            avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
+            avatarPicture: "",  //测试的头像信息
             username: "", //测试的昵称信息
             loginNumber: "", //测试的账号信息
             signTime: "", //测试的注册时间信息
@@ -160,6 +164,8 @@ export default {
             phoneNumber: "", //测试的手机信息
             majority: "", //测试的学员信息
             signature: "", //测试的个人签名
+
+            fileList: [],  //上传图片位置
 
             inputUsername: "",
             inputPhone: "",
@@ -187,8 +193,30 @@ export default {
             this.majority = (result.data.major != "") ? result.data.major : "未设定";      
             this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
         })
+
+        // 获取头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head",
+            params: {
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+        }).then((result) => {
+            console.log(result)
+            this.avatarPicture = result.data.info;
+        })
     },
     methods: {
+        uploadAvatar() {
+            const file = this.fileList[0].raw;
+            const data = new FormData();
+            data.append("file", file);
+
+            console.log(file);
+
+            axios.post("/api/user/uploadHead", data);
+        },
+
         ChangeInformation() {
             if (isNaN(this.inputEntryTime)) {
                 this.$message({
@@ -445,7 +473,6 @@ textarea::placeholder {
     display: flex;
     margin-top: 32px;
     justify-content: flex-end;
-    margin-right: 233px;
 }
 
 .button-left {
@@ -461,6 +488,16 @@ textarea::placeholder {
 .button-right {
     width: 60px;
     height: 32px;
+    border-radius: 4px;
+    background-color: #f7f8fa;
+    color: #4e5969;
+    border: none;
+}
+
+.button-changeavatar {
+    margin-right: 12px;
+    height: 32px;
+    width: 80px;
     border-radius: 4px;
     background-color: #f7f8fa;
     color: #4e5969;
