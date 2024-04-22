@@ -85,6 +85,9 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) FROM user_follow WHERE user_id = #{id}")
     int getFollowCount(Integer id);
 
+    @Select("SELECT COUNT(*) FROM user_follow WHERE user_id = #{userId} and follow_id = #{followId}")
+    int isFollow(Integer userId, Integer followId);
+
     @Select("SELECT follow_id FROM user_follow WHERE follow_id = #{id} ORDER BY uf_id DESC")
     List<Integer> getFollower(Integer id);  //  被关注，备用
 

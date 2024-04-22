@@ -75,18 +75,19 @@ public class UserService {
         return imageMapper.getImage(user.getHeadId());
     }
 
-    public UserSocialInfoResponse getUserSocialInfo(Integer id) {
+    public UserSocialInfoResponse getUserSocialInfo(Integer searcher, Integer id) {
         User user = userMapper.selectUserById(id);
         if (user == null) return new UserSocialInfoResponse();
         return new UserSocialInfoResponse(
-                user.getName(),
-                user.getUserId(),
-                (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
-                userMapper.getFollowCount(user.getUserId()),
-                userMapper.getFollowerCount(user.getUserId()),
-                postMapper.getUserPostNum(user.getUserId()),
-                postMapper.getUserCommentNum(user.getUserId()),
-                user.getSign()
+                user.getName(), id,
+                (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(id),
+                userMapper.getFollowCount(id),
+                userMapper.getFollowerCount(id),
+                postMapper.getUserPostNum(id),
+                postMapper.getUserCommentNum(id),
+                postMapper.getUserPostLikeNum(id) + postMapper.getUserCommentLikeNum(id),
+                user.getSign(),
+                userMapper.isFollow(searcher, id) > 0
         );
     }
 
@@ -94,7 +95,7 @@ public class UserService {
         List<Integer> followIds = userMapper.getFollow(id);
         UserListResponse userListResponse = new UserListResponse(followIds.size(), new ArrayList<>());
         for (Integer followId : followIds) {
-            UserSocialInfoResponse response = getUserSocialInfo(followId);
+            UserSocialInfoResponse response = getUserSocialInfo(id, followId);
             if (response != null) {
                 userListResponse.getUser().add(response);
             }
@@ -144,9 +145,9 @@ public class UserService {
     }
 
     public BasicInfoResponse resetForgottenPassword
-            (String account, String name, String email, String np) {
+            (String account, String email, String np) {
         User user = userMapper.selectUserByAccount(account);
-        if (!user.getName().equals(name) || !user.getEmail().equals(email)) {
+        if (!user.getEmail().equals(email)) {
             return new BasicInfoResponse(false, "信息验证不通过！");
         }
         resetPassword(user.getUserId(), np);

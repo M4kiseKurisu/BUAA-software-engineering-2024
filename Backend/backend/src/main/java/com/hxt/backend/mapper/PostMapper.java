@@ -20,6 +20,14 @@ public interface PostMapper {
     //  回帖统计信息
     @Select("SELECT COUNT(*) FROM comment WHERE author_id = #{userId}")
     int getUserCommentNum(int userId);
+
+    //  帖子点赞统计信息
+    @Select("SELECT SUM(like_count) FROM post WHERE author_id = #{userId}")
+    int getUserPostLikeNum(int userId);
+
+    //  回帖点赞统计信息
+    @Select("SELECT SUM(like_count) FROM comment WHERE author_id = #{userId}")
+    int getUserCommentLikeNum(int userId);
     
     //插入新帖子
     @Options(useGeneratedKeys = true)
