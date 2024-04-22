@@ -11,16 +11,16 @@
 
                 <div class="information-change-left-row">
                     <div class="information-sign">输入账号</div>
-                    <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                    <input type="text" class="input-type-1" v-model="this.loginName" :placeholder=this.loginNumber>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">输入密码</div>
-                    <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                    <input type="text" class="input-type-1" v-model="this.loginPassword" :placeholder=this.loginNumber>
                 </div>
 
                 <div class="button-container">
-                    <button class="button-left">登录</button>
+                    <button class="button-left" @click="Login">登录</button>
                 </div>
 
                 <div class="to-assign-container">
@@ -86,6 +86,8 @@ export default {
             loginOrRegister: 1,  //1代表登录界面，2代表注册界面
             loginPic: "./src/Images/LoginImage.png",
             logoPic: "./src/Images/buaaLogo.png",
+            loginName: "",
+            loginPassword: "",
             registerAccount:"",
             registerEmail:"",
             registerPhone:"",
@@ -93,6 +95,38 @@ export default {
         }
     },
     methods: {
+        Login() {
+            let content = {
+                name: this.loginName,
+                password: this.loginPassword,
+            }
+
+            console.log(content);
+
+            axios({
+                method: "POST",
+                url: "/api/user/login",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    // 登录成功
+                    this.$message({
+                        showClose: true,
+                        message: "登录成功！",
+                        type: 'success',
+                    });
+                    this.$router.push({ path: "MainPage/Personal_Center" });
+                } else {
+                    // 登录失败
+                    this.$message({
+                        showClose: true,
+                        message: result.data.info,
+                        type: 'error',
+                    });
+                }
+            })
+        },
         toRegister() {
             this.loginOrRegister = 2;
         },
@@ -118,8 +152,21 @@ export default {
                 data: content,
             }).then((result) => {
                 console.log(result);
-                if(result.success) {
+                if(result.data.success) {
                     this.loginOrRegister = 1;
+                    // 注册成功
+                    this.$message({
+                        showClose: true,
+                        message: "注册成功！",
+                        type: 'success'
+                    });
+                } else {
+                    // 注册失败
+                    this.$message({
+                        showClose: true,
+                        message: result.data.info,
+                        type: 'error'
+                    });
                 }
             })
         }

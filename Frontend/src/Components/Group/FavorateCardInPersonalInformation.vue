@@ -59,7 +59,7 @@ export default {
 
 /* 定义文章标题样式，注意抵消el-card自带的20px padding */
 .title {
-    font-size: 14px;
+    font-size: 14px !important;
     height: 20px;
     color: #101010;
 }

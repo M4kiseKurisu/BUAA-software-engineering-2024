@@ -28,14 +28,14 @@
                 <!-- 头像信息 -->
                 <el-avatar :size="86" :src="avatarPicture"/>
                 <!-- 昵称信息 -->
-                <div class="nickname">{{ this.nickName }}</div>
+                <div class="nickname">{{ this.username }}</div>
 
                 <!-- 学届，专业，邮箱信息（在同一行） -->
                 <div class="information-line2-container">
                     <!-- 学届信息 -->
                     <div class="sub-information-line2-container">
                         <el-icon><Calendar :size="17" color="#101010"/></el-icon>
-                        <div class="sub-information-line2-font">{{ this.entryYear }}</div>
+                        <div class="sub-information-line2-font">{{ this.signTime }}</div>
                     </div>
 
                     <!-- 专业信息 -->
@@ -54,7 +54,7 @@
                 <!-- 个人签名信息 -->
                 <div class="personal-sign-container">
                     <el-icon><User :size="17" color="#101010"/></el-icon>
-                    <div class="personal-sign-font">{{ this.userSign }}</div>
+                    <div class="personal-sign-font">{{ this.signature }}</div>
                 </div>
             </div>
 
@@ -170,6 +170,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 // 引入图标
@@ -205,11 +208,11 @@ export default {
         return {
             route: ["个人中心", "用户信息"],  //本界面要显示的面包屑信息
             avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
-            nickName: "M4kiseKurisu", //测试的昵称信息
-            entryYear: "2021",  //测试的学届信息
+            username: "", //测试的昵称信息
+            signTime: "",  //测试的学届信息
             majority: "计算机学院",  //测试的专业信息
-            email: "21373343@buaa.edu.cn",  //测试的邮箱信息
-            userSign: "好好做好软工作业是命运石之门的选择！", //测试的个人签名信息
+            email: "",  //测试的邮箱信息
+            signature: "", //测试的个人签名信息
 
             //收藏界面可视化
             show_favorate:false,
@@ -319,12 +322,13 @@ export default {
         }
     },
     methods: {
-      toggle_favorate() {
-        this.show_favorate = true;
-      },
-      toggle_following_user() {
-        this.show_userfollowing = true;
-      }
+        toggle_favorate() {
+            this.show_favorate = true;
+        },
+        toggle_following_user() {
+            this.show_userfollowing = true;
+        },
+
     },
     computed: {
         group1() {
@@ -347,6 +351,47 @@ export default {
             //分离站内通知的前四个内容
             return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 5);
         }
+    },
+    mounted() {
+        // 获取基本信息
+        axios({
+            method: "GET",
+            url: "/api/user/info",
+        }).then((result) => {
+            console.log(result);
+            this.username = (result.data.name != "") ? result.data.name : result.data.account;
+            this.signTime = (result.data.enrollment_year != "") ? result.data.enrollment_year : "未设定";
+            this.email = result.data.email;
+            this.majority = (result.data.major != "") ? result.data.major : "未设定";      
+            this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
+        })
+
+        // 获取收藏帖子信息
+        axios({
+            method: "GET",
+            url: "/api/user/favorites"
+        }).then((result) => {
+            console.log(result);
+            this.favorateList = result.data.posts;
+            /*
+                收到的favorateList格式：
+                "posts": [
+                    {
+                        "post_id": 0,
+                        "post_title": "string",
+                        "post_content": "string",
+                        "author_name": "string",
+                        "author_id": 0,
+                        "section": "string",
+                        "post_tags": [
+                            {
+                                "tag_name": "string"
+                            }
+                        ]
+                    }
+                ]
+            */
+        })
     }
 }
 </script>
@@ -477,6 +522,7 @@ export default {
     margin-left: 40px;
     justify-content: space-between;
     display: flex;
+    border: none;
 }
 
 /* 收藏帖子模块标题样式 */
@@ -493,6 +539,7 @@ export default {
     color: #165dff;
     height: 20px;
     margin-top: 41px;
+    border: none;
 }
 
 /* 收藏帖子正文部分样式 */
