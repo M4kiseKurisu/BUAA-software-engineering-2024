@@ -20,15 +20,27 @@ public interface PostMapper {
     //  回帖统计信息
     @Select("SELECT COUNT(*) FROM comment WHERE author_id = #{userId}")
     int getUserCommentNum(int userId);
+
+    //  帖子点赞统计信息
+    @Select("SELECT SUM(like_count) FROM post WHERE author_id = #{userId}")
+    int getUserPostLikeNum(int userId);
+
+    //  回帖点赞统计信息
+    @Select("SELECT SUM(like_count) FROM comment WHERE author_id = #{userId}")
+    int getUserCommentLikeNum(int userId);
     
     //插入新帖子
-    @Options(useGeneratedKeys = true)
+    @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, content, category, section_id, author_id, like_count, " +
             "collect_count, comment_count, view_count, time)" +
             " VALUES (#{title}, #{content}, #{category}, #{sectionId}, #{authorId}, #{likeCount}, " +
             "#{collectCount}, #{commentCount}, #{viewCount}, #{postTime})")
+    int insertPost(Post post);
+    /*
     int insertPost(String title, String content, Integer category, Integer sectionId, Integer authorId,
                    Integer likeCount, Integer collectCount, Integer commentCount,Integer viewCount, Timestamp postTime);
+    */
+    
     
     //删除帖子
     @Delete("DELETE FROM post WHERE post_id = #{id}")
@@ -47,6 +59,10 @@ public interface PostMapper {
     @Update("UPDATE post SET view_count = #{viewCount} WHERE post_id = #{id}")
     int updateViewCount(Integer id, Integer viewCount);
     
+    //更新帖子评论数（含回复）
+    @Update("UPDATE post SET reply_count = #{replyCount} WHERE post_id = #{id}")
+    int updateCommentCount(Integer id, Integer replyCount);
+    
     //帖子-图片
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_image (post_id, image_id) VALUES (#{postId}, #{imageId})")
@@ -62,7 +78,7 @@ public interface PostMapper {
     //帖子-资源
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_resource (post_id, resource_id) VALUES (#{postId}, #{resourceId})")
-    int insertPR(Integer postId, Integer resourceId);
+    int insertPostResource(Integer postId, Integer resourceId);
     
     //获取某帖子的所有资源的id
     @Select("SELECT resource_id from post_resource where post_id = #{id} ORDER BY pr_id ASC")
@@ -73,7 +89,7 @@ public interface PostMapper {
     //帖子-Tag
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_tag (post_id, tag_id) VALUES (#{postId}, #{tagId})")
-    int insertPT(Integer postId, Integer tagId);
+    int insertPostTag(Integer postId, Integer tagId);
     
     //获取某帖子的所有Tag的id
     @Select("SELECT tag_id from post_tag where post_id = #{id} ORDER BY pt_id ASC")
@@ -84,15 +100,22 @@ public interface PostMapper {
     //评论
     
     //添加评论
-    @Options(useGeneratedKeys = true)
+    @Options(useGeneratedKeys = true, keyProperty = "comment_id", keyColumn = "comment_id")
     @Insert("INSERT INTO comment (post_id, author_id, content, time, reply_count, like_count) " +
             "VALUES (#{postId}, #{authorId}, #{content}, #{commentTime}, #{replyCount}, #{likeCount})")
-    int insertComment(Integer postId, Integer authorId, String content,
-                      Timestamp commentTime, Integer replyCount, Integer likeCount);
+    int insertComment(Comment comment);
+    
+
+    
     
     //删除评论
     @Delete("DELETE FROM comment WHERE comment_id = #{id}")
     int deleteComment(Integer id);
+    
+    //根据评论id获取评论
+    @Select("SELECT * from comment where comment_id = #{id}")
+    @Result(column = "time", property = "commentTime")
+    Comment getCommentById(Integer id);
     
     //获取某帖子的所有评论(正序)
     @Select("SELECT * from comment where post_id = #{id} ORDER BY time ASC, comment_id ASC")

@@ -34,4 +34,12 @@ public class TagService {
         }
         return tagMapper.getTag(id).getName();
     }
+    
+    public Integer getIdByName(String name) {
+        if (tagMapper.getTagByName(name) == null) {
+            return null;
+        }
+        return tagMapper.getTagByName(name).getTagId();
+    }
+    
 }

@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="line-container">
-                    <div class="grey-card-information">注册时间：</div>
+                    <div class="grey-card-information">入学时间：</div>
                     <div class="grey-card-information2">{{ this.signTime }}</div>
                 </div>
                 
@@ -37,13 +37,13 @@
                 <div class="line-container">
                     <div class="grey-card-information">认证邮箱：</div>
                     <div class="grey-card-information2">{{ this.email }}</div>
-                    <div class="grey-card-changee-link">修改</div>
+                    <!-- <div class="grey-card-changee-link">修改</div> -->
                 </div>
 
                 <div class="line-container">
                     <div class="grey-card-information">手机号码：</div>
                     <div class="grey-card-information2">{{ this.phoneNumber }}</div>
-                    <div class="grey-card-changee-link">修改</div>
+                    <!-- <div class="grey-card-changee-link">修改</div> -->
                 </div>
 
             </div>
@@ -61,8 +61,8 @@
                 </div>
 
                 <div class="information-change-left-row">
-                    <div class="information-sign">登陆账号</div>
-                    <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                    <div class="information-sign">手机号码</div>
+                    <input type="text" class="input-type-1" v-model="inputPhone" :placeholder=this.phoneNumber>
                 </div>
 
                 <div class="information-change-left-row">
@@ -72,7 +72,7 @@
 
                 <div class="information-change-left-row">
                     <div class="information-sign">入学时间</div>
-                    <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.entryTime>
+                    <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.signTime>
                 </div>
 
                 <div class="information-change-left-row">
@@ -81,8 +81,12 @@
                 </div>
 
                 <div class="button-container">
-                    <button class="button-left">保存</button>
-                    <button class="button-right">重置</button>
+                    <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+                        <button class="button-changeavatar">选择头像</button>
+                    </el-upload>
+                    <button class="button-changeavatar" @click="uploadAvatar">上传头像</button>
+                    <button class="button-left" @click="ChangeInformation">保存</button>
+                    <button class="button-right" @click="emptyInformation">重置</button>
                 </div>
 
             </div>
@@ -90,37 +94,41 @@
             <!-- 右侧基本信息更改栏位 -->
             <div class="right-container">
 
+                <!--
                 <div class="right-container-header">
                     <button class="button-choose">更改密码</button>
                     <button class="button-not-choose-1">邮箱认证</button>
                     <button class="button-not-choose-1">手机号认证</button>
                 </div>
+                -->
+
+                <div class="left-container-header-2">更改密码</div>
 
                 <div class="right-content-container">
 
                     <div class="information-change-left-row">
                         <div class="information-sign">登陆账号</div>
-                        <input type="text" class="input-type-1" v-model="inputUsername" :placeholder=this.username>
+                        <input type="text" class="input-type-1" v-model="this.inputAccount">
                     </div>
 
                     <div class="information-change-left-row">
-                        <div class="information-sign">旧密码</div>
-                        <input type="text" class="input-type-1" v-model="inputLoginNumber" :placeholder=this.loginNumber>
+                        <div class="information-sign">用户邮箱</div>
+                        <input type="text" class="input-type-1" v-model="this.inputEmail">
                     </div>
 
                     <div class="information-change-left-row">
                         <div class="information-sign">新密码</div>
-                        <input type="text" class="input-type-1" v-model="inputMajority" :placeholder=this.majority>
+                        <input type="text" class="input-type-1" v-model="this.inputNewPassword">
                     </div>
 
                     <div class="information-change-left-row">
                         <div class="information-sign">再次输入新密码</div>
-                        <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.entryTime>
+                        <input type="text" class="input-type-1" v-model="this.inputNewPassword2">
                     </div>
 
                     <div class="button-container">
-                        <button class="button-left">保存</button>
-                        <button class="button-right">重置</button>
+                        <button class="button-left" @click="changePassword">保存</button>
+                        <button class="button-right" @click="emptyInformation2">重置</button>
                     </div>
 
                 </div>
@@ -135,6 +143,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 
@@ -145,21 +156,172 @@ export default {
     data() {
         return {
             route: ["个人中心", "用户设置"],  //本界面要显示的面包屑信息
-            avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
-            username: "M4kiseKurisu", //测试的昵称信息
-            loginNumber: "123123321321", //测试的账号信息
-            signTime: "2024-4-10", //测试的注册时间信息
-            email: "320358301@qq.com", //测试的邮箱信息
-            phoneNumber: "13538177567", //测试的手机信息
-            majority: "计算机学院", //测试的学员信息
-            entryTime: "2021", //测试的入学时间
-            signature: "好好做好软工作业是命运石之门的选择！", //测试的个人签名
+            avatarPicture: "",  //测试的头像信息
+            username: "", //测试的昵称信息
+            loginNumber: "", //测试的账号信息
+            signTime: "", //测试的注册时间信息
+            email: "", //测试的邮箱信息
+            phoneNumber: "", //测试的手机信息
+            majority: "", //测试的学员信息
+            signature: "", //测试的个人签名
+
+            fileList: [],  //上传图片位置
 
             inputUsername: "",
-            inputLoginNumber: "",
+            inputPhone: "",
             inputMajority: "",
             inputEntryTime: "",
             inputSignature: "",
+
+            inputAccount: "",
+            inputEmail: "",
+            inputNewPassword: "",
+            inputNewPassword2: "",
+        }
+    },
+    mounted() {
+        axios({
+            method: "GET",
+            url: "/api/user/info",
+        }).then((result) => {
+            console.log(result);
+            this.username = (result.data.name != "") ? result.data.name : result.data.account;
+            this.loginNumber = result.data.account;
+            this.signTime = (result.data.enrollment_year != "") ? result.data.enrollment_year : "未设定";
+            this.email = result.data.email;
+            this.phoneNumber = (result.data.phone_number != "") ? result.data.phone_number : "未设定";   
+            this.majority = (result.data.major != "") ? result.data.major : "未设定";      
+            this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
+        })
+
+        // 获取头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head",
+            params: {
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+        }).then((result) => {
+            console.log(result)
+            this.avatarPicture = result.data.info;
+        })
+    },
+    methods: {
+        uploadAvatar() {
+            const file = this.fileList[0].raw;
+            const data = new FormData();
+            data.append("file", file);
+
+            console.log(file);
+
+            axios.post("/api/user/uploadHead", data);
+        },
+
+        ChangeInformation() {
+            if (isNaN(this.inputEntryTime)) {
+                this.$message({
+                    showClose: true,
+                    message: "入学年份必须是数字！",
+                    type: 'error',
+                });
+                return;
+            }
+
+            const content = {};
+            if (this.inputUsername != "") {
+                content.name = this.inputUsername;
+            }
+            if (this.inputPhone != "") {
+                content.phone = this.inputPhone;
+            }
+            if (this.inputMajority != "") {
+                content.major = this.inputMajority;
+            }
+            if (this.inputEntryTime != "") {
+                content.enrollment_year = parseInt(this.inputEntryTime);
+            }
+            if (this.inputSignature != "") {
+                content.sign = this.inputSignature;
+            }
+
+            console.log(content);
+
+            axios({
+                method: "POST",
+                url: "/api/user/update",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '基础信息更改成功！',
+                        type: 'success',
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: "基础信息更改失败！",
+                        type: 'error',
+                    });
+                }
+            })
+        },
+
+        emptyInformation() {
+            this.inputUsername = "";
+            this.inputPhone = "";
+            this.inputMajority = "";
+            this.inputEntryTime = "";
+            this.inputSignature = "";
+        },
+
+        emptyInformation2() {
+            this.inputAccount = "";
+            this.inputEmail = "";
+            this.inputNewPassword = "";
+            this.inputNewPassword2 = "";
+        },
+
+        changePassword() {
+            if (this.inputNewPassword === "" || this.inputNewPassword2 === "") {
+                return;
+            }
+            if (this.inputNewPassword != this.inputNewPassword2) {
+                this.$message({
+                    showClose: true,
+                    message: "两次输入的新密码不一致！",
+                    type: 'error',
+                });
+            }
+
+            let content = {
+                account: this.inputAccount,
+                email: this.inputEmail,
+                password: this.inputNewPassword,
+            }
+            console.log(content);
+
+            axios({
+                method: "POST",
+                url: "/api/user/password/forget",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: "密码更改成功！",
+                        type: 'success',
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: "密码更改失败！",
+                        type: 'error',
+                    });
+                }
+            })
         }
     }
 }
@@ -242,6 +404,16 @@ export default {
     font-weight: bold;
 }
 
+.left-container-header-2 {
+    font-size: 16px;
+    color: #101010;
+    height: 52px;
+    margin-top: 42px;
+    margin-left: 96px;
+    font-weight: bold;
+    margin-left: 30%;
+}
+
 .information-change-left-row {
     display: flex;
     margin-bottom: 20px;
@@ -301,7 +473,6 @@ textarea::placeholder {
     display: flex;
     margin-top: 32px;
     justify-content: flex-end;
-    margin-right: 233px;
 }
 
 .button-left {
@@ -317,6 +488,16 @@ textarea::placeholder {
 .button-right {
     width: 60px;
     height: 32px;
+    border-radius: 4px;
+    background-color: #f7f8fa;
+    color: #4e5969;
+    border: none;
+}
+
+.button-changeavatar {
+    margin-right: 12px;
+    height: 32px;
+    width: 80px;
     border-radius: 4px;
     background-color: #f7f8fa;
     color: #4e5969;
