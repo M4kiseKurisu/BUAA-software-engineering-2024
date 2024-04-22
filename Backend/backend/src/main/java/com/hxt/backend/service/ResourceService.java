@@ -44,4 +44,11 @@ public class ResourceService {
         }
         return resourceMapper.getResource(id).getName();
     }
+    
+    public Integer getResourceIdByUrl(String url) {
+        if (resourceMapper.getResourceIdByUrl(url) == null) {
+            return null;
+        }
+        return resourceMapper.getResourceIdByUrl(url);
+    }
 }
