@@ -84,6 +84,7 @@ public class PostController {
         return new BasicInfoResponse(true, "发帖成功");
     }
     
+    
     @RequestMapping (value="/posts/post/comment")
     public BasicInfoResponse writeComment(
             @RequestParam(name = "post_id", required = false) Integer post_id,
