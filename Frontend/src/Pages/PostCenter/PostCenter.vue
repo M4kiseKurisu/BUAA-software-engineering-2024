@@ -81,14 +81,6 @@
                 </div>
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
                     <div style="width: 25%;font-size: larger;">
-                        创建者:
-                    </div>
-                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem></ManagerItem>
-                    </div>
-                </div>
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
                         相关教师:
                     </div>
                     <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
@@ -128,13 +120,14 @@
 
 <script>
 // 引入面包屑组件
-import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
+import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import PostItem from "./PostItem.vue";
 import ManagerItem from "./ManagerItem.vue";
 import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     components: {
-
         BreadcrumbLabel,
         PostItem,
         ManagerItem,
@@ -153,6 +146,7 @@ export default {
             total: 20,
             currentPage: 1,
             updateTime: "2077.7.7.77",
+            sectionId : 1,
         }
     },
     methods: {
@@ -171,6 +165,18 @@ export default {
         handleCurrentChange(val) {
             this.currentPage = val;
         },
+        createPostCenter(){
+
+        },
+        followSection(){
+            axios({
+                method:"POST",
+                url:"api/section/focus",
+                data: sectionId,
+            }).then((result) => {
+                console.log(result);
+            })
+        }
     }
 }
 </script>

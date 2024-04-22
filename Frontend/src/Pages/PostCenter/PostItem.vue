@@ -7,13 +7,13 @@
             <div style="width: 100%;height: 40%;display: flex;align-items: center; justify-content: space-between;">
                 <span style="font-size:1.6em;font-weight: bold; margin-left: 20px;">{{ title }}</span>
                 <div style="display: flex;">
+
                     <span style="margin-right: 10px;"><el-tag type="primary" size="large" style="font-size: 1em; font-weight: bold;">Tag 1</el-tag></span>
                     <span style="margin-right: 10px;"><el-tag type="primary" size="large" style="font-size: 1em;font-weight: bold">Tag 2</el-tag></span>
                 </div>
             </div>
             <div style="width: 60%;height: 30%;margin-left: 20px;color: darkgrey;word-wrap: break-word;overflow: hidden;">
-                    {{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}
-                    {{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}{{ introduction }}
+                    {{ introduction }}{{ introduction }}
             </div>
             <div style="width: 100%;height: 30%; display: flex;justify-content: space-between;align-items: center;margin-left: 20px;">
                 <div style="display: flex;align-items: center;">
@@ -32,7 +32,12 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default{
+    props:{
+
+    },
     data(){
         return {
             title: "这是标题",
@@ -43,10 +48,28 @@ export default{
             time: '2022.22.2.2',
             starNum: 999,
             likeNum: 999,
+            postId: 1,
+            authorId : 1,
         }
     },
     methods:{
-
+        GetInfomation(){
+            axios({
+                method : "GET",
+                url : "api/posts/post",
+                data: this.postId,
+            }).then((result) => {
+                this.title = result.title;
+                this.authorId = result.author_id;
+                this.authorName = result.author_name;
+                this.introduction = result.content;
+                this.time = result.create_time;
+                this.tags = result.tags;
+                this.likeNum = result.like_count;
+                this.starNum = result.collect_count;
+                //还差一个封面
+            });
+        }
     }
 }
 </script>
