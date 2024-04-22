@@ -34,5 +34,13 @@ public class ImageService {
         return imageMapper.seekImage(id).getUrl();
     }
     
+    public Integer getImageIdByUrl(String url) {
+        if (imageMapper.getImageIdByUrl(url) == null) {
+            return null;
+        }
+        return imageMapper.getImageIdByUrl(url);
+    }
+    
+    
    
 }

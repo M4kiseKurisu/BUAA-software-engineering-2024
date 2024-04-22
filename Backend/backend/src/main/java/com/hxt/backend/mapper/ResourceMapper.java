@@ -17,10 +17,21 @@ public interface ResourceMapper {
     
     
     //获取某用户发布的所有资源
-    @Select("SELECT * from resource where resource_id = #{id}")
+    @Select("SELECT * from resource where publisher_id = #{id}")
+    @Results({
+            @Result(column = "resource_id", property = "resourceId", id = true),
+            @Result(column = "publisher_id", property = "publisherId"),
+            @Result(column = "time", property = "uploadTime")
+    })
     List<MyResource> getResourceByPublisher(Integer id);
     
+    //根据id获取资源
     @Select("SELECT * from resource where resource_id = #{id}")
+    @Results({
+        @Result(column = "resource_id", property = "resourceId", id = true),
+        @Result(column = "publisher_id", property = "publisherId"),
+        @Result(column = "time", property = "uploadTime")
+    })
     MyResource getResource(Integer id);
     
     
