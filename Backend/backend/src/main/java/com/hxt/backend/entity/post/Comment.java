@@ -17,11 +17,11 @@ import java.sql.Timestamp;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer commentId;
-    private Integer postId;
-    private Integer authorId;
+    private Integer comment_id;
+    private Integer post_id;
+    private Integer author_id;
     private String content;
     private Timestamp commentTime;
-    private Integer likeCount;
-    private Integer replyCount; //回复数
+    private Integer like_count;
+    private Integer reply_count; //回复数
 }
