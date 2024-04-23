@@ -38,7 +38,7 @@ public class AdminController {
         return new BasicInfoResponse(res, info);
     }
 
-    @RequestMapping("/admin/section/add/course")
+    @RequestMapping("/admin/section/add/school")
     public BasicInfoResponse addSchool(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "name", required = false) String name,
