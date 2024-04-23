@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 @AllArgsConstructor
@@ -21,4 +22,5 @@ public class PostElement {
     private Integer post_like;
     private ArrayList<String> tag_list;
     private String post_photo;
+    private Timestamp post_time;
 }
