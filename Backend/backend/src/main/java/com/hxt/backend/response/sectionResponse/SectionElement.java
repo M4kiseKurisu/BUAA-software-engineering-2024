@@ -22,4 +22,6 @@ public class SectionElement {
     private String section_academy;
 
     private String section_type;
+
+    private boolean section_is_following;
 }

@@ -1,12 +1,11 @@
 package com.hxt.backend.controller;
 
+import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.service.SectionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -17,14 +16,17 @@ public class SectionController {
 
     @GetMapping("/section/search")
     public SearchSectionResponse searchSection(
+            @CookieValue(name = "user_id", defaultValue = "") String userId,
             @RequestParam(name = "keyword", defaultValue = "") String keyWord,
             @RequestParam(name = "sort", defaultValue = "0") String sort,
             @RequestParam(name = "type", defaultValue = "0") String type,
             @RequestParam(name = "academy", defaultValue = "") String academy
     ) {
-        System.out.println("111111");
+        if (userId.isEmpty()) {
+            return new SearchSectionResponse(false,"用户未登录",0,null);
+        }
         ArrayList<SectionElement> list = sectionService.searchSection(keyWord,Integer.parseInt(sort),
-                Integer.parseInt(type),academy);
+                Integer.parseInt(type),academy,Integer.parseInt(userId));
         if (list.isEmpty()) {
             return new SearchSectionResponse(true,"未检索到响应结果",0,list);
         }
@@ -34,13 +36,58 @@ public class SectionController {
     }
 
     @GetMapping("/section/hots")
-    public SearchSectionResponse getHotSection() {
-        ArrayList<SectionElement> list = sectionService.getHotSections();
+    public SearchSectionResponse getHotSection(
+            @CookieValue(name = "user_id", defaultValue = "") String userId
+    ) {
+        if (userId.isEmpty()) {
+            return new SearchSectionResponse(false,"用户未登录",0,null);
+        }
+        ArrayList<SectionElement> list = sectionService.getHotSections(Integer.parseInt(userId));
         if (list.isEmpty()) {
-            return new SearchSectionResponse(true,"未检索到响应结果",0,list);
+            return new SearchSectionResponse(true,"未检索到相关结果",0,list);
         }
         else {
             return new SearchSectionResponse(true,"", list.size(), list);
+        }
+    }
+
+    @PostMapping("/section/focus")
+    public BasicInfoResponse focusSection(
+            @CookieValue(name = "user_id",defaultValue = "") String user_id,
+            @RequestParam(name = "section_id", defaultValue = "") String section_id
+    ){
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false,"用户未登录");
+        }
+        if (section_id.isEmpty()) {
+            return new BasicInfoResponse(false,"请求参数缺失");
+        }
+
+        if (sectionService.focusSection(Integer.parseInt(user_id),Integer.parseInt(section_id))) {
+            return new BasicInfoResponse(true,"");
+        }
+        else {
+            return new BasicInfoResponse(false,"操作失败");
+        }
+    }
+
+    @PostMapping("/section/unfocus")
+    public BasicInfoResponse unfocusSection(
+            @CookieValue(name = "user_id",defaultValue = "") String user_id,
+            @RequestParam(name = "section_id", defaultValue = "") String section_id
+    ){
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false,"用户未登录");
+        }
+        if (section_id.isEmpty()) {
+            return new BasicInfoResponse(false,"请求参数缺失");
+        }
+
+        if (sectionService.unfocusSection(Integer.parseInt(user_id),Integer.parseInt(section_id))) {
+            return new BasicInfoResponse(true,"");
+        }
+        else {
+            return new BasicInfoResponse(false,"操作失败");
         }
     }
     
