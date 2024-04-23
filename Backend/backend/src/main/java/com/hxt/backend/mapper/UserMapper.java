@@ -3,6 +3,7 @@ package com.hxt.backend.mapper;
 import com.hxt.backend.entity.User;
 import org.apache.ibatis.annotations.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -72,7 +73,13 @@ public interface UserMapper {
     int resetPassword(Integer id, String password);
 
     @Select("select user_id from user_info;")
-    List<Integer> selectAllUserId();  
+    List<Integer> selectAllUserId();
+
+    @Select("SELECT COUNT(*) FROM user_info")
+    int getUserNum();
+
+    @Select("SELECT COUNT(*) FROM user_info WHERE token_time > #{time}")
+    int getLoginNumRecent(Integer time);
   
     //  用户关注表
     @Options(useGeneratedKeys = true)

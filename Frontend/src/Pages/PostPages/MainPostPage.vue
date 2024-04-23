@@ -8,27 +8,45 @@
 
                 <!-- 帖子头部左侧 -->
                 <div class="post-page-header-left">
-                    <div class="post-main-title">本文的标题ABCDABCDABCD</div>
+                    <div class="post-main-title">{{ this.title }}</div>
 
-                    <button class="post-main-delete-button">
+                    <button class="post-main-delete-button" v-if="this.author_id === userId" @click="deletePost">
                         <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                     </button>
                 </div>
                 
                 <!-- 帖子头部右侧 -->
                 <div class="post-page-header-right">
-                    <div class="post-page-tag-css">本文标签</div>
+                    <div v-for="item in this.tags" class="post-page-tag-css">{{ item }}</div>
 
-                    <div class="icon-and-content">
+                    <div v-if="this.isLikePost" class="icon-and-content">
                         <!-- 喜欢图标 -->
-                        <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                        <div class="like-icon-after-contents">XX人点赞</div>
+                        <button class="icon-button-font" @click="dislikePost">
+                            <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
+                        </button>
+                        <div class="like-icon-after-contents">{{ this.like_count }}人点赞</div>
+                    </div>
+                    <div v-else class="icon-and-content">
+                        <!-- 喜欢图标（未点击的样式） -->
+                        <button class="icon-button-font" @click="likePost">
+                            <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
+                        </button>
+                        <div class="like-icon-after-contents-2">{{ this.like_count }}人点赞</div>
                     </div>
 
-                    <div class="icon-and-content">
+                    <div v-if="this.isCollectPost" class="icon-and-content">
                         <!-- 收藏图标 -->
-                        <svg t="1713272491744" class="starfill-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8600" width="200" height="200"><path d="M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3-12.3 12.7-12.1 32.9 0.6 45.3l183.7 179.1-43.4 252.9c-1.2 6.9-0.1 14.1 3.2 20.3 8.2 15.6 27.6 21.7 43.2 13.4L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3z" p-id="8601" fill="#f4ea2a"></path></svg>
-                        <div class="starfill-icon-after-contents">YY人收藏</div>
+                        <button class="icon-button-font" @click="discollectPost">
+                            <svg t="1713272491744" class="starfill-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8600" width="200" height="200"><path d="M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3-12.3 12.7-12.1 32.9 0.6 45.3l183.7 179.1-43.4 252.9c-1.2 6.9-0.1 14.1 3.2 20.3 8.2 15.6 27.6 21.7 43.2 13.4L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3z" p-id="8601" fill="#f4ea2a"></path></svg>
+                        </button>
+                        <div class="starfill-icon-after-contents">{{ this.collect_count }}人收藏</div>
+                    </div>
+                    <div v-else class="icon-and-content">
+                        <!-- 收藏图标（未点击的样式） -->
+                        <button class="icon-button-font" @click="collectPost">
+                            <svg t="1713272491744" class="starfill-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8600" width="200" height="200"><path d="M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3-12.3 12.7-12.1 32.9 0.6 45.3l183.7 179.1-43.4 252.9c-1.2 6.9-0.1 14.1 3.2 20.3 8.2 15.6 27.6 21.7 43.2 13.4L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3z" p-id="8601" fill="#86909c"></path></svg>
+                        </button>
+                        <div class="like-icon-after-contents-2">{{ this.collect_count }}人收藏</div>
                     </div>
                 </div>
                 
@@ -43,63 +61,67 @@
                     <el-avatar shape="square" :size="60" :src="this.avatarPicture" />
 
                     <div class="post-writer-information">
-                        <div class="post-writer-username">文章作者昵称</div>
-                        <div class="post-writer-signature">文章作者的个人签名：ABCDABCDABCDABCDABCDABCDABCDABCDABCD</div>
+                        <div class="post-writer-username">{{ this.author_name }}</div>
+                        <div class="post-writer-signature">{{ this.author_sign }}</div>
                     </div>
                 </div>
 
-                <div class="post-more-information-right">
-                    <button class="post-page-tag-css">关注作者</button>
+                <div v-if="this.author_id != this.userId">
+                    <div v-if="!this.isFollowingWriter" class="post-more-information-right">
+                        <button class="post-page-tag-css" @click="followingWriter">关注作者</button>
+                    </div>
+                    <div v-else class="post-more-information-right">
+                        <button class="post-page-tag-css" @click="notFollowingWriter">取消关注</button>
+                    </div>
                 </div>
+                
 
             </div>
+            <div v-html="this.content" class="post-main-content"/>
 
-            <div class="post-main-content">
-                此处为正文，存在额外的段间距。以下为随机文字：<br>
-                计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。这些编码器也可以与其他模块有效组合，以实现下游任务，例如图像生成（例如，DALL·E）。虽然在视觉和语言编码器方面取得了很大进展，但计算机视觉领域包含了远远超出这个范围的问题，对于其中的许多问题，都不存在充足的训练数据。
-            </div>
-
-            <div class="post-main-content">
-                注意，如果存在图片，图片和文字之间应该存在间隔：<br>
-                Task任务。我们首先将prompt提示的思想将NLP迁移到分割，其中一个prompt提示可以是一组前景/背景点，粗略的框或掩码，自由形式的文本，或者，一般来说，任何指示在图像中分割什么的信息。然后，promptable segmentation task可提示分割任务是给定任何提示返回有效的分割掩码。<br>
-                Related tasks 相关任务。 分割是一个广泛的领域：有interactive segmentation交互式分割，edge detection边缘检测，super pixelization超像素化，object proposal generation对象建议生成，foreground segmentation前景分割，semantic segmentation语义分割，instance segmentation实例分割，panoptic segmentation全景分割等。我们的可提示分割任务的目标是产生一个广泛的模型。
-            </div>
 
             <div class="post-main-end-line">
-                <button class="post-grey-button-below">展开共ZZ条评论</button>
-                <button class="post-grey-button-below">去评论</button>
-                <div class="post-time-show-font">发帖时间：YY-MM-DD hh-mm</div>
+                <button class="post-grey-button-below" @click="openComments">展开共{{ this.comments.length }}条评论</button>
+                <button class="post-grey-button-below" @click="openCommentEditor">去评论</button>
+                <div class="post-time-show-font">发帖时间：{{ this.create_time }}</div>
             </div>
         </div>
 
         <!-- 评论帖子发布位置 -->
-        <div class="post-reply-writing-container">
+        <div class="post-reply-writing-container" v-if="this.isCommentEditorOpen">
 
             <!-- 评论者头像及评论内容输入框 -->
             <div class="post-reply-first-line">
                 <!-- 回复者头像 -->
-                <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
+                <div class="reply-avatar-container">
+                    <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
+                </div>
+                
 
                 <!-- 回复编辑框 -->
-                <el-input
+                <!-- <el-input
                     v-model="this.ReplyTextarea"
                     style="margin-left: 18px"
                     :rows="5"
                     type="textarea"
                     placeholder="请输入您的评论"
-                />
+                /> -->
+                <div class="reply-editor-container">
+                    <WangEditor :isComment="true" :post_id="this.post_id" :author_id="this.author_id"/>
+                </div>
+                
             </div>
 
-            <button class="send-reply-button-css">发布评论</button>
+            <!-- <button class="send-reply-button-css">发布评论</button> -->
         </div>
 
         <!-- 评论帖子发布位置 -->
-        <div class="post-reply-container">
+        <div class="post-reply-container" v-if="this.isCommentsOpen">
             <div class="post-reply-content-first-line">
 
                 <!-- 回复栏位开头左侧 -->
                 <div class="post-reply-content-first-line-left">
-                    <div class="reply-title-font">ZZ条评论</div>
+                    <div class="reply-title-font">{{ this.comments.length }}条评论</div>
 
                     <div class="right-selector">
                         <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
@@ -111,6 +133,8 @@
                             />
                         </el-select>
                     </div>
+
+                    <el-button type="primary" size="small" style="margin-top: 5px" @click="changesort">改变排序方式</el-button>
                 </div>
 
                 <!-- 回复栏位开头右侧 -->
@@ -118,7 +142,7 @@
                     <div class="check-more-reply-font">查看更多评论：</div>
 
                     <div class="post-reply-content-first-line-right-pagination">
-                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="100" />
+                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.commentTotalPages" v-model="this.currentCommentPage" />
                     </div>
                 </div>
                 
@@ -127,20 +151,20 @@
             <el-divider/>
 
             <!-- 一条回复的全部内容 -->
-            <div class="reply-main-content-container">
+            <div v-for="item in commentsArray" class="reply-main-content-container">
                 <div class="reply-first-line">
 
                     <!-- 左侧信息：头像，昵称，tag，删除 -->
                     <div class="reply-first-line-left-content">
                         <!-- 回复者头像 -->
-                        <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
-                        <div class="replyer-username">评论者昵称</div>
+                        <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
+                        <div class="replyer-username">{{ item.comment_author_name }}</div>
 
                         <div class="replyer-tag">
-                            <div class="post-page-tag-css">作者标签</div>
+                            <div v-if="item.comment_author_id === this.userId" class="post-page-tag-css">作者</div>
                         </div>
-                        <div class="reply-delete-button">
-                            <button class="post-main-delete-button">
+                        <div class="reply-delete-button" v-if="item.comment_author_id === this.userId">
+                            <button class="post-main-delete-button" @click="deleteComment(item.comment_id)">
                                 <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                             </button>
                         </div>
@@ -255,8 +279,12 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
+
+import WangEditor from "./WangEditor.vue"
 
 import { Delete } from '@element-plus/icons-vue'
 
@@ -264,23 +292,308 @@ export default {
     components: {
         BreadcrumbLabel, 
         Delete, 
+        WangEditor,
     },
     data() {
         return {
+            userId: JSON.parse(sessionStorage.getItem("id")),
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
-            avatarPicture: "./src/Images/testAvatar.jpg",  //作者头像
+            avatarPicture: "",  //作者头像
             ReplyTextarea: "",  //回复内容监听
             sortOptions: [  //评论排序方式
                 {
+                    value: '0',
+                    label: '时间正序',
+                },
+                {
                     value: '1',
-                    label: '按热度排列',
+                    label: '热度排序',
                 },
                 {
                     value: '2',
-                    label: '按时间排列',
+                    label: '时间倒序',
                 }
             ],
+            sortValue: "",
             ReplysReplyTextarea: "",  //回复回复内容监听
+            post_id: 21,
+            title: "",
+            content: "",
+            author_id: "",
+            author_head: "",
+            author_name: "",
+            cerate_time: "",
+            tags: [],
+            images: [],
+            resources: [],
+            comments: [],
+            like_count: 0,
+            collect_count: 0,
+            comment_count: 0,
+            view_count: 0,
+
+            isLikePost: false,
+            isCollectPost: false,
+            author_sign: "",
+            isFollowingWriter: false,
+
+            isCommentsOpen: false,
+            isCommentEditorOpen: false,
+
+            commentTotalPages: 1,
+            currentCommentPage: 1,
+        }
+    },
+    computed: {
+        commentsArray() {
+            let showComments = [];
+            let i = this.currentCommentPage;
+            showComments.push(this.comments.slice((i - 1) * 3, i * 3));
+            return showComments;
+        }
+    },
+    mounted() {
+        axios({
+            method: "GET",
+            url: "/api/posts/post",
+            params: {
+                post_id: this.post_id,
+                comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+            }
+        }).then((result) => {
+            console.log(result)
+            this.title = result.data.title;
+            this.content = result.data.content;
+            this.author_id = result.data.author_id;
+            this.author_head = result.data.author_head;
+            this.author_name = result.data.author_name;
+            this.create_time = result.data.create_time;
+            this.tags = result.data.tags;
+            this.images = result.data.images;
+            this.resources = result.data.resources;
+            this.comments = result.data.comments;
+            this.like_count = result.data.likeCount;
+            this.collect_count = result.data.collectCount;
+            this.comment_count = result.data.comment_count;
+            this.view_count = result.data.view_count;
+
+            this.commentTotalPages = result.data.comments / 3 + 1;
+            this.createInformation();
+        })
+
+        axios({
+            method: "GET",
+            url: "/api/posts/isLike",
+            params: {
+                post_id: this.post_id,
+            }
+        }).then((result) => {
+            this.isLikePost = result.data.isLike;
+        })
+
+        axios({
+            method: "GET",
+            url: "/api/posts/isfavorite",
+            params: {
+                post_id: this.post_id,
+            }
+        }).then((result) => {
+            this.isCollectPost = result.data.isFavorite;
+        }) 
+    },
+    methods: {
+        createInformation() {
+            // 如果作者非本人，获取关注，签名信息
+            if (this.author_id != JSON.parse(sessionStorage.getItem("id"))) {
+                axios({
+                    method: "GET",
+                    url: "/api/user/social/others",
+                    params: {
+                        id: this.author_id,
+                    }
+                }).then((result) => {
+                    this.isFollowingWriter = result.data.is_follow;
+                    this.author_sign = result.data.sign;
+                })
+            } else {
+                axios({
+                    method: "GET",
+                    url: "/api/user/info",
+                }).then((result) => {
+                    this.author_sign = result.data.sign;
+                })
+            }
+
+            // 获取作者头像信息
+            axios({
+                method: "GET",
+                url: "/api/user/head",
+                params: {
+                    user_id: this.author_id
+                }
+            }).then((result) => {
+                //console.log(result)
+                this.avatarPicture = result.data.info;
+            })
+        },
+        deletePost() {
+            // 作者删除帖子
+            let content = {
+                post_id: this.post_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/delete",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子删除成功！',
+                        type: 'success',
+                    });
+                }
+            })
+        },
+        likePost() {
+            // 点赞帖子
+            let content = {
+                post_id: this.post_id,
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/like",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子点赞成功！',
+                        type: 'success',
+                    });
+                    this.isLikePost = true;
+                }
+            })
+        },
+        dislikePost() {
+            // 帖子点赞取消
+            
+        },
+        collectPost() {
+            // 帖子收藏
+            let content = {
+                post_id: this.post_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/favorite",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子收藏成功！',
+                        type: 'success',
+                    });
+                    this.isCollectPost = true;
+                }
+            })
+        },
+        discollectPost() {
+            // 帖子取消收藏
+            let content = {
+                post_id: this.post_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/unfavorite",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子取消收藏成功！',
+                        type: 'success',
+                    });
+                    this.isCollectPost = false;
+                }
+            })
+        },
+        followingWriter() {
+            // 关注帖子作者
+            
+        },
+        notFollowingWriter() {
+            // 取消关注作者
+            let content = {
+                user_id: this.author_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/user/unfollow",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '作者取消关注成功！',
+                        type: 'success',
+                    });
+                    this.isFollowingWriter = false;
+                }
+            })
+        },
+        openComments() {
+            //开关评论
+            this.isCommentsOpen = !this.isCommentsOpen
+        },
+        openCommentEditor() {
+            //开关评论编辑器
+            this.isCommentEditorOpen = !this.isCommentEditorOpen
+        },
+        changesort() {
+            //更换排序方式
+            console.log(this.sortValue);
+            axios({
+                method: "GET",
+                url: "/api/posts/post",
+                params: {
+                    post_id: this.post_id,
+                    comment_sort: this.sortValue,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                }
+            }).then((result) => {
+                console.log(result)
+                this.comments = result.data.comments;
+                this.commentTotalPages = result.data.comments.length / 3 + 1;
+                this.currentCommentPage = 1;
+            })
+        },
+        deleteComment(comment_id) {
+            // 作者删除评论
+            let content = {
+                comment_id: comment_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/comment/delete",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '评论删除成功！',
+                        type: 'success',
+                    });
+                    changesort();
+                }
+            })
         }
     }
 }
@@ -676,5 +989,28 @@ export default {
 
 .check-replys-reply-pagination {
     margin-top: 3px;
+}
+
+.like-icon-after-contents-2 {
+    height: 24px;
+    margin-left: 11px;
+    margin-top: 7px;
+    color: #86909C;
+    font-size: 14px;
+}
+
+.icon-button-font {
+    background-color: white;
+    border: none;
+    height: 20px;
+    width: 20px;
+}
+
+.reply-editor-container {
+    margin-left: 20px;
+}
+.reply-avatar-container {
+    height: 55px;
+    width: 55px;
 }
 </style>

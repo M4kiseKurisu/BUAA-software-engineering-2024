@@ -49,7 +49,6 @@ public class UserService {
     public Integer checkPassword(String name, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userMapper.selectUserByAccount(name);
-        System.out.println(user);
         if (md5.equals(user.getPassword())) {
             return user.getUserId();
         }
@@ -188,6 +187,10 @@ public class UserService {
         boolean phoneSuccess = phone == null || userMapper.updatePhone(id, phone) > 0;
         return (nameSuccess && majorSuccess && yearSuccess && signSuccess && phoneSuccess)?
                 "" : "服务器错误！";
+    }
+
+    public boolean followUser(Integer userId, Integer followId) {
+        return userMapper.followUser(userId, followId) > 0;
     }
 
     public boolean unfollowUser(Integer userId, Integer followId) {

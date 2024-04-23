@@ -1,10 +1,12 @@
 package com.hxt.backend.mapper;
 
+import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.entity.section.Teacher;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.sql.Timestamp;
@@ -42,4 +44,25 @@ public interface SectionMapper {
 
     @Select("select count(*) from section_follow where section_id = #{sectionId} and  user_id = #{userId};")
     Integer getUserSectionFocusState(Integer userId, Integer sectionId);
+
+    @Select("select * from post where section_id = #{id};")
+    ArrayList<Post> selectPostBySectionId(Integer id);
+
+    //  供管理员使用
+    @Select("SELECT COUNT(*) FROM section WHERE flag = 0")
+    int getCourseNum();
+
+    @Select("SELECT COUNT(*) FROM section WHERE flag = 1")
+    int getSchoolNum();
+
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO section (name, intro, flag, type, academy, credit, capacity) VALUES (#{name}, #{intro}, 0, " +
+            "#{type}, #{academy}, #{credit}, #{capacity})")
+    int insertCourse(String name, String intro, String type,
+                      String academy, Integer credit, Integer capacity);
+
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO section (name, intro, flag, school_category, web) VALUES (#{name}, #{intro}, 1, " +
+            "#{category}, #{web})")
+    int insertSchool(String name, String intro, String category, String web);
 }
