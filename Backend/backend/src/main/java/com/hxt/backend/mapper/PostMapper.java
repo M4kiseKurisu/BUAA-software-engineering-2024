@@ -49,9 +49,9 @@ public interface PostMapper {
     //获取帖子
     @Select("SELECT * from post where post_id = #{id}")
     @Results({
-            @Result(column = "post_id", property = "postId", id = true),
+            @Result(column = "post_id", property = "post_id", id = true),
             @Result(column = "time", property = "postTime"),
-            @Result(column = "publisher_id", property = "authorId")
+            @Result(column = "author_id", property = "authorId")
     })
     Post getPost(Integer id);
     

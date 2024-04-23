@@ -106,7 +106,7 @@ export default {
     data() {
         return {
             userName: '博酱',
-            userId: 2,
+            userId: 1,
             userAvatar: "",
             sign: '一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一',
             followCount: 5,
@@ -124,17 +124,17 @@ export default {
             axios({
                 method: "GET",
                 url: "/api/user/social/others",
-                params: { id: 1, }
+                params: { id: this.userId}
             }).then((result) => {
                 console.log(result);
-                this.userName = result.name;
-                this.userAvatar = result.user_avatar;
-                this.followCount = result.following_count;
-                this.followerCount = result.follower_count;
-                this.postCount = result.post_count;
-                this.likeCount = result.like_count;
-                this.sign = result.sign;
-                this.isFollow = result.is_follow;
+                this.userName = result.data.name;
+                this.userAvatar = result.data.user_avatar;
+                this.followCount = result.data.following_count;
+                this.followerCount = result.data.follower_count;
+                this.postCount = result.data.post_count;
+                this.likeCount = result.data.like_count;
+                this.sign = result.data.sign;
+                this.isFollow = result.data.is_follow;
             });
         },
         followOther() {
