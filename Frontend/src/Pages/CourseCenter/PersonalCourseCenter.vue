@@ -29,45 +29,15 @@
 
                 <div class="left-second-row-container">关注板块：</div>
 
-                <!-- 第一行关注模块信息 -->
-                <div class="left-content-row-container">
-                    <div v-for="item in group1">
-                        <div class="my-following-course-card">{{ item }}</div>
+                <!-- 用户关注模块信息 -->
+                <div v-for="item in showGroups" class="left-content-row-container">
+                    <div v-for="item2 in item">
+                        <div class="my-following-course-card">{{ item2.section_name }}</div>
                     </div>
                 </div>
 
-                <!-- 第二行关注模块信息 -->
-                <div class="left-content-row-container">
-                    <div v-for="item in group2">
-                        <div class="my-following-course-card">{{ item }}</div>
-                    </div>
-                </div>
+                <div v-if="this.courseNumber === 0" class="noFollowingCourses">您当前还没有关注课程板块~</div>
 
-                <!-- 第三行关注模块信息 -->
-                <div class="left-content-row-container">
-                    <div v-for="item in group3">
-                        <div class="my-following-course-card">{{ item }}</div>
-                    </div>
-                </div>
-
-                <!-- 第四行关注模块信息 -->
-                <div class="left-content-row-container">
-                    <div v-for="item in group4">
-                        <div class="my-following-course-card">{{ item }}</div>
-                    </div>
-                </div>
-
-                <!-- 第五行关注模块信息 -->
-                <div class="left-content-row-container">
-                    <div v-for="item in group5">
-                        <div class="my-following-course-card">{{ item }}</div>
-                    </div>
-                </div>
-
-                <!-- 左侧分页器  -->
-                <!-- <div class="left-pagination-container">
-                    <el-pagination small background layout="prev, pager, next" :total="10" class="pagination-left-location"/>
-                </div>   -->
             </div>
 
             <!-- 右侧信息栏位内容 -->
@@ -110,32 +80,24 @@
                     </div>
                 </div>
 
-                <!-- 单行关注课程信息 -->
-                <div v-for="item in sectionFor" class="course-card-row">
+                <div v-for="item in showCourses" class="course-card-row">
                     <el-row :gutter="54">
                         <!-- 单个关注课程信息 -->
-                        <el-col :span="12" ><CourseCard
-                            :sectionId="this.sectionCardTest.sectionId"
-                            :sectionName="this.sectionCardTest.sectionName"
-                            :sectionFollowerCount="this.sectionCardTest.sectionFollowerCount"
-                            :sectionIntroduction="this.sectionCardTest.sectionIntroduction"
-                            :sectionAcademy="this.sectionCardTest.sectionAcademy"
-                            :sectionType="this.sectionCardTest.sectionType"
-                        /></el-col>
-                        <!-- 单个关注课程信息 -->
-                        <el-col :span="12" ><CourseCard
-                            :sectionId="this.sectionCardTest.sectionId"
-                            :sectionName="this.sectionCardTest.sectionName"
-                            :sectionFollowerCount="this.sectionCardTest.sectionFollowerCount"
-                            :sectionIntroduction="this.sectionCardTest.sectionIntroduction"
-                            :sectionAcademy="this.sectionCardTest.sectionAcademy"
-                            :sectionType="this.sectionCardTest.sectionType"
-                        /></el-col>
+                        <el-col v-for="item2 in item" :span="12" >
+                            <CourseCard
+                                :sectionId="item2.section_id"
+                                :sectionName="item2.section_name"
+                                :sectionFollowerCount="item2.section_follower_count"
+                                :sectionIntroduction="item2.section_introduction"
+                                :sectionAcademy="item2.section_academy"
+                                :sectionType="item2.section_type"
+                            />
+                        </el-col>
                     </el-row>
                 </div>
 
                 <div class="pagination-in-right-course-center">
-                    <el-pagination :pager-count="6" layout="prev, pager, next" :total="100" />
+                    <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.totalPages" v-model="this.currentPage"/>
                 </div>
 
 
@@ -146,6 +108,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 
@@ -161,18 +126,10 @@ export default {
         return {
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             poster: "./src/Images/buaaPoster1.jpg", //本页面要展示的图片
-            // carouselList: ["./src/Images/testPoster.jpg",
-            //                "./src/Images/testPoster.jpg",
-            //                "./src/Images/testPoster.jpg",
-            //                "./src/Images/testPoster.jpg",
-            //                "./src/Images/testPoster.jpg",
-            //                "./src/Images/testPoster.jpg"],  //本界面要展示的走马灯图片测试
             avatarPicture: "./src/Images/testAvatar.jpg",  //本界面要展示的头像图片测试
             username: "M4kiseKurisu",  //本界面要展示的昵称信息
-            courseNumber: 7,  //本用户关注板块数
-            followingCourseList: [
-                "关注模块A", "关注模块B", "关注模块C", "关注模块D", "关注模块E", "关注模块F", "关注模块G", "关注模块H", "关注模块I", "关注模块J"
-            ],
+            courseNumber: 0,  //本用户关注板块数
+            followingCourseList: [],
             sortOptions: [
                 {
                     value: '1',
@@ -189,15 +146,10 @@ export default {
             ],
             sortValue: "",
             tagInput: "",
-            sectionCardTest: {  //测试热门板块卡片
-                sectionId: 1,
-                sectionName: "软件工程",
-                sectionFollowerCount: "186",
-                sectionIntroduction: "软件工程真的是一门好课！软件工程真的是一门好课！",
-                sectionAcademy: "计算机学院",
-                sectionType: "一般专业课",
-            },
             sectionFor: [1, 2, 3, 4],
+            totalPages: 1,  // 热门板块页码数
+            currentPage: 1,  //当前页码
+            getSections: [],  // 当前获取课程
         }
     },
     methods: {
@@ -206,21 +158,46 @@ export default {
       }
     },
     computed: {
-        group1() {  //分离个人关注的一二个板块
-            return (this.followingCourseList.length === 0) ? null : this.followingCourseList.slice(0, 2);
+        showCourses() {
+            let showCurrentPage = [];
+            let i = this.currentPage;
+            showCurrentPage.push(this.getSections.slice((i - 1) * 8, (i - 1) * 8 + 2));
+            showCurrentPage.push(this.getSections.slice((i - 1) * 8 + 2, (i - 1) * 8 + 4));
+            showCurrentPage.push(this.getSections.slice((i - 1) * 8 + 4, (i - 1) * 8 + 6));
+            showCurrentPage.push(this.getSections.slice((i - 1) * 8 + 6, i * 8));
+            return showCurrentPage;
         },
-        group2() {  //分离个人关注的三四个板块
-            return (this.followingCourseList.length <= 2) ? null : this.followingCourseList.slice(2, 4);
-        },
-        group3() {  //分离个人关注的五六个板块
-            return (this.followingCourseList.length <= 4) ? null : this.followingCourseList.slice(4, 6);
-        },
-        group4() {  //分离个人关注的七八个板块
-            return (this.followingCourseList.length <= 6) ? null : this.followingCourseList.slice(6, 8);
-        },
-        group5() {  //分离个人关注的九十个板块
-            return (this.followingCourseList.length <= 8) ? null : this.followingCourseList.slice(8, 10);
-        },
+        showGroups() {
+            let showMyCourses = [];
+            for (let i = 0; i < this.followingCourseList.length; i += 2) {
+                showMyCourses.push(this.followingCourseList.slice(i, i + 2));
+            }
+            return showMyCourses;
+        }
+    },
+    created() {
+        this.currentPage = 1;
+
+        // 默认获取热门板块
+        axios({
+            method: "GET",
+            url: "/api/section/hots",
+        }).then((result) => {
+            console.log(result)
+            this.totalPages = result.data.section_count / 10 + 1;
+            this.getSections = result.data.sections;
+        })
+
+        // 获取用户关注板块信息
+        axios({
+            method: "GET",
+            url: "/api/user/focus",
+        }).then((result) => {
+            console.log(result)
+            this.courseNumber = result.data.count;
+            console.log(result.data.count);
+            this.followingCourseList = result.data.sections;
+        })
     }
 }
 </script>
@@ -246,8 +223,9 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .submit-button {
-  display: block;
+  display: flex;
   padding: 10px;
   background-color: #007bff;
   color: #fff;
@@ -256,9 +234,11 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   width: 100px;
-  height: 40px;
+  height: 35px;
   margin-right: 200px;
-  margin-top: 29px;
+  margin-top: 32px;
+  justify-content: center;
+  align-items: center;
 }
 .personal-course-carousel {
     width: 82%;
@@ -417,4 +397,9 @@ export default {
     align-self: flex-end;
 }
 
+.noFollowingCourses {
+    margin-left: 27px;
+    font-size: 15px;
+    color: #86909c;
+}
 </style>
