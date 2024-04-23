@@ -4,14 +4,14 @@
     </div>
 
     <div class="main-postpage-container">
-      <!-- 管理界面弹出窗 -->
-      <div class="creator_dialog">
-        <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%">
-          <div class="creator_container">
-            <CreatorOfPostCenter></CreatorOfPostCenter>
-          </div>
-        </el-dialog>
-      </div>
+        <!-- 管理界面弹出窗 -->
+        <div class="creator_dialog">
+            <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%">
+                <div class="creator_container">
+                    <CreatorOfPostCenter></CreatorOfPostCenter>
+                </div>
+            </el-dialog>
+        </div>
         <!-- 帖子正文部分 -->
         <div style="display: flex;width: 100%;height: 150px;background-color: white;border-bottom: 1px solid darkgray;">
             <div style="width: 60%;height: 100%;">
@@ -34,9 +34,8 @@
                         </el-button-group>
                     </span>
                     <span style="padding-left: 3%;">
-                        <el-select v-model="sortKind" style="width: 150px">
-                            <el-option sortKind="热门">热门</el-option>
-                            <el-option sortKind="最新">最新</el-option>
+                        <el-select v-model="sortKindStr" style="width: 100px" placeholder="排序方式">
+                            <el-option v-for="item in this.sortKind"  :value="item.value" :label="item.label" />
                         </el-select>
                     </span>
                 </div>
@@ -110,8 +109,8 @@
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
 
-                    <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary" @click="toggle_Creator()"
-                            style="font-size: large;">查看详情</el-button></span>
+                    <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary"
+                            @click="toggle_Creator()" style="font-size: large;">查看详情</el-button></span>
                 </div>
             </div>
         </div>
@@ -135,7 +134,7 @@ export default {
     },
     data() {
         return {
-            show_Creator:false,
+            show_Creator: false,
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             courseName: "软件工程",
             courseId: 1,
@@ -146,13 +145,23 @@ export default {
             total: 20,
             currentPage: 1,
             updateTime: "2077.7.7.77",
-            sectionId : 1,
-            postList : "",
+            sectionId: 1,
+            postList: "",
+            sortKind: [{
+                value: '热门',
+                label: '热门',
+            },
+            {
+                value: '最新',
+                label: '最新',
+            },],
+            sortKindStr : '',
+            tagKind : '',
         }
     },
     methods: {
         toggle_Creator() {
-          this.show_Creator = true;
+            this.show_Creator = true;
         },
         selectOne() {
             this.kindSelect = 1;
@@ -169,26 +178,26 @@ export default {
         toPost() {
             this.$router.push({ path: "/MainPage/Course_Center/CreatePost" });
         },
-        followSection(){
+        followSection() {
             axios({
-                method:"POST",
-                url:"api/section/focus",
-                data: sectionId,
+                method: "POST",
+                url: "api/section/focus",
+                data: {section_id : this.sectionId },
             }).then((result) => {
                 console.log(result);
             })
         },
-        getPostList(){
+        getPostList() {
             axios({
-                method:"GET",
-                url:"api/section/posts",
-                data: sectionId,
-            }).then((result)=>{
+                method: "GET",
+                url: "api/section/posts",
+                data: {section_id : this.sectionId },
+            }).then((result) => {
                 this.postList = result.posts;
             })
         }
     },
-    created(){
+    created() {
         //getPostList();
     }
 }

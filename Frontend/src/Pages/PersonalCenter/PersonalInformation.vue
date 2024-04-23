@@ -142,11 +142,13 @@
 
                 <div v-for="item in followingListSort">
                     <FollowingCard
-                        :username="item.username"
-                        :signature="item.signature"
-                        :avatar="item.avatar"
+                        :username="item.name"
+                        :signature="item.sign"
+                        :avatar="item.user_avatar"
                     />
                 </div>
+
+                <div v-if="followingList.length === 0" class="no-favorate-card-tip">您目前还没有关注的用户~</div>
             </div>
 
             <!-- 我的打卡信息 -->
@@ -164,13 +166,15 @@
             <div class="notices-container">
                 <!-- 站内通知头部信息 -->
                 <div class="notices-header-container">
-                    <div class="favorates-header-1">站内通知</div>
+                    <div class="favorates-header-1">系统通知</div>
                     <div class="favorates-header-2">查看更多</div>
                 </div>
 
                 <div v-for="item in noticeListSort">
-                    <NoticeCard :notice="item"/>
+                    <NoticeCard :notice="item.notice_content"/>
                 </div>
+
+                <div v-if="this.noticeList.length === 0" class="no-favorate-card-tip">目前您还没有收到的系统通知~</div>
             </div>
 
         </div>
@@ -260,32 +264,7 @@ export default {
             ],
 
             //以下是用来测试关注用户板块的数组
-            followingList: [
-                {
-                    //关注用户1
-                    username: "M4kiseKurisu1",
-                    signature: "好好做好软工作业是命运石之门的选择！",
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //关注用户2
-                    username: "M4kiseKurisu2",
-                    signature: "好好做好软工作业是命运石之门的选择！",
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //关注用户3
-                    username: "M4kiseKurisu3",
-                    signature: "好好做好软工作业是命运石之门的选择！",
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //关注用户4
-                    username: "M4kiseKurisu4",
-                    signature: "好好做好软工作业是命运石之门的选择！",
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-            ],
+            followingList: [],
 
             //以下是用来测试个人打卡板块的元素
             poster: {
@@ -296,11 +275,7 @@ export default {
             },
 
             //以下是用来测试站内通知板块的数组
-            noticeList: [
-                "通知对象A 通知内容ABCDABCD (通知对象B)",
-                "通知对象A 长通知内容ABCDABCDABCDABCDABCDABCDABCDABCD (通知对象B)",
-                "通知对象A 中等长度通知内容ABCDABCDABCDABCDABCDABCD",
-            ],
+            noticeList: [],
         }
     },
     methods: {
@@ -367,6 +342,24 @@ export default {
         }).then((result) => {
             console.log(result);
             this.favorateList = result.data.posts;
+        })
+
+        // 获取关注用户信息
+        axios({
+            method: "GET",
+            url: "/api/user/following"
+        }).then((result) => {
+            console.log(result);
+            this.favorateList = result.data.following;
+        })
+
+        // 获取系统信息
+        axios({
+            method: "GET",
+            url: "/api/message/notice"
+        }).then((result) => {
+            console.log(result);
+            this.noticeList = result.data.notice_list;
         })
     }
 }

@@ -47,7 +47,7 @@
             </el-tag>
         </div>
 
-        <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" action="#">
             <el-button class="button-upload-file">上传资源</el-button>
         </el-upload>
     </div>
@@ -98,7 +98,7 @@ export default {
                 category: parseInt(this.PostcategoryValue),
                 tags: this.dynamicTags,
                 images: this.images,
-                resources: [],
+                resources: this.fileList,
             }
 
             console.log(content);
@@ -173,7 +173,6 @@ export default {
         }
 
         const images = ref([]);
-        const fileList = ref([]);
 
         const editorConfig = { 
             placeholder: '请输入内容', 
@@ -228,7 +227,6 @@ export default {
             editorConfig,
             handleCreated,
             images,
-            fileList,
         };
     }
 }

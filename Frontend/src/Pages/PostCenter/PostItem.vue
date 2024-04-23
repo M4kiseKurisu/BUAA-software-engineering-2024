@@ -61,7 +61,7 @@ export default{
             axios({
                 method : "GET",
                 url : "/api/posts/post",
-                data: this.postId,
+                data: {post_id:this.postId,},
             }).then((result) => {
                 console.log(result);
                 this.title = result.title;
