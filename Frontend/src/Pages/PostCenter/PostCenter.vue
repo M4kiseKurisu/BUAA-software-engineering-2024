@@ -35,7 +35,7 @@
                     </span>
                     <span style="padding-left: 3%;">
                         <el-select v-model="sortKindStr" style="width: 100px" placeholder="排序方式">
-                            <el-option v-for="item in this.sortKind"  :value="item.value" :label="item.label" />
+                            <el-option v-for="item in this.sortKind" :value="item.value" :label="item.label" />
                         </el-select>
                     </span>
                 </div>
@@ -62,15 +62,16 @@
                 </div>
             </div>
         </div>
-        <div style="width: 100%;height: fit-content;background-color: white;display: flex;">
-            <div style="width: 75%;height: fit-content;border-right: 1px solid darkgray;">
-                <PostItem></PostItem>
-                <PostItem></PostItem>
-                <PostItem></PostItem>
-                <PostItem></PostItem>
-                <PostItem></PostItem>
+        <div style="width: 100%;height: 785px;background-color: white;display: flex;">
+            <div style="width: 75%;height: 100%;border-right: 1px solid darkgray;">
+                <div style="width: 100%;height: 735px;">
+                    <PostItem></PostItem>
+                    <PostItem></PostItem>
+                    <PostItem></PostItem>
+                    <PostItem></PostItem>
+                </div>
                 <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
-                    <el-pagination background layout="prev, pager, next" :page-count="total"
+                    <el-pagination background layout="prev, pager, next" :page-size="5" :total = "total"
                         style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />
                 </div>
             </div>
@@ -140,7 +141,7 @@ export default {
             courseId: 1,
             postNum: 20,
             subscripNum: 30,
-            courseType : '',
+            courseType: '',
             kindSelect: 1,
             searchWord: "",
             total: 20,
@@ -156,8 +157,8 @@ export default {
                 value: '最新',
                 label: '最新',
             },],
-            sortKindStr : '',
-            tagKind : '',
+            sortKindStr: '',
+            tagKind: '',
         }
     },
     methods: {
@@ -183,7 +184,7 @@ export default {
             axios({
                 method: "POST",
                 url: "api/section/focus",
-                data: {section_id : this.sectionId },
+                data: { section_id: this.sectionId },
             }).then((result) => {
                 console.log(result);
             })
@@ -192,17 +193,19 @@ export default {
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: {section_id : this.sectionId },
+                params: { section_id: this.sectionId },
             }).then((result) => {
                 this.postList = result.posts;
+                this.total = result.posts.length;
             })
         },
-        getSectionInfomation(){
+        getSectionInfomation() {
             axios({
-                method : "GET",
+                method: "GET",
                 url: "/api/section/info",
-                params: {section_id : this.sectionId},
+                params: { section_id: this.sectionId },
             }).then((result) => {
+                console.log(result);
                 this.courseName = result.data.course_name;
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
@@ -211,7 +214,8 @@ export default {
         }
     },
     created() {
-        //getPostList();
+        this.getPostList();
+        //this.getSectionInfomation();
     }
 }
 </script>
