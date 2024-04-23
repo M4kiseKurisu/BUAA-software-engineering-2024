@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public interface SectionMapper {
 
     @Select("SELECT name FROM section WHERE section_id = #{id};")
-    String selectSectionNameById(int id);
+    String getSectionNameById(int id);
 
     @Select("select * from section where section_id = #{id};")
     Section selectSectionById(int id);
