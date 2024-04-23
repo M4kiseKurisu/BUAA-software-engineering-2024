@@ -7,6 +7,8 @@ import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Reply;
 import org.apache.ibatis.annotations.*;
 import com.hxt.backend.entity.post.Post;
+
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -54,6 +56,12 @@ public interface PostMapper {
             @Result(column = "author_id", property = "authorId")
     })
     Post getPost(Integer id);
+
+    @Select("SELECT COUNT(*) FROM post")
+    int getPostNum();
+
+    @Select("SELECT COUNT(*) FROM post WHERE time > #{time}")
+    int getPostNumRecent(Timestamp time);
     
     //更新帖子浏览数
     @Update("UPDATE post SET view_count = #{viewCount} WHERE post_id = #{id}")
@@ -136,6 +144,12 @@ public interface PostMapper {
             "(like_count + reply_count * 2) DESC, comment_id DESC")
     @Result(column = "time", property = "commentTime")
     List<Comment> getCommentSortByHotAsc(Integer id);
+
+    @Select("SELECT COUNT(*) FROM comment")
+    int getCommentNum();
+
+    @Select("SELECT COUNT(*) FROM comment WHERE time > #{time}")
+    int getCommentNumRecent(Timestamp time);
     
     //评论-图片
     @Options(useGeneratedKeys = true)
@@ -183,4 +197,10 @@ public interface PostMapper {
     //根据回复id获取评论id
     @Select("SELECT comment_id from reply where reply_id = #{id}")
     Integer getCommentIdByReplyId(Integer id);
+
+    @Select("SELECT COUNT(*) FROM reply")
+    int getReplyNum();
+
+    @Select("SELECT COUNT(*) FROM reply WHERE time > #{time}")
+    int getReplyNumRecent(Timestamp time);
 }

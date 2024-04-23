@@ -295,6 +295,19 @@ public class UserController {
         return new BasicInfoResponse(info.isEmpty(), info);
     }
 
+    @RequestMapping("/user/follow")
+    public BasicInfoResponse followUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "unfollow_id", required = false) Integer follow_id
+    ) {
+        if (user_id.isEmpty() || follow_id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        boolean success = userService.followUser(Integer.parseInt(user_id), follow_id);
+        String info = success? "" : "发生错误，未进行任何修改！";
+        return new BasicInfoResponse(success, info);
+    }
+
     @RequestMapping("/user/unfollow")
     public BasicInfoResponse unfollowUser(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
