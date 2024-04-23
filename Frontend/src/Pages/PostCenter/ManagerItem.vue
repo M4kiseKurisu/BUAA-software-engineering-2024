@@ -1,6 +1,7 @@
 <template>
     <div style="width: (100/3)%;">
-        <el-avatar :size = '75' src="./src/Images/testAvatar.jpg" shape="square" fit="cover"/>
+        <img src="../../Images/testAvatar.jpg"
+                        style="max-width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
     </div>
 </template>
 

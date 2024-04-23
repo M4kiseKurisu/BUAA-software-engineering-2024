@@ -9,7 +9,7 @@
                 <span style="font-size: large;font-weight: bolder;color: black;margin-left: 5px;" v-if="replyToPost">{{
                     postTitle }}</span>
                 <span style="margin-left: 5px;" v-if="!replyToPost">回复了你的评论</span>
-                <span style="font-size: large;font-weight: bolder;color: black;margin-left: 5px;" v-if="!replyToPost">{{
+                <span style="font-size: large;font-weight: bolder;color: black;margin-left: 5px;" v-if="replyToPost">{{
                     postTitle }}</span>
                 <span style="margin-left: 10px;">{{ time }}</span>
             </div>

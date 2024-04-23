@@ -22,6 +22,7 @@ public class SectionController {
             @RequestParam(name = "type", defaultValue = "0") String type,
             @RequestParam(name = "academy", defaultValue = "") String academy
     ) {
+        System.out.println("111111");
         ArrayList<SectionElement> list = sectionService.searchSection(keyWord,Integer.parseInt(sort),
                 Integer.parseInt(type),academy);
         if (list.isEmpty()) {
