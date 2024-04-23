@@ -31,8 +31,13 @@
             <el-menu-item index="/MainPage/Course_Center/Personal_Course">课程论坛</el-menu-item>
             <el-menu-item index="/MainPage/Course_Center/PostPage">论坛内容2</el-menu-item>
             <el-menu-item index="/MainPage/Course_Center/PostCenter">测试</el-menu-item>
+<<<<<<< HEAD
             <el-menu-item index="/CourseSection">课程详情测试</el-menu-item>
             <!-- <el-menu-item index="/ShowPersonalInformation">个人信息展示测试</el-menu-item> -->
+=======
+            <el-menu-item index="/CourseSection/1">课程详情测试</el-menu-item>
+            <el-menu-item index="/ShowPersonalInformation">个人信息展示测试</el-menu-item>
+>>>>>>> 330a45151970e431c8241ff160f4fe5367a8345b
         </el-sub-menu>
 
     </el-menu>

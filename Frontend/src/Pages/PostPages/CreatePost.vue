@@ -96,9 +96,9 @@ export default {
                 title: this.inputTitle,
                 content: contentToUpload,
                 category: parseInt(this.PostcategoryValue),
-                tags: this.dynamicTags,
-                images: this.images,
-                resources: [],
+                tags: "tags try",
+                images: "images try",
+                //resources: [],
             }
 
             console.log(content);
@@ -172,7 +172,7 @@ export default {
             ]
         }
 
-        const images = ref([]);
+        const images = ref();
         const fileList = ref([]);
 
         const editorConfig = { 
@@ -188,7 +188,7 @@ export default {
                             formData,  //data
                             (message)=>{
                                 console.log(message.url);
-                                images.value.push(message.url);
+                                images=message.url;
                                 insertFn(message.url, message.alt, message.href)  //success
                             }
                         )
