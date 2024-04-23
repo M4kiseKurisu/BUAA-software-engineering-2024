@@ -27,6 +27,7 @@ public class Post {
     private Integer collect_count; //收藏数
     private Integer comment_count;
     private Integer view_count;
+    @Column(name = "time")
     private Timestamp postTime;
     
 }
