@@ -96,7 +96,7 @@ public class UserService {
         }
         return new UserSocialInfoResponse(
                 user.getName(), id,
-                (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(id),
+                (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
                 userMapper.getFollowCount(id),
                 userMapper.getFollowerCount(id),
                 postMapper.getUserPostNum(id),
