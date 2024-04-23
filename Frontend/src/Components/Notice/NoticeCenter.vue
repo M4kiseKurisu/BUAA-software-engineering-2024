@@ -118,7 +118,7 @@ export default {
             axios({
                 method:"GET",
                 url: "api/message/private",
-                data: this.meId,
+                data: {receiver_id:this.meId,},
             }).then((result) => {
                 this.total1 = result.message_count ;
                 this.allDirectMessage = result.message_list;

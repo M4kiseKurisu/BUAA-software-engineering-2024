@@ -7,7 +7,7 @@
             <div style="width: 95%;height: 90%;background-color: white;display: flex;">
                 <div
                     style="height: 100%; aspect-ratio: 1/1 ; background-color: white;display: flex;justify-content: center;align-items: center;">
-                    <img :size='200' src="../../Images/testAvatar.jpg"
+                    <img :src="userAvatar"
                         style="max-width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 50%;">
                 </div>
                 <div style="flex-grow: 1;height: 100%;background-color:white;">
@@ -56,7 +56,7 @@
         </div>
         <div style="height: 70%;background-color: aliceblue;width: 100%;display: flex;">
             <div style="width: 30%;height: 100%;display: flex;align-items: center;justify-content: center;margin-left: 2%;">
-                <div style="width: 80%;height: 95%; background-color: white;">
+                <div style="width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
                     <div style="width: 100%;height: 10%;display: flex;justify-content: center;align-items: center;">
                         <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
                                 的 帖
@@ -123,8 +123,8 @@ export default {
         GetInfomation() {
             axios({
                 method: "GET",
-                url: "api/user/social/others",
-                data: { id: this.userId, },
+                url: "/api/user/social/others",
+                params: { id: 1, }
             }).then((result) => {
                 console.log(result);
                 this.userName = result.name;
@@ -155,7 +155,7 @@ export default {
 }
 
 .shumuWord {
-    font-size: x-large;
+    font-size: 1.3em;
     margin-left: 20px;
 }
 </style>
