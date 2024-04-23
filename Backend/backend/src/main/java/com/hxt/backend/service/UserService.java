@@ -86,6 +86,14 @@ public class UserService {
     public UserSocialInfoResponse getUserSocialInfo(Integer searcher, Integer id) {
         User user = userMapper.selectUserById(id);
         if (user == null) return new UserSocialInfoResponse();
+        Integer postLike = postMapper.getUserPostLikeNum(id);
+        if (postLike == null) {
+            postLike = 0;
+        }
+        Integer commentLike = postMapper.getUserCommentLikeNum(id);
+        if (commentLike == null) {
+            commentLike = 0;
+        }
         return new UserSocialInfoResponse(
                 user.getName(), id,
                 (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(id),
@@ -93,7 +101,7 @@ public class UserService {
                 userMapper.getFollowerCount(id),
                 postMapper.getUserPostNum(id),
                 postMapper.getUserCommentNum(id),
-                postMapper.getUserPostLikeNum(id) + postMapper.getUserCommentLikeNum(id),
+                postLike + commentLike,
                 user.getSign(),
                 userMapper.isFollow(searcher, id) > 0
         );
