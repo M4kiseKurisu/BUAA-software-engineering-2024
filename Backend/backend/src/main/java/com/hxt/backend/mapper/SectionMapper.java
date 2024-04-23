@@ -45,6 +45,12 @@ public interface SectionMapper {
     Integer getUserSectionFocusState(Integer userId, Integer sectionId);
 
     //  供管理员使用
+    @Select("SELECT COUNT(*) FROM section WHERE type = 0")
+    int getCourseNum();
+
+    @Select("SELECT COUNT(*) FROM section WHERE type = 1")
+    int getSchoolNum();
+
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO section (name, intro, flag, type, academy, credit, capacity) VALUES (#{name}, #{intro}, 0, " +
             "#{type}, #{academy}, #{credit}, #{capacity})")
