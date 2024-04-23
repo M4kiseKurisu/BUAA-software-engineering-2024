@@ -10,6 +10,8 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,14 +39,23 @@ public class PostService {
     @Resource
     private TagMapper tagMapper;
     
-    public Integer addPost(String title, String content, Integer category, Integer sectionId, Integer authorId) {
+    // 创建帖子
+    public Integer createPost(String title, String content, Integer category, Integer sectionId, Integer authorId) {
         if (title == null  || sectionId == null || authorId == null || category == null) {
             return -1;
         }
         Timestamp postTime = new Timestamp(System.currentTimeMillis());
-        return postMapper.insertPost(title, content, category, sectionId, authorId,
+        Post post = new Post(0, title, content, category, sectionId, authorId,
                 0, 0, 0, 0, postTime);
+        Integer res = postMapper.insertPost(post);
+        if (res == 0) {
+            return 0;
+        }
+        return post.getPost_id();
     }
+    
+    
+    
     
     public Integer deletePost(Integer id) {
         if (postMapper.getPost(id) == null) {
@@ -79,6 +90,17 @@ public class PostService {
         return author.getName();
     }
     
+    public Integer postInsertImage(Integer postId, Integer imageId) {
+        return postMapper.insertPostImage(postId, imageId);
+    }
+    
+    public Integer postInsertTag(Integer postId, Integer tagId) {
+        return postMapper.insertPostTag(postId, tagId);
+    }
+    
+    public Integer postInsertResource(Integer postId, Integer resourceId) {
+        return postMapper.insertPostResource(postId, resourceId);
+    }
     
     // 获取帖子图片的url
     public List<String> getPostImage(Integer postId) {
@@ -185,8 +207,68 @@ public class PostService {
         return commentResponses;
     }
     
+    //创建评论
+    public Integer createComment(String content, Integer postId, Integer authorId) {
+        if (postId == null || authorId == null) {
+            return -1;
+        }
+        Timestamp commentTime = new Timestamp(System.currentTimeMillis());
+        Comment comment = new Comment(0, postId, authorId, content, commentTime, 0, 0);
+        Integer res = postMapper.insertComment(comment);
+        if (res == 0) {
+            return 0;
+        }
+        return comment.getComment_id();
+    }
+    
+    public Integer commentInsertImage(Integer commentId, Integer imageId) {
+        return postMapper.insertCommentImage(commentId, imageId);
+    }
+    
+    public Integer commentInsertResource(Integer commentId, Integer resourceId) {
+        return postMapper.insertCommentResource(commentId, resourceId);
+    }
+    
+    public Integer deleteComment(Integer id) {
+        if (postMapper.getCommentById(id) == null) {
+            return -1;
+        }
+        return postMapper.deleteComment(id);
+    }
+    
     public void updateViewCount(Integer post_id) {
         Integer newViewCount = postMapper.getPost(post_id).getView_count() + 1;
         postMapper.updateViewCount(post_id, newViewCount);
+    }
+    
+    public void updatePostCommentCount(Integer post_id, Integer op) {
+        Integer newCommentCount = postMapper.getPost(post_id).getComment_count() + op;
+        postMapper.updateViewCount(post_id, newCommentCount);
+    }
+    
+    public void updateCommentReplyCount(Integer comment_id, Integer op) {
+        Integer newCommentCount = postMapper.getCommentById(comment_id).getReply_count() + op;
+        postMapper.updateViewCount(comment_id, newCommentCount);
+    }
+    
+    public Integer getCommentIdByReplyId(Integer replyId) {
+        return postMapper.getCommentIdByReplyId(replyId);
+    }
+    
+    
+    // 创建回复
+    public Integer createReply(Integer commentId, Integer repliedAuthorId, Integer authorId, String content) {
+        if (commentId == null  || repliedAuthorId == null || authorId == null) {
+            return -1;
+        }
+        Timestamp replyTime = new Timestamp(System.currentTimeMillis());
+        return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
+    }
+    
+    public Integer deleteReply(Integer id) {
+        if (postMapper.getReplyById(id) == null) {
+            return -1;
+        }
+        return postMapper.deleteReply(id);
     }
 }

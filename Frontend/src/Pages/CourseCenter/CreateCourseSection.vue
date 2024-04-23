@@ -156,7 +156,10 @@ export default defineComponent({
     handlePictureCardPreview(uploadFile) {
       this.dialogImageUrl = uploadFile.url;
       this.dialogVisible = true
-    }
+    },
+    // submitCourse() {
+
+    // }
   }
 
 })

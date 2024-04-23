@@ -22,7 +22,7 @@
                     <span style="padding-left: 3%;"><el-button type="primary" plain>关注板块</el-button></span>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
-                    <span><el-button type="primary">去发帖</el-button></span>
+                    <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
                     <span style="padding-left: 3%;">
                         <el-button-group class="ml-4">
                             <el-button type="primary" plain v-if="kindSelect != 1" @click="selectOne">讨论帖</el-button>
@@ -81,14 +81,6 @@
                 </div>
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
                     <div style="width: 25%;font-size: larger;">
-                        创建者:
-                    </div>
-                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem></ManagerItem>
-                    </div>
-                </div>
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
                         相关教师:
                     </div>
                     <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
@@ -128,13 +120,14 @@
 
 <script>
 // 引入面包屑组件
-import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
+import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import PostItem from "./PostItem.vue";
 import ManagerItem from "./ManagerItem.vue";
 import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     components: {
-
         BreadcrumbLabel,
         PostItem,
         ManagerItem,
@@ -153,6 +146,8 @@ export default {
             total: 20,
             currentPage: 1,
             updateTime: "2077.7.7.77",
+            sectionId : 1,
+            postList : "",
         }
     },
     methods: {
@@ -171,6 +166,30 @@ export default {
         handleCurrentChange(val) {
             this.currentPage = val;
         },
+        toPost() {
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost" });
+        },
+        followSection(){
+            axios({
+                method:"POST",
+                url:"api/section/focus",
+                data: sectionId,
+            }).then((result) => {
+                console.log(result);
+            })
+        },
+        getPostList(){
+            axios({
+                method:"GET",
+                url:"api/section/posts",
+                data: sectionId,
+            }).then((result)=>{
+                this.postList = result.posts;
+            })
+        }
+    },
+    created(){
+        //getPostList();
     }
 }
 </script>

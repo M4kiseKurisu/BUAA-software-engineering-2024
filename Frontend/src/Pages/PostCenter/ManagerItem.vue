@@ -5,12 +5,22 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default{
+    props:{
+
+    },
     data(){
         return {
             headImg: '',
             personId: '',
             personName: '博酱',
+        }
+    },
+    methods:{
+        GetInfomation(){
+            
         }
     }
 }

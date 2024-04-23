@@ -153,13 +153,27 @@ public class UserController {
         return userService.getUserInfo(Integer.parseInt(user_id));
     }
 
+    @RequestMapping("/user/social/self")
     public UserSocialInfoResponse getUserSocialInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         if (user_id.isEmpty()) {
             return new UserSocialInfoResponse();
         }
-        return userService.getUserSocialInfo(Integer.parseInt(user_id));
+        return userService.getUserSocialInfo(Integer.parseInt(user_id), Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/social/others")
+    public UserSocialInfoResponse getUserSocialInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new UserSocialInfoResponse();
+        } else if (user_id.isEmpty()) {
+            return userService.getUserSocialInfo(0, id);
+        }
+        return userService.getUserSocialInfo(Integer.parseInt(user_id), id);
     }
 
     @RequestMapping("/user/head")
@@ -238,16 +252,15 @@ public class UserController {
     @RequestMapping("/user/password/forget")
     public BasicInfoResponse setForgottenPassword(
             @RequestParam(name = "account", required = false) String account,
-            @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "password", required = false) String np
     ) {
-        if (account == null || name == null || email == null || np == null) {
+        if (account == null || email == null || np == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         } else if (!userService.lengthCheck(np, 6, 18)) {
             return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
-            return userService.resetForgottenPassword(account, name, email, np);
+            return userService.resetForgottenPassword(account, email, np);
         }
     }
 
