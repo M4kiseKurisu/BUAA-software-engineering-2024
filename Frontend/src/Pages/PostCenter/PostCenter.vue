@@ -22,7 +22,7 @@
                     <span style="padding-left: 3%;"><el-button type="primary" plain>关注板块</el-button></span>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
-                    <span><el-button type="primary">去发帖</el-button></span>
+                    <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
                     <span style="padding-left: 3%;">
                         <el-button-group class="ml-4">
                             <el-button type="primary" plain v-if="kindSelect != 1" @click="selectOne">讨论帖</el-button>
@@ -166,8 +166,8 @@ export default {
         handleCurrentChange(val) {
             this.currentPage = val;
         },
-        createPostCenter(){
-
+        toPost() {
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost" });
         },
         followSection(){
             axios({
