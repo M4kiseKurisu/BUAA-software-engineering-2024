@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
-        <div v-if="cover == ''" style="display: flex;height: 100%;width: 145px; justify-content: center;align-items: center; background-color: white;">
-            <el-avatar :size = '140' src="./src/Images/testAvatar.jpg" shape="square" fit="cover"/>
+        <div v-if="cover != ''" style="display: flex;height: 100%;width: 145px; justify-content: center;align-items: center; background-color: white;">
+            <el-avatar :size = '140' :src="cover" shape="square" fit="cover"/>
         </div>
         <div style="flex-grow: 1;background-color:white;height: 100%;">
             <div style="width: 100%;height: 40%;display: flex;align-items: center; justify-content: space-between;">
@@ -61,23 +61,24 @@ export default{
             axios({
                 method : "GET",
                 url : "/api/posts/post",
-                data: {post_id:this.postId,},
+                params: {post_id:this.postId,},
             }).then((result) => {
                 console.log(result);
-                this.title = result.title;
-                this.authorId = result.author_id;
-                this.authorName = result.author_name;
-                this.introduction = result.content;
-                this.time = result.create_time;
-                this.tags = result.tags;
-                this.likeNum = result.like_count;
-                this.starNum = result.collect_count;
+                this.title = result.data.title;
+                this.authorId = result.data.author_id;
+                this.authorName = result.data.author_name;
+                this.introduction = result.data.content;
+                this.time = result.data.create_time;
+                this.tags = result.data.tags;
+                this.likeNum = result.data.like_count;
+                this.starNum = result.data.collect_count;
+                this.cover = result.data.images;
                 //还差一个封面
             });
         }
     },
     created(){
-        //this.GetInfomation();
+        this.GetInfomation();
     }
 }
 </script>

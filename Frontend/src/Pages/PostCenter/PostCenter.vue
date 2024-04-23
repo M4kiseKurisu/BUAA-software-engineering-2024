@@ -140,6 +140,7 @@ export default {
             courseId: 1,
             postNum: 20,
             subscripNum: 30,
+            courseType : '',
             kindSelect: 1,
             searchWord: "",
             total: 20,
@@ -191,9 +192,21 @@ export default {
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                data: {section_id : this.sectionId },
+                params: {section_id : this.sectionId },
             }).then((result) => {
                 this.postList = result.posts;
+            })
+        },
+        getSectionInfomation(){
+            axios({
+                method : "GET",
+                url: "/api/section/info",
+                params: {section_id : this.sectionId},
+            }).then((result) => {
+                this.courseName = result.data.course_name;
+                this.courseType = result.data.course_type;
+                this.subscripNum = result.data.course_follows;
+                this.postNum = result.data.course_posts;
             })
         }
     },

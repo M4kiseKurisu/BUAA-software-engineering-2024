@@ -54,7 +54,7 @@
 
             </div>
 
-            <div class="post-main-content">
+            <!-- <div class="post-main-content">
                 此处为正文，存在额外的段间距。以下为随机文字：<br>
                 计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。这些编码器也可以与其他模块有效组合，以实现下游任务，例如图像生成（例如，DALL·E）。虽然在视觉和语言编码器方面取得了很大进展，但计算机视觉领域包含了远远超出这个范围的问题，对于其中的许多问题，都不存在充足的训练数据。
             </div>
@@ -63,6 +63,9 @@
                 注意，如果存在图片，图片和文字之间应该存在间隔：<br>
                 Task任务。我们首先将prompt提示的思想将NLP迁移到分割，其中一个prompt提示可以是一组前景/背景点，粗略的框或掩码，自由形式的文本，或者，一般来说，任何指示在图像中分割什么的信息。然后，promptable segmentation task可提示分割任务是给定任何提示返回有效的分割掩码。<br>
                 Related tasks 相关任务。 分割是一个广泛的领域：有interactive segmentation交互式分割，edge detection边缘检测，super pixelization超像素化，object proposal generation对象建议生成，foreground segmentation前景分割，semantic segmentation语义分割，instance segmentation实例分割，panoptic segmentation全景分割等。我们的可提示分割任务的目标是产生一个广泛的模型。
+            </div> -->
+            <div class="post-main-content">
+                {{ this.content }}
             </div>
 
             <div class="post-main-end-line">
@@ -255,6 +258,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 
@@ -281,7 +286,39 @@ export default {
                 }
             ],
             ReplysReplyTextarea: "",  //回复回复内容监听
+            title: "",
+            content: "",
+            author_id: "",
+            author_head: "",
+            author_name: "",
+            cerate_time: "",
+            tags: [],
+            images: [],
+            resources: [],
+            comments: [],
         }
+    },
+    mounted() {
+        axios({
+            method: "GET",
+            url: "/api/posts/post",
+            params: {
+                post_id: 21,
+                comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+            }
+        }).then((result) => {
+            console.log(result)
+            this.title = result.data.title;
+            this.content = result.data.content;
+            this.author_id = result.data.author_id;
+            this.author_head = result.data.author_head;
+            this.author_name = result.data.author_name;
+            this.cerate_time = result.data.cerate_time;
+            this.tags = result.data.tags;
+            this.images = result.data.images;
+            this.resources = result.data.resources;
+            this.comments = result.data.comments;
+        })
     }
 }
 </script>
