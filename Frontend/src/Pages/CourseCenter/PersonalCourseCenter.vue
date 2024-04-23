@@ -46,8 +46,11 @@
                 <div class="right-first-line-container">
                     <div class="left-start-items">
                         <div class="right-header">热门板块</div>
-                        <div class="right-selector">
-                            <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
+                    </div>
+
+                    <div class="right-start-items">
+                        <div class="right-selector2">
+                            <el-select v-model="sortValue1" placeholder="排序方式" style="width: 85px" size="small">
                                 <el-option
                                     v-for="item in sortOptions"
                                     :key="item.value"
@@ -56,13 +59,22 @@
                                 />
                             </el-select>
                         </div>
-                    </div>
 
-                    <div class="right-start-items">
                         <div class="right-selector2">
-                            <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
+                            <el-select v-model="sortValue2" placeholder="课程类型" style="width: 85px" size="small">
                                 <el-option
-                                    v-for="item in sortOptions"
+                                    v-for="item in sortOptions2"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                />
+                            </el-select>
+                        </div>
+
+                        <div class="right-selector2">
+                            <el-select v-model="sortValue3" placeholder="开课院系" style="width: 85px" size="small">
+                                <el-option
+                                    v-for="item in sortOptions3"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -75,7 +87,7 @@
                         </div>
 
                         <div class="right-search-button">
-                            <button class="right-search-button-css">搜索板块</button>
+                            <button class="right-search-button-css" @click="searchSession">搜索板块</button>
                         </div>
                     </div>
                 </div>
@@ -91,6 +103,7 @@
                                 :sectionIntroduction="item2.section_introduction"
                                 :sectionAcademy="item2.section_academy"
                                 :sectionType="item2.section_type"
+                                :sectionIsFollowing="item2.section_is_following"
                             />
                         </el-col>
                     </el-row>
@@ -132,19 +145,41 @@ export default {
             followingCourseList: [],
             sortOptions: [
                 {
-                    value: '1',
+                    value: '0',
                     label: '按热度排列',
                 },
                 {
-                    value: '2',
-                    label: '按首字母排列',
-                },
-                {
-                    value: '3',
-                    label: '按院系排列',
+                    value: '1',
+                    label: '按关注数排列',
                 }
             ],
-            sortValue: "",
+            sortOptions2: [
+                {
+                    value: '0',
+                    label: '所有课程',
+                },
+                {
+                    value: '1',
+                    label: '一般专业课',
+                },
+                {
+                    value: '2',
+                    label: '核心专业课',
+                }
+            ],
+            sortOptions3: [
+                {
+                    value: '计算机学院',
+                    label: '计算机学院',
+                },
+                {
+                    value: '软件工程学院',
+                    label: '软件工程学院',
+                },
+            ],
+            sortValue1: "",
+            sortValue2: "",
+            sortValue3: "",
             tagInput: "",
             sectionFor: [1, 2, 3, 4],
             totalPages: 1,  // 热门板块页码数
@@ -153,9 +188,26 @@ export default {
         }
     },
     methods: {
-      goToCreateCourseSection() {
-        this.$router.push({ path: '/CreateCourseSection' });
-      }
+        goToCreateCourseSection() {
+            this.$router.push({ path: '/CreateCourseSection' });
+        },
+        searchSession() {
+            // 搜索板块
+            axios({
+                method: "GET",
+                url: "/api/section/search",
+                params: {
+                    keyword: this.tagInput,
+                    sort: this.sortValue1,
+                    type: this.sortValue2,
+                    academy: this.sortValue3,
+                }
+            }).then((result) => {
+                console.log(result)
+                this.totalPages = result.data.section_count / 8 + 1;
+                this.getSections = result.data.sections;
+            })
+        }
     },
     computed: {
         showCourses() {
@@ -184,7 +236,7 @@ export default {
             url: "/api/section/hots",
         }).then((result) => {
             console.log(result)
-            this.totalPages = result.data.section_count / 10 + 1;
+            this.totalPages = result.data.section_count / 8 + 1;
             this.getSections = result.data.sections;
         })
 
@@ -193,9 +245,7 @@ export default {
             method: "GET",
             url: "/api/user/focus",
         }).then((result) => {
-            console.log(result)
             this.courseNumber = result.data.count;
-            console.log(result.data.count);
             this.followingCourseList = result.data.sections;
         })
     }

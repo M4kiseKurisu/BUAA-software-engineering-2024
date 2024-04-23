@@ -174,7 +174,7 @@
                     <NoticeCard :notice="item.notice_content"/>
                 </div>
 
-                <div v-if="this.noticeList.length === 0" class="no-favorate-card-tip">目前您还没有收藏的文章~</div>
+                <div v-if="this.noticeList.length === 0" class="no-favorate-card-tip">目前您还没有收到的系统通知~</div>
             </div>
 
         </div>
