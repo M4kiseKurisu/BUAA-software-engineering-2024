@@ -76,7 +76,7 @@ const router = createRouter({
                             component: PostCenter,
                         },
                         {
-                            path:'/CourseSection',
+                            path:'/CourseSection/:section_id',
                             component:CourseSection,
                         },
                         {
