@@ -15,9 +15,9 @@ public class SearchSectionResponse {
 
     private Boolean success;
 
-    private  String info;
+    private String info;
 
-    private  Integer section_count;
+    private Integer section_count;
 
     private ArrayList<SectionElement> sections;
 }

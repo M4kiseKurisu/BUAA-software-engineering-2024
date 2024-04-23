@@ -17,13 +17,18 @@ import java.sql.Timestamp;
 public class UserNotice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_notice_id")
     private Integer user_notice_id;
 
+    @Column(name = "is_read")
     private Boolean is_read;
 
+    @Column(name = "system_notice_id")
     private Integer system_notice_id;
 
+    @Column(name = "receiver_id")
     private Integer receiver_id;
 
+    @Column(name = "pull_time")
     private Timestamp pull_time;
 }
