@@ -11,6 +11,7 @@ import com.hxt.backend.service.PostService;
 import com.hxt.backend.service.ResourceService;
 import com.hxt.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,31 +78,42 @@ public class PostController {
     
     @RequestMapping (value="/posts/write")
     public WritePostResponse writePost(
+            @RequestBody String info,
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "category", required = false) Integer category,
-            @RequestParam(name = "tags", required = false) List<String> tags,
-            @RequestParam(name = "images", required = false) List<String> images,
-            @RequestParam(name = "resources", required = false) List<String> resources
+            @RequestParam(name = "tags", required = false) String tags,
+            @RequestParam(name = "images", required = false) String images
+            //@RequestParam(name = "resources", required = false) List<String> resources
     ) {
         //创建帖子并存入数据库
+        System.out.println(info);
         Integer post_id = postService.createPost(title, content, category, section_id, author_id);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
         } else if (post_id == 0) {
             return new WritePostResponse(false, "发帖出错", null);
         }
-        
+        System.out.println("receive");
+        System.out.println(post_id);
+        System.out.println(images);
+        System.out.println(tags);
         // 向 post_image表中插入数据
+        /*
         for (String imageUrl : images) {
             if (content.contains(imageUrl)) {
                 Integer image_id = imageService.getImageIdByUrl(imageUrl);
                 postService.postInsertImage(post_id, image_id);
             }
         }
-    
+        */
+        if (content.contains(images)) {
+            Integer image_id = imageService.getImageIdByUrl(images);
+            postService.postInsertImage(post_id, image_id);
+        }
+        /*
         // 向 post_resource表中插入数据
         for (String resourceUrl : resources) {
             if (content.contains(resourceUrl)) {
@@ -109,9 +121,9 @@ public class PostController {
                 postService.postInsertResource(post_id, resource_id);
             }
         }
-        
+        */
         //向 post_tag表插入数据
-    
+        /*
         for (String tagName : tags) {
             Integer tagId;
             if (tagService.getIdByName(tagName) == null) {
@@ -120,6 +132,13 @@ public class PostController {
             tagId = tagService.getIdByName(tagName);
             postService.postInsertTag(post_id, tagId);
         }
+        */
+        Integer tagId;
+        if (tagService.getIdByName(tags) == null) {
+            tagService.addTag(tags);
+        }
+        tagId = tagService.getIdByName(tags);
+        postService.postInsertTag(post_id, tagId);
         
         return new WritePostResponse(true, "发帖成功", post_id);
     }
