@@ -12,4 +12,15 @@ public class SectionService {
     @Resource
     private SectionMapper sectionMapper;
 
+
+
+
+    public boolean focusSection(Integer userId, Integer sectionId) {
+        return false;
+    }
+
+    public boolean unfocusSection(Integer userId, Integer sectionId) {
+        return false;
+    }
+
 }

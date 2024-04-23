@@ -13,11 +13,16 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class SectionInfoResponse {
-    private String section_name;
-    private Integer post_count;
-    private Integer follower_count;
-    private String section_introduction;
-    private Timestamp create_time;
+    private Boolean success;
+    private String course_name;
+    private String course_type;
+    private Integer course_credit;
+    private Integer course_capacity;
+    private Integer course_follows;
+    private Integer course_post;
+    private String course_info;
+    private String course_college;
+    private ArrayList<String> course_tags;
     private ArrayList<TeacherElement> teachers;
-    private ArrayList<AssistantsElement> assistants;
+    private ArrayList<Integer> assistants;
 }
