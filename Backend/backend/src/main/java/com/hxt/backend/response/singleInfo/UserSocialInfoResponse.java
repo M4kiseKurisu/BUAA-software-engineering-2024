@@ -17,5 +17,7 @@ public class UserSocialInfoResponse {
     private Integer follower_count; //  被关注人数（粉丝数）
     private Integer post_count;
     private Integer comment_count;
+    private Integer like_count;
     private String sign;
+    private boolean is_follow;    //  是否关注了该用户
 }

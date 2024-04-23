@@ -34,6 +34,9 @@ public interface ResourceMapper {
     })
     MyResource getResource(Integer id);
     
+    //根据url获取资源id
+    @Select("SELECT resource_id from resource where url = #{url}")
+    Integer getResourceIdByUrl(String url);
     
     //删除资源
     @Delete("DELETE FROM resource WHERE resource_id = #{id}")
