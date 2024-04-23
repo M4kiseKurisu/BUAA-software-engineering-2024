@@ -147,6 +147,7 @@ export default {
             currentPage: 1,
             updateTime: "2077.7.7.77",
             sectionId : 1,
+            postList : "",
         }
     },
     methods: {
@@ -176,7 +177,19 @@ export default {
             }).then((result) => {
                 console.log(result);
             })
+        },
+        getPostList(){
+            axios({
+                method:"GET",
+                url:"api/section/posts",
+                data: sectionId,
+            }).then((result)=>{
+                this.postList = result.posts;
+            })
         }
+    },
+    created(){
+        //getPostList();
     }
 }
 </script>

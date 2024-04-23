@@ -17,7 +17,7 @@
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span>
                     </div>
                     <div style="height: 25%;width: 70%;font-size: large;
-                            border-bottom: 1px solid darkgray;display: flex;align-items: center;">
+                                border-bottom: 1px solid darkgray;display: flex;align-items: center;">
                         <span>个性签名：
                             {{ sign }}
                         </span>
@@ -106,7 +106,7 @@ export default {
     data() {
         return {
             userName: '博酱',
-            userId: 1,
+            userId: 2,
             userAvatar: "",
             sign: '一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一顿能吃三碗饭一',
             followCount: 5,
@@ -124,8 +124,9 @@ export default {
             axios({
                 method: "GET",
                 url: "api/user/social/others",
-                data: userId,
+                data: { id: this.userId, },
             }).then((result) => {
+                console.log(result);
                 this.userName = result.name;
                 this.userAvatar = result.user_avatar;
                 this.followCount = result.following_count;
@@ -139,6 +140,9 @@ export default {
         followOther() {
             this.isFollow = true;
         },
+    },
+    created() {
+        this.GetInfomation();
     }
 }
 </script>

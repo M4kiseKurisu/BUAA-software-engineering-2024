@@ -36,7 +36,10 @@ import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default{
     props:{
-
+        // postId :{
+        //     type:Number,
+        //     default: 1,
+        // },
     },
     data(){
         return {
@@ -54,11 +57,13 @@ export default{
     },
     methods:{
         GetInfomation(){
+            //console.log(starNum);
             axios({
                 method : "GET",
-                url : "api/posts/post",
+                url : "/api/posts/post",
                 data: this.postId,
             }).then((result) => {
+                console.log(result);
                 this.title = result.title;
                 this.authorId = result.author_id;
                 this.authorName = result.author_name;
@@ -70,6 +75,9 @@ export default{
                 //还差一个封面
             });
         }
+    },
+    created(){
+        //this.GetInfomation();
     }
 }
 </script>
