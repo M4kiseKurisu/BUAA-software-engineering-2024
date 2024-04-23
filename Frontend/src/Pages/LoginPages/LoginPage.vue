@@ -215,7 +215,7 @@ export default {
     font-size: 32px;
     color: #165DFF;
     font-weight: bold;
-    margin-top: 90px;
+    margin-top: 20%;
     align-self: center;
     margin-bottom: 40px;
 }
@@ -246,10 +246,11 @@ export default {
     margin-right: 20px;
     margin-top: 6px;
     align-self: flex-end;
+    width: 65px;
 }
 
 .input-type-1 {
-    width: 240px;
+    width: 68%;
     height: 32px;
     background-color: #f7f8fa;
     border: 0px;

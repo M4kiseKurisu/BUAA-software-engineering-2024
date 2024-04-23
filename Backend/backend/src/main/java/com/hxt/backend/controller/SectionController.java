@@ -1,6 +1,8 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.sectionResponse.PostElement;
+import com.hxt.backend.response.sectionResponse.PostListResponse;
 import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.service.SectionService;
@@ -89,6 +91,19 @@ public class SectionController {
         else {
             return new BasicInfoResponse(false,"操作失败");
         }
+    }
+
+    public PostListResponse getSectionPosts(
+            @RequestParam(name = "section_id", defaultValue = "") String sectionId,
+            @RequestParam(name = "sort", defaultValue = "0") String sort,
+            @RequestParam(name = "post_type", defaultValue = "0") String postType,
+            @RequestParam(name = "tag_name", defaultValue = "") String tagName
+    ) {
+        if (sectionId.isEmpty()) {
+            return new PostListResponse(false,null);
+        }
+        ArrayList<PostElement> list = sectionService.getSectionPosts(Integer.parseInt(sectionId),sort,postType,tagName);
+        return new PostListResponse(true,list);
     }
     
 }
