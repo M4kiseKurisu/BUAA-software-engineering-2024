@@ -47,7 +47,7 @@
             </el-tag>
         </div>
 
-        <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" action="#">
             <el-button class="button-upload-file">上传资源</el-button>
         </el-upload>
     </div>
@@ -96,9 +96,9 @@ export default {
                 title: this.inputTitle,
                 content: contentToUpload,
                 category: parseInt(this.PostcategoryValue),
-                tags: "tags try",
-                images: "images try",
-                //resources: [],
+                tags: this.dynamicTags,
+                images: this.images,
+                resources: this.fileList,
             }
 
             console.log(content);
@@ -172,8 +172,7 @@ export default {
             ]
         }
 
-        const images = ref();
-        const fileList = ref([]);
+        const images = ref([]);
 
         const editorConfig = { 
             placeholder: '请输入内容', 
@@ -188,7 +187,7 @@ export default {
                             formData,  //data
                             (message)=>{
                                 console.log(message.url);
-                                images=message.url;
+                                images.value.push(message.url);
                                 insertFn(message.url, message.alt, message.href)  //success
                             }
                         )
@@ -228,7 +227,6 @@ export default {
             editorConfig,
             handleCreated,
             images,
-            fileList,
         };
     }
 }

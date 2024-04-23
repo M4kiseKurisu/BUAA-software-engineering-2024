@@ -10,7 +10,13 @@
         </div>
 
         <div class="course-card-right">
-            <button class="course-card-button">关注板块</button>
+            <div v-if="!sectionIsFollowing">
+                <button class="course-card-button" @click="followCourse">关注板块</button>
+            </div>
+            <div v-else>
+                <button class="course-card-button-2" @click="notfollowCourse">取消关注</button>
+            </div>
+            
             <div class="course-card-count">关注人数：{{ this.sectionFollowerCount }}</div>
             <div class="course-page-enter">进入板块</div>
         </div>
@@ -18,11 +24,56 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 export default {
-    props: ["sectionId", "sectionName", "sectionFollowerCount", "sectionIntroduction", "sectionAcademy", "sectionType"],
+    props: ["sectionId", "sectionName", "sectionFollowerCount", "sectionIntroduction", "sectionAcademy", "sectionType", "sectionIsFollowing"],
     data() {
         return {
 
+        }
+    },
+    methods: {
+        followCourse() {
+            let content = {
+                section_id: this.sectionId
+            }
+
+            axios({
+                method: "POST",
+                url: "/api/section/focus",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '关注板块成功！',
+                        type: 'success',
+                    });
+                }
+            })
+        },
+        notfollowCourse() {
+            let content = {
+                section_id: this.sectionId
+            }
+
+            axios({
+                method: "POST",
+                url: "/api/section/unfocus",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '取消关注成功！',
+                        type: 'success',
+                    });
+                }
+            })
         }
     }
 }
@@ -49,7 +100,7 @@ export default {
 }
 
 .course-introduction-font {
-    height: 46px;
+    height: 40px;
     width: 200px;
     margin-top: 4px;
     font-size: 14px;
@@ -90,6 +141,22 @@ export default {
     border: 1px solid #3894ff;
     color: #3894ff;
     background-color: #e9f3ff;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 13px;
+    padding-left: 6px;
+    padding-right: 6px;
+    align-self: flex-end;
+}
+
+.course-card-button-2 {
+    height: 24px;
+    border-radius: 3px;
+    border: none;
+    color: #86909C;
+    background-color: #E5E6EB;
     font-size: 13px;
     display: flex;
     justify-content: center;
