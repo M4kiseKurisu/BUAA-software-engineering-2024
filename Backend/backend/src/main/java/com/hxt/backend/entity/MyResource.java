@@ -17,10 +17,13 @@ import java.sql.Timestamp;
 public class MyResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "resource_id")
     private Integer resourceId;
     private String name;
+    @Column(name = "publisher_id")
     private Integer publisherId;
     private String url;
     private String type;
+    @Column(name = "time")
     private Timestamp uploadTime;
 }

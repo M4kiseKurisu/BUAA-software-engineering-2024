@@ -9,21 +9,22 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "reply")
+@Table(name = "post_like")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Reply {
+public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer reply_id;
-    private Integer comment_id; //所属评论id
-    private Integer replied_author_id; //被回复用户id
-    private Integer author_id;
-    private String content;
+    @Column(name = "pl_id")
+    private Integer plId;
+    @Column(name = "user_id")
+    private Integer userId;
+    @Column(name = "post_id")
+    private Integer postId;
+    @Column(name = "status")
+    private Integer status;
     @Column(name = "time")
-    private Timestamp replyTime;
-    private Integer like_count;
-    
+    private Timestamp likeTime;
 }

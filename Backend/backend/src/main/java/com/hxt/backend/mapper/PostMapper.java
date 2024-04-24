@@ -3,10 +3,8 @@ package com.hxt.backend.mapper;
 import com.hxt.backend.entity.Image;
 import com.hxt.backend.entity.MyResource;
 import com.hxt.backend.entity.Tag;
-import com.hxt.backend.entity.post.Comment;
-import com.hxt.backend.entity.post.Reply;
+import com.hxt.backend.entity.post.*;
 import org.apache.ibatis.annotations.*;
-import com.hxt.backend.entity.post.Post;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -56,7 +54,10 @@ public interface PostMapper {
             @Result(column = "author_id", property = "authorId")
     })
     Post getPost(Integer id);
-
+    
+    @Select("SELECT category from post where post_id = #{id}")
+    int getCategoryByPostId(Integer id);
+    
     @Select("SELECT COUNT(*) FROM post")
     int getPostNum();
 
@@ -68,8 +69,12 @@ public interface PostMapper {
     int updateViewCount(Integer id, Integer viewCount);
     
     //更新帖子评论数（含回复）
-    @Update("UPDATE post SET reply_count = #{replyCount} WHERE post_id = #{id}")
-    int updateCommentCount(Integer id, Integer replyCount);
+    @Update("UPDATE post SET comment_count = #{commentCount} WHERE post_id = #{id}")
+    int updateCommentCount(Integer id, Integer commentCount);
+    
+    //更新帖子点赞数
+    @Update("UPDATE post SET like_count = like_count + #{op} WHERE post_id = #{id}")
+    int updatePostLikeCount(Integer id, Integer op);
     
     //帖子-图片
     @Options(useGeneratedKeys = true)
@@ -105,6 +110,23 @@ public interface PostMapper {
 
     @Select("SELECT name from tag join post_tag pt on tag.tag_id = pt.tag_id where post_id = #{id} ORDER BY pt_id")
     List<String> getTagNameByPost(Integer id);
+    
+    //帖子-点赞
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO post_like (post_id, user_id, status, time) VALUES (#{postId}, #{userId}, #{status}, #{time})")
+    int insertPostLike(Integer postId, Integer userId, Integer status, Timestamp time);
+    
+    //获取帖子点赞
+    @Select("SELECT * from post_like where post_id = #{postId} and user_id = #{userId}")
+    PostLike getPostLike(Integer postId, Integer userId);
+    
+    //更新帖子点赞状态
+    @Update("UPDATE post_like SET status = #{status} WHERE pl_id = #{id}")
+    int updatePostLikeStatus(Integer id, Integer status);
+    
+    
+    
+    
     //评论
     
     //添加评论
@@ -113,14 +135,14 @@ public interface PostMapper {
             "VALUES (#{postId}, #{authorId}, #{content}, #{commentTime}, #{replyCount}, #{likeCount})")
     int insertComment(Comment comment);
     
-
+    
     
     
     //删除评论
     @Delete("DELETE FROM comment WHERE comment_id = #{id}")
     int deleteComment(Integer id);
     
-    //根据评论id获取评论
+    //根据评论id获取帖子
     @Select("SELECT * from comment where comment_id = #{id}")
     @Result(column = "time", property = "commentTime")
     Comment getCommentById(Integer id);
@@ -170,6 +192,28 @@ public interface PostMapper {
     @Select("SELECT resource_id from comment_resource where comment_id = #{id} ORDER BY cr_id ASC")
     List<Integer> getResourceIdByComment(Integer id);
     
+    //评论-点赞
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO comment_like (comment_id, user_id, status, time) " +
+            "VALUES (#{commentId}, #{userId}, #{status}, #{time})")
+    int insertCommentLike(Integer commentId, Integer userId, Integer status, Timestamp time);
+    
+    //获取评论-点赞
+    @Select("SELECT * from comment_like where comment_id = #{commentId} and user_id = #{userId}")
+    CommentLike getCommentLike(Integer commentId, Integer userId);
+    
+    //更新评论点赞状态
+    @Update("UPDATE comment_like SET status = #{status} WHERE cl_id = #{id}")
+    int updateCommentLikeStatus(Integer id, Integer status);
+    
+    //更新评论回复数
+    @Update("UPDATE comment SET reply_count = #{replyCount} WHERE comment_id = #{id}")
+    int updateReplyCount(Integer id, Integer replyCount);
+    
+    //更新评论点赞数
+    @Update("UPDATE comment SET like_count = like_count + #{op} WHERE comment_id = #{id}")
+    int updateCommentLikeCount(Integer id, Integer op);
+    
     //回复
     
     //添加回复
@@ -203,4 +247,22 @@ public interface PostMapper {
 
     @Select("SELECT COUNT(*) FROM reply WHERE time > #{time}")
     int getReplyNumRecent(Timestamp time);
+    
+    //回复-点赞
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO reply_like (reply_id, user_id, status, time) " +
+            "VALUES (#{replyId}, #{userId}, #{status}, #{time})")
+    int insertReplyLike(Integer replyId, Integer userId, Integer status, Timestamp time);
+    
+    //获取回复点赞
+    @Select("SELECT * from reply_like where reply_id = #{replyId} and user_id = #{userId}")
+    ReplyLike getReplyLike(Integer replyId, Integer userId);
+    
+    //更新回复点赞状态
+    @Update("UPDATE reply_like SET status = #{status} WHERE pl_id = #{id}")
+    int updateReplyLikeStatus(Integer id, Integer status);
+    
+    //更新回复点赞数
+    @Update("UPDATE reply SET like_count = like_count + #{op} WHERE reply_id = #{id}")
+    int updateReplyLikeCount(Integer id, Integer op);
 }
