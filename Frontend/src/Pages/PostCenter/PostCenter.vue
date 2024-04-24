@@ -19,7 +19,8 @@
                     <span style="font-size: xx-large;font-weight: bold;">{{ courseName }}讨论区</span>
                     <span style="padding-left: 3%;font-size: large;color: darkgrey;">帖子数: {{ postNum }}</span>
                     <span style="padding-left: 3%;font-size: large;color: darkgrey;">关注数: {{ subscripNum }}</span>
-                    <span style="padding-left: 3%;"><el-button type="primary" plain>关注板块</el-button></span>
+                    <span style="padding-left: 3%;" v-if = "!this.isFollow"><el-button type="primary" plain @click = "followSection">关注板块</el-button></span>
+                    <span style="padding-left: 3%;" v-if = "this.isFollow"><el-button type="primary" plain @click = "unFollowSection">取消关注</el-button></span>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
@@ -159,6 +160,7 @@ export default {
             },],
             sortKindStr: '',
             tagKind: '',
+            isFollow : false,
         }
     },
     methods: {
@@ -203,7 +205,7 @@ export default {
             axios({
                 method: "GET",
                 url: "/api/section/info",
-                params: { section_id: this.sectionId },
+                data: { section_id: this.sectionId },
             }).then((result) => {
                 console.log(result);
                 this.courseName = result.data.course_name;
@@ -211,11 +213,31 @@ export default {
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
             })
-        }
+        },
+        followSection(){
+            axios({
+                method: "POST",
+                url: "/api/section/focus",
+                data: { section_id: this.sectionId },
+            }).then((result) => {
+                console.log(result);
+                this.isFollow = true;
+            })
+        },
+        unFollowSection(){
+            axios({
+                method: "POST",
+                url: "/api/section/unfocus",
+                data: { section_id: this.sectionId },
+            }).then((result) => {
+                console.log(result);
+                this.isFollow = false;
+            })
+        },
     },
     created() {
-        this.getPostList();
-        //this.getSectionInfomation();
+        //this.getPostList();
+        this.getSectionInfomation();
     }
 }
 </script>
