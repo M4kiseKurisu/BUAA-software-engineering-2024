@@ -115,13 +115,13 @@ public interface UserMapper {
 
     //  用户收藏表
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO collect (user_id, post_id) VALUES (#{userId}, #{postId})")
+    @Insert("INSERT INTO favorite (user_id, post_id) VALUES (#{userId}, #{postId})")
     int CollectPost(Integer userId, Integer postId);
 
-    @Select("SELECT post_id FROM collect WHERE user_id = #{userId} ORDER BY collect_id DESC")
+    @Select("SELECT post_id FROM favorite WHERE user_id = #{userId} ORDER BY favorite_id DESC")
     List<Integer> getCollect(Integer userId);
 
-    @Select("SELECT COUNT(*) FROM collect WHERE post_id = #{postId}")
+    @Select("SELECT COUNT(*) FROM favorite WHERE post_id = #{postId}")
     int getCollectedCount(Integer postId);
 
     //板块关注表
