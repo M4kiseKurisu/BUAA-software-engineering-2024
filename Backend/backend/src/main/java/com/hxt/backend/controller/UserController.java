@@ -298,7 +298,7 @@ public class UserController {
     @RequestMapping("/user/follow")
     public BasicInfoResponse followUser(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
-            @RequestParam(name = "unfollow_id", required = false) Integer follow_id
+            @RequestParam(name = "follow_id", required = false) Integer follow_id
     ) {
         if (user_id.isEmpty() || follow_id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);

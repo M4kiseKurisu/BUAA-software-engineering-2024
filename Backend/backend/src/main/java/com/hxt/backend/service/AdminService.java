@@ -1,19 +1,19 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
-import com.hxt.backend.mapper.AdminMapper;
-import com.hxt.backend.mapper.PostMapper;
-import com.hxt.backend.mapper.SectionMapper;
-import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
+import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,8 @@ public class AdminService {
     PostMapper postMapper;
     @Resource
     AdminMapper adminMapper;
+    @Resource
+    ImageMapper imageMapper;
 
     public Integer checkPassword(String name, String password) {
         Timestamp lock = adminMapper.checkLock(name);
@@ -93,5 +95,30 @@ public class AdminService {
 
     public boolean lengthCheck(String s, int min, int max) {
         return (s.length() >= min) && (s.length() <= max);
+    }
+
+    public boolean blockUser(Integer id, Integer days) {
+        Integer realtime = days == null? Integer.MAX_VALUE : days;
+        return userMapper.blockUser(id, realtime) > 0;
+    }
+
+    public boolean unblockUser(Integer id) {
+        return userMapper.unblockUser(id) > 0;
+    }
+
+    public UserListResponse getUserList() {
+        List<Integer> ids = userMapper.selectAllUserId();
+        UserListResponse userInfoResponse = new UserListResponse(ids.size(), new ArrayList<>());
+        for (Integer id : ids) {
+            Integer tmp = userMapper.isBlocked(id);
+            boolean isBlocked = (tmp != null && tmp != 0);
+            User user = userMapper.selectUserById(id);
+            userInfoResponse.getUser().add(new UserSocialInfoResponse(
+                    user.getName(), id,
+                    (user.getHeadId() == null) ? "" : imageMapper.getImage(user.getHeadId()),
+                    0, 0, 0, 0, 0, user.getSign(), false, isBlocked
+            ));
+        }
+        return userInfoResponse;
     }
 }

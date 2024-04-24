@@ -80,6 +80,15 @@ public interface UserMapper {
 
     @Select("SELECT COUNT(*) FROM user_info WHERE token_time > #{time}")
     int getLoginNumRecent(Integer time);
+
+    @Update("UPDATE user_info SET block_point = NOW(), block_days = #{day} WHERE user_id = #{id}")
+    int blockUser(Integer id, Integer day);
+
+    @Select("select timestampdiff(day, block_point, now()) < block_days from user_info where user_id = #{id}")
+    Integer isBlocked(Integer id);
+
+    @Update("UPDATE user_info SET block_days = 0 WHERE user_id = #{id}")
+    int unblockUser(Integer id);
   
     //  用户关注表
     @Options(useGeneratedKeys = true)
