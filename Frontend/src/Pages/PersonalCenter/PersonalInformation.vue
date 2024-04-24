@@ -74,7 +74,7 @@
                 <!-- 收藏板块正文信息 -->
                 <div class="favorates-cards-container">
 
-                    <div v-if="this.favorateList.length != 0">
+                    <div v-if="favorateListLength != 0">
                         <!-- 按顺序输出前三个用户收藏文章卡片 -->
                         <el-row :gutter="26">
                             <el-col :span="8" v-for="item in group1">
@@ -307,6 +307,9 @@ export default {
         noticeListSort() {
             //分离站内通知的前四个内容
             return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 5);
+        },
+        favorateListLength() {
+            return this.favorateList.length;
         }
     },
     mounted() {
@@ -331,6 +334,7 @@ export default {
                 user_id: JSON.parse(sessionStorage.getItem("id"))
             }
         }).then((result) => {
+            console.log("getuserhead")
             console.log(result)
             this.avatarPicture = result.data.info;
         })
