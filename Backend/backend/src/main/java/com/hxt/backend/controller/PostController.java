@@ -180,7 +180,7 @@ public class PostController {
     }
     
     //用户是否点赞帖子
-    @RequestMapping (value="/posts/islike")
+    @RequestMapping (value="/posts/isLike")
     public IsLikeResponse isLikePost(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
