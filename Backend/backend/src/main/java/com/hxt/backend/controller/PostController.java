@@ -180,7 +180,7 @@ public class PostController {
     }
     
     //用户是否点赞帖子
-    @RequestMapping (value="/posts/islike")
+    @RequestMapping (value="/posts/isLike")
     public IsLikeResponse isLikePost(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
@@ -188,8 +188,11 @@ public class PostController {
     ) {
         //获取点赞状态
         Integer status = postService.postLikeStatus(post_id, Integer.parseInt(user_id));
-        
+        System.out.println("-----------");
+        System.out.println(status);
+        System.out.println(post_id);
         if (status == 1) {
+            System.out.println("test");
             return new IsLikeResponse(true);
         }
         
