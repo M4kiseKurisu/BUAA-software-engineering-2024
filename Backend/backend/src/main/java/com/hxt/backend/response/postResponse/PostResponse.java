@@ -30,7 +30,7 @@ public class PostResponse {
     
     public PostResponse (Post post){
         this.title = post.getTitle();
-        this.author_id = post.getAuthorId();
+        this.author_id = post.getAuthor_id();
         this.content = post.getContent();
         this.create_time = post.getPostTime().toString();
         this.commentCount = post.getComment_count();

@@ -17,6 +17,6 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
-    private Integer imageId;
+    private Integer image_id;
     private String url;
 }

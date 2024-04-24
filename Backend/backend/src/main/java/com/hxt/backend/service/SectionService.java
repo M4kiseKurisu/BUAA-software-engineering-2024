@@ -127,7 +127,7 @@ public class SectionService {
         for (Post post: posts) {
             PostElement element = new PostElement();
             element.setPost_id(post.getPost_id());
-            element.setAuthor_id(post.getAuthorId());
+            element.setAuthor_id(post.getAuthor_id());
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());

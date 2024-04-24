@@ -73,7 +73,7 @@ public class PostService {
         if (postMapper.getPost(id) == null) {
             return null;
         }
-        return postMapper.getPost(id).getAuthorId();
+        return postMapper.getPost(id).getAuthor_id();
     }
     
     public User getAuthor(Integer id) {
@@ -220,7 +220,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - postLike.getStatus();
-            postMapper.updatePostLikeStatus(postLike.getPlId(), newStatus);
+            postMapper.updatePostLikeStatus(postLike.getPl_id(), newStatus);
             return newStatus;
         }
     }
@@ -308,7 +308,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - commentLike.getStatus();
-            postMapper.updateCommentLikeStatus(commentLike.getClId(), newStatus);
+            postMapper.updateCommentLikeStatus(commentLike.getCl_id(), newStatus);
             return newStatus;
         }
     }
@@ -355,7 +355,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - replyLike.getStatus();
-            postMapper.updateReplyLikeStatus(replyLike.getRlId(), newStatus);
+            postMapper.updateReplyLikeStatus(replyLike.getRl_id(), newStatus);
             return newStatus;
         }
     }

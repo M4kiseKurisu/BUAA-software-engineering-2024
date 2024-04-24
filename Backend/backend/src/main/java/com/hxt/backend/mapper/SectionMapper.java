@@ -48,7 +48,6 @@ public interface SectionMapper {
     @Results({
             @Result(column = "post_id", property = "post_id", id = true),
             @Result(column = "time", property = "postTime"),
-            @Result(column = "author_id", property = "authorId")
     })
     ArrayList<Post> selectPostBySectionId(Integer id);
 
