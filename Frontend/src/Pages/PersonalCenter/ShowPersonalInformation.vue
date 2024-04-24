@@ -41,8 +41,8 @@
                         <div style="width: 25%;display: flex;">
                             <el-button v-if="!isFollow" type="primary" size="large" plain @click="followOther"><span
                                     style="font-size: large;">关注</span></el-button>
-                            <el-button v-if="isFollow" type="primary" size="large" plain disabled><span
-                                    style="font-size: large;">已关注</span></el-button>
+                            <el-button v-if="isFollow" type="primary" size="large" plain @click = "cancleFollow"><span
+                                    style="font-size: large;">取消关注</span></el-button>
                             <el-button type="primary" size="large" plain style="margin-left: 50px;"><span
                                     style="font-size: large;">私信</span></el-button>
                         </div>
@@ -94,6 +94,7 @@ import { ElMessage } from 'element-plus'
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import PostItem from "../PostCenter/PostItem.vue";
 import axios from 'axios';
+import { result } from 'lodash';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     props: {
@@ -116,7 +117,7 @@ export default {
             route: ['他人信息'],
             jieshu: '2021',
             academy: '计算机学院',
-            isFollow: false,
+            isFollow: true,
         }
     },
     methods: {
@@ -138,8 +139,31 @@ export default {
             });
         },
         followOther() {
-            this.isFollow = true;
+            axios({
+                method: "POST",
+                url: "/api/user/follow",
+                data: {
+                    user_id : this.userId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.isFollow = true;
+            })
+            
         },
+        cancleFollow() {
+            axios({
+                method: "POST",
+                url: "/api/user/unfollow",
+                data: {
+                    user_id : this.userId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.isFollow = false;
+            })
+        },
+
     },
     created() {
         this.GetInfomation();
