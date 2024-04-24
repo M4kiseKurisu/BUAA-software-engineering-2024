@@ -9,6 +9,10 @@ export default createStore({
         userLogin(state, data) {
             state.id = data.id;
             sessionStorage.setItem('id', JSON.stringify(data.id));
+        },
+        userLogout(state) {
+            state.id = null;
+            sessionStorage.removeItem('id');
         }
     },
     actions: {
