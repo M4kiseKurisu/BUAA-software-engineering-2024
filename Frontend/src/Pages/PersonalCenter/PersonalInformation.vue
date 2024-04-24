@@ -2,18 +2,13 @@
     <!-- 此容器是为了设定宽度，让内部的所有元素都可以使用百分比宽度 -->
     <div class="page-container">
       <div class="favorate_dialog">
-        <el-dialog class="fa_dialog" v-model="show_favorate" :visible.sync="show_favorate" width="60%" center>
-          <div class="favorate_container">
-            <Favorate class="favorate"></Favorate>
-          </div>
-
+        <el-dialog v-model="show_favorate" :visible.sync="show_favorate" width="56%" top="5%" center>
+          <Favorate class="favorate"></Favorate>
         </el-dialog>
       </div>
       <div class="following_user_dialog">
-        <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" width="50%" center>
-          <div>
-            <Following_user></Following_user>
-          </div>
+        <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" width="40%" center top="5%">
+          <Following_user class="user-dialog"></Following_user>
 
         </el-dialog>
       </div>
@@ -105,7 +100,7 @@
                     <div v-else>
                         <div class="no-favorate-card-tip">目前您还没有收藏的文章~</div>
                     </div>
-                    
+
                 </div>
             </div>
 
@@ -190,7 +185,7 @@ import { useStore } from 'vuex'
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 // 引入图标
-import { Calendar, School, Message, User } from '@element-plus/icons-vue'
+import {Calendar, School, Message, User, Search} from '@element-plus/icons-vue'
 //引入收藏帖子单元
 import FavorateCard from "../../Components/Group/FavorateCardInPersonalInformation.vue"
 //引入学习团体单元
@@ -203,8 +198,10 @@ import PosterCard from "../../Components/Group/PosterCardInPersonalInformation.v
 import NoticeCard from "../../Components/Group/NoticeCardInPersonalInformation.vue"
 import Favorate from "@/Pages/PersonalCenter/MoreDetails/Favorate.vue"
 import Following_user from "@/Pages/PersonalCenter/MoreDetails/Following_user.vue";
+import FavorateShow from "@/Components/Group/FavorateShow.vue";
 export default {
     components: {
+      Search, FavorateShow,
         BreadcrumbLabel,
         Calendar,
         School,
@@ -322,8 +319,8 @@ export default {
             this.username = (result.data.name != "") ? result.data.name : result.data.account;
             this.signTime = (result.data.enrollment_year != "") ? result.data.enrollment_year : "未设定";
             this.email = result.data.email;
-            this.majority = (result.data.major != "") ? result.data.major : "未设定";      
-            this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
+            this.majority = (result.data.major != "") ? result.data.major : "未设定";
+            this.signature = (result.data.sign != "") ? result.data.sign : "未设定";
         })
 
         // 获取头像信息
@@ -372,32 +369,52 @@ export default {
 <style scoped>
 
 .favorate_dialog {
-
-  justify-content: center; /* 水平居中 */
+  //width: 60%;
+  //display: flex;
+  //justify-content: center; /* 水平居中 */
 }
 
-/* 可以根据需要调整宽度 */
-.fa_dialog{
-
-  justify-content: center; /* 水平居中 */
-
-}
 
 .favorate{
-  display: block;
-  justify-content: center; /* 水平居中 */
-  text-align: center;
-  left:auto;
+  width: 100%;
+  margin-top: -3%;
+  //display: inline-block;
+  //justify-content: center; /* 水平居中 */
+  //text-align: center;
+  //left:auto;
+
 }
 
 .favorate_container{
   width: 100%;
-  margin-left: 100px;
+  height: 100%;
+  //margin-left: 100px;
   justify-content: center;
   text-align: center;
   left:auto;
 }
 
+.fa_dialog .el-dialog___body {
+  padding: 0; /* 取消 el-dialog 的内边距 */
+}
+.fa_dialog .el-dialog__body {
+  background: #1f63ff;
+  font-size: 22px;
+  position: absolute;
+  left: 20px;
+  top: 54px;
+  bottom: 72px;
+  right: 0;
+  padding: 0;
+  z-index: 1;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.user-dialog{
+  width: 100%;
+  margin-top: -5%;
+}
 /* 设定界面宽度真实值 */
 .page-container {
     width: calc(100vw - 205px);

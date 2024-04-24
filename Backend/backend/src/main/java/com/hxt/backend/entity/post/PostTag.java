@@ -15,7 +15,10 @@ import lombok.NoArgsConstructor;
 public class PostTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pt_id")
     private Integer ptId;
+    @Column(name = "post_id")
     private Integer postId;
+    @Column(name = "tag_id")
     private Integer tagId;
 }

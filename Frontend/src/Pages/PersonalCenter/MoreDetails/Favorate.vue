@@ -1,11 +1,11 @@
 <template>
-  <div class="favorates-container">
+  <div class="favorates-container-page">
     <!-- 收藏板块头部信息 -->
-    <div class="favorates-header-container">
-      <div class="favorates-header-1">收藏帖子</div>
-      <div class="favorates-header-2">
+    <div class="favorates-header-container-page">
+      <div class="favorates-header-1-page">收藏帖子</div>
+      <div class="favorates-header-2-page">
 
-        <div class="search-and-avatar">
+        <div class="search-and-avatar-page">
           <!-- Tag 选择框 -->
           <el-select v-model="selectedTag" placeholder="选择标签" class="el-select">
             <el-option
@@ -28,7 +28,7 @@
     <!-- 收藏板块正文信息 -->
     <div class="favorates-cards-container">
       <!-- 循环展示帖子 -->
-      <FavorateShow
+      <FavorateShow class="singe-show"
           v-for="(item, index) in favorateList"
           :key="index"
           :title="item.title"
@@ -117,7 +117,7 @@ export default {
 
 <style>
 /* 上边栏最右侧搜索框和头像的容器 */
-.search-and-avatar {
+.search-and-avatar-page {
   display: flex;
   align-items: center;
 }
@@ -126,11 +126,14 @@ export default {
 .el-select {
   margin-right: 8px; /* 调整标签选择框和搜索框之间的间距 */
 }
-.favorates-container {
-  display: flex;
+.favorates-container-page {
+  //display: flex;
   /* 设置子元素可选择靠左还是靠右排列 */
-  justify-content: space-between;
-  align-items: center;
+  //justify-content: space-between;
+  //align-items: center;
+  //margin-left: -16px;
+  //margin-right: -16px;
+  //width: 100%;
 }
 /* 搜索按钮的圆形边框样式 */
 /* 图标容器样式 */
@@ -147,22 +150,25 @@ export default {
 }
 
 
-.favorates-header-2 {
-
+.favorates-header-2-page {
+  margin-top: 10px;
+  margin-right: 15px;
 }
 
 /* 收藏帖子模块位置 */
 .favorates-container {
+  //width: 800px;
   display: block;
   //width: 69%;
   justify-content: center;
 }
-
 /* 收藏帖子模块标题位置 */
-.favorates-header-container {
-  height: 88px;
-  margin-left: 40px;
+.favorates-header-container-page {
 
+  height: 88px;
+
+  margin-left: -16px;
+  margin-right: -16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -170,19 +176,20 @@ export default {
 }
 
 /* 收藏帖子模块标题样式 */
-.favorates-header-1 {
+.favorates-header-1-page {
   font-size: 24px;
   color: #101010;
   font-weight: bold;
   height: 21px;
   //margin-top: 15px;
-
+  margin-left: 45px;
 }
 
 
 /* 收藏帖子正文部分样式 */
 .favorates-cards-container {
-  margin-left: 40px;
+  width: 100%;
+  //margin-left: 40px;
 }
 
 

@@ -1,6 +1,6 @@
 <template>
   <!-- 关注用户单元 -->
-  <div class="following-container">
+  <div class="following-container-page">
     <div class="following-group-container">
       <div class="following-left-container">
 
@@ -42,7 +42,8 @@ export default {
 </script>
 
 <style scoped>
-.following-container {
+.following-container-page {
+  width: 100%;
   margin-bottom: 20px;
 }
 

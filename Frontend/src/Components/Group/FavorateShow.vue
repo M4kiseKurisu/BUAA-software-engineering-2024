@@ -1,6 +1,6 @@
 <template>
   <!-- 个人信息中的收藏帖子单元 -->
-  <el-card class="card-container" shadow="never">
+  <el-card class="card-container-page" >
     <div class="card-content">
       <div class="image-container">
         <img :src="image" alt="图片" sizes="100vw"> <!-- 修改 sizes 属性 -->
@@ -56,11 +56,12 @@ export default {
 
 <style scoped>
 /* 定义卡片大小和边缘 */
-.card-container {
+.card-container-page {
   height: auto;
-  border: 1px solid #e5e6eb;
+  border: 10px solid #e5e6eb;
   border-radius: 2px;
   overflow: hidden;
+
 }
 
 /* 卡片内容布局 */

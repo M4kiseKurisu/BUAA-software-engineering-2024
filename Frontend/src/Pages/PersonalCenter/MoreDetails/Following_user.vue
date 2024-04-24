@@ -93,6 +93,7 @@ export default {
 .search-and-avatar {
   display: flex;
   align-items: center;
+  margin-top: 15px;
 }
 .follow-cards-container{
   display: flex;
@@ -122,14 +123,14 @@ export default {
 
 
 .follow-header-2 {
-
+  margin-right: 0px;
 }
 
 
 .follow-header-container {
   height: 88px;
-  margin-left: 40px;
-
+  margin-left: -17px;
+  margin-right: -17px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -142,6 +143,7 @@ export default {
   color: #101010;
   font-weight: bold;
   height: 21px;
+  margin-left: 30px;
 //margin-top: 15px;
 
 }

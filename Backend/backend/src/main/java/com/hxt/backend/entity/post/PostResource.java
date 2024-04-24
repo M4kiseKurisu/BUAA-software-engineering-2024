@@ -15,7 +15,10 @@ import lombok.NoArgsConstructor;
 public class PostResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pr_id")
     private Integer prId;
+    @Column(name = "post_id")
     private Integer postId;
+    @Column(name = "resource_id")
     private Integer resourceId;
 }

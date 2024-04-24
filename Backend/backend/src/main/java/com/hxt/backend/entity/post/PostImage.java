@@ -15,7 +15,10 @@ import lombok.NoArgsConstructor;
 public class PostImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pi_id")
     private Integer piId;
+    @Column(name = "post_id")
     private Integer postId;
+    @Column(name = "image_id")
     private Integer imageId;
 }
