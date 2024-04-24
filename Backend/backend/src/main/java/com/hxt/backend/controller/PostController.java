@@ -6,10 +6,7 @@ import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.CommentResponse;
 import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.WritePostResponse;
-import com.hxt.backend.service.ImageService;
-import com.hxt.backend.service.PostService;
-import com.hxt.backend.service.ResourceService;
-import com.hxt.backend.service.TagService;
+import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +24,7 @@ public class PostController {
     private final ImageService imageService;
     private final TagService tagService;
     private final ResourceService resourceService;
+    private final UserService userService;
     
     @RequestMapping (value="/posts/post")
     public PostResponse showPost(
@@ -88,6 +86,11 @@ public class PostController {
             @RequestParam(name = "images", required = false) String images
             //@RequestParam(name = "resources", required = false) List<String> resources
     ) {
+        //检查用户是否被封禁
+        if (userService.checkBlocked(author_id)) {
+            return new WritePostResponse(false, "您已被封禁，禁止发帖！", null);
+        }
+
         //创建帖子并存入数据库
         System.out.println(info);
         Integer post_id = postService.createPost(title, content, category, section_id, author_id);
@@ -165,6 +168,11 @@ public class PostController {
             @RequestParam(name = "images", required = false) List<String> images,
             @RequestParam(name = "resources", required = false) List<String> resources
     ) {
+        //检查用户是否被封禁
+        if (userService.checkBlocked(author_id)) {
+            return new BasicInfoResponse(false, "您已被封禁，禁止评论！");
+        }
+
         Integer comment_id = postService.createComment(content, post_id, author_id);
         if(comment_id == -1) {
             return new BasicInfoResponse(false, "评论内容不全");
@@ -217,6 +225,11 @@ public class PostController {
             @RequestParam(name = "content", required = false) String content
             
     ) {
+        //检查用户是否被封禁
+        if (userService.checkBlocked(author_id)) {
+            return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
+        }
+
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         

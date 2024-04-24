@@ -11,12 +11,12 @@
 
                 <div class="information-change-left-row">
                     <div class="information-sign">输入账号</div>
-                    <input type="text" class="input-type-1" v-model="this.loginName" :placeholder=this.loginNumber>
+                    <input type="text" class="input-type-1" v-model="this.loginName">
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">输入密码</div>
-                    <input type="text" class="input-type-1" v-model="this.loginPassword" :placeholder=this.loginNumber>
+                    <input type="password" class="input-type-1" v-model="this.loginPassword">
                 </div>
 
                 <div class="button-container">
@@ -25,6 +25,7 @@
 
                 <div class="to-assign-container">
                     <button class="to-assign-font" @click="toRegister">还没有账号？去注册</button>
+                    <button class="to-assign-font" style="margin-left: 16px" @click="toFindPassword">找回密码</button>
                 </div>
 
                 <el-image class="logoPicture" :src="logoPic" :fit="fit" />
@@ -35,36 +36,71 @@
                 <!-- 注册界面 -->
                 <div class="create-title-font">注册</div>
 
-                <div class="information-change-left-row">
-                    <div class="information-sign">账号</div>
+                <div class="information-change-left-row-2">
+                    <div class="information-sign-2">账号</div>
                     <div>
-                        <input type="text" class="input-type-1" v-model="this.registerAccount" :placeholder=this.loginNumber>
+                        <input type="text" class="input-type-2" v-model="this.registerAccount">
                     </div>
                 </div>
 
-                <div class="information-change-left-row">
-                    <div class="information-sign">邮箱</div>
+                <div class="information-change-left-row-2">
+                    <div class="information-sign-2">邮箱</div>
                     <div>
-                        <input type="text" class="input-type-1" v-model="this.registerEmail" :placeholder=this.loginNumber>
+                        <input type="text" class="input-type-2" v-model="this.registerEmail">
                     </div>
                 </div>
 
-                <div class="information-change-left-row">
-                    <div class="information-sign">(可选)手机</div>
+                <div class="information-change-left-row-2">
+                    <div class="information-sign-2">(可选)手机</div>
                     <div>
-                        <input type="text" class="input-type-1" v-model="this.registerPhone" :placeholder=this.loginNumber>
+                        <input type="text" class="input-type-2" v-model="this.registerPhone">
                     </div>
                 </div>
 
-                <div class="information-change-left-row">
-                    <div class="information-sign">密码</div>
+                <div class="information-change-left-row-2">
+                    <div class="information-sign-2">密码</div>
                     <div>
-                        <input type="text" class="input-type-1" v-model="this.registerPassword" :placeholder=this.loginNumber>
+                        <input type="password" class="input-type-2" v-model="this.registerPassword">
                     </div>
                 </div>
 
                 <div class="button-container">
                     <button class="button-left" @click="Register">注册</button>
+                </div>
+
+                <div class="to-assign-container">
+                    <button class="to-assign-font" @click="toLogin">返回登录界面</button>
+                </div>
+
+            </div>
+
+            <div v-if="this.loginOrRegister === 3" class="LoginPageRight">
+                <!-- 找回密码界面 -->
+                <div class="create-title-font">修改密码</div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">输入账号</div>
+                    <input type="text" class="input-type-1" v-model="this.changeAccount">
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">输入邮箱</div>
+                    <input type="text" class="input-type-1" v-model="this.changeEmail">
+                </div>
+
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">新设密码</div>
+                    <input type="password" class="input-type-1" v-model="this.changePassword">
+                </div>
+
+                <div class="information-change-left-row">
+                    <div class="information-sign">再次输入</div>
+                    <input type="password" class="input-type-1" v-model="this.changePassword2">
+                </div>
+
+                <div class="button-container">
+                    <button class="button-left-3" @click="change">申请更改</button>
                 </div>
 
                 <div class="to-assign-container">
@@ -83,7 +119,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 export default {
     data() {
         return {
-            loginOrRegister: 1,  //1代表登录界面，2代表注册界面
+            loginOrRegister: 1,  //1代表登录界面，2代表注册界面，3代表找回密码
             loginPic: "./src/Images/LoginImage.png",
             logoPic: "./src/Images/buaaLogo.png",
             loginName: "",
@@ -92,6 +128,10 @@ export default {
             registerEmail:"",
             registerPhone:"",
             registerPassword:"",
+            changeAccount: "",
+            changeEmail: "",
+            changePassword: "",
+            changePassword2: "",
         }
     },
     methods: {
@@ -131,6 +171,9 @@ export default {
         toRegister() {
             this.loginOrRegister = 2;
         },
+        toFindPassword() {
+            this.loginOrRegister = 3;
+        },
         toLogin() {
             this.loginOrRegister = 1;
         },
@@ -167,6 +210,46 @@ export default {
                         showClose: true,
                         message: result.data.info,
                         type: 'error'
+                    });
+                }
+            })
+        },
+        change() {
+            if (this.changePassword === "" || this.changePassword2 === "") {
+                return;
+            }
+            if (this.changePassword != this.changePassword2) {
+                this.$message({
+                    showClose: true,
+                    message: "两次输入的新密码不一致！",
+                    type: 'error',
+                });
+            }
+
+            let content = {
+                account: this.changeAccount,
+                email: this.changeEmail,
+                password: this.changePassword,
+            }
+            console.log(content);
+
+            axios({
+                method: "POST",
+                url: "/api/user/password/forget",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: "密码更改成功！",
+                        type: 'success',
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: "密码更改失败！",
+                        type: 'error',
                     });
                 }
             })
@@ -230,23 +313,22 @@ export default {
 }
 
 
-.information-change-left-row {
+.information-change-left-row-2 {
     display: flex;
     margin-bottom: 20px;
     width: 83%;
-    margin-left: -8%;
+    margin-left: -35%;
     justify-content: flex-end;
     align-self: center;
 }
 
-.information-sign {
+.information-sign-2 {
     font-size: 16px;
     font-weight: bold;
     color: #4e5969;
     margin-right: 20px;
     margin-top: 6px;
     align-self: flex-end;
-    width: 65px;
 }
 
 .input-type-1 {
@@ -259,6 +341,20 @@ export default {
 }
 
 .input-type-1:focus {
+    outline: none;
+    border: none;
+}
+
+.input-type-2 {
+    width: 100%;
+    height: 32px;
+    background-color: #f7f8fa;
+    border: 0px;
+    padding-left: 10px;
+    align-self: flex-end;
+}
+
+.input-type-2:focus {
     outline: none;
     border: none;
 }
@@ -297,5 +393,33 @@ export default {
     width: 90px;
     align-self: flex-end;
     margin-right: 8px;
+}
+
+.information-change-left-row {
+    display: flex;
+    margin-bottom: 20px;
+    width: 83%;
+    margin-left: -8%;
+    justify-content: flex-end;
+    align-self: center;
+}
+
+.information-sign {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4e5969;
+    margin-right: 20px;
+    margin-top: 6px;
+    align-self: flex-end;
+    width: 65px; 
+}
+
+.button-left-3 {
+    width: 80px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #1f63ff;
+    color: #ffffff;
+    border: none;
 }
 </style>

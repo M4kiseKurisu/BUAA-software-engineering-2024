@@ -2,6 +2,7 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.service.AdminService;
 import jakarta.annotation.Resource;
@@ -85,9 +86,7 @@ public class AdminController {
             @RequestParam(name = "credit", required = false) Integer credit,
             @RequestParam(name = "capacity", required = false) Integer capacity
     ) {
-        if (user_id == null) {
-            return new BasicInfoResponse(false, "user id is null");
-        } else if (name == null) {
+        if (user_id.isEmpty() || name == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         boolean res = adminService.addCourse(name, intro, type, academy, credit, capacity);
@@ -103,13 +102,43 @@ public class AdminController {
             @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "web", required = false) String web
     ) {
-        if (user_id == null) {
-            return new BasicInfoResponse(false, "user id is null");
-        } else if (name == null) {
+        if (user_id.isEmpty() || name == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         boolean res = adminService.addSchool(name, intro, category, web);
-        String info = res? "" : "服务器错误，未能添加";
+        String info = res? "" : "服务器错误，操作失败";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/list/user")
+    public UserListResponse getUserList() {
+        return adminService.getUserList();
+    }
+
+    @RequestMapping("/admin/block")
+    public BasicInfoResponse blockUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "days", required = false) Integer days
+    ) {
+        if (user_id.isEmpty() || id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        boolean res = adminService.blockUser(id, days);
+        String info = (res)? "" : "服务器错误，操作失败";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/unblock")
+    public BasicInfoResponse unblockUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (user_id.isEmpty() || id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        boolean res = adminService.unblockUser(id);
+        String info = (res)? "" : "服务器错误，操作失败";
         return new BasicInfoResponse(res, info);
     }
 }

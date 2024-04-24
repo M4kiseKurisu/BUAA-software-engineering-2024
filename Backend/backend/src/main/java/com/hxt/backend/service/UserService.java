@@ -93,6 +93,7 @@ public class UserService {
         if (commentLike == null) {
             commentLike = 0;
         }
+
         return new UserSocialInfoResponse(
                 user.getName(), id,
                 (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
@@ -102,7 +103,8 @@ public class UserService {
                 postMapper.getUserCommentNum(id),
                 postLike + commentLike,
                 user.getSign(),
-                userMapper.isFollow(searcher, id) > 0
+                userMapper.isFollow(searcher, id) > 0,
+                checkBlocked(id)
         );
     }
 
@@ -213,6 +215,11 @@ public class UserService {
             return 1;
         }
         return -2;
+    }
+
+    public boolean checkBlocked(Integer id) {
+        Integer tmp = userMapper.isBlocked(id);
+        return  (tmp != null && tmp != 0);
     }
 
     public boolean lengthCheck(String s, int min, int max) {
