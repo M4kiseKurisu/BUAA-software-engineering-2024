@@ -213,13 +213,15 @@ public class PostService {
     //点赞帖子
     public Integer thumbPost(Integer postId, Integer user_id) {
         PostLike postLike = postMapper.getPostLike(postId, user_id);
+        
         if (postLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertPostLike(postId, user_id, 1, likeTime);
             return 1;
         } else {
-            postMapper.updatePostLikeStatus(postLike.getPlId(), 1 - postLike.getStatus());
-            return 1 - postLike.getStatus();
+            Integer newStatus = 1 - postLike.getStatus();
+            postMapper.updatePostLikeStatus(postLike.getPlId(), newStatus);
+            return newStatus;
         }
     }
     
@@ -305,8 +307,9 @@ public class PostService {
             postMapper.insertCommentLike(commentId, user_id, 1, likeTime);
             return 1;
         } else {
-            postMapper.updateCommentLikeStatus(commentLike.getClId(), 1 - commentLike.getStatus());
-            return 1 - commentLike.getStatus();
+            Integer newStatus = 1 - commentLike.getStatus();
+            postMapper.updateCommentLikeStatus(commentLike.getClId(), newStatus);
+            return newStatus;
         }
     }
     
@@ -351,8 +354,9 @@ public class PostService {
             postMapper.insertReplyLike(replyId, user_id, 1, likeTime);
             return 1;
         } else {
-            postMapper.updateReplyLikeStatus(replyLike.getRlId(), 1 - replyLike.getStatus());
-            return 1 - replyLike.getStatus();
+            Integer newStatus = 1 - replyLike.getStatus();
+            postMapper.updateReplyLikeStatus(replyLike.getRlId(), newStatus);
+            return newStatus;
         }
     }
     

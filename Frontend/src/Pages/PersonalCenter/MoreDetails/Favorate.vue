@@ -1,46 +1,50 @@
 <template>
   <div class="favorates-container-page">
-    <!-- 收藏板块头部信息 -->
-    <div class="favorates-header-container-page">
-      <div class="favorates-header-1-page">收藏帖子</div>
-      <div class="favorates-header-2-page">
+      <div class="favorates-header-container-page">
+        <div class="favorates-header-1-page">收藏帖子</div>
+        <div class="favorates-header-2-page">
 
-        <div class="search-and-avatar-page">
-          <!-- Tag 选择框 -->
-          <el-select v-model="selectedTag" placeholder="选择标签" class="el-select">
-            <el-option
-                v-for="item in tagOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
-          <!-- 搜索框 -->
-          <el-input placeholder="搜索帖子" class="search-box"></el-input>
-          <!-- 图标 -->
-          <div class="circle-bound">
-            <el-icon color="#bbbbbb" :size="20"><Search /></el-icon>
+          <div class="search-and-avatar-page">
+            <!-- Tag 选择框 -->
+            <el-select v-model="selectedTag" placeholder="选择标签" class="el-select">
+              <el-option
+                  v-for="item in tagOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+            <!-- 搜索框 -->
+            <el-input placeholder="搜索帖子" class="search-box"></el-input>
+            <!-- 图标 -->
+            <div class="circle-bound">
+              <el-icon color="#bbbbbb" :size="20"><Search /></el-icon>
+            </div>
           </div>
+
         </div>
+      </div>
+      <!-- 收藏板块正文信息 -->
+      <div class="favorates-cards-container">
+        <!-- 循环展示帖子 -->
+
+        <FavorateShow class="singe-show"
+                      v-for="(item, index) in favorateList"
+                      :key="index"
+                      :title="item.title"
+                      :content="item.content"
+                      :image="item.image"
+                      :avatarSrc="item.avatarSrc"
+                      :writerName="item.writerName"
+                      :tags="item.tags"
+        />
+        <el-pagination background layout="prev, pager, next" :total="100" page-size="10" style="justify-content: center"></el-pagination>
+
 
       </div>
-    </div>
-    <!-- 收藏板块正文信息 -->
-    <div class="favorates-cards-container">
-      <!-- 循环展示帖子 -->
-      <FavorateShow class="singe-show"
-          v-for="(item, index) in favorateList"
-          :key="index"
-          :title="item.title"
-          :content="item.content"
-          :image="item.image"
-          :avatarSrc="item.avatarSrc"
-          :writerName="item.writerName"
-          :tags="item.tags"
-      />
-    </div>
+    <!-- 收藏板块头部信息 -->
+
     <!-- 分页 -->
-    <el-pagination background layout="prev, pager, next" :total="100" page-size="10" style="justify-content: center"></el-pagination>
   </div>
 </template>
 
@@ -49,6 +53,7 @@
 
 import FavorateShow from "@/Components/Group/FavorateShow.vue";
 import {Search} from "@element-plus/icons-vue";
+import axios from "axios";
 export default {
   components:{
     Search,
@@ -102,15 +107,20 @@ export default {
       ]
     }
   },
+  mounted() {
+    axios({
+      method: "GET",
+      url: "/api/user/favorites"
+    }).then((result) => {
+      console.log(result);
+      this.favorateList = result.data.posts;
+    })
+  },
   computed: {
-    group1() {
-      //分离收藏帖子列表的前三个帖子
-      return (this.favorateList.length === 0) ? null : this.favorateList.slice(0, 3);
-    },
-    group2() {
-      //分离收藏帖子列表的四五六个帖子
-      return (this.favorateList.length <= 3) ? null : this.favorateList.slice(3, 6);
-    }
+
+  },
+  methods: {
+
   }
 }
 </script>
@@ -192,5 +202,8 @@ export default {
   //margin-left: 40px;
 }
 
-
+.no-favorate-card-tip-page {
+  margin-top: 30px;
+  font-size: 22px;
+}
 </style>
