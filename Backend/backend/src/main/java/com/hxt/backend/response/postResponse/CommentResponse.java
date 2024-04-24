@@ -22,6 +22,7 @@ public class CommentResponse {
     private Map<Integer, String> comment_resources;
     private Integer comment_like_count;
     private Integer comment_reply_count;
+    private boolean comment_isLike;
     private List<ReplyResponse> replies;
     
     public CommentResponse(Comment comment) {

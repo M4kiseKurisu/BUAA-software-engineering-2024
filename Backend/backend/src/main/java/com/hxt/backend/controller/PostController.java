@@ -25,7 +25,8 @@ public class PostController {
     @RequestMapping (value="/posts/post")
     public PostResponse showPost(
             @RequestParam(name = "post_id", required = false) Integer post_id,
-            @RequestParam(name = "comment_sort", required = false) Integer comment_sort
+            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         if (post_id == null) {
             Post post = null;
@@ -63,7 +64,7 @@ public class PostController {
         postResponse.setResources(resources);
         
         //获取帖子评论
-        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort);
+        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
         postResponse.setComments(comments);
         
         postResponse.setSuccess(true);
