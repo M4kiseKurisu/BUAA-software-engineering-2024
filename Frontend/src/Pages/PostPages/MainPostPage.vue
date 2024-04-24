@@ -21,7 +21,7 @@
 
                     <div v-if="this.isLikePost" class="icon-and-content">
                         <!-- 喜欢图标 -->
-                        <button class="icon-button-font" @click="dislikePost">
+                        <button class="icon-button-font" @click="likePost">
                             <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
                         </button>
                         <div class="like-icon-after-contents">{{ this.like_count }}人点赞</div>
@@ -107,7 +107,7 @@
                     placeholder="请输入您的评论"
                 /> -->
                 <div class="reply-editor-container">
-                    <WangEditor :isComment="true" :post_id="this.post_id" :author_id="this.author_id"/>
+                    <WangEditor :isComment="true" :post_id="this.post_id" :author_id="this.userId"/>
                 </div>
                 
             </div>
@@ -151,7 +151,7 @@
             <el-divider/>
 
             <!-- 一条回复的全部内容 -->
-            <div v-for="item in commentsArray" class="reply-main-content-container">
+            <div v-for="(item, index) in commentsArray" class="reply-main-content-container">
                 <div class="reply-first-line">
 
                     <!-- 左侧信息：头像，昵称，tag，删除 -->
@@ -172,50 +172,67 @@
 
                     <!-- 右侧信息：评论时间，去评论，点赞 -->
                     <div class="reply-first-line-right-content">
-                        <div class="reply-time-information">评论时间：YY-MM-DD hh-mm</div>
+                        <div class="reply-time-information">评论时间：{{ item.comment_create_time }}</div>
 
-                        <div class="icon-and-content-2">
+                        <button @click="openReplyEditor(index)" class="icon-and-content-2">
                             <!-- 评论图标 -->
                             <svg t="1713327588804" class="comment-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3255" width="200" height="200"><path d="M896 128H128a32 32 0 0 0-32 32v576a32 32 0 0 0 32 32h288v-64H160V192h704v512h-256c-8.832 0-16.832 3.584-22.656 9.376l-159.968 160 45.248 45.248L621.248 768H896a32 32 0 0 0 32-32V160a32 32 0 0 0-32-32" fill="#86909C" p-id="3256"></path><path d="M560 448a48 48 0 1 0-95.968-0.032A48 48 0 0 0 560 448M240 448a48 48 0 1 0 95.968 0.032A48 48 0 0 0 240 448M784 448a48 48 0 1 0-95.968-0.032A48 48 0 0 0 784 448" fill="#86909C" p-id="3257"></path></svg>
                             <div class="comment-icon-after-contents">去评论</div>
-                        </div>
+                        </button>
 
 
-                        <div class="icon-and-content-2">
+                        <button @click="likeComment(item.comment_id, index)" v-if="false" class="icon-and-content-2">
                             <!-- 喜欢图标 -->
                             <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                            <div class="like-icon-after-contents">XX人点赞</div>
-                        </div>
+                            <div class="like-icon-after-contents">{{ item.comment_like_count }}人点赞</div>
+                        </button>
+                        <button @click="likeComment(item.comment_id, index)" v-else class="icon-and-content-2">
+                            <!-- 喜欢图标（点赞前） -->
+                            <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
+                            <div class="like-icon-after-contents-2">{{ item.comment_like_count }}人点赞</div>
+                        </button>
                     </div>
 
                 </div>
 
                 <!-- 回复正文 -->
-                <div class="post-main-content">
-                    此处为正文，存在额外的段间距。以下为随机文字：<br>
-                    计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。这些编码器也可以与其他模块有效组合，以实现下游任务，例如图像生成（例如，DALL·E）。虽然在视觉和语言编码器方面取得了很大进展，但计算机视觉领域包含了远远超出这个范围的问题，对于其中的许多问题，都不存在充足的训练数据。
+                <div class="post-main-content" v-html="item.comment_content"/>
+
+                <!-- 评论回复 -->
+                <div class="write-replys-reply" v-if="this.isReplysOpen[index]">
+                    <!-- 回复回复编辑框 -->
+                    <!-- <el-input
+                        v-model="this.ReplysReplyTextarea"
+                        :rows="5"
+                        type="textarea"
+                        placeholder="请输入您的评论"
+                    /> -->
+
+                    <div class="reply-editor-container">
+                        <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item.comment_author_id" :author_id="this.userId"/>
+                    </div>
                 </div>
 
                 <!-- 评论评论的全部内容 -->
-                <div class="replys-reply-container">
+                <div v-for="(item2, index2) in repliesArray(item.replies, index)"  class="replys-reply-container">
                     <div class="replys-reply-first-line-container">
 
                         <!-- 左侧信息：头像，昵称，tag，删除 -->
                         <div class="reply-first-line-left-content">
                             <!-- 回复者头像 -->
                             <div class="replys-reply-avatar">
-                                <el-avatar shape="square" :size="40" :src="this.avatarPicture" />
+                                <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
                             </div>
-                            <div class="replyer-username">评论者昵称</div>
+                            <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
-                            <!-- <div class="replyer-tag">
-                                <div class="post-page-tag-css">作者标签</div>
-                            </div> -->
+                            <div class="replyer-tag" v-if="item2.reply_author_id === this.userId">
+                                <div class="post-page-tag-css">作者</div>
+                            </div>
 
                             <div class="replys-reply-middle-font">回复</div>
 
-                            <div class="replyer-username">评论对象昵称</div>
-                            <div class="replys-reply-delete-button">
+                            <div class="replyer-username">{{ item2.replied_author_id }}</div>
+                            <div class="replys-reply-delete-button" v-if="item2.reply_author_id === this.userId">
                                 <button class="post-main-delete-button">
                                     <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                                 </button>
@@ -224,53 +241,46 @@
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
                         <div class="reply-first-line-right-content">
-                            <div class="reply-time-information">评论时间：YY-MM-DD hh-mm</div>
+                            <div class="reply-time-information">评论时间：{{ this.reply_create_time }}</div>
 
-                            <div class="icon-and-content-2">
+                            <button @click="openReplyEditor2(index, index2)" class="icon-and-content-2">
                                 <!-- 评论图标 -->
                                 <svg t="1713327588804" class="comment-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3255" width="200" height="200"><path d="M896 128H128a32 32 0 0 0-32 32v576a32 32 0 0 0 32 32h288v-64H160V192h704v512h-256c-8.832 0-16.832 3.584-22.656 9.376l-159.968 160 45.248 45.248L621.248 768H896a32 32 0 0 0 32-32V160a32 32 0 0 0-32-32" fill="#86909C" p-id="3256"></path><path d="M560 448a48 48 0 1 0-95.968-0.032A48 48 0 0 0 560 448M240 448a48 48 0 1 0 95.968 0.032A48 48 0 0 0 240 448M784 448a48 48 0 1 0-95.968-0.032A48 48 0 0 0 784 448" fill="#86909C" p-id="3257"></path></svg>
                                 <div class="comment-icon-after-contents">去评论</div>
-                            </div>
+                            </button>
 
 
-                            <div class="icon-and-content-2">
+                            <button v-if="false" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
                                 <!-- 喜欢图标 -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                                <div class="like-icon-after-contents">XX人点赞</div>
-                            </div>
+                                <div class="like-icon-after-contents">{{ item2.reply_like_count }}人点赞</div>
+                            </button>
+                            <button v-else class="icon-and-content-2" @click="likeReply(item2.reply_id, index, index2)">
+                                <!-- 喜欢图标(未点击) -->
+                                <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
+                                <div class="like-icon-after-contents-2">{{ item2.reply_like_count }}人点赞</div>
+                            </button>
                         </div>
 
                     </div>
 
                     <!-- 评论评论正文 -->
-                    <div class="replys-reply-content">
-                        此处为评论，存在额外的段间距。以下为随机文字：<br>
-                        计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。<br>
-                        加入@功能尝试：@AAAA，@BBBB，@CCCC
+                    <div class="replys-reply-content" v-html="item2.reply_content"/>
+
+
+                    <div class="write-replys-reply" v-if="this.isReplysOpen2[index][index2]">
+                        <div class="reply-editor-container">
+                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.replied_author_id" :author_id="this.userId"/>
+                        </div>
                     </div>
-                </div>
-
-                <div class="write-replys-reply">
-                    <!-- 回复回复编辑框 -->
-                    <el-input
-                        v-model="this.ReplysReplyTextarea"
-                        :rows="5"
-                        type="textarea"
-                        placeholder="请输入您的评论"
-                    />
-                </div>
-
-                <div class="send-replys-reply-button-location">
-                    <button class="send-reply-button-css">发布评论</button>
                 </div>
 
                 <div class="check-more-replys-reply-line">
                     <div class="check-more-reply-font">查看更多评论：</div>
                     <div class="check-replys-reply-pagination">
-                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="50" />
+                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.repliesTotalPages[index]" v-model="this.repliesTotalPages[index]" />
                     </div>
-                </div>
-                
+                </div>               
 
             </div>
 
@@ -285,6 +295,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
 
 import WangEditor from "./WangEditor.vue"
+import WangEditor2 from "./WangEditor2.vue"
 
 import { Delete } from '@element-plus/icons-vue'
 
@@ -293,6 +304,7 @@ export default {
         BreadcrumbLabel, 
         Delete, 
         WangEditor,
+        WangEditor2,
     },
     data() {
         return {
@@ -342,14 +354,55 @@ export default {
 
             commentTotalPages: 1,
             currentCommentPage: 1,
+
+            isReplysOpen:[false, false, false],
+            isReplyLiked:[false, false, false],
+
+            repliesTotalPages: [1, 1, 1],
+            repliesCurrentPage: [1, 1, 1],
+
+            isReplysOpen2: [[false, false, false], [false, false, false], [false, false, false]],
+            isReplyLiked2: [[false, false, false], [false, false, false], [false, false, false]],
         }
     },
     computed: {
         commentsArray() {
             let showComments = [];
+
+            if (this.comments.length === 0) {
+                return showComments;
+            }
+
             let i = this.currentCommentPage;
             showComments.push(this.comments.slice((i - 1) * 3, i * 3));
+            //console.log(showComments);
             return showComments;
+        },
+        repliesArray() {
+            // let showReplies = [];
+
+            // if (this.replies.length === 0) {
+            //     return replies;
+            // }
+
+            // let i = this.repliesCurrentPage[commentIndex];
+            // showReplies.push(this.replies.slice((i - 1) * 3, i * 3));
+            // return showReplies;
+            return (replies, commentIndex) => {
+                let showReplies = [];
+
+                if (!replies || replies.length === 0) {
+                    return replies;
+                }
+                // 测试用
+                // if (!replies) {
+                //     replies = [];
+                // }
+
+                let i = this.repliesCurrentPage[commentIndex];
+                showReplies.push(replies.slice((i - 1) * 3, i * 3));
+                return showReplies;
+            };
         }
     },
     mounted() {
@@ -457,7 +510,6 @@ export default {
             })
         },
         likePost() {
-            // 点赞帖子
             let content = {
                 post_id: this.post_id,
                 user_id: JSON.parse(sessionStorage.getItem("id"))
@@ -469,18 +521,27 @@ export default {
             }).then((result) => {
                 console.log(result);
                 if(result.data.success) {
-                    this.$message({
-                        showClose: true,
-                        message: '帖子点赞成功！',
-                        type: 'success',
-                    });
-                    this.isLikePost = true;
+                    // 这里的status定义还要确认
+                    // 点赞帖子
+                    if (result.data.status === 1) {
+                        this.$message({
+                            showClose: true,
+                            message: '帖子点赞成功！',
+                            type: 'success',
+                        });
+                        this.isLikePost = true;
+                    }
+                    // 取消点赞
+                    if (result.data.status === 0) {
+                        this.$message({
+                            showClose: true,
+                            message: '取消帖子点赞成功！',
+                            type: 'success',
+                        });
+                        this.isLikePost = false;
+                    }
                 }
             })
-        },
-        dislikePost() {
-            // 帖子点赞取消
-            
         },
         collectPost() {
             // 帖子收藏
@@ -592,6 +653,81 @@ export default {
                         type: 'success',
                     });
                     changesort();
+                }
+            })
+        },
+        openReplyEditor(index) {
+            this.isReplysOpen[index] = !this.isReplysOpen[index];
+        },
+        openReplyEditor2(index1, index2) {
+            //console.log(index1, index2, this.isReplysOpen2)
+            this.isReplysOpen2[index1][index2] = !this.isReplysOpen2[index1][index2];
+        },
+        likeComment(comment_id, index) {
+            let content = {
+                comment_id: comment_id,
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/comment/like",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    // 这里的status定义还要确认
+                    // 点赞评论
+                    if (result.data.status === 1) {
+                        this.$message({
+                            showClose: true,
+                            message: '评论点赞成功！',
+                            type: 'success',
+                        });
+                        this.isReplyLiked[index] = true;
+                    }
+                    // 取消点赞
+                    if (result.data.status === 0) {
+                        this.$message({
+                            showClose: true,
+                            message: '取消评论点赞成功！',
+                            type: 'success',
+                        });
+                        this.isReplyLiked[index] = false;
+                    }
+                }
+            })
+        },
+        likeReply(reply_id, index, index2) {
+            let content = {
+                reply_id: reply_id,
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/reply/like",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    // 这里的status定义还要确认
+                    // 点赞回复
+                    if (result.data.status === 1) {
+                        this.$message({
+                            showClose: true,
+                            message: '回复点赞成功！',
+                            type: 'success',
+                        });
+                        this.isReplyLiked2[index][index2] = true;
+                    }
+                    // 取消点赞
+                    if (result.data.status === 0) {
+                        this.$message({
+                            showClose: true,
+                            message: '取消回复点赞成功！',
+                            type: 'success',
+                        });
+                        this.isReplyLiked[index][index2] = false;
+                    }
                 }
             })
         }
@@ -909,6 +1045,8 @@ export default {
     display: flex;
     margin-right: 12px;
     margin-top: 7px;
+    border: none;
+    background-color: white;
 }
 
 .comment-icon {
@@ -970,8 +1108,8 @@ export default {
 }
 
 .write-replys-reply {
-    width: 77%;
-    margin-left: 17%;
+    width: 81%;
+    margin-left: 12%;
     margin-top: -5px;
 }
 
@@ -1009,8 +1147,17 @@ export default {
 .reply-editor-container {
     margin-left: 20px;
 }
+
 .reply-avatar-container {
     height: 55px;
     width: 55px;
+}
+
+.like-icon-after-contents-2 {
+    height: 24px;
+    margin-left: 11px;
+    margin-top: 7px;
+    color: #86909c;
+    font-size: 14px;
 }
 </style>

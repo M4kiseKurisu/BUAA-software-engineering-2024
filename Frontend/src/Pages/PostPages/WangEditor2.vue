@@ -37,20 +37,20 @@ export default {
         const contentToUpload = this.valueHtml; // 获取编辑器中的内容
         console.log(contentToUpload);
 
-        if (this.isComment) {
-            //发布帖子回复
+        if (!this.isComment) {
+            //发布评论回复
             let content = {
-                post_id: this.post_id,
+                comment_id: this.comment_id,
+                replied_id: this.replied_id,
                 author_id: this.author_id,
                 content: contentToUpload,
-                //images: this.images,
             }
 
             console.log(content);
 
             axios({
                 method: "POST",
-                url: "/api/posts/comment",
+                url: "/api/posts/reply",
                 data: content,
             }).then((result) => {
                 console.log(result);
@@ -58,7 +58,7 @@ export default {
         }
     }
   },
-  props: ["isComment", "post_id", "author_id"],
+  props: ["isComment", "comment_id", "replied_id", "author_id"],
   setup() {
     // 编辑器实例，必须用 shallowRef
     const editorRef = shallowRef()
@@ -76,47 +76,9 @@ export default {
     const toolbarConfig = {
         excludeKeys: [
             "insertVideo",  // 取消视频按钮
+            "group-image",  //取消图片上传
         ]
     }
-
-    if (this.isComment === false) {
-        toolbarConfig.excludeKeys.push("group-image");  // 评论回复取消图片上传按钮
-    }
-
-    const images = ref([]);
-
-    const editorConfig = { 
-        placeholder: '请输入内容', 
-        MENU_CONF: {
-            uploadImage: {
-            // 自定义上传
-                async customUpload(file, insertFn) {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    upload(
-                        '/api/posts/write/uploadImage',  //url
-                        formData,  //data
-                        (message)=>{
-                            console.log(message.url);
-                            images.value.push(message.url);
-                            insertFn(message.url, message.alt, message.href)  //success
-                        }
-                    )
-                }     
-            }
-        }
-    }
-
-    function upload(url, data, success){
-        console.log("start uploading pic!")
-        console.log(url);
-        console.log(data);
-        axios.post(url, data).then(({data})=> {
-            console.log(data);
-            if(data.success)
-                success(data, data.isSuccess)
-        })
-    }   
 
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {
@@ -134,9 +96,7 @@ export default {
       valueHtml,
       mode: 'simple', // 或 'simple'
       toolbarConfig,
-      editorConfig,
       handleCreated,
-      images,
     };
     }
 }
