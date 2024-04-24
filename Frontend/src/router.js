@@ -30,6 +30,10 @@ const router = createRouter({
             redirect: '/LoginPage'
         },
         {
+            path:"/1",
+            component:Favorate,
+        },
+        {
             path: '/LoginPage',
             component:LoginPage,
         },
