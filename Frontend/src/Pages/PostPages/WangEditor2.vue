@@ -40,10 +40,12 @@ export default {
         if (!this.isComment) {
             //发布评论回复
             let content = {
+                post_id: this.post_id,
                 comment_id: this.comment_id,
                 replied_id: this.replied_id,
                 author_id: this.author_id,
                 content: contentToUpload,
+                replied_author_id: this.replied_author_id,
             }
 
             console.log(content);
@@ -58,7 +60,7 @@ export default {
         }
     }
   },
-  props: ["isComment", "comment_id", "replied_id", "author_id"],
+  props: ["isComment", "comment_id", "replied_id", "author_id", "post_id", "replied_author_id"],
   setup() {
     // 编辑器实例，必须用 shallowRef
     const editorRef = shallowRef()
