@@ -18,9 +18,9 @@ public class CommentResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cr_id")
-    private Integer crId;
+    private Integer cr_id;
     @Column(name = "comment_id")
-    private Integer commentId;
+    private Integer comment_id;
     @Column(name = "resource_id")
-    private Integer resourceId;
+    private Integer resource_id;
 }

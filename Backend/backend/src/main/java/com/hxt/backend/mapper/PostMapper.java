@@ -33,13 +33,9 @@ public interface PostMapper {
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, content, category, section_id, author_id, like_count, " +
             "collect_count, comment_count, view_count, time)" +
-            " VALUES (#{title}, #{content}, #{category}, #{section_id}, #{authorId}, #{like_count}, " +
+            " VALUES (#{title}, #{content}, #{category}, #{section_id}, #{author_id}, #{like_count}, " +
             "#{collect_count}, #{comment_count}, #{view_count}, #{postTime})")
     int insertPost(Post post);
-    /*
-    int insertPost(String title, String content, Integer category, Integer sectionId, Integer authorId,
-                   Integer likeCount, Integer collectCount, Integer commentCount,Integer viewCount, Timestamp postTime);
-    */
     
     
     //删除帖子
@@ -51,7 +47,6 @@ public interface PostMapper {
     @Results({
             @Result(column = "post_id", property = "post_id", id = true),
             @Result(column = "time", property = "postTime"),
-            @Result(column = "author_id", property = "authorId")
     })
     Post getPost(Integer id);
     
@@ -118,6 +113,7 @@ public interface PostMapper {
     
     //获取帖子点赞
     @Select("SELECT * from post_like where post_id = #{postId} and user_id = #{userId}")
+    @Result(column = "time", property = "likeTime")
     PostLike getPostLike(Integer postId, Integer userId);
     
     //更新帖子点赞状态

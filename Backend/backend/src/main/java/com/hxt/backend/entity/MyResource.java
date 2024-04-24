@@ -18,10 +18,10 @@ public class MyResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resource_id")
-    private Integer resourceId;
+    private Integer resource_id;
     private String name;
     @Column(name = "publisher_id")
-    private Integer publisherId;
+    private Integer publisher_id;
     private String url;
     private String type;
     @Column(name = "time")

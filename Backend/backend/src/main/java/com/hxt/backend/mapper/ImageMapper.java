@@ -19,7 +19,7 @@ public interface ImageMapper {
     String getImage(Integer id);
     
     @Select("SELECT * from image where image_id = #{id}")
-    @Result(column = "image_id", property = "imageId", id = true)
+    @Result(column = "image_id", property = "image_id", id = true)
     Image seekImage(Integer id);
     
     @Delete("DELETE FROM image WHERE image_id = #{id}")

@@ -16,6 +16,6 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
-    private Integer tagId;
+    private Integer tag_id;
     private String name;
 }

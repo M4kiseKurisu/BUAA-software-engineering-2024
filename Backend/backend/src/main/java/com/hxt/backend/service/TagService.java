@@ -39,7 +39,7 @@ public class TagService {
         if (tagMapper.getTagByName(name) == null) {
             return null;
         }
-        return tagMapper.getTagByName(name).getTagId();
+        return tagMapper.getTagByName(name).getTag_id();
     }
     
 }

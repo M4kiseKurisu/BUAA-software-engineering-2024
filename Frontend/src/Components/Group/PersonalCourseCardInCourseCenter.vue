@@ -18,7 +18,10 @@
             </div>
             
             <div class="course-card-count">关注人数：{{ this.sectionFollowerCount }}</div>
-            <div class="course-page-enter">进入板块</div>
+            <button class="button-css" @click="toPostCenter()">
+                <div class="course-page-enter">进入板块</div>
+            </button>
+            
         </div>
     </div>
 </template>
@@ -74,6 +77,9 @@ export default {
                     });
                 }
             })
+        },
+        toPostCenter() {
+            this.$router.push({ path: '/MainPage/Course_Center/PostCenter/'+ this.sectionId });
         }
     }
 }
@@ -181,5 +187,10 @@ export default {
     color: #165dff;
     margin-top: 30px;
     align-self: flex-end;
+}
+
+.button-css {
+    border: none;
+    background-color: white;
 }
 </style>
