@@ -135,7 +135,7 @@ export default {
                 this.postCount = result.data.post_count;
                 this.likeCount = result.data.like_count;
                 this.sign = result.data.sign;
-                this.isFollow = result.data.is_follow;
+                this.isFollow = result.data._follow;
             });
         },
         followOther() {
@@ -143,11 +143,13 @@ export default {
                 method: "POST",
                 url: "/api/user/follow",
                 data: {
-                    user_id : this.userId,
+                    follow_id : this.userId,
                 }
             }).then((result) => {
                 console.log(result);
-                this.isFollow = true;
+                if(result.data.success){
+                     this.isFollow = true;
+                }
             })
             
         },
@@ -156,11 +158,13 @@ export default {
                 method: "POST",
                 url: "/api/user/unfollow",
                 data: {
-                    user_id : this.userId,
+                    unfollow_id : this.userId,
                 }
             }).then((result) => {
                 console.log(result);
-                this.isFollow = false;
+                if(result.data.success){
+                     this.isFollow = false;
+                }
             })
         },
 
