@@ -441,7 +441,8 @@ export default {
                 post_id: this.post_id,
             }
         }).then((result) => {
-            this.isLikePost = result.data.isLike;
+            console.log(result)
+            this.isLikePost = result.data.like;
         })
 
         axios({
@@ -530,6 +531,7 @@ export default {
                             type: 'success',
                         });
                         this.isLikePost = true;
+                        this.like_count++;
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -539,6 +541,7 @@ export default {
                             type: 'success',
                         });
                         this.isLikePost = false;
+                        this.like_count--;
                     }
                 }
             })
@@ -617,6 +620,7 @@ export default {
         openCommentEditor() {
             //开关评论编辑器
             this.isCommentEditorOpen = !this.isCommentEditorOpen
+            console.log(123);
         },
         changesort() {
             //更换排序方式

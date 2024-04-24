@@ -27,24 +27,38 @@ const router = createRouter({
     routes: [
         {
             path: '',
-            redirect: '/LoginPage'
+            redirect: '/LoginPage',
+            meta: { 
+                requireAuth: false,
+            }   
         },
         {
             path: '/LoginPage',
             component:LoginPage,
+            meta: { 
+                requireAuth: false,
+            }  
         },
         {
             path:'/NoticeCenter',
             component:NoticeCenter,
-
+            meta: { 
+                requireAuth: true,
+            }  
         },
         {
             path: '/ChatCenter',
             component: PersonalChat,
+            meta: { 
+                requireAuth: true,
+            } 
         },
         {
             path: '/MainPage',
             component: MainPage,
+            meta: { 
+                requireAuth: true,
+            },
             children: [
                 {
                     path: 'Personal_Center',
@@ -98,6 +112,25 @@ const router = createRouter({
             ]
         }
     ]
+})
+
+// 添加全局前置守卫
+router.beforeEach((to, from, next) => {
+    // 检查是否需要登录才能访问
+    if (to.matched.some(record => record.meta.requireAuth)) {
+        // 通过对 store.state.user 有无值的检查来判断用户是否登录
+        if (JSON.parse(sessionStorage.getItem('id')) == null) {
+            next({
+                path: '',
+                query: { redirect: to.fullPath }
+                // 将希望导航到的路由的路径传给登录界面，登录成功后可能需要基于此进行重定向。
+            })
+        } else {
+            next()  // 如果用户已经登录，就正常进入该路由。
+        }
+    } else {
+        next()  // 如果不需要登录，则直接放行。
+    }
 })
 
 export default router;

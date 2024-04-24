@@ -369,26 +369,26 @@ export default {
 <style scoped>
 
 .favorate_dialog {
-  //width: 60%;
-  //display: flex;
-  //justify-content: center; /* 水平居中 */
+  width: 60%;
+  display: flex;
+  justify-content: center; /* 水平居中 */
 }
 
 
 .favorate{
   width: 100%;
   margin-top: -3%;
-  //display: inline-block;
-  //justify-content: center; /* 水平居中 */
-  //text-align: center;
-  //left:auto;
+  display: inline-block;
+  justify-content: center; /* 水平居中 */
+  text-align: center;
+  left:auto;
 
 }
 
 .favorate_container{
   width: 100%;
   height: 100%;
-  //margin-left: 100px;
+  margin-left: 100px;
   justify-content: center;
   text-align: center;
   left:auto;
