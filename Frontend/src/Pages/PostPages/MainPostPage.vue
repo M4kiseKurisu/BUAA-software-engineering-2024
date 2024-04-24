@@ -405,6 +405,9 @@ export default {
             };
         }
     },
+    created() {
+        this.post_id = this.$route.params.postId;
+    },
     mounted() {
         axios({
             method: "GET",

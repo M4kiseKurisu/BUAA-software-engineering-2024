@@ -19,8 +19,10 @@
                     <span style="font-size: xx-large;font-weight: bold;">{{ courseName }}讨论区</span>
                     <span style="padding-left: 3%;font-size: large;color: darkgrey;">帖子数: {{ postNum }}</span>
                     <span style="padding-left: 3%;font-size: large;color: darkgrey;">关注数: {{ subscripNum }}</span>
-                    <span style="padding-left: 3%;" v-if = "!this.isFollow"><el-button type="primary" plain @click = "followSection">关注板块</el-button></span>
-                    <span style="padding-left: 3%;" v-if = "this.isFollow"><el-button type="primary" plain @click = "unFollowSection">取消关注</el-button></span>
+                    <span style="padding-left: 3%;" v-if="!this.isFollow"><el-button type="primary" plain
+                            @click="followSection">关注板块</el-button></span>
+                    <span style="padding-left: 3%;" v-if="this.isFollow"><el-button type="primary" plain
+                            @click="unFollowSection">取消关注</el-button></span>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
@@ -66,17 +68,14 @@
         <div style="width: 100%;height: 785px;background-color: white;display: flex;">
             <div style="width: 75%;height: 100%;border-right: 1px solid darkgray;">
                 <div style="width: 100%;height: 735px;">
-                    <PostItem></PostItem>
-                    <PostItem></PostItem>
-                    <PostItem></PostItem>
-                    <PostItem></PostItem>
+                    <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id"></PostItem>
                 </div>
                 <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
-                    <el-pagination background layout="prev, pager, next" :page-size="5" :total = "total"
+                    <el-pagination background layout="prev, pager, next" :page-size="5" :total="total"
                         style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />
                 </div>
             </div>
-            <div style="width: 25%; ">
+            <div style="width: 25%; min-width: 360px;">
                 <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
                 </div>
@@ -134,6 +133,17 @@ export default {
         ManagerItem,
         CreatorOfPostCenter
     },
+    computed: {
+        selectPostList() {
+            var begin, end;
+            begin = this.currentPage * 5 - 5;
+            end = this.currentPage * 5;
+            if (end > this.total) {
+                end = this.total;
+            }
+            return this.postList.slice(begin, end);
+        }
+    },
     data() {
         return {
             show_Creator: false,
@@ -160,7 +170,7 @@ export default {
             },],
             sortKindStr: '',
             tagKind: '',
-            isFollow : false,
+            isFollow: false,
         }
     },
     methods: {
@@ -180,7 +190,7 @@ export default {
             this.currentPage = val;
         },
         toPost() {
-            this.$router.push({ path: "/MainPage/Course_Center/CreatePost" });
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId});
         },
         followSection() {
             axios({
@@ -197,46 +207,57 @@ export default {
                 url: "api/section/posts",
                 params: { section_id: this.sectionId },
             }).then((result) => {
-                this.postList = result.posts;
-                this.total = result.posts.length;
+                //console.log(result);
+                this.postList = result.data.posts;
+                this.total = result.data.posts.length;
+                //console.log(this.postList[0].post_id);
             })
         },
         getSectionInfomation() {
             axios({
                 method: "GET",
                 url: "/api/section/info",
-                data: { section_id: this.sectionId },
+                params: { section_id: this.sectionId },
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.courseName = result.data.course_name;
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
             })
         },
-        followSection(){
+        followSection() {
             axios({
                 method: "POST",
                 url: "/api/section/focus",
                 data: { section_id: this.sectionId },
             }).then((result) => {
                 console.log(result);
-                this.isFollow = true;
+                if (result.data.success) {
+                    this.isFollow = true;
+                }
             })
         },
-        unFollowSection(){
+        unFollowSection() {
             axios({
                 method: "POST",
                 url: "/api/section/unfocus",
                 data: { section_id: this.sectionId },
             }).then((result) => {
                 console.log(result);
-                this.isFollow = false;
+                if (result.data.success) {
+                    this.isFollow = false;
+                }
             })
         },
     },
+    mounted() {
+
+    },
     created() {
-        //this.getPostList();
+        this.sectionId = this.$route.params.sectionId;
+        console.log(this.$route.params.sectionId);
+        this.getPostList();
         this.getSectionInfomation();
     }
 }

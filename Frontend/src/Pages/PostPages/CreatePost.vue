@@ -91,7 +91,7 @@ export default {
 
             //注册账号信息打包
             let content = {
-                section_id: 1,
+                section_id: this.sectionId,
                 author_id: JSON.parse(sessionStorage.getItem("id")),
                 title: this.inputTitle,
                 content: contentToUpload,
@@ -132,6 +132,9 @@ export default {
             console.log(uploadFile, uploadFiles)
         },
     },
+    created() {
+        this.sectionId = this.$route.params.sectionId;
+    },
     data() {
         return {
             inputTitle: "",
@@ -150,6 +153,7 @@ export default {
             inputVisible: false,
             dynamicTags: [],
             fileList: [],  //上传资源列表
+            sectionId:1,
         }
     },
     setup() {

@@ -28,7 +28,7 @@
                             alt="">&ensp;{{ likeNum }}</span>
                 </div>
                 <div style="display: flex;align-items: center; flex-grow: 1;justify-content: end;">
-                    <span style="margin-right: 5%;"><el-button type="primary">查看详情</el-button></span>
+                    <span style="margin-right: 4%;"><el-button type="primary" @click = "goToPost()">查看详情</el-button></span>
                 </div>
             </div>
         </div>
@@ -40,9 +40,9 @@ import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     props: {
-        postId: {
+        getPostId: {
             type: Number,
-            default: 12,
+            default: 10,
         },
         postInfo: {
             type: Object,
@@ -59,7 +59,7 @@ export default {
             time: '2022.22.2.2',
             starNum: 999,
             likeNum: 999,
-            //postId: 1,
+            postId: 1,
             authorId: 1,
         }
     },
@@ -84,21 +84,26 @@ export default {
                     this.cover = result.data.images[0];
                 }
             });
+        },
+        goToPost(){
+            this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
         }
     },
     created() {
+        console.log(this.postInfo);
         if (this.postInfo != null) {
-            this.postId = postInfo.post_id;
-            this.title = postInfo.post_title;
-            this.authorId = postInfo.author_id;
-            this.authorName = postInfo.author_name;
-            this.introduction = postInfo.post_content;
-            this.time = postInfo.create_time;
-            this.tags = postInfo.tag_list;
-            this.likeNum = postInfo.post_likes;
-            this.starNum = postInfo.post_favorites;
-            this.cover = postInfo.post_photo;
+            this.postId = this.postInfo.post_id;
+            this.title = this.postInfo.post_title;
+            this.authorId = this.postInfo.author_id;
+            this.authorName = this.postInfo.author_name;
+            this.introduction = this.postInfo.post_content;
+            this.time = this.postInfo.create_time;
+            this.tags = this.postInfo.tag_list;
+            this.likeNum = this.postInfo.post_likes;
+            this.starNum = this.postInfo.post_favorites;
+            this.cover = this.postInfo.post_photo;
         } else {
+            this.postId = this.getPostId;
             this.GetInfomation();
         }
     }

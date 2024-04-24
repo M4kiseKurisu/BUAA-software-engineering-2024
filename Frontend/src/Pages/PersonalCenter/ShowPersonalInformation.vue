@@ -3,7 +3,7 @@
         <BreadcrumbLabel :routeNames="route" />
     </div>
     <div style="width: calc(100vw - 205px); background-color: aliceblue;height: calc(100vh - 115px);">
-        <div style="width: 100%;height: 30%; display: flex;align-items: center;justify-content: center;">
+        <div style="width: 100%;height: 30%;min-height: 252px; display: flex;align-items: center;justify-content: center;">
             <div style="width: 95%;height: 90%;background-color: white;display: flex;">
                 <div
                     style="height: 100%; aspect-ratio: 1/1 ; background-color: white;display: flex;justify-content: center;align-items: center;">
@@ -135,7 +135,7 @@ export default {
                 this.postCount = result.data.post_count;
                 this.likeCount = result.data.like_count;
                 this.sign = result.data.sign;
-                this.isFollow = result.data._follow;
+                this.isFollow = result.data.flag_follow;
             });
         },
         followOther() {

@@ -69,11 +69,11 @@ const router = createRouter({
                             component: PersonalCourse,
                         },
                         {
-                            path: 'PostPage',
+                            path: 'PostPage/:postId',
                             component: PostPage,
                         },
                         {
-                            path: 'PostCenter',
+                            path: 'PostCenter/:sectionId',
                             component: PostCenter,
                         },
                         {
@@ -89,7 +89,7 @@ const router = createRouter({
                             component: ShowPersonalInformation,
                         },
                         {
-                            path: 'CreatePost',
+                            path: 'CreatePost/:sectionId',
                             component: CreatePost,
                         },
                     ]
