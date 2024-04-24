@@ -19,6 +19,6 @@ public class UserSocialInfoResponse {
     private Integer comment_count;
     private Integer like_count;
     private String sign;
-    private boolean is_follow;    //  是否关注了该用户
-    private boolean is_blocked;     //  是否被封禁
+    private boolean flag_follow;    //  是否关注了该用户
+    private boolean flag_blocked;     //  是否被封禁
 }

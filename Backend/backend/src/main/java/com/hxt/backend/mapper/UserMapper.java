@@ -72,7 +72,7 @@ public interface UserMapper {
     @Update("UPDATE user_info SET password = #{password} WHERE user_id = #{id}")
     int resetPassword(Integer id, String password);
 
-    @Select("select user_id from user_info;")
+    @Select("select user_id from user_info order by user_id")
     List<Integer> selectAllUserId();
 
     @Select("SELECT COUNT(*) FROM user_info")
