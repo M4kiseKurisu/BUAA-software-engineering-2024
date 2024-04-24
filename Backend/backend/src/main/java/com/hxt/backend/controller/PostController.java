@@ -327,7 +327,10 @@ public class PostController {
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         }
-
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        System.out.println(comment_id);
+        System.out.println(replied_author_id);
+        System.out.println(author_id);
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         

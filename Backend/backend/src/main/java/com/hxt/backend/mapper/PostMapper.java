@@ -132,7 +132,7 @@ public interface PostMapper {
     //添加评论
     @Options(useGeneratedKeys = true, keyProperty = "comment_id", keyColumn = "comment_id")
     @Insert("INSERT INTO comment (post_id, author_id, content, time, reply_count, like_count) " +
-            "VALUES (#{postId}, #{authorId}, #{content}, #{commentTime}, #{replyCount}, #{likeCount})")
+            "VALUES (#{post_id}, #{author_id}, #{content}, #{commentTime}, #{reply_count}, #{like_count})")
     int insertComment(Comment comment);
     
     
