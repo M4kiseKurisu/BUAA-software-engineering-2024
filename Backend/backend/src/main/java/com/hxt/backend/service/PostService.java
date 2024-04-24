@@ -1,9 +1,7 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
-import com.hxt.backend.entity.post.Comment;
-import com.hxt.backend.entity.post.Post;
-import com.hxt.backend.entity.post.Reply;
+import com.hxt.backend.entity.post.*;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.postResponse.CommentResponse;
 import com.hxt.backend.response.postResponse.PostResponse;
@@ -101,6 +99,11 @@ public class PostService {
     public Integer postInsertResource(Integer postId, Integer resourceId) {
         return postMapper.insertPostResource(postId, resourceId);
     }
+    
+    public Integer getCategoryByPostId(Integer postId) {
+        return postMapper.getCategoryByPostId(postId);
+    }
+    
     
     // 获取帖子图片的url
     public List<String> getPostImage(Integer postId) {
@@ -207,6 +210,37 @@ public class PostService {
         return commentResponses;
     }
     
+    //点赞帖子
+    public Integer thumbPost(Integer postId, Integer user_id) {
+        PostLike postLike = postMapper.getPostLike(postId, user_id);
+        if (postLike == null) {
+            Timestamp likeTime = new Timestamp(System.currentTimeMillis());
+            postMapper.insertPostLike(postId, user_id, 1, likeTime);
+            return 1;
+        } else {
+            postMapper.updatePostLikeStatus(postLike.getPlId(), 1 - postLike.getStatus());
+            return 1 - postLike.getStatus();
+        }
+    }
+    
+    //获取帖子-点赞状态
+    public Integer postLikeStatus(Integer postId, Integer user_id) {
+        PostLike postLike = postMapper.getPostLike(postId, user_id);
+        if (postLike == null) {
+            return 0;
+        } else {
+            return postLike.getStatus();
+        }
+    }
+    
+    //更新帖子点赞数
+    public Integer updatePostLikeCount(Integer postId, Integer op) {
+        postMapper.updatePostLikeCount(postId, op);
+        Post post = postMapper.getPost(postId);
+        return post.getLike_count();
+    }
+    
+    
     //创建评论
     public Integer createComment(String content, Integer postId, Integer authorId) {
         if (postId == null || authorId == null) {
@@ -221,19 +255,27 @@ public class PostService {
         return comment.getComment_id();
     }
     
+    //评论插图
     public Integer commentInsertImage(Integer commentId, Integer imageId) {
         return postMapper.insertCommentImage(commentId, imageId);
     }
     
+    //评论插资源
     public Integer commentInsertResource(Integer commentId, Integer resourceId) {
         return postMapper.insertCommentResource(commentId, resourceId);
     }
     
+    //删除评论
     public Integer deleteComment(Integer id) {
         if (postMapper.getCommentById(id) == null) {
             return -1;
         }
         return postMapper.deleteComment(id);
+    }
+    
+    //通过评论id获取帖子id
+    public Integer getPostIdByCommentId(Integer commentId) {
+        return postMapper.getPostIdByCommentId(commentId);
     }
     
     public void updateViewCount(Integer post_id) {
@@ -243,7 +285,7 @@ public class PostService {
     
     public void updatePostCommentCount(Integer post_id, Integer op) {
         Integer newCommentCount = postMapper.getPost(post_id).getComment_count() + op;
-        postMapper.updateViewCount(post_id, newCommentCount);
+        postMapper.updateCommentCount(post_id, newCommentCount);
     }
     
     public void updateCommentReplyCount(Integer comment_id, Integer op) {
@@ -255,6 +297,35 @@ public class PostService {
         return postMapper.getCommentIdByReplyId(replyId);
     }
     
+    //点赞评论
+    public Integer thumbComment(Integer commentId, Integer user_id) {
+        CommentLike commentLike = postMapper.getCommentLike(commentId, user_id);
+        if (commentLike == null) {
+            Timestamp likeTime = new Timestamp(System.currentTimeMillis());
+            postMapper.insertCommentLike(commentId, user_id, 1, likeTime);
+            return 1;
+        } else {
+            postMapper.updateCommentLikeStatus(commentLike.getClId(), 1 - commentLike.getStatus());
+            return 1 - commentLike.getStatus();
+        }
+    }
+    
+    //获取评论-点赞状态
+    public Integer commentLikeStatus(Integer commentId, Integer user_id) {
+         CommentLike commentLike= postMapper.getCommentLike(commentId, user_id);
+        if (commentLike == null) {
+            return 0;
+        } else {
+            return commentLike.getStatus();
+        }
+    }
+    
+    //更新评论点赞数
+    public Integer updateCommentLikeCount(Integer commentId, Integer op) {
+        postMapper.updateCommentLikeCount(commentId, op);
+        Comment comment = postMapper.getCommentById(commentId);
+        return comment.getLike_count();
+    }
     
     // 创建回复
     public Integer createReply(Integer commentId, Integer repliedAuthorId, Integer authorId, String content) {
@@ -271,4 +342,35 @@ public class PostService {
         }
         return postMapper.deleteReply(id);
     }
+    
+    //点赞评论
+    public Integer thumbReply(Integer replyId, Integer user_id) {
+        ReplyLike replyLike = postMapper.getReplyLike(replyId, user_id);
+        if (replyLike == null) {
+            Timestamp likeTime = new Timestamp(System.currentTimeMillis());
+            postMapper.insertReplyLike(replyId, user_id, 1, likeTime);
+            return 1;
+        } else {
+            postMapper.updateReplyLikeStatus(replyLike.getRlId(), 1 - replyLike.getStatus());
+            return 1 - replyLike.getStatus();
+        }
+    }
+    
+    //获取回复-点赞状态
+    public Integer replyLikeStatus(Integer replyId, Integer user_id) {
+        ReplyLike replyLike= postMapper.getReplyLike(replyId, user_id);
+        if (replyLike == null) {
+            return 0;
+        } else {
+            return replyLike.getStatus();
+        }
+    }
+    
+    //更新回复点赞数
+    public Integer updateReplyLikeCount(Integer replyId, Integer op) {
+        postMapper.updateReplyLikeCount(replyId, op);
+        Reply reply = postMapper.getReplyById(replyId);
+        return reply.getLike_count();
+    }
+    
 }
