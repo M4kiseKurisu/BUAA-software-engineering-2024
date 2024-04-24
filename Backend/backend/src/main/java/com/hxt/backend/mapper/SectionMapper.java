@@ -3,11 +3,7 @@ package com.hxt.backend.mapper;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.entity.section.Teacher;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -30,6 +26,9 @@ public interface SectionMapper {
     @Select("select * from course_teacher where section_id = #{id};")
     ArrayList<Teacher> selectTeacherBySectionId(Integer id);
 
+    @Select("select user_id from authority where section_id = #{id} and category like \"助教\";")
+    ArrayList<Integer> selectAssistantBySectionId(Integer id);
+
     @Select("select count(*) from post where section_id = #{id};")
     Integer getPostCountBySectionId(Integer id);
 
@@ -46,6 +45,11 @@ public interface SectionMapper {
     Integer getUserSectionFocusState(Integer userId, Integer sectionId);
 
     @Select("select * from post where section_id = #{id};")
+    @Results({
+            @Result(column = "post_id", property = "post_id", id = true),
+            @Result(column = "time", property = "postTime"),
+            @Result(column = "author_id", property = "authorId")
+    })
     ArrayList<Post> selectPostBySectionId(Integer id);
 
     //  供管理员使用

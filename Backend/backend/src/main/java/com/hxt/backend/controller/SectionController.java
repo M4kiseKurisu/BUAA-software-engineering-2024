@@ -1,10 +1,7 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
-import com.hxt.backend.response.sectionResponse.PostElement;
-import com.hxt.backend.response.sectionResponse.PostListResponse;
-import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
-import com.hxt.backend.response.sectionResponse.SectionElement;
+import com.hxt.backend.response.sectionResponse.*;
 import com.hxt.backend.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +90,7 @@ public class SectionController {
         }
     }
 
+    @GetMapping("/section/posts")
     public PostListResponse getSectionPosts(
             @RequestParam(name = "section_id", defaultValue = "") String sectionId,
             @RequestParam(name = "sort", defaultValue = "0") String sort,
@@ -104,6 +102,18 @@ public class SectionController {
         }
         ArrayList<PostElement> list = sectionService.getSectionPosts(Integer.parseInt(sectionId),sort,postType,tagName);
         return new PostListResponse(true,list);
+    }
+
+    @GetMapping("/section/info")
+    public SectionInfoResponse getSectionInfo(
+            @RequestParam(name = "section_id", defaultValue = "") String sectionId
+    ) {
+        if (sectionId.isEmpty()) {
+            SectionInfoResponse response = new SectionInfoResponse();
+            response.setSuccess(false);
+            return response;
+        }
+        return sectionService.getSectionInfo(Integer.parseInt(sectionId));
     }
     
 }

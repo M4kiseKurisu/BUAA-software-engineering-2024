@@ -19,10 +19,9 @@ public class SectionInfoResponse {
     private Integer course_credit;
     private Integer course_capacity;
     private Integer course_follows;
-    private Integer course_post;
+    private Integer course_posts;
     private String course_info;
     private String course_college;
-    private ArrayList<String> course_tags;
     private ArrayList<TeacherElement> teachers;
     private ArrayList<Integer> assistants;
 }

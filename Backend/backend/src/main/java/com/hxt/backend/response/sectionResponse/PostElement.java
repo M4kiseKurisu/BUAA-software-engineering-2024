@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,8 +19,8 @@ public class PostElement {
     private String post_title;
     private String post_content;
     private Integer post_favorites;
-    private Integer post_like;
-    private ArrayList<String> tag_list;
+    private Integer post_likes;
+    private List<String> tag_list;
     private String post_photo;
     private Timestamp post_time;
 }
