@@ -21,6 +21,7 @@ public class Comment {
     private Integer post_id;
     private Integer author_id;
     private String content;
+    
     @Column(name = "time")
     private Timestamp commentTime;
     private Integer like_count;
