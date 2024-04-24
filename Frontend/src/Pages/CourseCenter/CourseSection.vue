@@ -19,7 +19,7 @@
             <div class="other-inf">
               <span class="other-info">课程类型:{{ course.course_type }}</span>
               <span class="other-info">开课院系:{{ course.course_college }}</span>
-              <span class="other-info">学分:{{ course.course_credits }}</span>
+              <span class="other-info">学分:{{ course.course_credit }}</span>
             </div>
           </div>
           <div class="first-card-right">
@@ -52,28 +52,37 @@
         </div>
         <div class="course-teacher-container">
           <div class="course-teacher">
+
           <span class="cs-title">
             教师介绍
           </span>
+            <div v-if="teachers.length!==0">
+              <div class="pic-name">
+                <div class="teacher-pic-container">
+                  <img :src="selectedTeacher.teacher_picture" style="width: auto; height: 100px;" alt="">
+                </div>
+                <div class="teacher-name-container">
+                  <span class="teacher-name">{{ selectedTeacher.teacher_name }}</span>
+                </div>
+              </div>
+              <span class="introduction-of-">{{selectedTeacher.teacher_introduction }}</span>
+              <div class="pagination-container">
+                <el-pagination
+                    v-model="currentPage"
+                    :page-size="pageSize"
+                    layout="prev, pager, next"
+                    :total="teachers.length"
+                    @current-change="handleCurrentChange"
+                ></el-pagination>
+              </div>
+            </div>
+            <div v-else class="pic-name">
+              <span class="description-of-course">
+                暂无教师信息
+              </span>
 
-            <div class="pic-name">
-              <div class="teacher-pic-container">
-                <img :src="selectedTeacher.teacher_picture" style="width: auto; height: 100px;" alt="">
-              </div>
-              <div class="teacher-name-container">
-                <span class="teacher-name">{{ selectedTeacher.teacher_name }}</span>
-              </div>
             </div>
-            <span class="introduction-of-">{{selectedTeacher.teacher_introduction }}</span>
-            <div class="pagination-container">
-              <el-pagination
-                  v-model="currentPage"
-                  :page-size="pageSize"
-                  layout="prev, pager, next"
-                  :total="teachers.length"
-                  @current-change="handleCurrentChange"
-              ></el-pagination>
-            </div>
+
           </div>
         </div>
 
@@ -139,7 +148,7 @@ export default defineComponent({
         course_type:"核心专业课",
         course_tags:["标签一","标签二"],
         course_college:"计算机学院",
-        course_credits:"114.514",
+        course_credit:"114.514",
         course_capacity:"1919",
         course_follows:"810",
         course_info:"太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太没意思了傻软😫👎太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍",
@@ -211,15 +220,31 @@ export default defineComponent({
      // console.log(sectionId)
       axios({
         method:"GET",
-        url:"/section/info",
-        section_id:sectionId,
+        url:"api/section/info",
+        params:{section_id:sectionId},
+
       })
           //axios.get(`/section/info/${sectionId}`).
           .then(response => {
-            console.log(response)
+            console.log(response.data)
             // 请求成功，将返回的课程信息赋值给组件的 course 对象
-            this.course = response.course;
-            this.teachers=response.teachers;
+            this.course.course_info = response.data.course_info;
+            this.course.course_name = response.data.course_name;
+            this.course.course_college = response.data.course_college;
+            this.course.course_credit = response.data.course_credit;
+            this.course.course_posts = response.data.course_posts;
+            this.course.course_type = response.data.course_type;
+            this.course.course_capacity = response.data.course_capacity;
+            this.course.course_follows = response.data.course_follows;
+            this.teachers=response.data.teachers;
+            /*if (this.teachers.length === 0) {
+              this.teachers = [{
+
+                teacher_name: "暂无信息",
+                teacher_introduction: "暂无信息",
+                teacher_picture: ""
+              }];
+            }*/
             console.log(this.course)
             console.log(this.teachers)
           })
@@ -391,6 +416,7 @@ export default defineComponent({
 
 .description-of-course{
   margin-top: 30px;
+  margin-bottom: 30px;
 }
 .course-teacher-container{
   width: 30%;

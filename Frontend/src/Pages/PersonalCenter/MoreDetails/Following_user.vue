@@ -37,6 +37,7 @@
 
 import FollowingShow from "@/Components/Group/FollowingShow.vue";
 import {Search} from "@element-plus/icons-vue";
+import axios from "axios";
 export default {
   data(){
     return{
@@ -85,6 +86,15 @@ export default {
       //分离关注用户的前四个内容
       return (this.followingList.length === 0) ? null : this.followingList.slice(0, 4);
     },
+  },
+  mounted() {
+    axios({
+      method: "GET",
+      url: "/api/user/following"
+    }).then((result) => {
+      console.log(result);
+      this.followingList = result.data.user;
+    })
   }
 }
 </script>
