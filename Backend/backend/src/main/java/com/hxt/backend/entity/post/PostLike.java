@@ -18,11 +18,11 @@ public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pl_id")
-    private Integer plId;
+    private Integer pl_id;
     @Column(name = "user_id")
-    private Integer userId;
+    private Integer user_id;
     @Column(name = "post_id")
-    private Integer postId;
+    private Integer post_id;
     @Column(name = "status")
     private Integer status;
     @Column(name = "time")

@@ -19,11 +19,11 @@ public class ReplyLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rl_id")
-    private Integer rlId;
+    private Integer rl_id;
     @Column(name = "user_id")
-    private Integer userId;
+    private Integer user_id;
     @Column(name = "reply_id")
-    private Integer replyId;
+    private Integer reply_id;
     @Column(name = "status")
     private Integer status;
     @Column(name = "time")

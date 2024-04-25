@@ -132,8 +132,8 @@ public class UserService {
                         post.getPost_id(),
                         post.getTitle(),
                         post.getContent(),
-                        userMapper.getUserNameById(post.getAuthorId()),
-                        post.getAuthorId(),
+                        userMapper.getUserNameById(post.getAuthor_id()),
+                        post.getAuthor_id(),
                         sectionMapper.getSectionNameById(post.getSection_id()),
                         postMapper.getTagNameByPost(post.getPost_id())
                 );

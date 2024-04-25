@@ -25,7 +25,8 @@ public class PostController {
     @RequestMapping (value="/posts/post")
     public PostResponse showPost(
             @RequestParam(name = "post_id", required = false) Integer post_id,
-            @RequestParam(name = "comment_sort", required = false) Integer comment_sort
+            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         if (post_id == null) {
             Post post = null;
@@ -63,7 +64,7 @@ public class PostController {
         postResponse.setResources(resources);
         
         //获取帖子评论
-        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort);
+        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
         postResponse.setComments(comments);
         
         postResponse.setSuccess(true);
@@ -188,8 +189,11 @@ public class PostController {
     ) {
         //获取点赞状态
         Integer status = postService.postLikeStatus(post_id, Integer.parseInt(user_id));
-        
+        System.out.println("-----------");
+        System.out.println(status);
+        System.out.println(post_id);
         if (status == 1) {
+            System.out.println("test");
             return new IsLikeResponse(true);
         }
         
@@ -324,7 +328,10 @@ public class PostController {
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         }
-
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        System.out.println(comment_id);
+        System.out.println(replied_author_id);
+        System.out.println(author_id);
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         

@@ -79,10 +79,6 @@ export default {
         ]
     }
 
-    if (this.isComment === false) {
-        toolbarConfig.excludeKeys.push("group-image");  // 评论回复取消图片上传按钮
-    }
-
     const images = ref([]);
 
     const editorConfig = { 

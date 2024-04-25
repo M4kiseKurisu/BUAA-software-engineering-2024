@@ -73,7 +73,7 @@ public class PostService {
         if (postMapper.getPost(id) == null) {
             return null;
         }
-        return postMapper.getPost(id).getAuthorId();
+        return postMapper.getPost(id).getAuthor_id();
     }
     
     public User getAuthor(Integer id) {
@@ -142,7 +142,7 @@ public class PostService {
     }
     
     // 获取帖子的评论
-    public List<CommentResponse> getPostComments(Integer postId, Integer sort) {
+    public List<CommentResponse> getPostComments(Integer postId, Integer sort, Integer userId) {
         List<Comment> commentList;
         List<CommentResponse> commentResponses = new ArrayList<>();
         switch (sort) {
@@ -167,6 +167,14 @@ public class PostService {
             String authorHead = imageMapper.getImage(userMapper.selectUserById(authorId).getHeadId());
             commentResponse.setComment_author_name(authorName);
             commentResponse.setComment_author_head(authorHead);
+            
+            //获取用户是否点赞评论
+            Integer status = commentLikeStatus(comment.getComment_id(), userId);
+            if (status == 1) {
+                commentResponse.setComment_isLike(true);
+            } else {
+                commentResponse.setComment_isLike(false);
+            }
             
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
@@ -200,6 +208,20 @@ public class PostService {
                 String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
+                
+                //获取用户是否点赞评论
+                Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
+                if (replyStatus == 1) {
+                    replyResponse.setReply_isLike(true);
+                } else {
+                    replyResponse.setReply_isLike(false);
+                }
+                
+                //获取被评论用户名字
+                Integer repliedAuthorId = reply.getReplied_author_id();
+                String name = userMapper.getUserNameById(repliedAuthorId);
+                replyResponse.setReplied_author_name(name);
+                
                 replyResponses.add(replyResponse);
             }
             commentResponse.setReplies(replyResponses);
@@ -212,15 +234,24 @@ public class PostService {
     
     //点赞帖子
     public Integer thumbPost(Integer postId, Integer user_id) {
+        System.out.println(postId);
+        System.out.println(user_id);
         PostLike postLike = postMapper.getPostLike(postId, user_id);
-        
+        System.out.println(postLike);
         if (postLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertPostLike(postId, user_id, 1, likeTime);
             return 1;
         } else {
+            System.out.println("----------");
+            System.out.println(postLike.getStatus());
             Integer newStatus = 1 - postLike.getStatus();
-            postMapper.updatePostLikeStatus(postLike.getPlId(), newStatus);
+<<<<<<< HEAD
+            System.out.println(newStatus);
+            System.out.println(postLike.getPl_id());
+=======
+>>>>>>> 17bfdbaa1fd503f8981350e451fe29fd7227ebec
+            postMapper.updatePostLikeStatus(postLike.getPl_id(), newStatus);
             return newStatus;
         }
     }
@@ -308,7 +339,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - commentLike.getStatus();
-            postMapper.updateCommentLikeStatus(commentLike.getClId(), newStatus);
+            postMapper.updateCommentLikeStatus(commentLike.getCl_id(), newStatus);
             return newStatus;
         }
     }
@@ -333,6 +364,7 @@ public class PostService {
     // 创建回复
     public Integer createReply(Integer commentId, Integer repliedAuthorId, Integer authorId, String content) {
         if (commentId == null  || repliedAuthorId == null || authorId == null) {
+            System.out.println("************");
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
@@ -355,7 +387,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - replyLike.getStatus();
-            postMapper.updateReplyLikeStatus(replyLike.getRlId(), newStatus);
+            postMapper.updateReplyLikeStatus(replyLike.getRl_id(), newStatus);
             return newStatus;
         }
     }

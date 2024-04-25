@@ -19,7 +19,10 @@
             <div class="personal-course-left-container">
 
                 <div class="left-first-row-container">
-                    <el-avatar shape="square" :size="120" :src="this.avatarPicture" />
+                    <div class="avatar-container-120">
+                        <el-avatar shape="square" :size="120" :src="this.avatarPicture" />
+                    </div>
+                    
 
                     <div class="left-first-row-right-container">
                         <div class="personal-course-username">{{ this.username }}</div>
@@ -138,9 +141,8 @@ export default {
     data() {
         return {
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
-            poster: "./src/Images/buaaPoster1.jpg", //本页面要展示的图片
-            avatarPicture: "./src/Images/testAvatar.jpg",  //本界面要展示的头像图片测试
-            username: "M4kiseKurisu",  //本界面要展示的昵称信息
+            avatarPicture: "",  //本界面要展示的头像图片测试
+            username: "",  //本界面要展示的昵称信息
             courseNumber: 0,  //本用户关注板块数
             followingCourseList: [],
             sortOptions: [
@@ -193,6 +195,12 @@ export default {
         },
         searchSession() {
             // 搜索板块
+            console.log({
+                keyword: this.tagInput,
+                sort: this.sortValue1,
+                type: this.sortValue2,
+                academy: this.sortValue3,
+            })
             axios({
                 method: "GET",
                 url: "/api/section/search",
@@ -247,6 +255,25 @@ export default {
         }).then((result) => {
             this.courseNumber = result.data.count;
             this.followingCourseList = result.data.sections;
+        })
+
+        // 获取用户基本信息
+        axios({
+            method: "GET",
+            url: "/api/user/info",
+        }).then((result) => {
+            this.username = result.data.name;
+        })
+
+        // 获取用户头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head",
+            params: {
+                user_id: JSON.parse(sessionStorage.getItem('id')),
+            }
+        }).then((result) => {
+            this.avatarPicture = result.data.info;
         })
     }
 }
@@ -327,10 +354,10 @@ export default {
 }
 
 .personal-course-username {
-    height: 34px;
+    width: 90%;
     font-size: 24px;
-    overflow: hidden;
     color: #101010;
+    margin-top: -10px;
 }
 
 .personal-course-courseNumber {
@@ -451,5 +478,10 @@ export default {
     margin-left: 27px;
     font-size: 15px;
     color: #86909c;
+}
+
+.avatar-container-120 {
+    height: 120px;
+    width: 120px;
 }
 </style>

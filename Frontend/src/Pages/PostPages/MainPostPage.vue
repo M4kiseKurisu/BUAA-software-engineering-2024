@@ -209,7 +209,7 @@
                     /> -->
 
                     <div class="reply-editor-container">
-                        <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item.comment_author_id" :author_id="this.userId"/>
+                        <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item.comment_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item.comment_author_id"/>
                     </div>
                 </div>
 
@@ -231,7 +231,7 @@
 
                             <div class="replys-reply-middle-font">回复</div>
 
-                            <div class="replyer-username">{{ item2.replied_author_id }}</div>
+                            <div class="replyer-username">{{ item2.replied_author_name }}</div>
                             <div class="replys-reply-delete-button" v-if="item2.reply_author_id === this.userId">
                                 <button class="post-main-delete-button">
                                     <el-icon :size="16" color="#86909C"><Delete /></el-icon>
@@ -270,7 +270,7 @@
 
                     <div class="write-replys-reply" v-if="this.isReplysOpen2[index][index2]">
                         <div class="reply-editor-container">
-                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.replied_author_id" :author_id="this.userId"/>
+                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.replied_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item2.replied_author_id"/>
                         </div>
                     </div>
                 </div>
@@ -374,8 +374,8 @@ export default {
             }
 
             let i = this.currentCommentPage;
-            showComments.push(this.comments.slice((i - 1) * 3, i * 3));
-            //console.log(showComments);
+            showComments = this.comments.slice((i - 1) * 3, i * 3);
+            console.log(showComments);
             return showComments;
         },
         repliesArray() {
@@ -400,10 +400,13 @@ export default {
                 // }
 
                 let i = this.repliesCurrentPage[commentIndex];
-                showReplies.push(replies.slice((i - 1) * 3, i * 3));
+                showReplies = replies.slice((i - 1) * 3, i * 3);
                 return showReplies;
             };
         }
+    },
+    created() {
+        this.post_id = this.$route.params.postId;
     },
     mounted() {
         axios({
@@ -441,7 +444,8 @@ export default {
                 post_id: this.post_id,
             }
         }).then((result) => {
-            this.isLikePost = result.data.isLike;
+            console.log(result)
+            this.isLikePost = result.data.like;
         })
 
         axios({
@@ -530,6 +534,7 @@ export default {
                             type: 'success',
                         });
                         this.isLikePost = true;
+                        this.like_count++;
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -539,6 +544,7 @@ export default {
                             type: 'success',
                         });
                         this.isLikePost = false;
+                        this.like_count--;
                     }
                 }
             })
@@ -617,6 +623,7 @@ export default {
         openCommentEditor() {
             //开关评论编辑器
             this.isCommentEditorOpen = !this.isCommentEditorOpen
+            console.log(123);
         },
         changesort() {
             //更换排序方式
@@ -790,7 +797,7 @@ export default {
 }
 
 .post-page-tag-css {
-    width: 72px;
+    width: 45px;
     height: 26px;
     background-color: #e9f3ff;
     border: 1px solid #3894ff;

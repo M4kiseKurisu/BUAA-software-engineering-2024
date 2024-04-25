@@ -6,19 +6,26 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
-@Table(name = "post_resource")
+@Table(name = "favorite")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class PostResource {
+public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pr_id")
-    private Integer pr_id;
+    @Column(name = "favorite_id")
+    private Integer favorite_id;
+    
     @Column(name = "post_id")
     private Integer post_id;
-    @Column(name = "resource_id")
-    private Integer resource_id;
+    
+    @Column(name = "user_id")
+    private Integer user_id;
+    
+    @Column(name = "name")
+    private Timestamp favoriteTime;
 }

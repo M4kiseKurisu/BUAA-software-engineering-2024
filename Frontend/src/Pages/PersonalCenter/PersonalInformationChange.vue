@@ -107,23 +107,18 @@
                 <div class="right-content-container">
 
                     <div class="information-change-left-row">
-                        <div class="information-sign">登陆账号</div>
-                        <input type="text" class="input-type-1" v-model="this.inputAccount">
-                    </div>
-
-                    <div class="information-change-left-row">
-                        <div class="information-sign">用户邮箱</div>
-                        <input type="text" class="input-type-1" v-model="this.inputEmail">
+                        <div class="information-sign">旧密码</div>
+                        <input type="text" class="input-type-1" v-model="this.inputOldPassword">
                     </div>
 
                     <div class="information-change-left-row">
                         <div class="information-sign">新密码</div>
-                        <input type="text" class="input-type-1" v-model="this.inputNewPassword">
+                        <input type="password" class="input-type-1" v-model="this.inputNewPassword">
                     </div>
 
                     <div class="information-change-left-row">
                         <div class="information-sign">再次输入新密码</div>
-                        <input type="text" class="input-type-1" v-model="this.inputNewPassword2">
+                        <input type="password" class="input-type-1" v-model="this.inputNewPassword2">
                     </div>
 
                     <div class="button-container">
@@ -173,8 +168,7 @@ export default {
             inputEntryTime: "",
             inputSignature: "",
 
-            inputAccount: "",
-            inputEmail: "",
+            inputOldPassword: "",
             inputNewPassword: "",
             inputNewPassword2: "",
         }
@@ -277,8 +271,7 @@ export default {
         },
 
         emptyInformation2() {
-            this.inputAccount = "";
-            this.inputEmail = "";
+            this.inputOldPassword = "";
             this.inputNewPassword = "";
             this.inputNewPassword2 = "";
         },
@@ -296,15 +289,15 @@ export default {
             }
 
             let content = {
-                account: this.inputAccount,
-                email: this.inputEmail,
-                password: this.inputNewPassword,
+                id: JSON.parse(sessionStorage.getItem("id")),
+                old_password: this.inputOldPassword,
+                new_password: this.inputNewPassword,
             }
             console.log(content);
 
             axios({
                 method: "POST",
-                url: "/api/user/password/forget",
+                url: "/api/user/password/update",
                 data: content,
             }).then((result) => {
                 console.log(result);

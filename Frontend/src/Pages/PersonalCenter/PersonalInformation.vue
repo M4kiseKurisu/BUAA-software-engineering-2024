@@ -1,17 +1,38 @@
 <template>
     <!-- 此容器是为了设定宽度，让内部的所有元素都可以使用百分比宽度 -->
     <div class="page-container">
-      <div class="favorate_dialog">
-        <el-dialog v-model="show_favorate" :visible.sync="show_favorate" width="56%" top="5%" center>
-          <Favorate class="favorate"></Favorate>
-        </el-dialog>
-      </div>
-      <div class="following_user_dialog">
-        <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" width="40%" center top="5%">
-          <Following_user class="user-dialog"></Following_user>
+      <div>
+        <div class="favorate_dialog" v-if="favorateList.length!==0">
+          <el-dialog v-model="show_favorate" :visible.sync="show_favorate" width="56%" top="5%" center>
+            <Favorate class="favorate"></Favorate>
+          </el-dialog>
+        </div>
+        <div v-else>
+          <el-dialog v-model="show_favorate" :visible.sync="show_favorate" title="提示" width="20%" top="20%">
+            <div style="display: flex;justify-content: center">
+              <span style="font-size: 20px">暂无收藏信息</span>
+            </div>
 
-        </el-dialog>
+          </el-dialog>
+        </div>
       </div>
+      <div>
+        <div class="following_user_dialog" v-if="followingList.length!==0">
+          <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" width="40%" center top="5%">
+            <Following_user class="user-dialog"></Following_user>
+
+          </el-dialog>
+        </div>
+        <div v-else>
+          <el-dialog v-model="show_userfollowing" :visible.sync="show_userfollowing" title="提示" width="20%" top="20%">
+            <div style="display: flex;justify-content: center">
+              <span style="font-size: 20px">暂无关注信息</span>
+            </div>
+
+          </el-dialog>
+        </div>
+      </div>
+
         <!-- 此处为面包屑组件 -->
         <div class="breadcrumb"><BreadcrumbLabel :routeNames="route" /></div>
 
@@ -69,7 +90,7 @@
                 <!-- 收藏板块正文信息 -->
                 <div class="favorates-cards-container">
 
-                    <div v-if="favorateListLength != 0">
+                    <div v-if="favorateListLength !== 0">
                         <!-- 按顺序输出前三个用户收藏文章卡片 -->
                         <el-row :gutter="26">
                             <el-col :span="8" v-for="item in group1">
@@ -351,7 +372,7 @@ export default {
             url: "/api/user/following"
         }).then((result) => {
             console.log(result);
-            this.favorateList = result.data.following;
+            this.followingList = result.data.user;
         })
 
         // 获取系统信息
@@ -369,26 +390,26 @@ export default {
 <style scoped>
 
 .favorate_dialog {
-  //width: 60%;
-  //display: flex;
-  //justify-content: center; /* 水平居中 */
+  width: 60%;
+  display: flex;
+  justify-content: center; /* 水平居中 */
 }
 
 
 .favorate{
   width: 100%;
   margin-top: -3%;
-  //display: inline-block;
-  //justify-content: center; /* 水平居中 */
-  //text-align: center;
-  //left:auto;
+  display: inline-block;
+  justify-content: center; /* 水平居中 */
+  text-align: center;
+  left:auto;
 
 }
 
 .favorate_container{
   width: 100%;
   height: 100%;
-  //margin-left: 100px;
+  margin-left: 100px;
   justify-content: center;
   text-align: center;
   left:auto;

@@ -18,11 +18,11 @@ public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cl_id")
-    private Integer clId;
+    private Integer cl_id;
     @Column(name = "user_id")
-    private Integer userId;
+    private Integer user_id;
     @Column(name = "comment_id")
-    private Integer commentId;
+    private Integer comment_id;
     @Column(name = "status")
     private Integer status;
     @Column(name = "time")
