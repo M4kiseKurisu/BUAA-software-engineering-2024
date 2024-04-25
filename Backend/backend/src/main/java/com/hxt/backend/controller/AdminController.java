@@ -22,6 +22,7 @@ public class AdminController {
     @Resource
     private AdminService adminService;
     private String hasEmptyResponse = "信息填写不完整！";
+    private String authorityResponse = "该账号不具有相应权限！";
 
     @RequestMapping("/admin/login")
     public LoginResponse login(
@@ -38,7 +39,11 @@ public class AdminController {
         }
         int id = adminService.checkPassword(name, password);
         if (id > 0) {
-            Cookie cookie = new Cookie("user_id",String.valueOf(id));
+            Cookie cookie = new Cookie("user_id", String.valueOf(id));
+            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            cookie = new Cookie("type", "admin");
             cookie.setMaxAge(24 * 60 * 60);
             cookie.setPath("/");
             response.addCookie(cookie);
@@ -118,11 +123,15 @@ public class AdminController {
     @RequestMapping("/admin/block")
     public BasicInfoResponse blockUser(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "id", required = false) Integer id,
             @RequestParam(name = "days", required = false) Integer days
     ) {
+        System.out.println();
         if (user_id.isEmpty() || id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.blockUser(id, days);
         String info = (res)? "" : "服务器错误，操作失败";
@@ -132,10 +141,13 @@ public class AdminController {
     @RequestMapping("/admin/unblock")
     public BasicInfoResponse unblockUser(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "id", required = false) Integer id
     ) {
         if (user_id.isEmpty() || id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.unblockUser(id);
         String info = (res)? "" : "服务器错误，操作失败";

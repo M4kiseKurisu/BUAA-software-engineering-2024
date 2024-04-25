@@ -101,10 +101,8 @@ public class UserController {
         }
         int id = userService.checkPassword(name, password);
         if (id > 0) {
-            Cookie cookie = new Cookie("user_id",String.valueOf(id));
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            userService.setUserCookie("user_id", String.valueOf(id), response);
+            userService.setUserCookie("type", "user", response);
             return new LoginResponse(true, id, "", userService.setToken(id));
         } else {
             return new LoginResponse(false, id, "用户名或密码错误！", "");
