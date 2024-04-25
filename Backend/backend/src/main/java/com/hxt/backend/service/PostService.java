@@ -8,10 +8,6 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -38,12 +34,13 @@ public class PostService {
     private TagMapper tagMapper;
     
     // 创建帖子
-    public Integer createPost(String title, String content, Integer category, Integer sectionId, Integer authorId) {
-        if (title == null  || sectionId == null || authorId == null || category == null) {
+    public Integer createPost(String title, String intro, String content,
+                              Integer category, Integer sectionId, Integer authorId) {
+        if (title == null || intro == null || sectionId == null || authorId == null || category == null) {
             return -1;
         }
         Timestamp postTime = new Timestamp(System.currentTimeMillis());
-        Post post = new Post(0, title, content, category, sectionId, authorId,
+        Post post = new Post(0, title, intro, content, category, sectionId, authorId,
                 0, 0, 0, 0, postTime);
         Integer res = postMapper.insertPost(post);
         if (res == 0) {
@@ -73,7 +70,7 @@ public class PostService {
         if (postMapper.getPost(id) == null) {
             return null;
         }
-        return postMapper.getPost(id).getAuthorId();
+        return postMapper.getPost(id).getAuthor_id();
     }
     
     public User getAuthor(Integer id) {
@@ -142,7 +139,7 @@ public class PostService {
     }
     
     // 获取帖子的评论
-    public List<CommentResponse> getPostComments(Integer postId, Integer sort) {
+    public List<CommentResponse> getPostComments(Integer postId, Integer sort, Integer userId) {
         List<Comment> commentList;
         List<CommentResponse> commentResponses = new ArrayList<>();
         switch (sort) {
@@ -167,6 +164,14 @@ public class PostService {
             String authorHead = imageMapper.getImage(userMapper.selectUserById(authorId).getHeadId());
             commentResponse.setComment_author_name(authorName);
             commentResponse.setComment_author_head(authorHead);
+            
+            //获取用户是否点赞评论
+            Integer status = commentLikeStatus(comment.getComment_id(), userId);
+            if (status == 1) {
+                commentResponse.setComment_isLike(true);
+            } else {
+                commentResponse.setComment_isLike(false);
+            }
             
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
@@ -200,6 +205,20 @@ public class PostService {
                 String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
+                
+                //获取用户是否点赞回复
+                Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
+                if (replyStatus == 1) {
+                    replyResponse.setReply_isLike(true);
+                } else {
+                    replyResponse.setReply_isLike(false);
+                }
+                
+                //获取被评论用户名字
+                Integer repliedAuthorId = reply.getReplied_author_id();
+                String name = userMapper.getUserNameById(repliedAuthorId);
+                replyResponse.setReplied_author_name(name);
+                
                 replyResponses.add(replyResponse);
             }
             commentResponse.setReplies(replyResponses);
@@ -213,14 +232,13 @@ public class PostService {
     //点赞帖子
     public Integer thumbPost(Integer postId, Integer user_id) {
         PostLike postLike = postMapper.getPostLike(postId, user_id);
-        
         if (postLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertPostLike(postId, user_id, 1, likeTime);
             return 1;
         } else {
             Integer newStatus = 1 - postLike.getStatus();
-            postMapper.updatePostLikeStatus(postLike.getPlId(), newStatus);
+            postMapper.updatePostLikeStatus(postLike.getPl_id(), newStatus);
             return newStatus;
         }
     }
@@ -240,6 +258,45 @@ public class PostService {
         postMapper.updatePostLikeCount(postId, op);
         Post post = postMapper.getPost(postId);
         return post.getLike_count();
+    }
+    
+    // 收藏帖子
+    public Integer favoritePost(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+    
+        if (favorite != null) {
+            return 0;
+        } else {
+            Timestamp favoriteTime = new Timestamp(System.currentTimeMillis());
+            postMapper.insertPostFavorite(postId, user_id, favoriteTime);
+            return 1;
+        }
+    }
+    
+    // 取消收藏帖子
+    public Integer unfavoritePost(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+        if (favorite != null) {
+            postMapper.deleteFavorite(postId, user_id);
+            return 1;
+        }
+        return 0;
+    }
+    
+    // 获取帖子收藏状态
+    public Integer postFavoriteStatus(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+        if (favorite == null) {
+            return 0;
+        }
+        return 1;
+    }
+    
+    //更新帖子收藏数
+    public Integer updatePostFavoriteCount(Integer postId, Integer op) {
+        postMapper.updatePostFavoriteCount(postId, op);
+        Post post = postMapper.getPost(postId);
+        return post.getCollect_count();
     }
     
     
@@ -308,7 +365,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - commentLike.getStatus();
-            postMapper.updateCommentLikeStatus(commentLike.getClId(), newStatus);
+            postMapper.updateCommentLikeStatus(commentLike.getCl_id(), newStatus);
             return newStatus;
         }
     }
@@ -355,7 +412,7 @@ public class PostService {
             return 1;
         } else {
             Integer newStatus = 1 - replyLike.getStatus();
-            postMapper.updateReplyLikeStatus(replyLike.getRlId(), newStatus);
+            postMapper.updateReplyLikeStatus(replyLike.getRl_id(), newStatus);
             return newStatus;
         }
     }

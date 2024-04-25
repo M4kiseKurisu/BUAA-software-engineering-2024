@@ -16,9 +16,9 @@ public class PostTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pt_id")
-    private Integer ptId;
+    private Integer pt_id;
     @Column(name = "post_id")
-    private Integer postId;
+    private Integer post_id;
     @Column(name = "tag_id")
-    private Integer tagId;
+    private Integer tag_id;
 }

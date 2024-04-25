@@ -1,8 +1,6 @@
 package com.hxt.backend.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
 
@@ -30,4 +28,22 @@ public interface AdminMapper {
     @Update("UPDATE admin SET password = #{password} WHERE admin_id = #{id}")
     int resetPassword(Integer id, String password);
 
+    //  权限管理
+    @Insert("INSERT INTO authority(section_id, user_id, category) VALUES (#{section}, #{id}, #{type})")
+    int setAuthority(Integer id, Integer section, String type);
+
+    @Select("SELECT authority_id FROM authority WHERE user_id = #{id} AND section_id = #{section}")
+    Integer checkAuthority(Integer id, Integer section);
+
+    @Delete("DELETE FROM authority WHERE user_id = #{id} AND section_id = #{section}")
+    int deleteAuthority(Integer id, Integer section);
+
+    @Update("UPDATE user_info SET global_authority = 1 WHERE user_id = #{id}")
+    int setGlobalAuthority(Integer id);
+
+    @Select("SELECT global_authority FROM user_info WHERE user_id = #{id}")
+    Integer checkGlobalAuthority(Integer id);
+
+    @Update("UPDATE user_info SET global_authority = 0 WHERE user_id = #{id}")
+    int deleteGlobalAuthority(Integer id);
 }

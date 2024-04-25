@@ -14,6 +14,7 @@ import java.util.Map;
 public class PostResponse {
     private boolean success;
     private String title;
+    private String intro;
     private Integer author_id;
     private String author_name;
     private String author_head;
@@ -30,7 +31,8 @@ public class PostResponse {
     
     public PostResponse (Post post){
         this.title = post.getTitle();
-        this.author_id = post.getAuthorId();
+        this.intro = post.getIntro();
+        this.author_id = post.getAuthor_id();
         this.content = post.getContent();
         this.create_time = post.getPostTime().toString();
         this.commentCount = post.getComment_count();

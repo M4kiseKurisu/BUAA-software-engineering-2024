@@ -14,15 +14,13 @@ public interface TagMapper {
     
     @Select("SELECT * from tag where tag_id = #{id}")
     @Results({
-            @Result(column = "tag_id", property = "tagId", id = true),
-            @Result(column = "name", property = "name")
+            @Result(column = "tag_id", property = "tag_id", id = true),
     })
     Tag getTag(Integer id);
     
     @Select("SELECT tag_id from tag where name = #{name}")
     @Results({
-            @Result(column = "tag_id", property = "tagId", id = true),
-            @Result(column = "name", property = "name")
+            @Result(column = "tag_id", property = "tag_id", id = true),
     })
     Tag getTagByName(String name);
     

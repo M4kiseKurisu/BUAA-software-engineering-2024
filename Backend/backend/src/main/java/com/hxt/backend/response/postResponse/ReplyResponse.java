@@ -12,12 +12,14 @@ import lombok.Setter;
 public class ReplyResponse {
     private Integer reply_id;
     private Integer replied_author_id;
+    private String replied_author_name;
     private Integer reply_author_id;
     private String reply_author_head;
     private String reply_author_name;
     private String reply_content;
     private String reply_create_time;
     private Integer reply_like_count;
+    private boolean reply_isLike;
     
     public ReplyResponse(Reply reply) {
         this.reply_id = reply.getReply_id();

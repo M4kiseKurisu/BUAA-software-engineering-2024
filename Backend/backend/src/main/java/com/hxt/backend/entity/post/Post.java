@@ -19,11 +19,12 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer post_id;
     private String title;
+    private String intro;
     private String content;
     private Integer category; //帖子类型 0：普通，1：资源
     private Integer section_id;
     @Column(name = "author_id")
-    private Integer authorId; //发帖人id
+    private Integer author_id; //发帖人id
     private Integer like_count; //点赞数
     private Integer collect_count; //收藏数
     private Integer comment_count;
