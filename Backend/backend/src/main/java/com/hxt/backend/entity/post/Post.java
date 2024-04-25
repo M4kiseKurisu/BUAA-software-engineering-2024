@@ -19,6 +19,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer post_id;
     private String title;
+    private String intro;
     private String content;
     private Integer category; //帖子类型 0：普通，1：资源
     private Integer section_id;
