@@ -26,6 +26,6 @@ public class Favorite {
     @Column(name = "user_id")
     private Integer user_id;
     
-    @Column(name = "name")
+    @Column(name = "time")
     private Timestamp favoriteTime;
 }
