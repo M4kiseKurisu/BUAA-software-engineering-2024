@@ -8,10 +8,6 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -209,7 +205,7 @@ public class PostService {
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
                 
-                //获取用户是否点赞评论
+                //获取用户是否点赞回复
                 Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
                 if (replyStatus == 1) {
                     replyResponse.setReply_isLike(true);
@@ -234,23 +230,13 @@ public class PostService {
     
     //点赞帖子
     public Integer thumbPost(Integer postId, Integer user_id) {
-        System.out.println(postId);
-        System.out.println(user_id);
         PostLike postLike = postMapper.getPostLike(postId, user_id);
-        System.out.println(postLike);
         if (postLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertPostLike(postId, user_id, 1, likeTime);
             return 1;
         } else {
-            System.out.println("----------");
-            System.out.println(postLike.getStatus());
             Integer newStatus = 1 - postLike.getStatus();
-<<<<<<< HEAD
-            System.out.println(newStatus);
-            System.out.println(postLike.getPl_id());
-=======
->>>>>>> 17bfdbaa1fd503f8981350e451fe29fd7227ebec
             postMapper.updatePostLikeStatus(postLike.getPl_id(), newStatus);
             return newStatus;
         }
@@ -271,6 +257,45 @@ public class PostService {
         postMapper.updatePostLikeCount(postId, op);
         Post post = postMapper.getPost(postId);
         return post.getLike_count();
+    }
+    
+    // 收藏帖子
+    public Integer favoritePost(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+    
+        if (favorite != null) {
+            return 0;
+        } else {
+            Timestamp favoriteTime = new Timestamp(System.currentTimeMillis());
+            postMapper.insertPostFavorite(postId, user_id, favoriteTime);
+            return 1;
+        }
+    }
+    
+    // 取消收藏帖子
+    public Integer unfavoritePost(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+        if (favorite != null) {
+            postMapper.deleteFavorite(postId, user_id);
+            return 1;
+        }
+        return 0;
+    }
+    
+    // 获取帖子收藏状态
+    public Integer postFavoriteStatus(Integer postId, Integer user_id) {
+        Favorite favorite = postMapper.getFavorite(postId, user_id);
+        if (favorite == null) {
+            return 0;
+        }
+        return 1;
+    }
+    
+    //更新帖子收藏数
+    public Integer updatePostFavoriteCount(Integer postId, Integer op) {
+        postMapper.updatePostFavoriteCount(postId, op);
+        Post post = postMapper.getPost(postId);
+        return post.getCollect_count();
     }
     
     
@@ -364,7 +389,6 @@ public class PostService {
     // 创建回复
     public Integer createReply(Integer commentId, Integer repliedAuthorId, Integer authorId, String content) {
         if (commentId == null  || repliedAuthorId == null || authorId == null) {
-            System.out.println("************");
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());

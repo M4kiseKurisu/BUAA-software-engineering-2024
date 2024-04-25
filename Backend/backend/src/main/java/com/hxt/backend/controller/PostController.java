@@ -74,15 +74,14 @@ public class PostController {
     // 用户发帖
     @RequestMapping (value="/posts/write")
     public WritePostResponse writePost(
-            @RequestBody String info,
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "category", required = false) Integer category,
-            @RequestParam(name = "tags", required = false) List<String> tags,
-            @RequestParam(name = "images", required = false) List<String> images,
-            @RequestParam(name = "resources", required = false) List<String> resources
+            @RequestParam(name = "tags[]", required = false) String[] tags,
+            @RequestParam(name = "images[]", required = false) String[] images,
+            @RequestParam(name = "resources[]", required = false) String[] resources
     ) {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
@@ -97,7 +96,7 @@ public class PostController {
         }
 
         //创建帖子并存入数据库
-        System.out.println(info);
+        
         Integer post_id = postService.createPost(title, content, category, section_id, author_id);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
@@ -189,14 +188,74 @@ public class PostController {
     ) {
         //获取点赞状态
         Integer status = postService.postLikeStatus(post_id, Integer.parseInt(user_id));
-        System.out.println("-----------");
-        System.out.println(status);
-        System.out.println(post_id);
+        
         if (status == 1) {
-            System.out.println("test");
             return new IsLikeResponse(true);
         }
         
+        return new IsLikeResponse(false);
+    }
+    
+    //用户收藏帖子
+    @RequestMapping (value="/posts/favorite")
+    public BasicInfoResponse favoritePost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+
+    ) {
+        //向favorite表中插入数据
+        Integer status = postService.favoritePost(post_id, Integer.parseInt(user_id));
+    
+        String info = "";
+        if (status == 1) {
+            info = "收藏成功";
+            //帖子收藏数 +1
+            postService.updatePostFavoriteCount(post_id, 1);
+        } else if (status == 0) {
+            info = "已收藏该帖子";
+            return  new BasicInfoResponse(false, info);
+        }
+    
+        return new BasicInfoResponse(true, info);
+    }
+    
+    //用户取消收藏帖子
+    @RequestMapping (value="/posts/unfavorite")
+    public BasicInfoResponse unfavoritePost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+
+    ) {
+        //从favorite表中删除数据
+        Integer status = postService.unfavoritePost(post_id, Integer.parseInt(user_id));
+    
+        String info = "";
+        if (status == 1) {
+            info = "取消收藏成功！";
+            //帖子收藏数 -1
+            postService.updatePostFavoriteCount(post_id, -1);
+        } else if (status == 0) {
+            info = "未收藏该帖子！";
+            return  new BasicInfoResponse(false, info);
+        }
+    
+        return new BasicInfoResponse(true, info);
+    }
+    
+    //获取帖子收藏状态
+    @RequestMapping (value="/posts/isFavorite")
+    public IsLikeResponse isFavoritePost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+
+    ) {
+        //获取帖子收藏状态
+        Integer status = postService.postFavoriteStatus(post_id, Integer.parseInt(user_id));
+        
+        if (status == 1) {
+            return new IsLikeResponse(true);
+        }
+    
         return new IsLikeResponse(false);
     }
     
@@ -328,10 +387,6 @@ public class PostController {
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         }
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        System.out.println(comment_id);
-        System.out.println(replied_author_id);
-        System.out.println(author_id);
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         
