@@ -150,7 +150,7 @@ export default {
             route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
             courseName: "软件工程",
             courseId: 1,
-            postNum: 20,
+            postNum: '',
             subscripNum: 30,
             courseType: '',
             kindSelect: 1,
@@ -171,6 +171,11 @@ export default {
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
+        }
+    },
+    watch:{
+        sortKindStr(newValue,oldValue){
+
         }
     },
     methods: {
@@ -201,11 +206,11 @@ export default {
                 console.log(result);
             })
         },
-        getPostList() {
+        getPostList(sort,post_type,tag_name) {
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: { section_id: this.sectionId },
+                params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name},
             }).then((result) => {
                 //console.log(result);
                 this.postList = result.data.posts;
@@ -219,7 +224,7 @@ export default {
                 url: "/api/section/info",
                 params: { section_id: this.sectionId },
             }).then((result) => {
-                //console.log(result);
+                console.log(result);
                 this.courseName = result.data.course_name;
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
@@ -257,7 +262,7 @@ export default {
     created() {
         this.sectionId = this.$route.params.sectionId;
         console.log(this.$route.params.sectionId);
-        this.getPostList();
+        this.getPostList(0,0,'');
         this.getSectionInfomation();
     }
 }
