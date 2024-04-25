@@ -34,12 +34,13 @@ public class PostService {
     private TagMapper tagMapper;
     
     // 创建帖子
-    public Integer createPost(String title, String content, Integer category, Integer sectionId, Integer authorId) {
-        if (title == null  || sectionId == null || authorId == null || category == null) {
+    public Integer createPost(String title, String intro, String content,
+                              Integer category, Integer sectionId, Integer authorId) {
+        if (title == null || intro == null || sectionId == null || authorId == null || category == null) {
             return -1;
         }
         Timestamp postTime = new Timestamp(System.currentTimeMillis());
-        Post post = new Post(0, title, content, category, sectionId, authorId,
+        Post post = new Post(0, title, intro, content, category, sectionId, authorId,
                 0, 0, 0, 0, postTime);
         Integer res = postMapper.insertPost(post);
         if (res == 0) {

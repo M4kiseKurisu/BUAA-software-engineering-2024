@@ -30,7 +30,7 @@ public class PostController {
     ) {
         if (post_id == null) {
             Post post = null;
-            PostResponse postResponse = new  PostResponse(post);
+            PostResponse postResponse = new PostResponse(post);
             postResponse.setSuccess(false);
             return postResponse;
         }
@@ -77,6 +77,7 @@ public class PostController {
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "intro", required = false) String intro,
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "category", required = false) Integer category,
             @RequestParam(name = "tags[]", required = false) String[] tags,
@@ -97,7 +98,7 @@ public class PostController {
 
         //创建帖子并存入数据库
         
-        Integer post_id = postService.createPost(title, content, category, section_id, author_id);
+        Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
         } else if (post_id == 0) {
