@@ -176,12 +176,12 @@ public class UserController {
 
     @RequestMapping("/user/head")
     public BasicInfoResponse getUserHead(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @RequestParam(name = "user_id", required = false) Integer user_id
     ) {
-        if (user_id.isEmpty()) {
+        if (user_id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
-        String url = userService.getUserHead(Integer.parseInt(user_id));
+        String url = userService.getUserHead(user_id);
         if (url == null) {
             return new BasicInfoResponse(false, "该用户未设置头像！");
         }

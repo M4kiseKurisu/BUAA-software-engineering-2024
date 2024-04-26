@@ -47,10 +47,15 @@ export default {
     props: ["postId", "title", "content", "writerId", "writerName"],
     mounted() {
         // 获取作者头像信息
+        //console.log(this.writerId);
         axios({
             method: "GET",
-            url: "/api/user/head"
+            url: "/api/user/head",
+            params: {
+                user_id: this.writerId
+            }
         }).then((result) => {
+            //console.log(result.data.info);
             this.avatarSrc = result.data.info;
         })
     },
@@ -66,7 +71,7 @@ export default {
                 url: "/api/posts/unfavorite",
                 data: content,
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 if(result.data.success) {
                     this.$message({
                         showClose: true,
