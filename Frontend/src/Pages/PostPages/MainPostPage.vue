@@ -172,7 +172,7 @@
 
                     <!-- 右侧信息：评论时间，去评论，点赞 -->
                     <div class="reply-first-line-right-content">
-                        <div class="reply-time-information">评论时间：{{ item.comment_create_time }}</div>
+                        <div class="reply-time-information">{{ item.comment_create_time }}</div>
 
                         <button @click="openReplyEditor(index)" class="icon-and-content-2">
                             <!-- 评论图标 -->
@@ -241,7 +241,7 @@
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
                         <div class="reply-first-line-right-content">
-                            <div class="reply-time-information">评论时间：{{ item2.reply_create_time }}</div>
+                            <div class="reply-time-information">{{ item2.reply_create_time }}</div>
 
                             <button @click="openReplyEditor2(index, index2)" class="icon-and-content-2">
                                 <!-- 评论图标 -->
@@ -250,7 +250,7 @@
                             </button>
 
 
-                            <button v-if="false" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
+                            <button v-if="this.isReplyLiked2[index][index2]" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
                                 <!-- 喜欢图标 -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
                                 <div class="like-icon-after-contents">{{ item2.reply_like_count }}人点赞</div>
@@ -387,6 +387,11 @@ export default {
                 //点赞状态信息
                 this.isReplyLiked[j] = showComments[j].comment_isLike;
                 this.replyLikesCount[j] = showComments[j].comment_like_count;
+
+                for (let k = 0; k < (showComments[j].replies.length >= 3 ? 3 : showComments[j].replies.length); k++) {
+                    this.isReplyLiked2[j][k] = showComments[j].replies[k].reply_isLike;
+                }
+                console.log(this.isReplyLiked2);
             }
 
             return showComments;
@@ -414,6 +419,9 @@ export default {
 
                 let i = this.repliesCurrentPage[commentIndex];
                 showReplies = replies.slice((i - 1) * 3, i * 3);
+                for (let j = 0; j < showReplies.length; j++) {
+                    this.isReplyLiked2[commentIndex][j] = showReplies[j].reply_isLike;
+                }
                 return showReplies;
             };
         }
@@ -456,10 +464,16 @@ export default {
                 //点赞状态信息
                 this.replyLikesCount.push(this.comments[j].comment_like_count);
                 this.isReplyLiked[j] = this.comments[j].comment_isLike;
+
+                //回复状态信息
+                for (let k = 0; k < (this.comments[j].replies.length >= 3 ? 3 : this.comments[j].replies.length); k++) {
+                    this.isReplyLiked2[j][k] = this.comments[j].replies[k].reply_isLike;
+                }
             }
             //console.log(this.repliesTotalPages);
             //console.log(this.commentTotalPages);
-            console.log(this.replyLikesCount);
+            //console.log(this.replyLikesCount);
+            console.log(this.isReplyLiked2);
             this.createInformation();
         })
 
@@ -598,6 +612,7 @@ export default {
                         type: 'success',
                     });
                     this.isCollectPost = true;
+                    this.collect_count++;
                 }
             })
         },
@@ -620,6 +635,7 @@ export default {
                         type: 'success',
                     });
                     this.isCollectPost = false;
+                    this.collect_count--;
                 }
             })
         },
@@ -776,7 +792,14 @@ export default {
                             message: '回复点赞成功！',
                             type: 'success',
                         });
+
+                        //?????
+                        console.log(this.isReplyLiked2);
+                        console.log(this.isReplyLiked2[index][index2]);
                         this.isReplyLiked2[index][index2] = true;
+                        console.log(index, index2);
+                        console.log(this.isReplyLiked2[index][index2]);
+                        console.log(this.isReplyLiked2);
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -785,7 +808,7 @@ export default {
                             message: '取消回复点赞成功！',
                             type: 'success',
                         });
-                        this.isReplyLiked[index][index2] = false;
+                        this.isReplyLiked2[index][index2] = false;
                     }
                 }
             })
@@ -849,7 +872,6 @@ export default {
 }
 
 .post-page-tag-css {
-    width: 80px;
     height: 26px;
     background-color: #e9f3ff;
     border: 1px solid #3894ff;

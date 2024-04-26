@@ -89,6 +89,24 @@ export default {
             const contentToUpload = this.valueHtml; // 获取编辑器中的内容
             console.log(contentToUpload);
 
+            //上传资源处理
+            // for (let i = 0; i < this.fileList.length; i++) {
+            //     let input = {
+            //         name: "Try",
+            //         publisher_id: JSON.parse(sessionStorage.getItem("id")),
+            //         file: this.fileList[i],
+            //         type: "",
+            //     }
+            //     console.log(input);
+            //     axios({
+            //         method: "POST",
+            //         url: "/api/posts/write/uploadResource",
+            //         data: input,
+            //     }).then((result) => {
+            //         console.log(result);
+            //     })
+            // }
+
             //注册账号信息打包
             let content = {
                 section_id: this.sectionId,
@@ -116,7 +134,7 @@ export default {
                         message: '发帖成功！',
                         type: 'success',
                     });
-                    location.reload();
+                    //location.reload();
                 }
             })
         },

@@ -47,7 +47,7 @@ public class PostController {
         
         // 获取发帖者名字和头像
         String authorName = postService.getAuthorName(post_id);
-        String authorHead = postService.getAuthorName(post_id);
+        String authorHead = postService.getAuthorHead(post_id);
         
         postResponse.setAuthor_name(authorName);
         postResponse.setAuthor_head(authorHead);
