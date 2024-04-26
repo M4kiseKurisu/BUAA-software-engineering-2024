@@ -161,6 +161,7 @@
                         :username="item.name"
                         :signature="item.sign"
                         :avatar="item.user_avatar"
+                        :id="item.user_id"
                     />
                 </div>
 

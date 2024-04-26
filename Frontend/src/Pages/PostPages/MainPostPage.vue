@@ -58,7 +58,7 @@
 
                 <div class="post-more-information-left">
                     <!-- 作者头像 -->
-                    <el-avatar shape="square" :size="60" :src="this.avatarPicture" />
+                    <el-avatar shape="square" :size="60" :src="this.author_head" />
 
                     <div class="post-writer-information">
                         <div class="post-writer-username">{{ this.author_name }}</div>
@@ -142,7 +142,7 @@
                     <div class="check-more-reply-font">查看更多评论：</div>
 
                     <div class="post-reply-content-first-line-right-pagination">
-                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.commentTotalPages" v-model="this.currentCommentPage" />
+                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.commentTotalPages * 10" v-model:current-page="currentCommentPage" />
                     </div>
                 </div>
                 
@@ -161,7 +161,7 @@
                         <div class="replyer-username">{{ item.comment_author_name }}</div>
 
                         <div class="replyer-tag">
-                            <div v-if="item.comment_author_id === this.userId" class="post-page-tag-css">作者</div>
+                            <div v-if="this.author_id === this.userId" class="post-page-tag-css-for-replyer">作者</div>
                         </div>
                         <div class="reply-delete-button" v-if="item.comment_author_id === this.userId">
                             <button class="post-main-delete-button" @click="deleteComment(item.comment_id)">
@@ -181,15 +181,15 @@
                         </button>
 
 
-                        <button @click="likeComment(item.comment_id, index)" v-if="false" class="icon-and-content-2">
+                        <button @click="likeComment(item.comment_id, index)" v-if="this.isReplyLiked[index]" class="icon-and-content-2">
                             <!-- 喜欢图标 -->
                             <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                            <div class="like-icon-after-contents">{{ item.comment_like_count }}人点赞</div>
+                            <div class="like-icon-after-contents">{{ this.replyLikesCount[index] }}人点赞</div>
                         </button>
                         <button @click="likeComment(item.comment_id, index)" v-else class="icon-and-content-2">
                             <!-- 喜欢图标（点赞前） -->
                             <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
-                            <div class="like-icon-after-contents-2">{{ item.comment_like_count }}人点赞</div>
+                            <div class="like-icon-after-contents-2">{{ this.replyLikesCount[index] }}人点赞</div>
                         </button>
                     </div>
 
@@ -225,8 +225,8 @@
                             </div>
                             <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
-                            <div class="replyer-tag" v-if="item2.reply_author_id === this.userId">
-                                <div class="post-page-tag-css">作者</div>
+                            <div class="replyer-tag" v-if="this.author_id === this.userId">
+                                <div class="post-page-tag-css-for-replyer">作者</div>
                             </div>
 
                             <div class="replys-reply-middle-font">回复</div>
@@ -278,7 +278,7 @@
                 <div class="check-more-replys-reply-line">
                     <div class="check-more-reply-font">查看更多评论：</div>
                     <div class="check-replys-reply-pagination">
-                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.repliesTotalPages[index]" v-model="this.repliesTotalPages[index]" />
+                        <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.repliesTotalPages[index] * 10" v-model:current-page="this.repliesCurrentPage[index]" />
                     </div>
                 </div>               
 
@@ -357,6 +357,7 @@ export default {
 
             isReplysOpen:[false, false, false],
             isReplyLiked:[false, false, false],
+            replyLikesCount:[],
 
             repliesTotalPages: [1, 1, 1],
             repliesCurrentPage: [1, 1, 1],
@@ -374,8 +375,20 @@ export default {
             }
 
             let i = this.currentCommentPage;
+            //console.log(this.currentCommentPage);
             showComments = this.comments.slice((i - 1) * 3, i * 3);
-            console.log(showComments);
+            //console.log(showComments);
+
+            // 更改楼中楼信息
+            for (let j = 0; j < showComments.length; j++) {
+                this.repliesTotalPages[j] = Math.floor(showComments[j].replies.length / 3 + 1);
+                this.repliesCurrentPage[j] = 1;
+
+                //点赞状态信息
+                this.isReplyLiked[j] = showComments[j].comment_isLike;
+                this.replyLikesCount[j] = showComments[j].comment_like_count;
+            }
+
             return showComments;
         },
         repliesArray() {
@@ -434,7 +447,19 @@ export default {
             this.comment_count = result.data.comment_count;
             this.view_count = result.data.view_count;
 
-            this.commentTotalPages = result.data.comments / 3 + 1;
+            this.commentTotalPages = Math.floor(result.data.comments.length / 3 + 1);
+            // 更改楼中楼信息
+            for (let j = 0; j < (this.comments.length >= 3 ? 3 : this.comments.length); j++) {
+                this.repliesTotalPages[j] = Math.floor(this.comments[j].replies.length / 3 + 1);
+                this.repliesCurrentPage[j] = 1;
+
+                //点赞状态信息
+                this.replyLikesCount.push(this.comments[j].comment_like_count);
+                this.isReplyLiked[j] = this.comments[j].comment_isLike;
+            }
+            //console.log(this.repliesTotalPages);
+            //console.log(this.commentTotalPages);
+            console.log(this.replyLikesCount);
             this.createInformation();
         })
 
@@ -454,6 +479,7 @@ export default {
             url: "/api/posts/isfavorite",
             params: {
                 post_id: this.post_id,
+                user_id: this.userId,
             }
         }).then((result) => {
             this.isCollectPost = result.data.isFavorite;
@@ -470,7 +496,8 @@ export default {
                         id: this.author_id,
                     }
                 }).then((result) => {
-                    this.isFollowingWriter = result.data.is_follow;
+                    console.log(result);
+                    this.isFollowingWriter = result.data.flag_follow;
                     this.author_sign = result.data.sign;
                 })
             } else {
@@ -483,6 +510,7 @@ export default {
             }
 
             // 获取作者头像信息
+            console.log( this.author_id);
             axios({
                 method: "GET",
                 url: "/api/user/head",
@@ -490,7 +518,7 @@ export default {
                     user_id: this.author_id
                 }
             }).then((result) => {
-                //console.log(result)
+                console.log(result)
                 this.avatarPicture = result.data.info;
             })
         },
@@ -554,7 +582,9 @@ export default {
             // 帖子收藏
             let content = {
                 post_id: this.post_id,
+                user_id: this.userId,
             }
+            console.log(content);
             axios({
                 method: "POST",
                 url: "/api/posts/favorite",
@@ -575,6 +605,7 @@ export default {
             // 帖子取消收藏
             let content = {
                 post_id: this.post_id,
+                user_id: this.userId,
             }
             axios({
                 method: "POST",
@@ -594,12 +625,29 @@ export default {
         },
         followingWriter() {
             // 关注帖子作者
-            
+            let content = {
+                follow_id: this.author_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/user/follow",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '作者关注成功！',
+                        type: 'success',
+                    });
+                    this.isFollowingWriter = true;
+                }
+            })
         },
         notFollowingWriter() {
             // 取消关注作者
             let content = {
-                user_id: this.author_id,
+                unfollow_id: this.author_id,
             }
             axios({
                 method: "POST",
@@ -637,9 +685,10 @@ export default {
                     comment_sort: this.sortValue,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
                 }
             }).then((result) => {
-                console.log(result)
                 this.comments = result.data.comments;
-                this.commentTotalPages = result.data.comments.length / 3 + 1;
+                this.commentTotalPages = Math.floor(result.data.comments.length / 3 + 1);
+                //console.log(this.comments);
+                //console.log(this.commentTotalPages);
                 this.currentCommentPage = 1;
             })
         },
@@ -692,6 +741,7 @@ export default {
                             type: 'success',
                         });
                         this.isReplyLiked[index] = true;
+                        this.replyLikesCount[index]++;
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -701,6 +751,7 @@ export default {
                             type: 'success',
                         });
                         this.isReplyLiked[index] = false;
+                        this.replyLikesCount[index]--;
                     }
                 }
             })
@@ -1167,5 +1218,20 @@ export default {
     margin-top: 7px;
     color: #86909c;
     font-size: 14px;
+}
+
+.post-page-tag-css-for-replyer {
+    width: 40px;
+    height: 26px;
+    background-color: #e9f3ff;
+    border: 1px solid #3894ff;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #3894ff;
+    margin-top: 4px;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
 }
 </style>

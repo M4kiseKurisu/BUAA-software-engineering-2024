@@ -99,6 +99,7 @@ export default {
                 tags: this.dynamicTags,
                 images: this.images,
                 resources: this.fileList,
+                intro:"",
             }
 
             console.log(content);
@@ -109,6 +110,14 @@ export default {
                 data: content,
             }).then((result) => {
                 console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '发帖成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                }
             })
         },
         handleClose(tag) {

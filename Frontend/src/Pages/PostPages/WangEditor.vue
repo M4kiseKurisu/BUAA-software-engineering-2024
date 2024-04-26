@@ -54,6 +54,7 @@ export default {
                 data: content,
             }).then((result) => {
                 console.log(result);
+                location.reload();
             })
         }
     }
