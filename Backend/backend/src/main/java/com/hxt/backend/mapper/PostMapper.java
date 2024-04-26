@@ -274,7 +274,7 @@ public interface PostMapper {
     ReplyLike getReplyLike(Integer replyId, Integer userId);
     
     //更新回复点赞状态
-    @Update("UPDATE reply_like SET status = #{status} WHERE pl_id = #{id}")
+    @Update("UPDATE reply_like SET status = #{status} WHERE rl_id = #{id}")
     int updateReplyLikeStatus(Integer id, Integer status);
     
     //更新回复点赞数

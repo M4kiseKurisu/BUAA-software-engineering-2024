@@ -91,11 +91,18 @@ public class PostService {
         return author;
     }
     
-    public String getAuthorName(Integer id) {
+    public List<String> getAuthorNameAndHead(Integer id) {
+        List<String> ans = new ArrayList<>();
         Integer authorId = getAuthorId(id);
         User author = userMapper.selectUserById(authorId);
-        return author.getName();
+        ans.add(author.getName());
+        String headUrl = imageMapper.getImage(author.getHeadId());
+        ans.add(headUrl);
+        return ans;
     }
+    
+    
+    
     
     public Integer postInsertImage(Integer postId, Integer imageId) {
         return postMapper.insertPostImage(postId, imageId);
