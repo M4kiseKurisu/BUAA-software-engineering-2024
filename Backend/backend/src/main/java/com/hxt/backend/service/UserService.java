@@ -2,16 +2,14 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.Post;
-import com.hxt.backend.mapper.ImageMapper;
-import com.hxt.backend.mapper.PostMapper;
-import com.hxt.backend.mapper.SectionMapper;
-import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.PostResponse;
+import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
@@ -37,6 +35,8 @@ public class UserService {
     private PostMapper postMapper;
     @Resource
     private SectionMapper sectionMapper;
+    @Resource
+    private AdminMapper adminMapper;
     private final String defaultHeadUrl = "";
 
     public Integer register(String name, String email, String phone,
@@ -95,7 +95,16 @@ public class UserService {
         if (commentLike == null) {
             commentLike = 0;
         }
-
+        Integer replyLike = postMapper.getUserReplyLikeNum(id);
+        if (replyLike == null) {
+            replyLike = 0;
+        }
+        List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
+        if (adminMapper.checkGlobalAuthority(id) > 0) {
+            authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
+        } else {
+            authorityInfo = adminMapper.getUserAuthorities(id);
+        }
         return new UserSocialInfoResponse(
                 user.getName(), id,
                 (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
@@ -103,10 +112,11 @@ public class UserService {
                 userMapper.getFollowerCount(id),
                 postMapper.getUserPostNum(id),
                 postMapper.getUserCommentNum(id),
-                postLike + commentLike,
+                postLike + commentLike + replyLike,
                 user.getSign(),
                 userMapper.isFollow(searcher, id) > 0,
-                checkBlocked(id)
+                checkBlocked(id),
+                authorityInfo
         );
     }
 

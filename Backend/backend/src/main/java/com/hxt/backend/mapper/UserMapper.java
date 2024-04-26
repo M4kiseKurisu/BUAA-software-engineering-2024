@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+
     //  用户表
     @Select("SELECT * FROM user_info WHERE account = #{name}")
     @Results({
@@ -40,8 +41,8 @@ public interface UserMapper {
     String getUserNameById(Integer id);
 
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time)" +
-            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0)")
+    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time, sign)" +
+            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0, 'Hello World!')")
     int insertUser(String name, String email, String phone,
                    String major, Integer year, String password);
 

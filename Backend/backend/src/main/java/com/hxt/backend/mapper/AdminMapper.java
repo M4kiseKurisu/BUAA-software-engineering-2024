@@ -1,8 +1,10 @@
 package com.hxt.backend.mapper;
 
+import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Mapper
 public interface AdminMapper {
@@ -34,6 +36,12 @@ public interface AdminMapper {
 
     @Select("SELECT authority_id FROM authority WHERE user_id = #{id} AND section_id = #{section}")
     Integer checkAuthority(Integer id, Integer section);
+
+    @Select("SELECT section_id, category FROM authority WHERE user_id = #{id}")
+    @Results({
+            @Result(column = "section_id", property = "section"),
+    })
+    List<UserAuthorityInfo> getUserAuthorities(Integer id);
 
     @Delete("DELETE FROM authority WHERE user_id = #{id} AND section_id = #{section}")
     int deleteAuthority(Integer id, Integer section);

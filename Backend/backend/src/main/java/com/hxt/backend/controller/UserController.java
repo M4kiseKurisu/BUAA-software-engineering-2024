@@ -166,7 +166,6 @@ public class UserController {
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "id", required = false) Integer id
     ) {
-        System.out.println(user_id + " " + id);
         if (id == null) {
             return new UserSocialInfoResponse();
         } else if (user_id.isEmpty()) {

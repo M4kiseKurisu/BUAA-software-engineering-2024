@@ -4,6 +4,7 @@ import com.hxt.backend.entity.User;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
+import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
@@ -111,10 +112,16 @@ public class AdminService {
             Integer tmp = userMapper.isBlocked(id);
             boolean isBlocked = (tmp != null && tmp != 0);
             User user = userMapper.selectUserById(id);
+            List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
+            if (adminMapper.checkGlobalAuthority(id) > 0) {
+                authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
+            } else {
+                authorityInfo = adminMapper.getUserAuthorities(id);
+            }
             userInfoResponse.getUser().add(new UserSocialInfoResponse(
                     user.getName(), id,
                     (user.getHeadId() == null) ? "" : imageMapper.getImage(user.getHeadId()),
-                    0, 0, 0, 0, 0, user.getSign(), false, isBlocked
+                    null, null, null, null, null, user.getSign(), null, isBlocked, authorityInfo
             ));
         }
         return userInfoResponse;

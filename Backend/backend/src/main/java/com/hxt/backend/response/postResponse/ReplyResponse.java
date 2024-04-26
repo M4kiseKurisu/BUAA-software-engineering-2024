@@ -26,7 +26,8 @@ public class ReplyResponse {
         this.replied_author_id = reply.getReplied_author_id();
         this.reply_author_id = reply.getAuthor_id();
         this.reply_content = reply.getContent();
-        this.reply_create_time = reply.getReplyTime().toString();
+        String[] time = reply.getReplyTime().toString().split(":");
+        this.reply_create_time = time[0] + ":" + time[1];
         this.reply_like_count = reply.getLike_count();
     }
 }
