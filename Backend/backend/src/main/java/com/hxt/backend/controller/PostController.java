@@ -47,8 +47,10 @@ public class PostController {
         PostResponse postResponse = postService.getPost(post_id);
         
         // 获取发帖者名字和头像
-        String authorName = postService.getAuthorName(post_id);
-        String authorHead = postService.getAuthorName(post_id);
+        List<String> nameAndHead = postService.getAuthorNameAndHead(post_id);
+        String authorName = nameAndHead.get(0);
+        String authorHead = nameAndHead.get(1);
+
         
         postResponse.setAuthor_name(authorName);
         postResponse.setAuthor_head(authorHead);
@@ -108,7 +110,6 @@ public class PostController {
         }
         
         // 向 post_image表中插入数据
-        /*
         if (images != null) {
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
@@ -117,7 +118,7 @@ public class PostController {
                 }
             }
         }
-        */
+        
         // 向 post_resource表中插入数据
         if (resources != null) {
             for (String resourceUrl : resources) {
@@ -162,6 +163,19 @@ public class PostController {
         }
         
         return new BasicInfoResponse(true, "删帖成功");
+    }
+    
+    @RequestMapping(value = "/posts/search")
+    public SearchResponse searchPost(
+            @CookieValue(name = "user_id", defaultValue = "") String userId,
+            @RequestParam(name = "section_id", required = false) Integer section_id,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "sort", required = false) Integer sort,
+            @RequestParam(name = "tag", required = false) String tag
+    ) {
+        //待完善
+        
+        return new SearchResponse(true, null, null);
     }
     
     //用户点赞帖子

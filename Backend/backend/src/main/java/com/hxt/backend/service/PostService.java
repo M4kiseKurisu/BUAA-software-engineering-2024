@@ -112,11 +112,18 @@ public class PostService {
         return author;
     }
     
-    public String getAuthorName(Integer id) {
+    public List<String> getAuthorNameAndHead(Integer id) {
+        List<String> ans = new ArrayList<>();
         Integer authorId = getAuthorId(id);
         User author = userMapper.selectUserById(authorId);
-        return author.getName();
+        ans.add(author.getName());
+        String headUrl = imageMapper.getImage(author.getHeadId());
+        ans.add(headUrl);
+        return ans;
     }
+    
+    
+    
     
     public Integer postInsertImage(Integer postId, Integer imageId) {
         return postMapper.insertPostImage(postId, imageId);
@@ -461,6 +468,9 @@ public class PostService {
     //点赞评论
     public Integer thumbReply(Integer replyId, Integer user_id) {
         ReplyLike replyLike = postMapper.getReplyLike(replyId, user_id);
+        System.out.println(replyLike);
+        System.out.println(replyLike.getStatus());
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&");
         if (replyLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertReplyLike(replyId, user_id, 1, likeTime);

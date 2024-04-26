@@ -389,8 +389,8 @@ export default {
 }
 
 .logoPicture {
-    height: 120px;
-    width: 90px;
+    height: 20%;
+    width: 17%;
     align-self: flex-end;
     margin-right: 8px;
 }
