@@ -34,7 +34,8 @@ public class PostResponse {
         this.intro = post.getIntro();
         this.author_id = post.getAuthor_id();
         this.content = post.getContent();
-        this.create_time = post.getPostTime().toString();
+        String[] time = post.getPostTime().toString().split(":");
+        this.create_time = time[0] + ":" + time[1];
         this.commentCount = post.getComment_count();
         this.likeCount = post.getLike_count();
         this.collectCount = post.getCollect_count();

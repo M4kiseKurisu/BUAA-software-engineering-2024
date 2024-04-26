@@ -29,7 +29,8 @@ public class CommentResponse {
         this.comment_id = comment.getComment_id();
         this.comment_author_id = comment.getAuthor_id();
         this.comment_content = comment.getContent();
-        this.comment_create_time = comment.getCommentTime().toString();
+        String time[] = comment.getCommentTime().toString().split(":");
+        this.comment_create_time = time[0] + ":" + time[1];
         this.comment_like_count = comment.getLike_count();
         this.comment_reply_count = comment.getReply_count();
     }
