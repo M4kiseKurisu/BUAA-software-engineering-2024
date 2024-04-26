@@ -21,6 +21,7 @@ public class PostController {
     private final TagService tagService;
     private final ResourceService resourceService;
     private final UserService userService;
+    private final String authorityError = "权限不匹配！";
     
     //帖子详情
     @RequestMapping (value="/posts/post")
@@ -156,6 +157,8 @@ public class PostController {
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选帖子不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
         
         return new BasicInfoResponse(true, "删帖成功");
@@ -322,18 +325,20 @@ public class PostController {
     //删除评论
     @RequestMapping (value="/posts/comment/delete")
     public BasicInfoResponse deleteComment(
-            @RequestParam(name = "comment_id", required = false) Integer comment_id
-    
+            @RequestParam(name = "comment_id", required = false) Integer comment_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         Integer post_id = postService.getPostIdByCommentId(comment_id);
-        Integer res = postService.deleteComment(comment_id);
+        Integer res = postService.deleteComment(false, Integer.parseInt(user_id), comment_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选评论不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
     
         // 该帖子的评论数 -1
-        postService.updatePostCommentCount(post_id, -1);
+        postService.updatePostCommentCount(post_id, -res);
         
         return new BasicInfoResponse(true, "删除评论成功");
     }
@@ -413,15 +418,17 @@ public class PostController {
     //用户删除回复
     @RequestMapping (value="/posts/reply/delete")
     public BasicInfoResponse deleteReply(
-            @RequestParam(name = "reply_id", required = false) Integer reply_id
-    
+            @RequestParam(name = "reply_id", required = false) Integer reply_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         Integer comment_id = postService.getCommentIdByReplyId(reply_id);
         Integer post_id = postService.getPostIdByCommentId(comment_id);
-        Integer res = postService.deleteReply(reply_id);
+        Integer res = postService.deleteReply(false, Integer.parseInt(user_id), reply_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选评论不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
     
         // 该评论的回复数 -1

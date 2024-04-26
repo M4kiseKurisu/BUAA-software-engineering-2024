@@ -14,7 +14,7 @@
                         <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                     </button>
                 </div>
-                
+
                 <!-- 帖子头部右侧 -->
                 <div class="post-page-header-right">
                     <div v-for="item in this.tags" class="post-page-tag-css">{{ item }}</div>
@@ -49,9 +49,9 @@
                         <div class="like-icon-after-contents-2">{{ this.collect_count }}人收藏</div>
                     </div>
                 </div>
-                
+
             </div>
-            
+
             <el-divider/>
 
             <div class="post-more-information-line">
@@ -74,7 +74,7 @@
                         <button class="post-page-tag-css" @click="notFollowingWriter">取消关注</button>
                     </div>
                 </div>
-                
+
 
             </div>
             <div v-html="this.content" class="post-main-content"/>
@@ -96,7 +96,7 @@
                 <div class="reply-avatar-container">
                     <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
                 </div>
-                
+
 
                 <!-- 回复编辑框 -->
                 <!-- <el-input
@@ -109,7 +109,7 @@
                 <div class="reply-editor-container">
                     <WangEditor :isComment="true" :post_id="this.post_id" :author_id="this.userId"/>
                 </div>
-                
+
             </div>
 
             <!-- <button class="send-reply-button-css">发布评论</button> -->
@@ -145,7 +145,7 @@
                         <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.commentTotalPages * 10" v-model:current-page="currentCommentPage" />
                     </div>
                 </div>
-                
+
             </div>
 
             <el-divider/>
@@ -280,7 +280,7 @@
                     <div class="check-replys-reply-pagination">
                         <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.repliesTotalPages[index] * 10" v-model:current-page="this.repliesCurrentPage[index]" />
                     </div>
-                </div>               
+                </div>
 
             </div>
 
@@ -301,8 +301,8 @@ import { Delete } from '@element-plus/icons-vue'
 
 export default {
     components: {
-        BreadcrumbLabel, 
-        Delete, 
+        BreadcrumbLabel,
+        Delete,
         WangEditor,
         WangEditor2,
     },
@@ -476,14 +476,14 @@ export default {
 
         axios({
             method: "GET",
-            url: "/api/posts/isfavorite",
+            url: "/api/posts/isFavorite",
             params: {
                 post_id: this.post_id,
                 user_id: this.userId,
             }
         }).then((result) => {
             this.isCollectPost = result.data.isFavorite;
-        }) 
+        })
     },
     methods: {
         createInformation() {
@@ -860,7 +860,7 @@ export default {
     margin-right: 16px;
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .icon-and-content {
@@ -1232,6 +1232,6 @@ export default {
     margin-right: 16px;
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
 }
 </style>
