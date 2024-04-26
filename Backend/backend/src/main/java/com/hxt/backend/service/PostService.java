@@ -32,6 +32,9 @@ public class PostService {
     
     @Resource
     private TagMapper tagMapper;
+
+    @Resource
+    private AdminMapper adminMapper;
     
     // 创建帖子
     public Integer createPost(String title, String intro, String content,
@@ -52,11 +55,20 @@ public class PostService {
     
     
     
-    public Integer deletePost(Integer id) {
-        if (postMapper.getPost(id) == null) {
+    public Integer deletePost(Integer userId, Integer postId) {
+        Post p = postMapper.getPost(postId);
+        if (p == null) {
             return -1;
         }
-        return postMapper.deletePost(id);
+        //  检查权限
+        if (!p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+            return -2;
+        }
+        //  删除所有楼中楼、评论，防止外键异常导致删除失败
+        //  删除所有点赞、收藏，防止外键异常导致删除失败
+        //  TODO
+        return postMapper.deletePost(postId);
     }
     
     public PostResponse getPost(Integer id) {

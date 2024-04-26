@@ -146,10 +146,13 @@ public class PostController {
     //用户删除帖子
     @RequestMapping (value="/posts/delete")
     public BasicInfoResponse deletePost(
-            @RequestParam(name = "post_id", required = false) Integer post_id
-            
+            @RequestParam(name = "post_id", required = false) Integer post_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
-        Integer res = postService.deletePost(post_id);
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, "信息不完整！");
+        }
+        Integer res = postService.deletePost(Integer.parseInt(user_id), post_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选帖子不存在");

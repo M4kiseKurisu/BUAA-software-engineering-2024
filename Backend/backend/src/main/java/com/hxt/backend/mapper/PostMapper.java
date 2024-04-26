@@ -28,7 +28,11 @@ public interface PostMapper {
     //  回帖点赞统计信息
     @Select("SELECT SUM(like_count) FROM comment WHERE author_id = #{userId}")
     Integer getUserCommentLikeNum(int userId);
-    
+
+    //  楼中楼点赞统计信息
+    @Select("SELECT SUM(like_count) FROM reply WHERE author_id = #{userId}")
+    Integer getUserReplyLikeNum(int userId);
+
     //插入新帖子
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, intro, content, category, section_id, author_id, like_count, " +
