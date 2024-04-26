@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class PostController {
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "category", required = false) Integer category,
             @RequestParam(name = "tags", required = false) List<String> tags,
-            @RequestParam(name = "images", required = false) List<String> images,
+            @RequestParam(name = "images[]", required = false) String[] images,
             @RequestParam(name = "resources", required = false) List<String> resources
     ) {
         //检查用户是否被封禁
@@ -98,6 +99,9 @@ public class PostController {
 
         //创建帖子并存入数据库
         System.out.println(info);
+
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        System.out.println(images[0]);
         Integer post_id = postService.createPost(title, content, category, section_id, author_id);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
@@ -106,6 +110,7 @@ public class PostController {
         }
         
         // 向 post_image表中插入数据
+        /*
         if (images != null) {
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
@@ -114,7 +119,7 @@ public class PostController {
                 }
             }
         }
-        
+        */
         // 向 post_resource表中插入数据
         if (resources != null) {
             for (String resourceUrl : resources) {
@@ -328,10 +333,7 @@ public class PostController {
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         }
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        System.out.println(comment_id);
-        System.out.println(replied_author_id);
-        System.out.println(author_id);
+
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         

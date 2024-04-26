@@ -241,7 +241,7 @@
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
                         <div class="reply-first-line-right-content">
-                            <div class="reply-time-information">评论时间：{{ this.reply_create_time }}</div>
+                            <div class="reply-time-information">评论时间：{{ item2.reply_create_time }}</div>
 
                             <button @click="openReplyEditor2(index, index2)" class="icon-and-content-2">
                                 <!-- 评论图标 -->
@@ -415,6 +415,7 @@ export default {
             params: {
                 post_id: this.post_id,
                 comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                user_id: JSON.parse(sessionStorage.getItem("id")),
             }
         }).then((result) => {
             console.log(result)
@@ -797,7 +798,7 @@ export default {
 }
 
 .post-page-tag-css {
-    width: 45px;
+    width: 80px;
     height: 26px;
     background-color: #e9f3ff;
     border: 1px solid #3894ff;

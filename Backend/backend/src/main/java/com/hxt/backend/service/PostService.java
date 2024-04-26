@@ -175,7 +175,9 @@ public class PostService {
             } else {
                 commentResponse.setComment_isLike(false);
             }
-            
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(status);
+
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
             List<String> imageUrls = new ArrayList<>();
@@ -243,14 +245,8 @@ public class PostService {
             postMapper.insertPostLike(postId, user_id, 1, likeTime);
             return 1;
         } else {
-            System.out.println("----------");
-            System.out.println(postLike.getStatus());
             Integer newStatus = 1 - postLike.getStatus();
-<<<<<<< HEAD
-            System.out.println(newStatus);
-            System.out.println(postLike.getPl_id());
-=======
->>>>>>> 17bfdbaa1fd503f8981350e451fe29fd7227ebec
+
             postMapper.updatePostLikeStatus(postLike.getPl_id(), newStatus);
             return newStatus;
         }
