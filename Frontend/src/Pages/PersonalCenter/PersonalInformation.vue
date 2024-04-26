@@ -12,7 +12,6 @@
             <div style="display: flex;justify-content: center">
               <span style="font-size: 20px">暂无收藏信息</span>
             </div>
-
           </el-dialog>
         </div>
       </div>

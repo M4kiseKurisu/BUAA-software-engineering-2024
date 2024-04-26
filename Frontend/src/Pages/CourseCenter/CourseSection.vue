@@ -216,8 +216,6 @@ export default defineComponent({
   },
   methods: {
     getCourseInfo(sectionId) {
-     // console.log(1111111111111111111111111111111222)
-     // console.log(sectionId)
       axios({
         method:"GET",
         url:"api/section/info",
@@ -237,6 +235,7 @@ export default defineComponent({
             this.course.course_capacity = response.data.course_capacity;
             this.course.course_follows = response.data.course_follows;
             this.teachers=response.data.teachers;
+            this.course.course_tags=[this.course.course_college,this.course.course_type];
             /*if (this.teachers.length === 0) {
               this.teachers = [{
 
