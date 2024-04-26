@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -22,6 +25,7 @@ public class AdminController {
     @Resource
     private AdminService adminService;
     private String hasEmptyResponse = "信息填写不完整！";
+    private String authorityResponse = "该账号不具有相应权限！";
 
     @RequestMapping("/admin/login")
     public LoginResponse login(
@@ -38,10 +42,8 @@ public class AdminController {
         }
         int id = adminService.checkPassword(name, password);
         if (id > 0) {
-            Cookie cookie = new Cookie("user_id",String.valueOf(id));
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            adminService.setUserCookie("user_id", String.valueOf(id), response);
+            adminService.setUserCookie("type", "admin", response);
             return new LoginResponse(true, id, "", "");
         } else if (id >= -3) {
             String info = String.format("用户名或密码错误，还有%d次尝试机会！", 4 + id);
@@ -78,32 +80,36 @@ public class AdminController {
 
     @RequestMapping("/admin/section/add/course")
     public BasicInfoResponse addCourse(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "intro", required = false) String intro,
-            @RequestParam(name = "type", required = false) String type,
+            @RequestParam(name = "type", required = false) String course_type,
             @RequestParam(name = "academy", required = false) String academy,
             @RequestParam(name = "credit", required = false) Integer credit,
             @RequestParam(name = "capacity", required = false) Integer capacity
     ) {
-        if (user_id.isEmpty() || name == null) {
+        if (name == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
-        boolean res = adminService.addCourse(name, intro, type, academy, credit, capacity);
+        boolean res = adminService.addCourse(name, intro, course_type, academy, credit, capacity);
         String info = res? "" : "服务器错误，未能添加";
         return new BasicInfoResponse(res, info);
     }
 
     @RequestMapping("/admin/section/add/school")
     public BasicInfoResponse addSchool(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "intro", required = false) String intro,
             @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "web", required = false) String web
     ) {
-        if (user_id.isEmpty() || name == null) {
+        if (name == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.addSchool(name, intro, category, web);
         String info = res? "" : "服务器错误，操作失败";
@@ -116,13 +122,16 @@ public class AdminController {
     }
 
     @RequestMapping("/admin/block")
-    public BasicInfoResponse blockUser(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+    public BasicInfoResponse globalBlockUser(
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "id", required = false) Integer id,
             @RequestParam(name = "days", required = false) Integer days
     ) {
-        if (user_id.isEmpty() || id == null) {
+        System.out.println();
+        if (id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.blockUser(id, days);
         String info = (res)? "" : "服务器错误，操作失败";
@@ -130,15 +139,82 @@ public class AdminController {
     }
 
     @RequestMapping("/admin/unblock")
-    public BasicInfoResponse unblockUser(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+    public BasicInfoResponse globalUnblockUser(
+            @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "id", required = false) Integer id
     ) {
-        if (user_id.isEmpty() || id == null) {
+        if (id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.unblockUser(id);
         String info = (res)? "" : "服务器错误，操作失败";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/authority/add")
+    public BasicInfoResponse setAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "type", required = false) String auth_type
+    ) {
+        if (id == null || section == null || auth_type == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin") && !adminService.checkAuthority(Integer.parseInt(user_id), section)) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.setAuthority(id, section, auth_type);
+        String info = res? "" : "服务器错误！";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/authority/delete")
+    public BasicInfoResponse deleteAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "section", required = false) Integer section
+    ) {
+        if (id == null || section == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin") && !adminService.checkAuthority(Integer.parseInt(user_id), section)) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.deleteAuthority(id, section);
+        String info = res? "" : "服务器错误！";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/authority/global/add")
+    public BasicInfoResponse setGlobalAuthority(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.setGlobalAuthority(id);
+        String info = res? "" : "服务器错误！";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/authority/global/delete")
+    public BasicInfoResponse deleteGlobalAuthority(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.deleteGlobalAuthority(id);
+        String info = res? "" : "服务器错误！";
         return new BasicInfoResponse(res, info);
     }
 }

@@ -99,7 +99,7 @@ const router = createRouter({
                             component: CreateCourseSection,
                         },
                         {
-                            path: '/ShowPersonalInformation',
+                            path: '/ShowPersonalInformation/:userId',
                             component: ShowPersonalInformation,
                         },
                         {

@@ -6,6 +6,8 @@ import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -93,10 +95,6 @@ public class AdminService {
         return sectionMapper.insertSchool(name, intro, category, web) > 0;
     }
 
-    public boolean lengthCheck(String s, int min, int max) {
-        return (s.length() >= min) && (s.length() <= max);
-    }
-
     public boolean blockUser(Integer id, Integer days) {
         Integer realtime = days == null? Integer.MAX_VALUE : days;
         return userMapper.blockUser(id, realtime) > 0;
@@ -120,5 +118,46 @@ public class AdminService {
             ));
         }
         return userInfoResponse;
+    }
+
+    public boolean setAuthority(Integer id, Integer section, String type) {
+        if (checkAuthority(id, section)) {
+            return true;
+        }
+        return adminMapper.setAuthority(id, section, type) > 0;
+    }
+
+    public boolean deleteAuthority(Integer id, Integer section) {
+        return adminMapper.deleteAuthority(id, section) > 0;
+    }
+
+    public boolean checkAuthority(Integer id, Integer section) {
+        if (checkGlobalAuthority(id)) {
+            return true;
+        }
+        return adminMapper.checkAuthority(id, section) != null;
+    }
+
+    public boolean setGlobalAuthority(Integer id) {
+        return adminMapper.setGlobalAuthority(id) > 0;
+    }
+
+    public boolean deleteGlobalAuthority(Integer id) {
+        return adminMapper.deleteGlobalAuthority(id) > 0;
+    }
+
+    public boolean checkGlobalAuthority(Integer id) {
+        return adminMapper.checkGlobalAuthority(id) > 0;
+    }
+
+    public void setUserCookie(String type, String value, HttpServletResponse response) {
+        Cookie cookie = new Cookie(type, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    public boolean lengthCheck(String s, int min, int max) {
+        return (s.length() >= min) && (s.length() <= max);
     }
 }

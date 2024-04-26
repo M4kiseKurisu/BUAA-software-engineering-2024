@@ -97,7 +97,7 @@ export default {
             this.authorId = this.postInfo.author_id;
             this.authorName = this.postInfo.author_name;
             this.introduction = this.postInfo.post_content;
-            this.time = this.postInfo.create_time;
+            this.time = this.postInfo.post_time;
             this.tags = this.postInfo.tag_list;
             this.likeNum = this.postInfo.post_likes;
             this.starNum = this.postInfo.post_favorites;

@@ -14,6 +14,8 @@ import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.PostResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -224,5 +226,12 @@ public class UserService {
 
     public boolean lengthCheck(String s, int min, int max) {
         return (s.length() >= min) && (s.length() <= max);
+    }
+
+    public void setUserCookie(String type, String value, HttpServletResponse response) {
+        Cookie cookie = new Cookie(type, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

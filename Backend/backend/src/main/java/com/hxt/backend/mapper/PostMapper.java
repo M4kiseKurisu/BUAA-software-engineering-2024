@@ -31,9 +31,9 @@ public interface PostMapper {
     
     //插入新帖子
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
-    @Insert("INSERT INTO post (title, content, category, section_id, author_id, like_count, " +
+    @Insert("INSERT INTO post (title, intro, content, category, section_id, author_id, like_count, " +
             "collect_count, comment_count, view_count, time)" +
-            " VALUES (#{title}, #{content}, #{category}, #{section_id}, #{author_id}, #{like_count}, " +
+            " VALUES (#{title}, #{intro}, #{content}, #{category}, #{section_id}, #{author_id}, #{like_count}, " +
             "#{collect_count}, #{comment_count}, #{view_count}, #{postTime})")
     int insertPost(Post post);
     
@@ -120,8 +120,23 @@ public interface PostMapper {
     @Update("UPDATE post_like SET status = #{status} WHERE pl_id = #{id}")
     int updatePostLikeStatus(Integer id, Integer status);
     
+    // 帖子-收藏
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO favorite (post_id, user_id, time) VALUES (#{postId}, #{userId}, #{time})")
+    int insertPostFavorite(Integer postId, Integer userId, Timestamp time);
     
+    // 帖子-取消收藏
+    @Delete("DELETE FROM favorite WHERE post_id = #{postId} AND user_id = #{userId}")
+    int deleteFavorite(Integer postId, Integer userId);
     
+    //获取帖子收藏
+    @Select("SELECT * from favorite where post_id = #{postId} and user_id = #{userId}")
+    @Result(column = "time", property = "favoriteTime")
+    Favorite getFavorite(Integer postId, Integer userId);
+    
+    //更新帖子收藏数
+    @Update("UPDATE post SET collect_count = collect_count + #{op} WHERE post_id = #{id}")
+    int updatePostFavoriteCount(Integer id, Integer op);
     
     //评论
     
