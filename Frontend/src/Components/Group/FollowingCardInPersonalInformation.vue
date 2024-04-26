@@ -18,7 +18,7 @@
             </div>
 
             <!-- 取消关注按钮 -->
-            <button class="cancel-following-button">
+            <button class="cancel-following-button" @click="notFollow">
                 <div class="button-font">取消关注</div>
             </button>
 
@@ -29,8 +29,35 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 export default {
-    props: ["username", "signature", "avatar"],
+    props: ["username", "signature", "avatar", "id"],
+    methods: {
+        notFollow() {
+            // 取消关注作者
+            let content = {
+                unfollow_id: this.id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/user/unfollow",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '作者取消关注成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                    this.isFollowingWriter = false;
+                }
+            })
+        }
+    }
 }
 </script>
 
