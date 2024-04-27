@@ -145,6 +145,20 @@ public interface PostMapper {
     //更新帖子收藏数
     @Update("UPDATE post SET collect_count = collect_count + #{op} WHERE post_id = #{id}")
     int updatePostFavoriteCount(Integer id, Integer op);
+    
+    //根据关键词搜索帖子(时间倒序)
+    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
+            "content like '%${keyword}%' ORDER BY time DESC, post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> getPostByKeywordTimeDesc(String keyword);
+    
+    //获取某帖子的所有评论(热度)
+    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
+            "content like '%${keyword}%'" +
+            "(like_count + collect_count * 2 + comment_count * 3) DESC, post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> getPostByKeywordHotDesc(String keyword);
+    
 
     //  以下为删除帖子时删除附加信息用
     @Delete("DELETE FROM post_like WHERE post_id = #{id}")
@@ -168,9 +182,6 @@ public interface PostMapper {
     @Insert("INSERT INTO comment (post_id, author_id, content, time, reply_count, like_count) " +
             "VALUES (#{post_id}, #{author_id}, #{content}, #{commentTime}, #{reply_count}, #{like_count})")
     int insertComment(Comment comment);
-    
-    
-    
     
     //删除评论
     @Delete("DELETE FROM comment WHERE comment_id = #{id}")

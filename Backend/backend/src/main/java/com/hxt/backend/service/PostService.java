@@ -4,6 +4,7 @@ import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.*;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.postResponse.CommentResponse;
+import com.hxt.backend.response.postResponse.PostIntroResponse;
 import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
@@ -121,8 +122,6 @@ public class PostService {
         ans.add(headUrl);
         return ans;
     }
-    
-    
     
     
     public Integer postInsertImage(Integer postId, Integer imageId) {
@@ -339,6 +338,14 @@ public class PostService {
         postMapper.updatePostFavoriteCount(postId, op);
         Post post = postMapper.getPost(postId);
         return post.getCollect_count();
+    }
+    
+    //搜索帖子
+    public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag) {
+        if (section_id == 0) {
+        
+        }
+        return null;
     }
     
     

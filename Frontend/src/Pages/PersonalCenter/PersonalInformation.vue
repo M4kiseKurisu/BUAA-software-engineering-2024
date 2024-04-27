@@ -96,7 +96,7 @@
                                 <FavorateCard
                                     :postId="item.post_id"
                                     :title="item.post_title"
-                                    :content="item.post_content"
+                                    :content="item.post_intro"
                                     :writerId="item.author_id"
                                     :writerName="item.author_name"
                                 />
@@ -109,7 +109,7 @@
                                 <FavorateCard
                                     :postId="item.post_id"
                                     :title="item.post_title"
-                                    :content="item.post_content"
+                                    :content="item.post_intro"
                                     :writerId="item.author_id"
                                     :writerName="item.author_name"
                                 />

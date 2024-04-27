@@ -381,7 +381,9 @@ export default {
 
             // 更改楼中楼信息
             for (let j = 0; j < showComments.length; j++) {
-                this.repliesTotalPages[j] = Math.floor(showComments[j].replies.length / 3 + 1);
+                const count = (showComments[j].replies.length % 3 === 0) ? 
+                    showComments[j].replies.length / 3 : Math.ceil(showComments[j].replies.length / 3);
+                this.repliesTotalPages[j] = count;
                 this.repliesCurrentPage[j] = 1;
 
                 //点赞状态信息
@@ -455,10 +457,14 @@ export default {
             this.comment_count = result.data.comment_count;
             this.view_count = result.data.view_count;
 
-            this.commentTotalPages = Math.floor(result.data.comments.length / 3 + 1);
+            const count = (result.data.comments.length % 3 === 0) ? 
+                result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
+            this.commentTotalPages = count;
             // 更改楼中楼信息
             for (let j = 0; j < (this.comments.length >= 3 ? 3 : this.comments.length); j++) {
-                this.repliesTotalPages[j] = Math.floor(this.comments[j].replies.length / 3 + 1);
+                const count = (this.comments[j].replies.length % 3 === 0) ? 
+                    this.comments[j].replies.length / 3 : Math.ceil(this.comments[j].replies.length / 3);
+                this.repliesTotalPages[j] = count;
                 this.repliesCurrentPage[j] = 1;
 
                 //点赞状态信息
@@ -476,31 +482,34 @@ export default {
             console.log(this.isReplyLiked2);
             this.createInformation();
         })
-
-        axios({
-            method: "GET",
-            url: "/api/posts/isLike",
-            params: {
-                post_id: this.post_id,
-            }
-        }).then((result) => {
-            console.log(result)
-            this.isLikePost = result.data.like;
-        })
-
-        axios({
-            method: "GET",
-            url: "/api/posts/isFavorite",
-            params: {
-                post_id: this.post_id,
-                user_id: this.userId,
-            }
-        }).then((result) => {
-            this.isCollectPost = result.data.isFavorite;
-        })
     },
     methods: {
         createInformation() {
+            //获得用户是否点赞、收藏信息
+            axios({
+                method: "GET",
+                url: "/api/posts/isLike",
+                params: {
+                    post_id: this.post_id,
+                    user_id: this.userId,
+                }
+            }).then((result) => {
+                this.isLikePost = result.data.like;
+            })
+
+            axios({
+                method: "GET",
+                url: "/api/posts/isFavorite",
+                params: {
+                    post_id: this.post_id,
+                    user_id: this.userId,
+                }
+            }).then((result) => {
+                console.log(result)
+                this.isCollectPost = result.data.like;
+            })
+
+
             // 如果作者非本人，获取关注，签名信息
             if (this.author_id != JSON.parse(sessionStorage.getItem("id"))) {
                 axios({
@@ -702,7 +711,11 @@ export default {
                 }
             }).then((result) => {
                 this.comments = result.data.comments;
-                this.commentTotalPages = Math.floor(result.data.comments.length / 3 + 1);
+
+                const count = (result.data.comments.length % 3 === 0) ? 
+                    result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
+                this.commentTotalPages = count;
+
                 //console.log(this.comments);
                 //console.log(this.commentTotalPages);
                 this.currentCommentPage = 1;
@@ -777,6 +790,7 @@ export default {
                 reply_id: reply_id,
                 user_id: JSON.parse(sessionStorage.getItem("id"))
             }
+            console.log(content);
             axios({
                 method: "POST",
                 url: "/api/posts/reply/like",
@@ -872,6 +886,8 @@ export default {
 }
 
 .post-page-tag-css {
+    padding-left: 3px;
+    padding-right: 3px;
     height: 26px;
     background-color: #e9f3ff;
     border: 1px solid #3894ff;
