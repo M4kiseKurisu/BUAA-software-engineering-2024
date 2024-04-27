@@ -174,6 +174,16 @@ public class UserController {
         return userService.getUserSocialInfo(Integer.parseInt(user_id), id);
     }
 
+    @RequestMapping("/user/search")
+    public UserListResponse searchUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "sort", required = false) Integer sort
+    ) {
+        Integer id = user_id.isEmpty()? 0 : Integer.parseInt(user_id);
+        return userService.searchUser(keyword, id, sort);
+    }
+
     @RequestMapping("/user/head")
     public BasicInfoResponse getUserHead(
             @RequestParam(name = "user_id", required = false) Integer user_id
