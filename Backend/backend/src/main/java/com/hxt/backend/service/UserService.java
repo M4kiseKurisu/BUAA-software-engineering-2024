@@ -141,6 +141,7 @@ public class UserService {
                 PostResponse postResponse = new PostResponse(
                         post.getPost_id(),
                         post.getTitle(),
+                        post.getIntro(),
                         post.getContent(),
                         userMapper.getUserNameById(post.getAuthor_id()),
                         post.getAuthor_id(),
