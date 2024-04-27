@@ -4,6 +4,8 @@ import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.mapper.TagMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.*;
+import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
+import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -173,9 +175,18 @@ public class PostController {
             @RequestParam(name = "sort", required = false) Integer sort,
             @RequestParam(name = "tag", required = false) String tag
     ) {
-        //待完善
+        if (userId.isEmpty()) {
+            return new SearchResponse(false,"用户未登录",null);
+        }
+    
+        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag);
         
-        return new SearchResponse(true, null, null);
+        if (list.isEmpty()) {
+            return new SearchResponse(true,"未检索到响应结果",list);
+        } else {
+            return new SearchResponse(true,"检索成功",  list);
+        }
+        
     }
     
     //用户点赞帖子

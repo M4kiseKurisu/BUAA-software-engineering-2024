@@ -12,6 +12,7 @@ import java.util.List;
 public class PostResponse {
     private Integer post_id;
     private String post_title;
+    private String post_intro;
     private String post_content;
     private String author_name;
     private Integer author_id;
