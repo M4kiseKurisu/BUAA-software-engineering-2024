@@ -19,9 +19,6 @@
             </div>
         </div>
 
-    </div>
-
-    <div class="first-line">
         <div class="tag-in-container">
             <el-input
                 v-if="inputVisible"
@@ -47,9 +44,53 @@
             </el-tag>
         </div>
 
-        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" action="#">
-            <el-button class="button-upload-file">上传资源</el-button>
+        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" 
+            action="/api/posts/write/uploadResource" :data="getUploadData" @change="handleFileChange">
+            <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file">选择资源</el-button>
+            <el-button v-else disabled class="button-upload-file">选择资源</el-button>
         </el-upload>
+
+        <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file" @click="uploadFile">上传资源</el-button>
+        <el-button v-else disabled class="button-upload-file">上传资源</el-button>
+
+    </div>
+
+    <div class="first-line">
+        <!-- <div class="tag-in-container">
+            <el-input
+                v-if="inputVisible"
+                ref="InputRef"
+                v-model="inputValue"
+                class="w-20"
+                @keyup.enter="handleInputConfirm"
+                @blur="handleInputConfirm"
+                style="width: 100px"
+            />
+            <el-button v-else class="button-new-tag" @click="showInput">
+                添加新标签
+            </el-button>
+
+            <el-tag class="tag-in-container-content"
+                v-for="tag in dynamicTags"
+                :key="tag"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(tag)"
+            >
+                {{ tag }}
+            </el-tag>
+        </div>
+
+        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" action="#">
+            <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file">上传资源</el-button>
+            <el-button v-else disabled class="button-upload-file">上传资源</el-button>
+        </el-upload> -->
+
+        <div class="post-title-font">帖子摘要：</div>
+        <div>
+            <el-input v-model="this.inputContent" style="width: 600px" 
+                :autosize="{ minRows: 1, maxRows: 2 }" type="textarea" placeholder="输入摘要内容" />
+        </div>
     </div>
 
     <div class="inputPostContainer" style="border: 1px solid #e5e6eb">
@@ -117,7 +158,7 @@ export default {
                 tags: this.dynamicTags,
                 images: this.images,
                 resources: this.fileList,
-                intro:"",
+                intro: this.inputContent,
             }
 
             console.log(content);
@@ -135,6 +176,7 @@ export default {
                         type: 'success',
                     });
                     //location.reload();
+                    this.$router.push({ path: "/MainPage/Course_Center/PostCenter/" + this.sectionId});
                 }
             })
         },
@@ -158,6 +200,63 @@ export default {
         handleRemove(uploadFile, uploadFiles) {
             console.log(uploadFile, uploadFiles)
         },
+        handleFileChange(file) {
+            this.fileList = [file];
+        },
+        getUploadData() {
+            return {
+                // 传递其他参数，如 name、publisher_id、type
+                name: "Try",
+                publisher_id: JSON.parse(sessionStorage.getItem("id")),
+                type: ""
+            };
+        },
+        uploadFile() {
+            if (this.fileList.length === 0) {
+                // 没有选择文件，进行处理
+                return;
+            }
+/*
+            const formData = new FormData();
+            formData.append('file', this.fileList[0].raw);
+            console.log(formData);
+
+            axios
+            .post('/api/posts/write/uploadResource', formData)
+            .then(response => {
+                // 处理后端的响应
+            })
+            .catch(error => {
+                // 处理错误
+            });
+*/
+//1
+            const formData = new FormData();
+            formData.append('file', this.fileList[0].raw);
+            //formData.append('name', "try");
+            //formData.append('type', "");
+            //formData.append('publisher_id', JSON.parse(sessionStorage.getItem("id")))
+//2
+            let content = {
+                name: "try",
+                publisher_id: JSON.parse(sessionStorage.getItem("id")),
+                type: "",
+                file: formData,
+            }
+
+            console.log(content);
+
+            // axios({
+            //     method: "POST",
+            //     url: "/api/posts/write/uploadResource",
+            //     data: content,
+            // }).then((result) => {
+            //     console.log(result);
+            // })
+
+            axios.post("/api/posts/write/uploadResource", formData);
+
+        }
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
@@ -180,7 +279,8 @@ export default {
             inputVisible: false,
             dynamicTags: [],
             fileList: [],  //上传资源列表
-            sectionId:1,
+            sectionId: 1,
+            inputContent: "",
         }
     },
     setup() {
