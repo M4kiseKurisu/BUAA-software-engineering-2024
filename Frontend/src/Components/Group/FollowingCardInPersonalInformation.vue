@@ -5,9 +5,9 @@
             <div class="following-left-container">
                 
                 <!-- 关注用户图片 -->
-                <div class="following-avatar">
+                <button class="following-avatar" @click="toInformationShow(this.id)">
                     <el-avatar :size="48" :src="avatar"/>
-                </div>  
+                </button>  
 
                 <!-- 关注用户信息 -->
                 <div class="following-information-container">
@@ -56,6 +56,9 @@ export default {
                     this.isFollowingWriter = false;
                 }
             })
+        },
+        toInformationShow(id) {
+            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + id});
         }
     }
 }
@@ -77,6 +80,8 @@ export default {
 
 .following-avatar {
     margin-left: 4px;
+    background-color: white;
+    border: none;
 }
 
 .following-information-container {

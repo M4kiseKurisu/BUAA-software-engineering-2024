@@ -58,7 +58,10 @@
 
                 <div class="post-more-information-left">
                     <!-- 作者头像 -->
-                    <el-avatar shape="square" :size="60" :src="this.author_head" />
+                    <button class="avatar-button" @click="toInformationShow(this.author_id)">
+                        <el-avatar shape="square" :size="60" :src="this.author_head" />
+                    </button>
+                    
 
                     <div class="post-writer-information">
                         <div class="post-writer-username">{{ this.author_name }}</div>
@@ -80,8 +83,8 @@
             <div v-html="this.content" class="post-main-content"/>
 
             <div class="post-main-end-line" v-for="(item, index) in this.resources">
-                <div class="post-time-show-font">附加资源{{index}}：</div>
-                <div class="url-show-blue">{{ item }}</div>
+                <div class="post-time-show-font">附加资源{{ index + 1 }}：</div>
+                <button class="url-show-blue" @click="download(item)">{{ item }}</button>
             </div>
 
             <div class="post-main-end-line" style="margin-top: 6px">
@@ -161,11 +164,14 @@
                     <!-- 左侧信息：头像，昵称，tag，删除 -->
                     <div class="reply-first-line-left-content">
                         <!-- 回复者头像 -->
-                        <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
+                        <button class="avatar-button" @click="toInformationShow(item.comment_author_id)">
+                            <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
+                        </button>
+                        
                         <div class="replyer-username">{{ item.comment_author_name }}</div>
 
                         <div class="replyer-tag">
-                            <div v-if="this.author_id === this.userId" class="post-page-tag-css-for-replyer">作者</div>
+                            <div v-if="this.author_id === item.comment_author_id" class="post-page-tag-css-for-replyer">作者</div>
                         </div>
                         <div class="reply-delete-button" v-if="item.comment_author_id === this.userId">
                             <button class="post-main-delete-button" @click="deleteComment(item.comment_id)">
@@ -224,12 +230,15 @@
                         <!-- 左侧信息：头像，昵称，tag，删除 -->
                         <div class="reply-first-line-left-content">
                             <!-- 回复者头像 -->
-                            <div class="replys-reply-avatar">
-                                <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
-                            </div>
+                            <button class="avatar-button" @click="toInformationShow(item2.reply_author_id)">
+                                <div class="replys-reply-avatar">
+                                    <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
+                                </div>
+                            </button>
+                            
                             <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
-                            <div class="replyer-tag" v-if="this.author_id === this.userId">
+                            <div class="replyer-tag" v-if="this.author_id === item2.reply_author_id">
                                 <div class="post-page-tag-css-for-replyer">作者</div>
                             </div>
 
@@ -368,6 +377,7 @@ export default {
 
             isReplysOpen2: [[false, false, false], [false, false, false], [false, false, false]],
             isReplyLiked2: [[false, false, false], [false, false, false], [false, false, false]],
+            isReplyLiked2_1: [false, false, false],
             replyLikes: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         }
     },
@@ -808,6 +818,19 @@ export default {
                 console.log(result);
                 if(result.data.success) {
                     // 这里的status定义还要确认
+                    //this.isReplyLiked2[index][index2] = !this.isReplyLiked2[index][index2];
+                    // let getarray = this.isReplyLiked2[index];
+                    // console.log(getarray);
+                    // getarray[index2] = !getarray[index2];
+                    // console.log(getarray);
+                    //this.isReplyLiked2[index] = getarray;
+                    //this.isReplyLiked2.splice(index,1,getarray);
+                    // let newarray = [];
+                    // for (let i = 0; i < 3; i++) {
+                    //     newarray.push(getarray);
+                    // }
+                    // this.isReplyLiked2 = newarray;
+                    // console.log(this.isReplyLiked2);
                     // 点赞回复
                     if (result.data.status === 1) {
                         this.$message({
@@ -816,19 +839,22 @@ export default {
                             type: 'success',
                         });
 
-                        this.replyLikes[index][index2]++;
+                        //this.replyLikes[index][index2]++;
 
                         //?????
-                        console.log(this.isReplyLiked2);
-                        console.log(this.isReplyLiked2[index][index2]);
-                        this.isReplyLiked2[index][index2] = true;
-                        console.log(index, index2);
-                        this.$nextTick(function() {
-                            console.log(this.isReplyLiked2[index]);
-                            console.log(this.isReplyLiked2);
-                        })
-                        console.log(this.isReplyLiked2);
+                        // console.log(this.isReplyLiked2);
+                        // console.log(this.isReplyLiked2[index][index2]);
+                        //this.isReplyLiked2[index][index2] = true;
+                        //this.$set(this.isReplyLiked2[index], index2, true);
+                        // console.log(index, index2);
+                        // this.$nextTick(function() {
+                        //     console.log(this.isReplyLiked2[index]);
+                        //     console.log(this.isReplyLiked2);
+                        // })
+                        // console.log(this.isReplyLiked2);
                         //console.log(this.isReplyLiked2[index][index2]);
+                        //this.isReplyLiked2_1[index2] = true;
+                        //console.log(this.isReplyLiked2_1);
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -837,11 +863,18 @@ export default {
                             message: '取消回复点赞成功！',
                             type: 'success',
                         });
-                        this.isReplyLiked2[index][index2] = false;
-                        this.replyLikes[index][index2]--;
+                        //this.isReplyLiked2[index][index2] = false;
+                        //this.replyLikes[index][index2]--;
                     }
+                    location.reload();
                 }
             })
+        },
+        download(item) {
+            window.open(item);
+        },
+        toInformationShow(id) {
+            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + id});
         }
     }
 }
@@ -1028,10 +1061,13 @@ export default {
 }
 
 .url-show-blue {
-    height: 25px;
     font-size: 16px;
     color: #165DFF;
     margin-top: 8px;
+    width: 80%;
+    overflow: hidden;
+    background-color: white;
+    border: none;
 }
 
 .post-reply-writing-container {
@@ -1294,5 +1330,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.avatar-button {
+    background-color: white;
+    border: none;
 }
 </style>
