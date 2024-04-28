@@ -1,7 +1,6 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.entity.post.Post;
-import com.hxt.backend.mapper.TagMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.*;
 import com.hxt.backend.service.*;
@@ -20,6 +19,7 @@ public class PostController {
     private final TagService tagService;
     private final ResourceService resourceService;
     private final UserService userService;
+    private final String authorityError = "权限不匹配！";
     
     //帖子详情
     @RequestMapping (value="/posts/post")
@@ -45,8 +45,10 @@ public class PostController {
         PostResponse postResponse = postService.getPost(post_id);
         
         // 获取发帖者名字和头像
-        String authorName = postService.getAuthorName(post_id);
-        String authorHead = postService.getAuthorName(post_id);
+        List<String> nameAndHead = postService.getAuthorNameAndHead(post_id);
+        String authorName = nameAndHead.get(0);
+        String authorHead = nameAndHead.get(1);
+
         
         postResponse.setAuthor_name(authorName);
         postResponse.setAuthor_head(authorHead);
@@ -56,11 +58,13 @@ public class PostController {
         postResponse.setTags(tags);
         
         //获取帖子图片
+        /*
         List<String> images = postService.getPostImage(post_id);
         postResponse.setImages(images);
+        */
         
         //获取帖子资源
-        Map<Integer, String> resources = postService.getPostResource(post_id);
+        List<String> resources = postService.getPostResourceUrl(post_id);
         postResponse.setResources(resources);
         
         //获取帖子评论
@@ -118,10 +122,8 @@ public class PostController {
         // 向 post_resource表中插入数据
         if (resources != null) {
             for (String resourceUrl : resources) {
-                if (content.contains(resourceUrl)) {
-                    Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
-                    postService.postInsertResource(post_id, resource_id);
-                }
+                Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
+                postService.postInsertResource(post_id, resource_id);
             }
         }
         
@@ -144,16 +146,43 @@ public class PostController {
     //用户删除帖子
     @RequestMapping (value="/posts/delete")
     public BasicInfoResponse deletePost(
-            @RequestParam(name = "post_id", required = false) Integer post_id
-            
+            @RequestParam(name = "post_id", required = false) Integer post_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
-        Integer res = postService.deletePost(post_id);
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, "信息不完整！");
+        }
+        Integer res = postService.deletePost(Integer.parseInt(user_id), post_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选帖子不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
         
         return new BasicInfoResponse(true, "删帖成功");
+    }
+    
+    @RequestMapping(value = "/posts/search")
+    public SearchResponse searchPost(
+            @CookieValue(name = "user_id", defaultValue = "") String userId,
+            @RequestParam(name = "section_id", required = false) Integer section_id,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "sort", required = false) Integer sort,
+            @RequestParam(name = "tag", required = false) String tag
+    ) {
+        if (userId.isEmpty()) {
+            return new SearchResponse(false,"用户未登录",null);
+        }
+    
+        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag);
+        
+        if (list.isEmpty()) {
+            return new SearchResponse(true,"未检索到响应结果",list);
+        } else {
+            return new SearchResponse(true,"检索成功",  list);
+        }
+        
     }
     
     //用户点赞帖子
@@ -317,18 +346,20 @@ public class PostController {
     //删除评论
     @RequestMapping (value="/posts/comment/delete")
     public BasicInfoResponse deleteComment(
-            @RequestParam(name = "comment_id", required = false) Integer comment_id
-    
+            @RequestParam(name = "comment_id", required = false) Integer comment_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         Integer post_id = postService.getPostIdByCommentId(comment_id);
-        Integer res = postService.deleteComment(comment_id);
+        Integer res = postService.deleteComment(false, Integer.parseInt(user_id), comment_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选评论不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
     
         // 该帖子的评论数 -1
-        postService.updatePostCommentCount(post_id, -1);
+        postService.updatePostCommentCount(post_id, -res);
         
         return new BasicInfoResponse(true, "删除评论成功");
     }
@@ -388,6 +419,7 @@ public class PostController {
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         }
+
         //向数据库插入 reply
         Integer res = postService.createReply(comment_id, replied_author_id, author_id, content);
         
@@ -407,15 +439,17 @@ public class PostController {
     //用户删除回复
     @RequestMapping (value="/posts/reply/delete")
     public BasicInfoResponse deleteReply(
-            @RequestParam(name = "reply_id", required = false) Integer reply_id
-    
+            @RequestParam(name = "reply_id", required = false) Integer reply_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
         Integer comment_id = postService.getCommentIdByReplyId(reply_id);
         Integer post_id = postService.getPostIdByCommentId(comment_id);
-        Integer res = postService.deleteReply(reply_id);
+        Integer res = postService.deleteReply(false, Integer.parseInt(user_id), reply_id);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选评论不存在");
+        } else if (res == -2) {
+            return new BasicInfoResponse(false, authorityError);
         }
     
         // 该评论的回复数 -1

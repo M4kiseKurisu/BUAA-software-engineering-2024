@@ -28,7 +28,11 @@ public interface PostMapper {
     //  回帖点赞统计信息
     @Select("SELECT SUM(like_count) FROM comment WHERE author_id = #{userId}")
     Integer getUserCommentLikeNum(int userId);
-    
+
+    //  楼中楼点赞统计信息
+    @Select("SELECT SUM(like_count) FROM reply WHERE author_id = #{userId}")
+    Integer getUserReplyLikeNum(int userId);
+
     //插入新帖子
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, intro, content, category, section_id, author_id, like_count, " +
@@ -133,11 +137,44 @@ public interface PostMapper {
     @Select("SELECT * from favorite where post_id = #{postId} and user_id = #{userId}")
     @Result(column = "time", property = "favoriteTime")
     Favorite getFavorite(Integer postId, Integer userId);
+
+    //  获取所有收藏某帖子的用户id
+    @Select("SELECT user_id from favorite where post_id = #{postId}")
+    List<Integer> getFavoriteUsersByPost(Integer postId);
     
     //更新帖子收藏数
     @Update("UPDATE post SET collect_count = collect_count + #{op} WHERE post_id = #{id}")
     int updatePostFavoriteCount(Integer id, Integer op);
     
+    //根据关键词搜索帖子(时间倒序)
+    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
+            "content like '%${keyword}%' ORDER BY time DESC, post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> getPostByKeywordTimeDesc(String keyword);
+    
+    //获取某帖子的所有评论(热度)
+    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
+            "content like '%${keyword}%'" +
+            "(like_count + collect_count * 2 + comment_count * 3) DESC, post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> getPostByKeywordHotDesc(String keyword);
+    
+
+    //  以下为删除帖子时删除附加信息用
+    @Delete("DELETE FROM post_like WHERE post_id = #{id}")
+    int deletePostLike(Integer id);
+
+    @Delete("DELETE FROM post_image WHERE post_id = #{id}")
+    int deletePostImage(Integer id);
+
+    @Delete("DELETE FROM post_resource WHERE post_id = #{id}")
+    int deletePostResource(Integer id);
+
+    @Delete("DELETE FROM post_tag WHERE post_id = #{id}")
+    int deletePostTag(Integer id);
+
+    @Delete("DELETE FROM favorite WHERE post_id = #{id}")
+    int deletePostFavorite(Integer id);
     //评论
     
     //添加评论
@@ -145,9 +182,6 @@ public interface PostMapper {
     @Insert("INSERT INTO comment (post_id, author_id, content, time, reply_count, like_count) " +
             "VALUES (#{post_id}, #{author_id}, #{content}, #{commentTime}, #{reply_count}, #{like_count})")
     int insertComment(Comment comment);
-    
-    
-    
     
     //删除评论
     @Delete("DELETE FROM comment WHERE comment_id = #{id}")
@@ -224,6 +258,16 @@ public interface PostMapper {
     //更新评论点赞数
     @Update("UPDATE comment SET like_count = like_count + #{op} WHERE comment_id = #{id}")
     int updateCommentLikeCount(Integer id, Integer op);
+
+    //  以下为删除评论时删除附加信息用
+    @Delete("DELETE FROM comment_like WHERE comment_id = #{id}")
+    int deleteCommentLike(Integer id);
+
+    @Delete("DELETE FROM comment_image WHERE comment_id = #{id}")
+    int deleteCommentImage(Integer id);
+
+    @Delete("DELETE FROM comment_resource WHERE comment_id = #{id}")
+    int deleteCommentResource(Integer id);
     
     //回复
     
@@ -253,6 +297,9 @@ public interface PostMapper {
     @Select("SELECT comment_id from reply where reply_id = #{id}")
     Integer getCommentIdByReplyId(Integer id);
 
+    @Select("SELECT COUNT(*) FROM reply where author_id = #{id}")
+    int getUserReplyNum(Integer id);
+
     @Select("SELECT COUNT(*) FROM reply")
     int getReplyNum();
 
@@ -270,10 +317,14 @@ public interface PostMapper {
     ReplyLike getReplyLike(Integer replyId, Integer userId);
     
     //更新回复点赞状态
-    @Update("UPDATE reply_like SET status = #{status} WHERE pl_id = #{id}")
+    @Update("UPDATE reply_like SET status = #{status} WHERE rl_id = #{id}")
     int updateReplyLikeStatus(Integer id, Integer status);
     
     //更新回复点赞数
     @Update("UPDATE reply SET like_count = like_count + #{op} WHERE reply_id = #{id}")
     int updateReplyLikeCount(Integer id, Integer op);
+
+    //  删除回复时删除所有点赞信息
+    @Delete("DELETE FROM reply_like WHERE reply_id = #{id}")
+    int deleteReplyLike(Integer id);
 }

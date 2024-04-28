@@ -12,7 +12,6 @@
             <div style="display: flex;justify-content: center">
               <span style="font-size: 20px">暂无收藏信息</span>
             </div>
-
           </el-dialog>
         </div>
       </div>
@@ -97,7 +96,7 @@
                                 <FavorateCard
                                     :postId="item.post_id"
                                     :title="item.post_title"
-                                    :content="item.post_content"
+                                    :content="item.post_intro"
                                     :writerId="item.author_id"
                                     :writerName="item.author_name"
                                 />
@@ -110,7 +109,7 @@
                                 <FavorateCard
                                     :postId="item.post_id"
                                     :title="item.post_title"
-                                    :content="item.post_content"
+                                    :content="item.post_intro"
                                     :writerId="item.author_id"
                                     :writerName="item.author_name"
                                 />
@@ -161,6 +160,7 @@
                         :username="item.name"
                         :signature="item.sign"
                         :avatar="item.user_avatar"
+                        :id="item.user_id"
                     />
                 </div>
 
@@ -557,6 +557,7 @@ export default {
 /* 收藏帖子正文部分样式 */
 .favorates-cards-container {
     margin-left: 40px;
+    width: 95%;
 }
 
 /* 两行收藏文章卡片中间的间距设置 */

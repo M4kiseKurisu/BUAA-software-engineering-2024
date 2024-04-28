@@ -1,14 +1,19 @@
 package com.hxt.backend.response.singleInfo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserSocialInfoResponse {
     private String name;
     private Integer user_id;
@@ -19,6 +24,7 @@ public class UserSocialInfoResponse {
     private Integer comment_count;
     private Integer like_count;
     private String sign;
-    private boolean flag_follow;    //  是否关注了该用户
-    private boolean flag_blocked;     //  是否被封禁
+    private Boolean flag_follow;    //  是否关注了该用户
+    private Boolean flag_blocked;     //  是否被封禁
+    private List<UserAuthorityInfo> authorities;
 }

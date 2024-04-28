@@ -27,6 +27,11 @@ public interface MessageMapper {
     @Select("select * from manager_system_notice where system_notice_id = #{id};")
     ManagerNotice selectManagerSystemNoticeById(Integer id);
 
+    //  发送系统通知
+    @Insert("INSERT INTO manager_system_notice (title, content, is_public, receiver_id, publish_time, pushed)\n" +
+            "VALUES (#{title}, #{content}, 0, #{receiver}, NOW(), 0);")
+    int sendSystemNoticeToUser(String title, String content, Integer receiver);
+
     // 用户系统通知表
 
     // 插入新的通知

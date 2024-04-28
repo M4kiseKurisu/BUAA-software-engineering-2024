@@ -35,7 +35,7 @@
                 <!-- 用户关注模块信息 -->
                 <div v-for="item in showGroups" class="left-content-row-container">
                     <div v-for="item2 in item">
-                        <div class="my-following-course-card">{{ item2.section_name }}</div>
+                        <button class="my-following-course-card" @click="toFollowingSection(item2.section_id)">{{ item2.section_name }}</button>
                     </div>
                 </div>
 
@@ -215,6 +215,9 @@ export default {
                 this.totalPages = result.data.section_count / 8 + 1;
                 this.getSections = result.data.sections;
             })
+        },
+        toFollowingSection(id) {
+            this.$router.push({ path: "/MainPage/Course_Center/PostCenter/" + id});
         }
     },
     computed: {

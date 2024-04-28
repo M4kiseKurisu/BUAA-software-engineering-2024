@@ -7,9 +7,9 @@
             <div class="title">{{ title }}</div>
 
             <!-- 收藏按钮 -->
-            <div class="star">
+            <button class="star" @click="disFavorate">
                 <el-icon :size="24" color="#fedf00"><StarFilled/></el-icon>
-            </div>   
+            </button>   
         </div>
         
         <!-- 收藏帖子正文 -->
@@ -24,7 +24,7 @@
             </div>
 
             <!-- 点击跳转至收藏帖子 -->
-            <div class="content-link">>点击进入</div>
+            <button class="content-link" @click="jump">>点击进入</button>
         </div>
         
     </el-card>
@@ -47,12 +47,44 @@ export default {
     props: ["postId", "title", "content", "writerId", "writerName"],
     mounted() {
         // 获取作者头像信息
+        //console.log(this.writerId);
         axios({
             method: "GET",
-            url: "/api/user/head"
+            url: "/api/user/head",
+            params: {
+                user_id: this.writerId
+            }
         }).then((result) => {
+            //console.log(result.data.info);
             this.avatarSrc = result.data.info;
         })
+    },
+    methods: {
+        disFavorate() {
+            // 帖子取消收藏
+            let content = {
+                post_id: this.postId,
+                user_id: JSON.parse(sessionStorage.getItem("id")),
+            }
+            axios({
+                method: "POST",
+                url: "/api/posts/unfavorite",
+                data: content,
+            }).then((result) => {
+                //console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子取消收藏成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                }
+            })
+        },
+        jump() {
+            this.$router.push({ path: "/MainPage/Course_Center/PostPage/" + this.postId});
+        }
     }
 }
 </script>
@@ -84,6 +116,8 @@ export default {
 .star {
     margin-top: 3px;
     margin-right: -5px;
+    border: none;
+    background-color: white;
 }
 
 /* 定义文章简介样式 */
@@ -122,5 +156,7 @@ export default {
     color: #165dff;
     margin-top: 18px;
     margin-right: -10px;
+    border: none;
+    background-color: white;
 }
 </style>

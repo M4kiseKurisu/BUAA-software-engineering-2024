@@ -166,7 +166,6 @@ public class UserController {
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "id", required = false) Integer id
     ) {
-        System.out.println(user_id + " " + id);
         if (id == null) {
             return new UserSocialInfoResponse();
         } else if (user_id.isEmpty()) {
@@ -175,14 +174,24 @@ public class UserController {
         return userService.getUserSocialInfo(Integer.parseInt(user_id), id);
     }
 
+    @RequestMapping("/user/search")
+    public UserListResponse searchUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "sort", required = false) Integer sort
+    ) {
+        Integer id = user_id.isEmpty()? 0 : Integer.parseInt(user_id);
+        return userService.searchUser(keyword, id, sort);
+    }
+
     @RequestMapping("/user/head")
     public BasicInfoResponse getUserHead(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @RequestParam(name = "user_id", required = false) Integer user_id
     ) {
-        if (user_id.isEmpty()) {
+        if (user_id == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
-        String url = userService.getUserHead(Integer.parseInt(user_id));
+        String url = userService.getUserHead(user_id);
         if (url == null) {
             return new BasicInfoResponse(false, "该用户未设置头像！");
         }

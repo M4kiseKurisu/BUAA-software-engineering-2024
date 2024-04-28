@@ -6,7 +6,7 @@
     <div class="main-postpage-container">
         <!-- 管理界面弹出窗 -->
         <div class="creator_dialog">
-            <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%">
+            <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%" top="2%">
                 <div class="creator_container">
                     <CreatorOfPostCenter></CreatorOfPostCenter>
                 </div>
@@ -265,7 +265,7 @@ export default {
     created() {
         this.sectionId = this.$route.params.sectionId;
         console.log(this.$route.params.sectionId);
-        this.getPostList(0,0,'');
+        this.getPostList(0,2,'');
         this.getSectionInfomation();
     }
 }

@@ -1,9 +1,11 @@
 package com.hxt.backend.service;
 
+import com.hxt.backend.entity.MyResource;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.*;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.postResponse.CommentResponse;
+import com.hxt.backend.response.postResponse.PostIntroResponse;
 import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -32,6 +35,12 @@ public class PostService {
     
     @Resource
     private TagMapper tagMapper;
+
+    @Resource
+    private AdminMapper adminMapper;
+
+    @Resource
+    private MessageMapper messageMapper;
     
     // 创建帖子
     public Integer createPost(String title, String intro, String content,
@@ -52,11 +61,37 @@ public class PostService {
     
     
     
-    public Integer deletePost(Integer id) {
-        if (postMapper.getPost(id) == null) {
+    public Integer deletePost(Integer userId, Integer postId) {
+        Post p = postMapper.getPost(postId);
+        if (p == null) {
             return -1;
         }
-        return postMapper.deletePost(id);
+        //  检查权限
+        if (!p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+            return -2;
+        }
+        List<Comment> comments = postMapper.getCommentSortByTimeAsc(postId);
+        List<Integer> favoriteIds = postMapper.getFavoriteUsersByPost(postId);
+        for (Comment comment : comments) {
+            deleteComment(true, 0, comment.getComment_id());
+        }
+        postMapper.deletePostImage(postId);
+        postMapper.deletePostTag(postId);
+        postMapper.deletePostLike(postId);
+        postMapper.deletePostFavorite(postId);
+        postMapper.deletePostResource(postId);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("删帖通知",
+                String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
+                p.getAuthor_id());
+        for (Integer id : favoriteIds) {
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您收藏的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)), id);
+        }
+        return postMapper.deletePost(postId);
     }
     
     public PostResponse getPost(Integer id) {
@@ -79,11 +114,16 @@ public class PostService {
         return author;
     }
     
-    public String getAuthorName(Integer id) {
+    public List<String> getAuthorNameAndHead(Integer id) {
+        List<String> ans = new ArrayList<>();
         Integer authorId = getAuthorId(id);
         User author = userMapper.selectUserById(authorId);
-        return author.getName();
+        ans.add(author.getName());
+        String headUrl = imageMapper.getImage(author.getHeadId());
+        ans.add(headUrl);
+        return ans;
     }
+    
     
     public Integer postInsertImage(Integer postId, Integer imageId) {
         return postMapper.insertPostImage(postId, imageId);
@@ -124,6 +164,19 @@ public class PostService {
             }
         }
         return resourceMap;
+    }
+    
+    //获取帖子资源的url
+    public List<String> getPostResourceUrl(Integer postId) {
+        List<Integer> resourceIds = postMapper.getResourceIdByPost(postId);
+        List<String> resourceList = new ArrayList<>();
+        for (Integer resourceId : resourceIds) {
+            MyResource resource = resourceMapper.getResource(resourceId);
+            if (resource != null) {
+                resourceList.add(resource.getUrl());
+            }
+        }
+        return resourceList;
     }
     
     // 获取帖子 tag 的名称
@@ -172,7 +225,7 @@ public class PostService {
             } else {
                 commentResponse.setComment_isLike(false);
             }
-            
+
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
             List<String> imageUrls = new ArrayList<>();
@@ -299,6 +352,14 @@ public class PostService {
         return post.getCollect_count();
     }
     
+    //搜索帖子
+    public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag) {
+        if (section_id == 0) {
+        
+        }
+        return null;
+    }
+    
     
     //创建评论
     public Integer createComment(String content, Integer postId, Integer authorId) {
@@ -325,11 +386,24 @@ public class PostService {
     }
     
     //删除评论
-    public Integer deleteComment(Integer id) {
-        if (postMapper.getCommentById(id) == null) {
+    public Integer deleteComment(boolean flag, Integer userId, Integer commentId) {
+        Comment c = postMapper.getCommentById(commentId);
+        Post p = postMapper.getPost(postMapper.getPostIdByCommentId(commentId));
+        if (c == null) {
             return -1;
         }
-        return postMapper.deleteComment(id);
+        if (!flag && !c.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+            return -2;
+        }
+        List<Reply> replies = postMapper.getReplyByCommentId(commentId);
+        for (Reply reply : replies) {
+            deleteReply(true, 0, reply.getReply_id());
+        }
+        postMapper.deleteCommentLike(commentId);
+        postMapper.deleteCommentImage(commentId);
+        postMapper.deleteCommentResource(commentId);
+        return postMapper.deleteComment(commentId) + replies.size();
     }
     
     //通过评论id获取帖子id
@@ -396,11 +470,18 @@ public class PostService {
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
     }
     
-    public Integer deleteReply(Integer id) {
-        if (postMapper.getReplyById(id) == null) {
+    public Integer deleteReply(boolean flag, Integer userId, Integer replyId) {
+        Reply r = postMapper.getReplyById(replyId);
+        if (r == null) {
             return -1;
         }
-        return postMapper.deleteReply(id);
+        Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
+        if (!flag && !r.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+            return -2;
+        }
+        postMapper.deleteReplyLike(replyId);
+        return postMapper.deleteReply(replyId);
     }
     
     //点赞评论
