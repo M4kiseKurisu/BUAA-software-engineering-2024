@@ -79,8 +79,12 @@
             </div>
             <div v-html="this.content" class="post-main-content"/>
 
+            <div class="post-main-end-line" v-for="(item, index) in this.resources">
+                <div class="post-time-show-font">附加资源{{index}}：</div>
+                <div class="url-show-blue">{{ item }}</div>
+            </div>
 
-            <div class="post-main-end-line">
+            <div class="post-main-end-line" style="margin-top: 6px">
                 <button class="post-grey-button-below" @click="openComments">展开共{{ this.comments.length }}条评论</button>
                 <button class="post-grey-button-below" @click="openCommentEditor">去评论</button>
                 <div class="post-time-show-font">发帖时间：{{ this.create_time }}</div>
@@ -253,12 +257,12 @@
                             <button v-if="this.isReplyLiked2[index][index2]" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
                                 <!-- 喜欢图标 -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                                <div class="like-icon-after-contents">{{ item2.reply_like_count }}人点赞</div>
+                                <div class="like-icon-after-contents">{{ this.replyLikes[index][index2] }}人点赞</div>
                             </button>
                             <button v-else class="icon-and-content-2" @click="likeReply(item2.reply_id, index, index2)">
                                 <!-- 喜欢图标(未点击) -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
-                                <div class="like-icon-after-contents-2">{{ item2.reply_like_count }}人点赞</div>
+                                <div class="like-icon-after-contents-2">{{ this.replyLikes[index][index2] }}人点赞</div>
                             </button>
                         </div>
 
@@ -364,6 +368,7 @@ export default {
 
             isReplysOpen2: [[false, false, false], [false, false, false], [false, false, false]],
             isReplyLiked2: [[false, false, false], [false, false, false], [false, false, false]],
+            replyLikes: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
         }
     },
     computed: {
@@ -392,6 +397,7 @@ export default {
 
                 for (let k = 0; k < (showComments[j].replies.length >= 3 ? 3 : showComments[j].replies.length); k++) {
                     this.isReplyLiked2[j][k] = showComments[j].replies[k].reply_isLike;
+                    this.replyLikes[j][k] = showComments[j].replies[k].reply_like_count;
                 }
                 console.log(this.isReplyLiked2);
             }
@@ -423,6 +429,7 @@ export default {
                 showReplies = replies.slice((i - 1) * 3, i * 3);
                 for (let j = 0; j < showReplies.length; j++) {
                     this.isReplyLiked2[commentIndex][j] = showReplies[j].reply_isLike;
+                    this.replyLikes[commentIndex][j] = showReplies[j].reply_like_count;
                 }
                 return showReplies;
             };
@@ -474,12 +481,14 @@ export default {
                 //回复状态信息
                 for (let k = 0; k < (this.comments[j].replies.length >= 3 ? 3 : this.comments[j].replies.length); k++) {
                     this.isReplyLiked2[j][k] = this.comments[j].replies[k].reply_isLike;
+                    this.replyLikes[j][k] = this.comments[j].replies[k].reply_like_count;
                 }
             }
             //console.log(this.repliesTotalPages);
             //console.log(this.commentTotalPages);
             //console.log(this.replyLikesCount);
-            console.log(this.isReplyLiked2);
+            console.log(this.resources);
+            //console.log(this.isReplyLiked2);
             this.createInformation();
         })
     },
@@ -807,13 +816,19 @@ export default {
                             type: 'success',
                         });
 
+                        this.replyLikes[index][index2]++;
+
                         //?????
                         console.log(this.isReplyLiked2);
                         console.log(this.isReplyLiked2[index][index2]);
                         this.isReplyLiked2[index][index2] = true;
                         console.log(index, index2);
-                        console.log(this.isReplyLiked2[index][index2]);
+                        this.$nextTick(function() {
+                            console.log(this.isReplyLiked2[index]);
+                            console.log(this.isReplyLiked2);
+                        })
                         console.log(this.isReplyLiked2);
+                        //console.log(this.isReplyLiked2[index][index2]);
                     }
                     // 取消点赞
                     if (result.data.status === 0) {
@@ -823,6 +838,7 @@ export default {
                             type: 'success',
                         });
                         this.isReplyLiked2[index][index2] = false;
+                        this.replyLikes[index][index2]--;
                     }
                 }
             })
@@ -1008,6 +1024,13 @@ export default {
     height: 25px;
     font-size: 16px;
     color: #86909c;
+    margin-top: 8px;
+}
+
+.url-show-blue {
+    height: 25px;
+    font-size: 16px;
+    color: #165DFF;
     margin-top: 8px;
 }
 

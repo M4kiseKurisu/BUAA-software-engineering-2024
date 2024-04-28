@@ -557,6 +557,7 @@ export default {
 /* 收藏帖子正文部分样式 */
 .favorates-cards-container {
     margin-left: 40px;
+    width: 95%;
 }
 
 /* 两行收藏文章卡片中间的间距设置 */

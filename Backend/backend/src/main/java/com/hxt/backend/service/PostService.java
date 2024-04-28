@@ -211,8 +211,6 @@ public class PostService {
             } else {
                 commentResponse.setComment_isLike(false);
             }
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
-            System.out.println(status);
 
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
@@ -475,9 +473,7 @@ public class PostService {
     //点赞评论
     public Integer thumbReply(Integer replyId, Integer user_id) {
         ReplyLike replyLike = postMapper.getReplyLike(replyId, user_id);
-        System.out.println(replyLike);
-        System.out.println(replyLike.getStatus());
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&");
+
         if (replyLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertReplyLike(replyId, user_id, 1, likeTime);

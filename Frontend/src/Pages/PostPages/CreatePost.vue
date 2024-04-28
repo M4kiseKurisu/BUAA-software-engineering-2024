@@ -44,7 +44,7 @@
             </el-tag>
         </div>
 
-        <el-upload v-model:file-list="this.fileList" :show-file-list="false" :auto-upload="false" 
+        <el-upload v-model:file-list="this.fileList" :show-file-list="true" :auto-upload="false" 
             action="/api/posts/write/uploadResource" :data="getUploadData" @change="handleFileChange">
             <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file">选择资源</el-button>
             <el-button v-else disabled class="button-upload-file">选择资源</el-button>
@@ -157,7 +157,7 @@ export default {
                 category: parseInt(this.PostcategoryValue),
                 tags: this.dynamicTags,
                 images: this.images,
-                resources: this.fileList,
+                resources: this.filelistUrl,
                 intro: this.inputContent,
             }
 
@@ -211,51 +211,33 @@ export default {
                 type: ""
             };
         },
-        uploadFile() {
-            if (this.fileList.length === 0) {
-                // 没有选择文件，进行处理
-                return;
+        async uploadFile() {
+            try {
+                if (this.fileList.length === 0) {
+                    // 没有选择文件，进行处理
+                    return;
+                }
+
+                //console.log(this.fileList);
+                for (let i = 0; i < this.fileList.length; i++) {
+                    const formData = new FormData();
+                    formData.append('file', this.fileList[i].raw);
+                    formData.append('name', "");
+                    formData.append('type', "");
+                    formData.append('publisher_id', JSON.parse(sessionStorage.getItem("id")))
+
+                    let response = await axios.post("/api/posts/write/uploadResource", formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    console.log(response.data);
+                    this.filelistUrl.push(response.data.url);
+                }
+            } catch (error) {
+                console.log("error")
             }
-/*
-            const formData = new FormData();
-            formData.append('file', this.fileList[0].raw);
-            console.log(formData);
-
-            axios
-            .post('/api/posts/write/uploadResource', formData)
-            .then(response => {
-                // 处理后端的响应
-            })
-            .catch(error => {
-                // 处理错误
-            });
-*/
-//1
-            const formData = new FormData();
-            formData.append('file', this.fileList[0].raw);
-            //formData.append('name', "try");
-            //formData.append('type', "");
-            //formData.append('publisher_id', JSON.parse(sessionStorage.getItem("id")))
-//2
-            let content = {
-                name: "try",
-                publisher_id: JSON.parse(sessionStorage.getItem("id")),
-                type: "",
-                file: formData,
-            }
-
-            console.log(content);
-
-            // axios({
-            //     method: "POST",
-            //     url: "/api/posts/write/uploadResource",
-            //     data: content,
-            // }).then((result) => {
-            //     console.log(result);
-            // })
-
-            axios.post("/api/posts/write/uploadResource", formData);
-
         }
     },
     created() {
@@ -281,6 +263,7 @@ export default {
             fileList: [],  //上传资源列表
             sectionId: 1,
             inputContent: "",
+            filelistUrl: [],
         }
     },
     setup() {

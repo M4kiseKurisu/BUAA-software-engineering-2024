@@ -10,12 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.core.io.UrlResource;
 
+import java.util.List;
 
 
 @RestController
@@ -104,16 +103,18 @@ public class UploadController {
         
     }
     
-    @RequestMapping (value="/posts/write/uploadResource")
+    @PostMapping (value="/posts/write/uploadResource")
     public UploadResponse uploadResource(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "publisher_id", required = false) Integer publisherId,
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam(name = "type", required = false) String type
     ) {
+        System.out.println();
         if (file == null) {
             return new UploadResponse(false, "文件为空", "");
         }
+
         // 上传文件到云服务器并返回文件在云服务器上的 URL
         String url = obsService.uploadFile(file);
         

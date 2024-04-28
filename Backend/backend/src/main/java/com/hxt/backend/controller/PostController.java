@@ -124,10 +124,8 @@ public class PostController {
         // 向 post_resource表中插入数据
         if (resources != null) {
             for (String resourceUrl : resources) {
-                if (content.contains(resourceUrl)) {
-                    Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
-                    postService.postInsertResource(post_id, resource_id);
-                }
+                Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
+                postService.postInsertResource(post_id, resource_id);
             }
         }
         

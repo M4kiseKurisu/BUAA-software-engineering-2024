@@ -262,7 +262,7 @@ export default {
     created() {
         this.sectionId = this.$route.params.sectionId;
         console.log(this.$route.params.sectionId);
-        this.getPostList(0,0,'');
+        this.getPostList(0,2,'');
         this.getSectionInfomation();
     }
 }
