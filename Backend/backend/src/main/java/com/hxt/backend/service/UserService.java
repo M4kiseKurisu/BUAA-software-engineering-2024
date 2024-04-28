@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -111,13 +109,30 @@ public class UserService {
                 userMapper.getFollowCount(id),
                 userMapper.getFollowerCount(id),
                 postMapper.getUserPostNum(id),
-                postMapper.getUserCommentNum(id),
+                postMapper.getUserCommentNum(id) + postMapper.getUserReplyNum(id),
                 postLike + commentLike + replyLike,
                 user.getSign(),
                 userMapper.isFollow(searcher, id) > 0,
                 checkBlocked(id),
                 authorityInfo
         );
+    }
+
+    public UserListResponse searchUser(String keyword, Integer searcher, Integer sort) {
+        List<Integer> ids = userMapper.searchUserByName(keyword);
+        UserListResponse response = new UserListResponse(ids.size(), new ArrayList<>());
+        for (Integer id : ids) {
+            response.getUser().add(getUserSocialInfo(searcher, id));
+        }
+        if (sort == 1) {
+            response.getUser().sort((o1, o2) -> o2.getFollower_count() - o1.getFollower_count());
+        } else if (sort == 2) {
+            response.getUser().sort((o1, o2) -> o2.getLike_count() - o1.getLike_count());
+        } else if (sort == 3) {
+            response.getUser().sort((o1, o2) -> o2.getPost_count() + o2.getComment_count()
+                    - o1.getPost_count() - o1.getComment_count());
+        }
+        return response;
     }
 
     public UserListResponse getFollow(Integer id) {

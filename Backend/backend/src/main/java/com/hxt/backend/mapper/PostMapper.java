@@ -297,6 +297,9 @@ public interface PostMapper {
     @Select("SELECT comment_id from reply where reply_id = #{id}")
     Integer getCommentIdByReplyId(Integer id);
 
+    @Select("SELECT COUNT(*) FROM reply where author_id = #{id}")
+    int getUserReplyNum(Integer id);
+
     @Select("SELECT COUNT(*) FROM reply")
     int getReplyNum();
 

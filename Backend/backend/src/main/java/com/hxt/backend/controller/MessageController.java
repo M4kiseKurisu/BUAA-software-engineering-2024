@@ -95,7 +95,7 @@ public class MessageController {
     }
 
 
-    @GetMapping("/message.apply")
+    @GetMapping("/message/apply")
     public ApplyMessageResponse getApply(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {

@@ -28,6 +28,9 @@ public interface UserMapper {
     })
     User selectUserByName(String name);
 
+    @Select("SELECT user_id FROM user_info WHERE name like '%${name}%' ORDER BY LENGTH(name), token_time DESC")
+    List<Integer> searchUserByName(String name);
+
     @Select("SELECT * FROM user_info WHERE user_id = #{id}")
     @Results({
             @Result(column = "user_id", property = "userId", id = true),
