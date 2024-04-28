@@ -1,5 +1,6 @@
 package com.hxt.backend.service;
 
+import com.hxt.backend.entity.MyResource;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.*;
 import com.hxt.backend.mapper.*;
@@ -165,6 +166,19 @@ public class PostService {
         return resourceMap;
     }
     
+    //获取帖子资源的url
+    public List<String> getPostResourceUrl(Integer postId) {
+        List<Integer> resourceIds = postMapper.getResourceIdByPost(postId);
+        List<String> resourceList = new ArrayList<>();
+        for (Integer resourceId : resourceIds) {
+            MyResource resource = resourceMapper.getResource(resourceId);
+            if (resource != null) {
+                resourceList.add(resource.getUrl());
+            }
+        }
+        return resourceList;
+    }
+    
     // 获取帖子 tag 的名称
     public List<String> getPostTag(Integer postId) {
         List<Integer> tagIds = postMapper.getTagIdByPost(postId);
@@ -211,8 +225,6 @@ public class PostService {
             } else {
                 commentResponse.setComment_isLike(false);
             }
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
-            System.out.println(status);
 
             //获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
@@ -475,9 +487,6 @@ public class PostService {
     //点赞评论
     public Integer thumbReply(Integer replyId, Integer user_id) {
         ReplyLike replyLike = postMapper.getReplyLike(replyId, user_id);
-        System.out.println(replyLike);
-        System.out.println(replyLike.getStatus());
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&");
         if (replyLike == null) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             postMapper.insertReplyLike(replyId, user_id, 1, likeTime);
