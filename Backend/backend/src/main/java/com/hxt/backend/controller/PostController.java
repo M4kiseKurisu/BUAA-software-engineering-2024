@@ -1,17 +1,13 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.entity.post.Post;
-import com.hxt.backend.mapper.TagMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.*;
-import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
-import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,11 +58,13 @@ public class PostController {
         postResponse.setTags(tags);
         
         //获取帖子图片
+        /*
         List<String> images = postService.getPostImage(post_id);
         postResponse.setImages(images);
+        */
         
         //获取帖子资源
-        Map<Integer, String> resources = postService.getPostResource(post_id);
+        List<String> resources = postService.getPostResourceUrl(post_id);
         postResponse.setResources(resources);
         
         //获取帖子评论
@@ -124,10 +122,8 @@ public class PostController {
         // 向 post_resource表中插入数据
         if (resources != null) {
             for (String resourceUrl : resources) {
-                if (content.contains(resourceUrl)) {
-                    Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
-                    postService.postInsertResource(post_id, resource_id);
-                }
+                Integer resource_id = resourceService.getResourceIdByUrl(resourceUrl);
+                postService.postInsertResource(post_id, resource_id);
             }
         }
         

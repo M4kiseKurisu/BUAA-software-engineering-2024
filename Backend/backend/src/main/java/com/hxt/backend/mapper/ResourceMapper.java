@@ -12,7 +12,7 @@ public interface ResourceMapper {
     //插入资源
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO resource (name, publisher_id, url, type, time)" +
-            " VALUES (#{name}, #{publisherId}, #{url}, #{type}, #{updateTime})")
+            " VALUES (#{name}, #{publisherId}, #{url}, #{type}, #{uploadTime})")
     int insertResource(String name, Integer publisherId, String url, String type, Timestamp uploadTime);
     
     
