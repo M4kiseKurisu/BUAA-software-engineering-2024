@@ -184,12 +184,15 @@ export default {
         },
         selectOne() {
             this.kindSelect = 1;
+            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
         },
         selectTwo() {
             this.kindSelect = 2;
+            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
         },
         selectThree() {
             this.kindSelect = 3;
+            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
@@ -277,6 +280,7 @@ export default {
 
 .main-postpage-container {
     width: calc(100vw - 205px);
+    min-width: 1080px;
     background-color: rgba(247, 248, 250, 0.7);
 }
 </style>

@@ -56,7 +56,7 @@
         </div>
         <div style="height: 70%;background-color: aliceblue;width: 100%;display: flex;">
             <div style="width: 30%;height: 100%;display: flex;align-items: center;justify-content: center;margin-left: 2%;">
-                <div style="width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
+                <div style="min-height: 470px;width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
                     <div style="width: 100%;height: 10%;display: flex;justify-content: center;align-items: center;">
                         <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
                                 的 帖
@@ -73,11 +73,6 @@
                 <div style="width: 100%;height: 100%;">
                     <el-scrollbar style="height: 100%;width: 100%;">
                         <div style="width: 98.1%;height: 100%;">
-                            <PostItem></PostItem>
-                            <PostItem></PostItem>
-                            <PostItem></PostItem>
-                            <PostItem></PostItem>
-                            <PostItem></PostItem>
                             <PostItem></PostItem>
                         </div>
 
