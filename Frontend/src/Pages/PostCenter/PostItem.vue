@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 100%;max-width: 100%;;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
+    <div style="width: 100%;min-width: 780px;max-width: 100%;;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
         <div v-if="this.cover != ''"
             style="display: flex;height: 100%;width: 145px; justify-content: center;align-items: center; background-color: white;">
             <el-avatar :size='140' :src="cover" shape="square" fit="cover" />
@@ -28,7 +28,7 @@
                             alt="">&ensp;{{ likeNum }}</span>
                 </div>
                 <div style="display: flex;align-items: center; flex-grow: 1;justify-content: end;">
-                    <span style="margin-right: 4%;"><el-button type="primary" @click = "goToPost()">查看详情</el-button></span>
+                    <span style="margin-right: 30px;"><el-button type="primary" @click = "goToPost()">查看详情</el-button></span>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@ export default {
     props: {
         getPostId: {
             type: Number,
-            default: 10,
+            default: 1,
         },
         postInfo: {
             type: Object,
