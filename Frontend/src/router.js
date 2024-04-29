@@ -20,6 +20,7 @@ import CreatePost from "./Pages/PostPages/CreatePost.vue"
 
 import CreateCourseSection from "@/Pages/CourseCenter/CreateCourseSection.vue";
 
+import SocialCenter from "@/Pages/SocialCenter/SocialPageContainer.vue"
 
 import ShowPersonalInformation from "./Pages/PersonalCenter/ShowPersonalInformation.vue"
 const router = createRouter({
@@ -108,7 +109,10 @@ const router = createRouter({
                         },
                     ]
                 },
-
+                {
+                    path: 'Social_Center',
+                    component: SocialCenter,
+                }
             ]
         }
     ]
