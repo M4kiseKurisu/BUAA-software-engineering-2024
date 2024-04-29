@@ -1,6 +1,7 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.MyResource;
+import com.hxt.backend.entity.Tag;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.*;
 import com.hxt.backend.mapper.*;
@@ -354,10 +355,33 @@ public class PostService {
     
     //搜索帖子
     public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag) {
-        if (section_id == 0) {
+        List<Post> posts;
+        List<PostIntroResponse> postIntroResponses = new ArrayList<>();
         
+        if (section_id == 0) {
+            if (sort == 0) {
+                posts = postMapper.searchPostByKeywordTagHotDesc(keyword, tag);
+            } else {
+                posts = postMapper.searchPostByKeywordTagTimeDesc(keyword, tag);
+            }
+        } else {
+            if (sort == 0) {
+                posts = postMapper.searchPostInSectionByKeywordTagHotDesc(section_id, keyword, tag);
+            } else {
+                posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(section_id, keyword, tag);
+            }
         }
-        return null;
+        
+        for (Post post : posts) {
+            PostIntroResponse postIntroResponse = new PostIntroResponse(post);
+            String authorName = userMapper.getUserNameById(post.getAuthor_id());
+            List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
+            postIntroResponse.setPost_author_name(authorName);
+            postIntroResponse.setTags(tags);
+            
+            postIntroResponses.add(postIntroResponse);
+        }
+        return postIntroResponses;
     }
     
     

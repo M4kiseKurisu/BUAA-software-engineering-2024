@@ -36,16 +36,30 @@
             <!-- <el-menu-item index="/ShowPersonalInformation">个人信息展示测试</el-menu-item> -->
         </el-sub-menu>
 
+        <!-- 侧边栏第三个元素是展示模块 -->
+        <el-sub-menu>
+            <!-- 设置学业模块子菜单的表头信息 -->
+            <template #title>
+                <el-icon><View /></el-icon>
+                <span>展示模块</span>
+            </template>
+
+            <!-- 设置学业模块子菜单内容：学习团体，打卡信息 -->
+            <el-menu-item index="/MainPage/Course_Center/Personal_Course">学习团体</el-menu-item>
+            <el-menu-item index="/MainPage/Social_Center">打卡信息</el-menu-item>
+        </el-sub-menu>
+
     </el-menu>
 </template>
 
 <script>
-import { User, Reading } from '@element-plus/icons-vue'
+import { User, Reading, View } from '@element-plus/icons-vue'
 
 export default {
     components: {
         User,
         Reading,
+        View,
     },
     data() {
         return {
