@@ -107,7 +107,9 @@ public interface PostMapper {
     @Select("SELECT tag_id from post_tag where post_id = #{id} ORDER BY pt_id ASC")
     List<Integer> getTagIdByPost(Integer id);
 
-    @Select("SELECT name from tag join post_tag pt on tag.tag_id = pt.tag_id where post_id = #{id} ORDER BY pt_id")
+    @Select("SELECT t.name from tag t " +
+            "join post_tag pt on t.tag_id = pt.tag_id " +
+            "where pt.post_id = #{id} ORDER BY pt.pt_id")
     List<String> getTagNameByPost(Integer id);
     
     //帖子-点赞
@@ -146,18 +148,63 @@ public interface PostMapper {
     @Update("UPDATE post SET collect_count = collect_count + #{op} WHERE post_id = #{id}")
     int updatePostFavoriteCount(Integer id, Integer op);
     
-    //根据关键词搜索帖子(时间倒序)
-    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
-            "content like '%${keyword}%' ORDER BY time DESC, post_id DESC")
+    /*"SELECT p.* " +
+            "FROM post p " +
+            "INNER JOIN post_tag pt ON p.post_id = pt.post_id " +
+            "INNER JOIN tag t ON pt.tag_id = t.tag_id " +
+            "WHERE p.content LIKE CONCAT('%', ?, '%') " +
+            "AND t.name LIKE CONCAT('%', ?, '%')";
+            
+     */
+    //根据关键词和tag在所有版块搜索帖子(时间倒序)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and t.name like concat('%', #{tag}, '%') " +
+            "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
-    List<Post> getPostByKeywordTimeDesc(String keyword);
+    List<Post> searchPostByKeywordTagTimeDesc(String keyword, String tag);
     
-    //获取某帖子的所有评论(热度)
-    @Select("SELECT * from post where title like '%${keyword}%' or intro like '%${keyword}%' or " +
-            "content like '%${keyword}%'" +
-            "(like_count + collect_count * 2 + comment_count * 3) DESC, post_id DESC")
+    //根据关键词和tag在所有版块搜索帖子(热度)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and t.name like concat('%', #{tag}, '%') " +
+            "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
-    List<Post> getPostByKeywordHotDesc(String keyword);
+    List<Post> searchPostByKeywordTagHotDesc(String keyword, String tag);
+    
+    //根据关键词和tag在特定版块搜索帖子(时间倒序)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and t.name like concat('%', #{tag}, '%') " +
+            "ORDER BY p.time DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag);
+    
+    //根据关键词和tag在特定版块搜索帖子(热度)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and t.name like concat('%', #{tag}, '%') " +
+            "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag);
     
 
     //  以下为删除帖子时删除附加信息用
