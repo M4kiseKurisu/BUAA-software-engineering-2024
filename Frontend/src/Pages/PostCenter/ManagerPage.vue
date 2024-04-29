@@ -6,7 +6,6 @@
     <div class="name-container">
       <span>姓名</span>
     </div>
-
   </div>
 </template>
 <script>
@@ -15,25 +14,27 @@ export default {
 }
 </script>
 <style>
-.img-container{
+.img-container {
   display: block;
-  //justify-content: center;
-  //background: #8c939d;
+  /* justify-content: center; */
+  /* background: #8c939d; */
   width: 100%;
 }
-.img-container-it{
+
+.img-container-it {
   display: flex;
   justify-content: center;
 }
-.img-of-creator{
+
+.img-of-creator {
   max-width: 80%;
   aspect-ratio: 1/1;
   border: 1px solid darkgray;
   border-radius: 5%;
 }
-.name-container{
+
+.name-container {
   display: flex;
   justify-content: center;
   font-size: 16px;
-}
-</style>
+}</style>

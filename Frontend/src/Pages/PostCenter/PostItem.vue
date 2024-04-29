@@ -12,9 +12,8 @@
                             style="font-size: 1em; font-weight: bold;">{{ item }}</el-tag></span>
                 </div>
             </div>
-            <div style="width: 60%;height: 30%;margin-left: 20px;max-width: 60%;">
-                <div  v-html="introduction" style="color: darkgrey;word-wrap: break-word;overflow: hidden;width: 100%;height: 100%;">
-                </div>
+            <div style="width: 60%;height: 30%;margin-left: 20px;max-width: 60%;color: darkgrey;word-wrap: break-word;overflow: hidden;">
+                <span>{{ introduction }}</span>
             </div>
             <div
                 style="width: 100%;height: 30%; display: flex;justify-content: space-between;align-items: center;margin-left: 20px;">
@@ -71,7 +70,7 @@ export default {
                 url: "/api/posts/post",
                 params: { post_id: this.postId, },
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.title = result.data.title;
                 this.authorId = result.data.author_id;
                 this.authorName = result.data.author_name;
@@ -90,13 +89,13 @@ export default {
         }
     },
     created() {
-        console.log(this.postInfo);
+        //console.log(this.postInfo);
         if (this.postInfo != null) {
             this.postId = this.postInfo.post_id;
             this.title = this.postInfo.post_title;
             this.authorId = this.postInfo.author_id;
             this.authorName = this.postInfo.author_name;
-            this.introduction = this.postInfo.post_content;
+            this.introduction = this.postInfo.intro;
             this.time = this.postInfo.post_time;
             this.tags = this.postInfo.tag_list;
             this.likeNum = this.postInfo.post_likes;

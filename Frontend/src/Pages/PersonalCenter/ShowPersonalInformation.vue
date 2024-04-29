@@ -165,6 +165,7 @@ export default {
 
     },
     created() {
+        this.userId = this.$route.params.userId;
         this.GetInfomation();
     }
 }

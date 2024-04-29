@@ -7,7 +7,7 @@ import MainPage from "./Pages/MainPageContainer.vue"
 import PersonalInformation from "./Pages/PersonalCenter/PersonalInformation.vue"
 
 import NoticeCenter from "./Components/Notice/NoticeCenter.vue"
-import PersonalChat from "./Components/Chat/PersonalChat.vue"
+import ChatCenter from "./Components/Chat/ChatCenter.vue"
 import PersonalInformationChange from "./Pages/PersonalCenter/PersonalInformationChange.vue"
 import Favorate from "./Pages/PersonalCenter/MoreDetails/Favorate.vue";
 
@@ -45,13 +45,6 @@ const router = createRouter({
             meta: { 
                 requireAuth: true,
             }  
-        },
-        {
-            path: '/ChatCenter',
-            component: PersonalChat,
-            meta: { 
-                requireAuth: true,
-            } 
         },
         {
             path: '/MainPage',
@@ -105,6 +98,10 @@ const router = createRouter({
                         {
                             path: 'CreatePost/:sectionId',
                             component: CreatePost,
+                        },
+                        {
+                            path: '/ChatCenter',
+                            component: ChatCenter,
                         },
                     ]
                 },

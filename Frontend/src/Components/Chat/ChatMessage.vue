@@ -6,8 +6,8 @@
         <div style="width: 100%;">
             <div style="font-size: medium;font-weight: bold;color:darkgray;">{{ senderName }}</div>
             <div class="message-bubble-o">
-                <div class="message-content-o">这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息
-                    这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息
+                <div class="message-content-o">
+                    {{ content }}
                 </div>
             </div>
         </div>
@@ -19,37 +19,70 @@
         <div style="width: 100%;display: flex;flex-direction: column;align-items: end;">
             <div style="font-size: medium;font-weight: bold;color:darkgray;">{{ meName }}</div>
             <div class="message-bubble-m">
-                <div class="message-content-m">这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</div>
+                <div class="message-content-m">{{ content }}</div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { result } from 'lodash';
+
 export default {
     props: {
-        senderId: {
-            type: Number,
-            default: 0,
+        messageInfomation: {
+            type: Object,
+            default: null,
         },
     },
     data() {
         return {
             headImg: '',
             senderName: '也是中文名',
+            senderId: 0,
             content: 'hello hxt!',
             time: '2022.2.2.2',
             meId: 999,
             meName: '中文名',
+            time: '',
         }
     },
     methods: {
-    }
+        getMessageInfomation() {
+            this.senderId = this.messageInfomation.message_sender_id;
+            this.content = this.messageInfomation.message_content;
+            this.time = this.messageInfomation.message_time;
+            this.meId = JSON.parse(sessionStorage.getItem("id"));
+            if (this.meId == this.senderId) {
+                axios({
+                    method: "GET",
+                    url: "api/user/social/self",
+                }).then((result) => {
+                    this.headImg = result.data.user_avatar;
+                    this.meName = result.data.name;
+                })
+            } else {
+                axios({
+                    method: "GET",
+                    url: "api/user/social/others",
+                    params: {
+                        id: this.senderId,
+                    }
+                }).then((result) => {
+                    this.headImg = result.data.user_avatar;
+                    this.senderName = result.data.name;
+                })
+            }
+        }
+    },
+    created() {
+
+    },
 }
 </script>
 
 <style scoped>
-
-
 .message-bubble-o {
     display: flex;
     background-color: #e0e0e0;

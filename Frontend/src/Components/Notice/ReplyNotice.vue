@@ -1,6 +1,6 @@
 <template>
     <div class="replyNoticeContainer">
-        <div class="headContainer"><el-avatar :size="60" src="./src/Images/私信.png" />
+        <div class="headContainer"><el-avatar :size="60" :src="replyUserHead" />
         </div>
         <div style="margin-left: 10px;width: 90%;">
             <div class="senderContainer">
@@ -16,25 +16,35 @@
             <div class="contentContainer">
                 <div style="height: 100%;width: 80%;max-width: 80%;;font-size: 1.2em;">
                     <div v-if="!replyToPost" style="border-left: 3px solid darkgray;background-color: rgb(230, 225, 223);margin-bottom: 5px;max-width: 100%;
-                        white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" >
+                                    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                         <span style="margin-left: 5px;"> {{ meName }}: {{ commentContent }}</span>
                     </div>
                     <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">回复：{{ replyContent }}</div>
                 </div>
                 <div style="height: 100%;display: flex;align-items: center;width: 20%;justify-content: end;">
-                    <el-button type="primary" plain>查看详情</el-button>
+                    <el-button type="primary" plain @click = "goToPost">查看详情</el-button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios';
+import { result } from 'lodash';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
+    props: {
+        replyInformation: {
+            type: Object,
+            default: null,
+        }
+    },
     data() {
         return {
             replyId: 1,
             replyUserId: 1,
             replyUserName: 'bojiang',
+            replyUserHead: '',
             meName: 'wodes',
             replyToPost: false,
             replyContent: "喜欢吗~喜欢吗~喜欢吗~喜欢吗~喜欢吗",
@@ -46,7 +56,44 @@ export default {
         }
     },
     methods: {
-
+        getReplyInfomation() {
+            this.replyId = this.replyInformation.reply_id;
+            this.replyUserId = this.replyInformation.reply_user_id;
+            this.replyUserName = this.replyInformation.reply_user_name;
+            this.replyToPost = this.replyInformation.reply_to_post;
+            this.replyContent = this.replyInformation.reply_content;
+            this.replyTime = this.replyInformation.reply_time;
+            this.postId = this.replyInformation.post_id;
+            this.postTitle = this.replyInformation.post_title;
+            this.commentId = this.replyInformation.comment_id;
+            this.commentContent = this.replyInformation.comment_content;
+            if (!this.replyToPost) {
+                axios({
+                    method: "GET",
+                    url: 'api/user/social/self',
+                }).then((result) => {
+                    this.meName = result.data.name;
+                })
+            }
+            axios({
+                method: "GET",
+                url: "api/user/social/others",
+                params: { id: this.replyUserId, },
+            }).then((result) => {
+                //console.log(result);
+                this.replyUserName = result.data.name;
+                this.replyUserHead = result.data.user_avatar;
+            });
+        },
+        goToPost(){
+            this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
+        },
+    },
+    created() {
+        if (this.replyInformation != null) {
+            this.getReplyInfomation();
+        }
+        //console.log(this.replyInformation);
     }
 }
 </script>

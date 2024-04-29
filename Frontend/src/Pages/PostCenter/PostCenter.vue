@@ -83,16 +83,18 @@
                     <div style="width: 25%;font-size: larger;">
                         相关教师:
                     </div>
-                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem></ManagerItem>
+                    <div v-if = "this.techerIdList == ''" style="font-size: larger;">无</div>
+                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
                     <div style="width: 25%;font-size: larger;">
                         相关助教:
                     </div>
-                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem></ManagerItem>
+                    <div v-if = "this.assitantIdList == ''" style="font-size: larger;">无</div>
+                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
                         <ManagerItem></ManagerItem>
                     </div>
                 </div>
@@ -100,12 +102,9 @@
                     <div style="width: 25%;font-size: larger;">
                         热门作者:
                     </div>
-                    <div style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem></ManagerItem>
-                        <ManagerItem></ManagerItem>
-                        <ManagerItem></ManagerItem>
-                        <ManagerItem></ManagerItem>
-                        <ManagerItem></ManagerItem>
+                    <div v-if = "this.popAuthorIdList == ''" style="font-size: larger;">无</div>
+                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
@@ -142,6 +141,17 @@ export default {
                 end = this.total;
             }
             return this.postList.slice(begin, end);
+        },
+        sortIndex(){
+            var sort = 0;
+            if(this.sortKindStr == '' ||this.sortKind == '最新' ){
+                sort = 0;
+            } else if(this.sortKindStr == '点赞数') {
+                sort = 1;
+            } else if(this.sortKindStr == '收藏数') {
+                sort = 2;
+            }
+            return sort;
         }
     },
     data() {
@@ -161,21 +171,29 @@ export default {
             sectionId: 1,
             postList: "",
             sortKind: [{
-                value: '热门',
-                label: '热门',
+                value: '点赞数',
+                label: '点赞数',
             },
             {
                 value: '最新',
                 label: '最新',
-            },],
+            },
+            {
+                value: '收藏数',
+                label: '收藏数',
+            }],
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
+            techerIdList: '',
+            assitantIdList: '',
+            popAuthorIdList: '',
         }
     },
     watch:{
         sortKindStr(newValue,oldValue){
-
+            console.log(newValue);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
         }
     },
     methods: {
@@ -184,15 +202,15 @@ export default {
         },
         selectOne() {
             this.kindSelect = 1;
-            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
         },
         selectTwo() {
             this.kindSelect = 2;
-            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
         },
         selectThree() {
             this.kindSelect = 3;
-            this.getPostList(this.sortKind,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
@@ -264,8 +282,9 @@ export default {
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
-        console.log(this.$route.params.sectionId);
-        this.getPostList(0,2,'');
+        //console.log(this.$route.params.sectionId);
+        //console.log(this.sortIndex);
+        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
         this.getSectionInfomation();
     }
 }

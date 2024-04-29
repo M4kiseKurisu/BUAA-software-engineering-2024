@@ -1,6 +1,6 @@
 <template>
     <div class="directMessageContainer">
-        <div class="headContainer"><el-avatar :size="60" src="./src/Images/私信.png" />
+        <div class="headContainer"><el-avatar :size="60" :src="this.headImg" />
         </div>
         <div style="margin-left: 10px;width: 70%;">
             <div class="senderContainer">
@@ -12,8 +12,8 @@
                 {{ content }}
             </div>
         </div>
-        <div style="width: 20%;height: 100%;display: flex;justify-content: end;align-items: center;">
-            <el-tag type="danger"  >未读</el-tag>
+        <div v-if = "this.isRead != true" style="width: 20%;height: 100%;display: flex;justify-content: end;align-items: center;">
+            <el-tag type="danger">未读</el-tag>
         </div>
     </div>
 </template>
@@ -41,27 +41,26 @@ export default {
     },
     methods: {
         GetSenderInfomation() {
-            this.senderId = this.messageInfomation.message_sender_id,
-                this.senderName = 'huazhi',
-                this.content = this.messageInfomation.message_content,
-                this.time = this.messageInfomation.message_time,
+                this.senderId = this.messageInfomation.sender_id,
+                //this.senderName = this.messageInfomation.,
+                this.content = this.messageInfomation.last_message_content,
+                this.time = this.messageInfomation.last_message_time,
                 this.isRead = this.messageInfomation.is_read,
-                this.receiverId = this.messageInfomation.message_receiver_id,
+                this.receiverId = this.messageInfomation.receiver_id,
                 axios({
                     method: "GET",
-                    url: "api/user/info",
-                    data: {message_sender_id : this.senderId,},
+                    url: "api/user/social/others",
+                    params: { id: this.senderId, },
                 }).then((result) => {
-                    this.senderName = result.name;
+                    this.senderName = result.data.name;
+                    this.headImg = result.data.user_avatar;
                 });
-            axios({
-                method: "GET",
-                url: "api/user/head",
-                data: {message_sender_id : this.senderId,},
-            }).then((result) => {
-                this.headImg = result.info;
-            });
         },
+    },
+    created() {
+        if (this.messageInfomation != null) {
+            this.GetSenderInfomation();
+        }
     }
 }
 </script>
@@ -71,7 +70,7 @@ export default {
     width: 100%;
     height: 100px;
     display: flex;
-    
+
 }
 
 .headContainer {
