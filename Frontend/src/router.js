@@ -23,6 +23,8 @@ import CreateCourseSection from "@/Pages/CourseCenter/CreateCourseSection.vue";
 import SocialCenter from "@/Pages/SocialCenter/SocialPageContainer.vue"
 
 import ShowPersonalInformation from "./Pages/PersonalCenter/ShowPersonalInformation.vue"
+import StudyGroupCenter from './Components/GroupCenter/StudyGroupCenter.vue'
+import CreateGroup from './Components/GroupCenter/CreateGroup.vue'
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -45,7 +47,7 @@ const router = createRouter({
             component:NoticeCenter,
             meta: { 
                 requireAuth: true,
-            }  
+            } 
         },
         {
             path: '/MainPage',
@@ -93,7 +95,7 @@ const router = createRouter({
                             component: CreateCourseSection,
                         },
                         {
-                            path: '/ShowPersonalInformation/:userId',
+                            path: 'ShowPersonalInformation/:userId',
                             component: ShowPersonalInformation,
                         },
                         {
@@ -101,7 +103,7 @@ const router = createRouter({
                             component: CreatePost,
                         },
                         {
-                            path: '/ChatCenter',
+                            path: 'ChatCenter',
                             component: ChatCenter,
                         },
                     ]
@@ -109,7 +111,15 @@ const router = createRouter({
                 {
                     path: 'Social_Center',
                     component: SocialCenter,
-                }
+                },
+                {
+                    path: 'StudyGroupCenter',
+                    component: StudyGroupCenter,
+                },
+                {
+                    path: 'CreateGroup',
+                    component: CreateGroup,
+                },
             ]
         }
     ]
