@@ -5,7 +5,7 @@
         <div class="breadcrumb" style="margin-bottom: 24px"><BreadcrumbLabel :routeNames="route" /></div>
 
         <div class="flex-container">
-            <el-scrollbar class="container-left">
+            <div class="container-left">
                 <div style="margin-left: 5%; margin-bottom: 12px;">
                     <el-radio-group v-model="radio">
                         <el-radio-button label="查看本人打卡" value="0" />
@@ -14,7 +14,7 @@
                 </div>
                 <div v-if="radio === '0'"><MySocialPost @childMethod="showDetail"/></div>
                 <div v-if="radio === '1'"><OthersSocialPost /></div>
-            </el-scrollbar>
+            </div>
             <el-divider v-if="radio === '0'" direction="vertical"/>
             <div class="container-right">
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
