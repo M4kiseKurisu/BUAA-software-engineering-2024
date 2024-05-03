@@ -5,8 +5,17 @@
         <div class="breadcrumb" style="margin-bottom: 24px"><BreadcrumbLabel :routeNames="route" /></div>
 
         <div class="flex-container">
-            <div class="container-left"><MySocialPost @childMethod="showDetail"/></div>
-            <el-divider direction="vertical"/>
+            <el-scrollbar class="container-left">
+                <div style="margin-left: 5%; margin-bottom: 12px;">
+                    <el-radio-group v-model="radio">
+                        <el-radio-button label="查看本人打卡" value="0" />
+                        <el-radio-button label="查看打卡广场" value="1" />
+                    </el-radio-group>
+                </div>
+                <div v-if="radio === '0'"><MySocialPost @childMethod="showDetail"/></div>
+                <div v-if="radio === '1'"><OthersSocialPost /></div>
+            </el-scrollbar>
+            <el-divider v-if="radio === '0'" direction="vertical"/>
             <div class="container-right">
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
             </div>
@@ -20,17 +29,20 @@ import BreadcrumbLabel from '@/Components/Tool/BreadcrumbLabel.vue';
 
 import MySocialPost from './MySocialPost.vue'
 import SocialPostDetail from './SocialPostDetail.vue'
+import OthersSocialPost from './OthersSocialPost.vue'
 
 export default {
     components: {
         BreadcrumbLabel,
         MySocialPost,
         SocialPostDetail,
+        OthersSocialPost,
     },
     data(){
         return {
             route: ["展示模块", "打卡信息"],
             detail_post_id: 0,
+            radio: "0",
         }
     },
     methods: {
@@ -38,7 +50,7 @@ export default {
             this.detail_post_id = id;
             console.log(this.detail_post_id);
         },
-    }
+    },
 }
 </script>
 

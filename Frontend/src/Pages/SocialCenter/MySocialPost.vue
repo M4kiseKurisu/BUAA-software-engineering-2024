@@ -74,7 +74,7 @@ export default {
             for (let i = 0; i < this.avatar_list.length; i += 4) {
                 pic_show_list.push(this.avatar_list.slice(i, i + 4));
             }
-            console.log(pic_show_list);
+            //console.log(pic_show_list);
             return pic_show_list;
         },       
     },
