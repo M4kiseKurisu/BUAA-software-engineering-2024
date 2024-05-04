@@ -1,12 +1,8 @@
 package com.hxt.backend.mapper;
 
-import com.hxt.backend.entity.Image;
-import com.hxt.backend.entity.MyResource;
-import com.hxt.backend.entity.Tag;
 import com.hxt.backend.entity.post.*;
 import org.apache.ibatis.annotations.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -53,6 +49,13 @@ public interface PostMapper {
             @Result(column = "time", property = "postTime"),
     })
     Post getPost(Integer id);
+    
+    //获取所有帖子
+    @Select("SELECT * from post")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getAllPost();
     
     @Select("SELECT category from post where post_id = #{id}")
     int getCategoryByPostId(Integer id);

@@ -7,9 +7,6 @@ import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.ResourceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.UrlResource;
@@ -38,7 +35,7 @@ public class UploadController {
     public UploadResponse uploadImage(
             @RequestParam(name = "file", required = false) MultipartFile file
     ) {
-        if (file == null) {
+        if (file.isEmpty()) {
             return new UploadResponse(false, "图片为空", "");
         }
         // 上传文件到云服务器并返回图片在云服务器上的 URL
@@ -114,8 +111,8 @@ public class UploadController {
             @RequestParam(name = "file", required = false) MultipartFile file,
             @RequestParam(name = "type", required = false) String type
     ) {
-        System.out.println();
-        if (file == null) {
+        
+        if (file.isEmpty()) {
             return new UploadResponse(false, "文件为空", "");
         }
 

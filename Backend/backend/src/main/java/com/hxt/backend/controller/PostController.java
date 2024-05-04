@@ -19,6 +19,7 @@ public class PostController {
     private final TagService tagService;
     private final ResourceService resourceService;
     private final UserService userService;
+    private final RecommendService recommendService;
     private final String authorityError = "权限不匹配！";
     
     //帖子详情
@@ -43,6 +44,12 @@ public class PostController {
         
         //获取帖子基本信息
         PostResponse postResponse = postService.getPost(post_id);
+        
+        //更新用户浏览偏好和浏览记录
+        Map<String, Double> postTFIDF = recommendService.calculatePostTFIDF(post_id);
+        recommendService.updateUserPreference(Integer.parseInt(user_id), postTFIDF);
+        
+        recommendService.updateViewHistory(Integer.parseInt(user_id), post_id);
         
         // 获取发帖者名字和头像
         List<String> nameAndHead = postService.getAuthorNameAndHead(post_id);
