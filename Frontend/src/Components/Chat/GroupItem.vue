@@ -18,7 +18,7 @@
                     团体人数:{{ groupPersonNum }}/{{ groupCapacity }}
                 </div>
                 <div style="margin-left: auto;">
-                    <el-button  type = "primary" plain style="margin-right: 5px;">去聊天</el-button>
+                    <el-button  type = "primary" plain style="margin-right: 5px;" @click = "goToChatCenter">去聊天</el-button>
                 </div>
             </div>
         </div>
@@ -59,6 +59,9 @@ export default {
         giveGroupId() {
             console.log(this.groupId);
             this.$emit('getGroupId', this.groupId);
+        },
+        goToChatCenter(){
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }});
         }
     }
 }
