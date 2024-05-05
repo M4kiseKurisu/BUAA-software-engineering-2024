@@ -180,7 +180,7 @@ public class RecommendService {
             double idf = calculateIDF(keyword, posts);
             tfidfScores.put(keyword, tf * idf);
         }
-        
+
         return tfidfScores;
     }
     
@@ -239,6 +239,9 @@ public class RecommendService {
     
     // 计算 TF（词频）
     private double calculateTF(String text, String keyword) {
+        if (text.isEmpty()) {
+            return 0;
+        }
         List<String> words = new ArrayList<>(extractKeywords(text));
         int keywordFrequency = Collections.frequency(words, keyword);
         return (double) keywordFrequency / words.size();

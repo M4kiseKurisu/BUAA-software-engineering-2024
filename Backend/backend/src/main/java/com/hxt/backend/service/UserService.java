@@ -49,7 +49,7 @@ public class UserService {
     public Integer checkPassword(String name, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userMapper.selectUserByAccount(name);
-        if (md5.equals(user.getPassword())) {
+        if (user != null && md5.equals(user.getPassword())) {
             return user.getUserId();
         }
         return -1;
