@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import { createDOMCompilerError } from "@vue/compiler-dom";
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import GroupItem from "../Chat/GroupItem.vue";
 import GroupCard from "./GroupCard.vue";
@@ -116,7 +117,7 @@ export default {
         goToCreatGroup(){
             this.$router.push({ path: "/MainPage/CreateGroup"});
         }
-    }
+    },
 }
 </script>
 
@@ -140,7 +141,6 @@ export default {
     width: 100%;
     height: 100px;
     background-color: aliceblue;
-    border-bottom: 1px solid darkgray;
     display: flex;
     align-items: center;
 }
@@ -155,14 +155,14 @@ export default {
 .study_group_center_mygroup {
     width: 23%;
     height: 100%;
-    background-color: antiquewhite;
+    background-color: white;
     min-width: 300px;
 }
 
 .study_group_center_selfinfomation {
     width: 100%;
     height: 100px;
-    background-color: azure;
+    background-color:rgb(238, 241, 244);
     display: flex;
 }
 
