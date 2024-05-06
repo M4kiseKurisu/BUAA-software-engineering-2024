@@ -16,42 +16,29 @@
         
     </div>
 
+    <div style="margin-top: 24px; margin-left: 5%; color: #86909c" v-if="this.divided_posts.length === 0">您当前还没有打卡信息~</div>
 
-    <div class="post-time-font-style" style="margin-top: 24px; margin-left: 5%">2024年</div>
+    <div v-else v-for="item1 in this.divided_posts">
+        <!--  一个年份的打卡图像-->
+        <div class="post-time-font-style" style="margin-top: 24px; margin-left: 5%">{{item1.year}}年</div>
 
-    <!-- 一个月份的打卡图像 -->
-    <div class="flex-layout" style="margin-top: 12px; margin-left: 5%">
+        <!-- 一个月份的打卡图像 -->
+        <div v-for="item2 in item1.posts" class="flex-layout" style="margin-top: 12px; margin-left: 5%">
 
-        <div class="post-time-font-style" style="margin-right: 10%">5月</div>
+            <div class="post-time-font-style" style="margin-right: 10%">{{item2.month}}月</div>
 
-        <div style="flex-grow: 1; margin-right: 5%">
-            <el-row v-for="item in showPic" :gutter="20" style="margin-bottom: 6px;">
-                <el-col v-for="item2 in item" :span="6">
-                    <button style="border: none; background-color: white; width: 100%; aspect-ratio: 1/1;" @click="getDetail(1)">
-                        <el-image style="width: 100%; aspect-ratio: 1/1;" :src="url" :fit="fit" />
-                    </button>
-                </el-col>
-            </el-row>
+            <div style="flex-grow: 1; margin-right: 5%">
+                <el-row v-for="item3 in item2.posts" :gutter="20" style="margin-bottom: 6px;">
+                    <el-col v-for="item4 in item3" :span="6">
+                        <button style="border: none; background-color: white; width: 100%; aspect-ratio: 1/1;" @click="getDetail(item4.id)">
+                            <el-image style="width: 100%; aspect-ratio: 1/1;" :src="item4.url"/>
+                        </button>
+                    </el-col>
+                </el-row>
+            </div>
         </div>
-
     </div>
 
-    <!-- 一个月份的打卡图像（测试用，后续删除） -->
-    <div class="flex-layout" style="margin-top: 12px; margin-left: 5%">
-
-        <div class="post-time-font-style" style="margin-right: 10%">4月</div>
-
-        <div style="flex-grow: 1; margin-right: 5%">
-            <el-row v-for="item in showPic" :gutter="20" style="margin-bottom: 6px;">
-                <el-col v-for="item2 in item" :span="6">
-                    <button style="border: none; background-color: white; width: 100%; aspect-ratio: 1/1;" @click="getDetail(1)">
-                        <el-image style="width: 100%; aspect-ratio: 1/1;" :src="url" :fit="fit" />
-                    </button>
-                </el-col>
-            </el-row>
-        </div>
-
-    </div>
 </template>
 
 <script>
@@ -66,6 +53,8 @@ export default {
             user_name: "",
             user_sign: "",
             avatar_list: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            get_posts: [],
+            divided_posts: [],
         }
     },
     computed: {
@@ -109,10 +98,76 @@ export default {
         } else {
             ellipsis.style.visibility = 'hidden'; // 隐藏省略号
         }
+
+        // 获得打卡信息
+        axios({
+            method: "GET",
+            url: "/api/pyq/userInfo"
+        }).then((result) => {
+            this.get_posts = result.data.social_post;
+            this.dividePosts(result.data.social_post);
+        })
     },
     methods: {
         getDetail(id) {
             this.$emit('childMethod', id);
+        },
+        dividePosts(posts) {
+            this.divided_posts = [];
+            let now_year = 0;
+            let now_month = 0;
+            let month_posts = [];
+            let date_posts = [];
+
+            for (let i = 0; i < posts.length; i++) {
+                if (posts[i].year != now_year) {
+                    if (month_posts.length != 0) {
+                        let element1 = {
+                            year: posts[i].year,
+                            posts: month_posts,
+                        }
+                        this.divided_posts.push(element1);
+                        now_year = posts[i].year;
+                        month_posts = [];
+                    }  //切分年份
+                }
+
+                if (posts[i].month != now_month) {  //这个判断可能有bug
+                    if (date_posts.length != 0) {
+                        let element2 = {
+                            month: posts[i].month,
+                            posts: date_posts,
+                        }
+                        this.month_posts.push(element2);
+                        now_month = posts[i].month;
+                        date_posts = [];
+                    }  //切分月份
+                }
+
+                for (let j = 0; j < posts[i].image_urls.length; j++) {
+                    let element3 = {
+                        url: posts[i].image_urls[j],
+                        id: posts[i].post_id,
+                    }
+                    date_posts.push(element3);
+                } //将所有图片,id放入对应日期
+            }
+
+            // console.log(this.divided_posts); // 测评
+        },
+        finalDivide() {
+            // 将每个月的信息以4分组
+            for (let i = 0; i < this.divided_posts.length; i++) {
+                for (let j = 0; j < this.divided_posts[i].posts.length; j++) {
+                    let new_post = [];
+                    for (let k = 0; k < this.divided_posts[i].posts[j].posts.length; k += 4) {
+                        new_post.push(this.divided_posts[i].posts[j].posts.slice(k, k + 4));
+                    }
+                    this.divided_posts[i].posts[j].posts = new_post;
+                }
+            }
+
+            // console.log(this.divided_posts); // 测评
         }
     }
 }
