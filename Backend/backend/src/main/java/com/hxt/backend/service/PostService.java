@@ -369,9 +369,9 @@ public class PostService {
         */
         
         if (sort == 0) {
-            posts = postMapper.searchPostInSectionByKeywordTagHotDesc(section_id, keyword, tag, type);
+            posts = postMapper.searchPostInSectionByKeywordTagTypeHotDesc(section_id, keyword, tag, type);
         } else {
-            posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(section_id, keyword, tag, type);
+            posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(section_id, keyword, tag, type);
         }
         
         

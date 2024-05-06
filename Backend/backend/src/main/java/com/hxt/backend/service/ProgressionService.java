@@ -58,9 +58,17 @@ public class ProgressionService {
         List<Post> posts;
         
         if (sort == 0) {
-            posts = postMapper.searchPostInSectionByKeywordTagHotDesc(0, keyword, target, type);
+            if (type == 0 || type == 1) {
+                posts = postMapper.searchPostInSectionByKeywordTagTypeHotDesc(0, keyword, target, type);
+            } else {
+                posts = postMapper.searchPostInSectionByKeywordTagHotDesc(0, keyword, target);
+            }
         } else {
-            posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(0, keyword, target, type);
+            if (type == 0 || type == 1) {
+                posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(0, keyword, target, type);
+            } else {
+                posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(0, keyword, target);
+            }
         }
         
         return getPostIntroResponseByPost(posts);

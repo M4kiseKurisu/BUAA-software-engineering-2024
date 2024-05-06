@@ -126,7 +126,8 @@ public class RecommendService {
             PostIntroResponse postIntroResponse = new PostIntroResponse(post);
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
-    
+            
+            //第一张图url
             String imageUrl = null;
             List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
             if (!imageIds.isEmpty()) {
