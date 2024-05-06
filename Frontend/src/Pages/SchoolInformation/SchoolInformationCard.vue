@@ -6,7 +6,7 @@
 
         <div style="margin-left: 5%;">
             <div class="school-font" style="margin-top: 26%;">{{ this.school_name }}</div>
-            <button style="border: none; background-color: white; margin-top: 5%;" class="goto-font">
+            <button style="border: none; background-color: white; margin-top: 5%;" class="goto-font" @click="toInformation(this.school_id)">
                 点击查看学校详情
             </button>
         </div>
@@ -14,11 +14,16 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
-            school_avatar: "./src/Images/buaa-avatar.jpg",
-            school_name: "北京航空航天大学",
+        }
+    },
+    props: ["school_avatar", "school_name", "school_id"],
+    methods: {
+        toInformation(id) {
+            this.$router.push({ path: "/MainPage/SchoolInformation/Detail/" + id});
         }
     }
 }

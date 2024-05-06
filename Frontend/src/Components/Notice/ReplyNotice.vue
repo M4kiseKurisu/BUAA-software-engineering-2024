@@ -16,13 +16,13 @@
             <div class="contentContainer">
                 <div style="height: 100%;width: 80%;max-width: 80%;;font-size: 1.2em;">
                     <div v-if="!replyToPost" style="border-left: 3px solid darkgray;background-color: rgb(230, 225, 223);margin-bottom: 5px;max-width: 100%;
-                                    white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                            white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                         <span style="margin-left: 5px;"> {{ meName }}: {{ commentContent }}</span>
                     </div>
                     <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">回复：{{ replyContent }}</div>
                 </div>
                 <div style="height: 100%;display: flex;align-items: center;width: 20%;justify-content: end;">
-                    <el-button type="primary" plain @click = "goToPost">查看详情</el-button>
+                    <el-button type="primary" plain @click="goToPost">查看详情</el-button>
                 </div>
             </div>
         </div>
@@ -85,8 +85,8 @@ export default {
                 this.replyUserHead = result.data.user_avatar;
             });
         },
-        goToPost(){
-            this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
+        goToPost() {
+            this.$router.push({ path: '/MainPage/Course_Center/PostPage/' + this.postId });
         },
     },
     created() {
@@ -101,7 +101,7 @@ export default {
 .contentContainer {
     display: flex;
     /* align-items: center; */
-    height: 50%;
+    height: 60%;
     justify-content: space-between;
     align-items: center;
 }
@@ -122,7 +122,7 @@ export default {
 
 .senderContainer {
     display: flex;
-    height: 50%;
+    height: 40%;
     align-items: center;
 }
 

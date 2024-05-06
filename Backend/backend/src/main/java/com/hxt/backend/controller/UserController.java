@@ -162,6 +162,16 @@ public class UserController {
         return userService.getUserSocialInfo(Integer.parseInt(user_id), Integer.parseInt(user_id));
     }
 
+    @RequestMapping("/user/social/simple")
+    public UserSocialInfoResponse getUserNameAndHead(
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new UserSocialInfoResponse();
+        }
+        return userService.getUserSocialInfo(-1, id);
+    }
+
     @RequestMapping("/user/social/others")
     public UserSocialInfoResponse getUserSocialInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,

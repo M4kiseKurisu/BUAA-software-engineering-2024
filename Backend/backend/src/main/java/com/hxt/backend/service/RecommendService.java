@@ -4,9 +4,7 @@ package com.hxt.backend.service;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.recommend.UserPreference;
 import com.hxt.backend.entity.recommend.ViewHistory;
-import com.hxt.backend.mapper.PostMapper;
-import com.hxt.backend.mapper.RecommendMapper;
-import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.postResponse.PostIntroResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -40,18 +38,28 @@ public class RecommendService {
     @Resource
     private UserMapper userMapper;
     
+    @Resource
+    private ImageMapper imageMapper;
+    
+    @Resource
+    private SectionMapper sectionMapper;
+    
     
     //更新用户偏好
     public void updateUserPreference(Integer userId, Map<String, Double> keywordTfIdf) {
+        
+        //总浏览数
+        Integer totalView = recommendMapper.getViewedPostIdByUserId(userId).size();
+        
         // 添加或更新关键词
         for (String keyword : keywordTfIdf.keySet()) {
             Double tfIdf = keywordTfIdf.get(keyword);
             UserPreference userPreference = recommendMapper.getUserPreferenceBYUserIdKeyword(userId, keyword);
             if (userPreference == null) {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                recommendMapper.insertUserPreference(userId, keyword, tfIdf, timestamp);
+                recommendMapper.insertUserPreference(userId, keyword, tfIdf / (totalView + 1), timestamp);
             } else {
-                recommendMapper.updateUserPreference(userPreference.getUser_preference_id(), tfIdf);
+                recommendMapper.updateUserPreference(userPreference.getUser_preference_id(), tfIdf, totalView);
             }
         }
     
@@ -80,8 +88,12 @@ public class RecommendService {
     public List<PostIntroResponse> recommendPostsByContent(Integer userId) {
         Map<Post, Double> postScores = new HashMap<>();
         
-        //获取所有的帖子
+        /*获取所有的帖子
         List<Post> posts = postMapper.getAllPost();
+        */
+        
+        //获取升学版块所有帖子
+        List<Post> posts = sectionMapper.selectPostBySectionId(0);
         
         //获取该用户浏览记录
         List<Integer> viewedPosts = recommendMapper.getViewedPostIdByUserId(userId);
@@ -114,8 +126,18 @@ public class RecommendService {
             PostIntroResponse postIntroResponse = new PostIntroResponse(post);
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
-            postIntroResponse.setPost_author_name(authorName);
+            
+            //第一张图url
+            String imageUrl = null;
+            List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
+            if (!imageIds.isEmpty()) {
+                imageUrl = imageMapper.getImage(imageIds.get(0));
+            }
+    
+            postIntroResponse.setAuthor_name(authorName);
             postIntroResponse.setTags(tags);
+            postIntroResponse.setPost_image(imageUrl);
+            
         
             postIntroResponses.add(postIntroResponse);
         }
@@ -157,25 +179,35 @@ public class RecommendService {
         String title = post.getTitle();
         String intro = post.getIntro();
         String content = extractTextFromHtml(post.getContent());
+        
+        /*
         List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
+         */
         
         // 提取关键词并合并
         Set<String> keywords = new HashSet<>();
         keywords.addAll(extractKeywords(title));
         keywords.addAll(extractKeywords(intro));
         keywords.addAll(extractKeywords(content));
+        
+        /*
         for (String tag : tags) {
             keywords.addAll(extractKeywords(tag));
         }
+        */
+        
         
         // 计算每个关键词的 TF-IDF
         for (String keyword : keywords) {
             double tf = calculateTF(title, keyword) * TITLE_WEIGHT +
                     calculateTF(intro, keyword) * INTRO_WEIGHT +
                     calculateTF(content, keyword) * CONTENT_WEIGHT;
+            
+            /*
             for (String tag : tags) {
                 tf += calculateTF(tag, keyword) * TAG_WEIGHT;
             }
+             */
             
             double idf = calculateIDF(keyword, posts);
             tfidfScores.put(keyword, tf * idf);
@@ -223,18 +255,26 @@ public class RecommendService {
     }
     
     //从文本中提取关键词
-    private Set<String> extractKeywords(String content) {
+    private List<String> extractKeywords(String content) {
         if (content == null) {
             return null;
         }
-        Set<String> keywords = new HashSet<>();
+        
         List<Term> terms = HanLP.segment(content);
+    
+        // 定义需要保留的词性
+        List<String> importantPosTags = Arrays.asList("n", "v"); // 名词和动词
+        int minWordLength = 2; // 最小词语长度阈值
+    
+        // 过滤结果
+        List<String> importantWords = new ArrayList<>();
         for (Term term : terms) {
-            if (!term.word.trim().isEmpty()) {
-                keywords.add(term.word.toLowerCase());
+            if (importantPosTags.contains(term.nature.firstChar()) && term.word.length() >= minWordLength) {
+                importantWords.add(term.word.toLowerCase());
             }
         }
-        return keywords;
+        
+        return importantWords;
     }
     
     // 计算 TF（词频）
@@ -244,6 +284,7 @@ public class RecommendService {
         }
         List<String> words = new ArrayList<>(extractKeywords(text));
         int keywordFrequency = Collections.frequency(words, keyword);
+       
         return (double) keywordFrequency / words.size();
     }
     
@@ -258,10 +299,14 @@ public class RecommendService {
         int count = 0;
         for (Post post : posts) {
             String allText = post.getTitle() + " " + post.getIntro() + " " + extractTextFromHtml(post.getContent());
+            
+            /*
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
             for (String tag : tags) {
                 allText += " " + tag;
             }
+             */
+            
             if (extractKeywords(allText).contains(keyword)) {
                 count++;
             }

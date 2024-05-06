@@ -93,6 +93,32 @@
         </div>
     </div>
 
+    <div class="first-line" v-if="this.sectionId === 0">
+        <div class="post-title-font">学校信息：</div>
+        <div>
+            <el-select v-model="this.school_choice" placeholder="选择学校" style="width: 240px">
+                <el-option
+                    v-for="item in school_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.label"
+                />
+            </el-select>
+        </div>
+
+        <div class="post-title-font" style="margin-left: 10px;">升学分享类型：</div>
+        <div>
+            <el-select v-model="this.graduate_choice" placeholder="选择类型" style="width: 240px">
+                <el-option
+                    v-for="item in graduate_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.label"
+                />
+            </el-select>
+        </div>
+    </div>
+
     <div class="inputPostContainer" style="border: 1px solid #e5e6eb">
         <Toolbar
             style="border-bottom: 1px #e5e6eb"
@@ -149,6 +175,9 @@ export default {
             // }
 
             //注册账号信息打包
+
+            this.dynamicTags.push(this.school_choice);
+            this.dynamicTags.push(this.graduate_choice);
             let content = {
                 section_id: this.sectionId,
                 author_id: JSON.parse(sessionStorage.getItem("id")),
@@ -264,6 +293,68 @@ export default {
             sectionId: 1,
             inputContent: "",
             filelistUrl: [],
+            school_choice: "",
+            school_options: [
+                {
+                    value: '0',
+                    label: '北京航空航天大学',
+                },
+                {
+                    value: '1',
+                    label: '清华大学',
+                },
+                {
+                    value: '2',
+                    label: '北京大学',
+                },
+                {
+                    value: '3',
+                    label: '复旦大学',
+                },
+                {
+                    value: '4',
+                    label: '上海交通大学',
+                },
+                {
+                    value: '5',
+                    label: '浙江大学',
+                },
+                {
+                    value: '6',
+                    label: '南京大学',
+                },
+                {
+                    value: '7',
+                    label: '中国人民大学',
+                },
+                {
+                    value: '8',
+                    label: '中国科学技术大学',
+                },
+                {
+                    value: '9',
+                    label: '其他学校',
+                }
+            ],
+            graduate_choice: "",
+            graduate_options: [
+                {
+                    value: '0',
+                    label: '考研升学',
+                },
+                {
+                    value: '1',
+                    label: '保研升学',
+                },
+                {
+                    value: '2',
+                    label: '出国升学',
+                },
+                {
+                    value: '3',
+                    label: '其他升学',
+                },
+            ],
         }
     },
     setup() {
