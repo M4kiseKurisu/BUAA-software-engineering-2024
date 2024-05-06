@@ -85,6 +85,14 @@ public class UserService {
     public UserSocialInfoResponse getUserSocialInfo(Integer searcher, Integer id) {
         User user = userMapper.selectUserById(id);
         if (user == null) return new UserSocialInfoResponse();
+        if (searcher == -1) {
+            return new UserSocialInfoResponse(
+                    user.getName(), null,
+                    (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
+                    null, null, null, null, null,
+                    null, null, null, null
+            );
+        }
         Integer postLike = postMapper.getUserPostLikeNum(id);
         if (postLike == null) {
             postLike = 0;
