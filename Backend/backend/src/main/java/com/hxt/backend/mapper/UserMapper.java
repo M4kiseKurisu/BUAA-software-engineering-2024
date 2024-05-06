@@ -44,8 +44,8 @@ public interface UserMapper {
     String getUserNameById(Integer id);
 
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time, sign)" +
-            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0, 'Hello World!')")
+    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time, sign, global_authority)" +
+            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0, 'Hello World!', 0)")
     int insertUser(String name, String email, String phone,
                    String major, Integer year, String password);
 

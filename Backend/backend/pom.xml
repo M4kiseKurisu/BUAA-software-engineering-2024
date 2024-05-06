@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
-			<!--<scope>provided</scope> -->
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- 从html中提取内容 -->
@@ -115,6 +115,20 @@
 			<artifactId>hanlp</artifactId>
 			<version>portable-1.8.3</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.12.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20231013</version>
+		</dependency>
+
+
 
 	</dependencies>
 
