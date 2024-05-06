@@ -1,4 +1,4 @@
-package com.hxt.backend.response.postResponse;
+package com.hxt.backend.response.progressionResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class SearchResponse {
+public class SchoolIntroListResponse {
     private boolean success;
-    private String info;
-    private List<PostIntroResponse> posts;
+    private List<SchoolIntroResponse> schools;
 }

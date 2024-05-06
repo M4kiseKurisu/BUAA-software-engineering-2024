@@ -176,13 +176,14 @@ public class PostController {
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sort", required = false) Integer sort,
-            @RequestParam(name = "tag", required = false) String tag
+            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "type", required = false) Integer type
     ) {
         if (userId.isEmpty()) {
             return new SearchResponse(false,"用户未登录",null);
         }
     
-        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag);
+        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag, type);
         
         if (list.isEmpty()) {
             return new SearchResponse(true,"未检索到响应结果",list);
