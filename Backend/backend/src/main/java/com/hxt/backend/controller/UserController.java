@@ -12,6 +12,7 @@ import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -159,6 +160,16 @@ public class UserController {
             return new UserSocialInfoResponse();
         }
         return userService.getUserSocialInfo(Integer.parseInt(user_id), Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/social/simple")
+    public UserSocialInfoResponse getUserNameAndHead(
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new UserSocialInfoResponse();
+        }
+        return userService.getUserSocialInfo(-1, id);
     }
 
     @RequestMapping("/user/social/others")

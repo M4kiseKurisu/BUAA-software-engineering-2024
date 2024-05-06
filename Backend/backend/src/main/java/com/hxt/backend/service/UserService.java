@@ -49,7 +49,7 @@ public class UserService {
     public Integer checkPassword(String name, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userMapper.selectUserByAccount(name);
-        if (md5.equals(user.getPassword())) {
+        if (user != null && md5.equals(user.getPassword())) {
             return user.getUserId();
         }
         return -1;
@@ -85,6 +85,14 @@ public class UserService {
     public UserSocialInfoResponse getUserSocialInfo(Integer searcher, Integer id) {
         User user = userMapper.selectUserById(id);
         if (user == null) return new UserSocialInfoResponse();
+        if (searcher == -1) {
+            return new UserSocialInfoResponse(
+                    user.getName(), null,
+                    (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
+                    null, null, null, null, null,
+                    null, null, null, null
+            );
+        }
         Integer postLike = postMapper.getUserPostLikeNum(id);
         if (postLike == null) {
             postLike = 0;
@@ -98,7 +106,8 @@ public class UserService {
             replyLike = 0;
         }
         List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
-        if (adminMapper.checkGlobalAuthority(id) > 0) {
+        Integer check = adminMapper.checkGlobalAuthority(id);
+        if (check != null && check > 0) {
             authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
         } else {
             authorityInfo = adminMapper.getUserAuthorities(id);

@@ -32,8 +32,7 @@
         <el-divider direction="vertical"/>
 
         <div style=" margin-left: 3%; margin-right: 6%; width: 41%; line-height: 1.5;" class="content-font-style">
-            此处为评论，存在额外的段间距。以下为随机文字：        
-            计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。例如，CLIP和ALIGN使用对比学习来训练文本和图像编码器，以对齐两种模态。一旦训练完成，工程化的文本提示就可以将零样本泛化到新的视觉概念和数据分布。这些编码器也可以与其他模块有效组合，以实现下游任务，例如图像生成（例如，DALL·E）。虽然在视觉和语言编码器方面取得了很大进展，但计算机视觉领域包含了远远超出这个范围的问题，对于其中的许多问题，都不存在充足的训练数据。
+            {{ this.content }}
         </div>
     </div>
 
@@ -54,9 +53,9 @@
 
         <!-- 删除按钮（只有此打卡为本人发布才存在） -->
 
-        <el-divider v-if="true" direction="vertical"/>
+        <el-divider v-if="this.poster_id === this.my_id" direction="vertical"/>
 
-        <button v-if="true" class="flex-layout" style="background-color: white; border: none; margin-left: 2%; margin-right: 2%;">
+        <button v-if="this.poster_id === this.my_id" class="flex-layout" style="background-color: white; border: none; margin-left: 2%; margin-right: 2%;" @click="deletePost">
             <svg t="1714569453159" style="height: 19px; width: 19px;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3570" width="200" height="200"><path d="M959.04 192.256h-35.84V958.72a64 64 0 0 1-63.936 63.872H160.64a63.872 63.872 0 0 1-63.872-63.872V192.256h-31.872a31.872 31.872 0 1 1 0-63.872h223.552V32.64c0-17.664 14.272-31.936 31.936-31.936h383.168c17.664 0 32 14.272 32 32v95.68h223.488a32 32 0 0 1 0 64z m-287.424-127.744h-319.36v63.872h319.36v-63.872z m191.68 191.616v-63.872H160.64v734.592a32 32 0 0 0 32 31.936h638.72a32 32 0 0 0 31.936-32V256.192z m-191.68 143.744h63.936v407.168h-63.936V399.872zM480.064 336H544v470.976h-63.872v-471.04z m-191.616 63.872h63.872v407.168h-63.872V399.872z" fill="#86909c" p-id="3571"></path></svg>
             <div style="height: 22px; margin-left: 6px; color: #86909c; font-size: 14px;">删除</div>
         </button>
@@ -72,9 +71,11 @@
 
             <!-- 展示点赞者头像 -->
             <div class="flex-column-layout" style="width: 92%; margin-left: 3%;">
-                <div v-for="item in 2" style="width: 100%; margin-top: 3px; margin-bottom: 6px;" class="flex-layout">
-                    <div v-for="item2 in 12" style="width: 6%; aspect-ratio: 1/1; margin-right: 2%;">
-                        <el-avatar style="width: 100%; height: 100%" :src="circleUrl" />
+                <div v-for="item in favorGroup" style="width: 100%; margin-top: 3px; margin-bottom: 6px;" class="flex-layout">
+                    <div v-for="item2 in item1" style="width: 6%; aspect-ratio: 1/1; margin-right: 2%;">
+                        <button style="width: 100%; height: 100%; border: none; background-color: white;">
+                            <el-avatar style="width: 100%; height: 100%" :src="item2.favor_id" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -83,16 +84,16 @@
 
         <el-divider/>
 
-        <div v-for="item in 3">
+        <div v-for="item in this.comment_list">
             <div class="flex-layout" style="width: 100%; margin-bottom: 14px;">
                 <!-- 展示所有回复 -->
-                <div style="width: 4%; aspect-ratio: 1/1; margin-left: 2%; margin-top: 9px;">
-                    <el-avatar shape="square" :src="this.avatar_pic"/>
-                </div>
+                <button style="width: 4%; aspect-ratio: 1/1; margin-left: 2%; margin-top: 9px; border: none; background-color: white;">
+                    <el-avatar shape="square" :src="item.writer_avatar"/>
+                </button>
 
                 <div style="margin-left: 4%;">
-                    <div style="margin-top: 9px;" class="reply-username-font-style">回复者昵称</div>
-                    <div style="margin-top: 4px; width: 100%" class="content-font-style">计算机视觉领域也探索了基础模型，尽管程度较小。也许最突出的例子是从网络中对齐配对的文本和图像。</div>
+                    <div style="margin-top: 9px;" class="reply-username-font-style">{{ item.writer_name }}</div>
+                    <div style="margin-top: 4px; width: 100%" class="content-font-style">{{ item.comment_content }}</div>
                 </div>
                 
             </div>
@@ -105,21 +106,83 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 import { Edit, Delete } from '@element-plus/icons-vue'
 
 export default {
     data() {
         return {
+            my_id: JSON.parse(sessionStorage.getItem("id")),
+            poster_id: 0,
             user_name: "发布打卡者昵称",
             user_sign: "发布打卡者的签名ABCDABCDABCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
             avatar_pic: "发布打卡者的头像信息",
             post_pics: [
                 "./src/Images/testAvatar.jpg", "./src/Images/buaaPoster1.jpg", "./src/Images/testPoster.jpg",
-            ]
+            ],
+            content: "",
+            favor_list: [],
+            comment_list: [],
         }
     },
     props: ["social_post_id"],
     components: {
+    },
+    mounted() {
+        // 获取打卡详细信息
+        axios({
+            method: "GET",
+            url: "/api/pyq/detail",
+            params: {
+                post_id: social_post_id
+            }
+        }).then((result) => {
+            this.poster_id = result.data.poster_id;
+            this.user_name = result.data.poster_name;
+            this.user_sign = result.data.poster_sign;
+            this.avatar_pic = result.data.poster_avatar;
+            this.post_pics = result.data.image_urls;
+            this.content = result.data.poster_content;
+            this.favor_list = result.data.favors_list;
+            this.comment_list = result.data.comments_list;
+        })
+    },
+    computed: {
+        favorGroup() {
+            let output = [];
+            if (this.favor_list.length === 0) {
+                return output;
+            }
+            for (let i = 0; i < this.favor_list.length; i += 12) {
+                output.push(this.favor_list.slice(i, i + 12));
+            }
+            return output;
+        }
+    },
+    methods: {
+        deletePost() {
+            let content = {
+                user_id: JSON.parse(sessionStorage.getItem("id")),
+                post_id: this.social_post_id,
+            }
+            console.log(content);
+            axios({
+                method: "POST",
+                url: "/api/pyq/delete",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '删除打卡成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                }
+            })
+        }
     }
 }
 

@@ -30,6 +30,7 @@ public class WebSocketServer {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("userId") String userId) {
+        log.info("尝试连接");
         this.session = session;
         this.userId = userId;
         webSocketSet.add(this);

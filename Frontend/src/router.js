@@ -25,7 +25,14 @@ import SocialCenter from "@/Pages/SocialCenter/SocialPageContainer.vue"
 import ShowPersonalInformation from "./Pages/PersonalCenter/ShowPersonalInformation.vue"
 import StudyGroupCenter from './Components/GroupCenter/StudyGroupCenter.vue'
 import CreateGroup from './Components/GroupCenter/CreateGroup.vue'
+<<<<<<< HEAD
 import UpGradeCenter from './Components/UpGrade/UpGradeCenter.vue'
+=======
+
+
+import SchoolInformationMain from "./Pages/SchoolInformation/SchoolInformationMain.vue"
+import SchoolInformationDetail from "./Pages/SchoolInformation/SchoolInformationDetail.vue"
+>>>>>>> fbd8b695fb8251406af56d838b0b741e2929e9ce
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -125,6 +132,21 @@ const router = createRouter({
                 {
                     path: 'UpGradeCenter',
                     component: UpGradeCenter,
+                },
+                {
+                    
+                    path: 'SchoolInformation',
+                    redirect: '/MainPage/SchoolInformation/Main',
+                    children: [
+                        {
+                            path: 'Main',
+                            component: SchoolInformationMain,
+                        },
+                        {
+                            path: 'Detail/:school_id',
+                            component: SchoolInformationDetail,
+                        },
+                    ]
                 }
             ]
         }

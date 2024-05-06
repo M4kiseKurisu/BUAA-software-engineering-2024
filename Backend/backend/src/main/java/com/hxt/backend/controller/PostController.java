@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class PostController {
     private final ResourceService resourceService;
     private final UserService userService;
     private final RecommendService recommendService;
+    private final ReviewService reviewService;
     private final String authorityError = "权限不匹配！";
     
     //帖子详情
@@ -46,8 +48,10 @@ public class PostController {
         PostResponse postResponse = postService.getPost(post_id);
         
         //更新用户浏览偏好和浏览记录
+        
         Map<String, Double> postTFIDF = recommendService.calculatePostTFIDF(post_id);
         recommendService.updateUserPreference(Integer.parseInt(user_id), postTFIDF);
+        
         
         recommendService.updateViewHistory(Integer.parseInt(user_id), post_id);
         
@@ -94,7 +98,7 @@ public class PostController {
             @RequestParam(name = "tags[]", required = false) String[] tags,
             @RequestParam(name = "images[]", required = false) String[] images,
             @RequestParam(name = "resources[]", required = false) String[] resources
-    ) {
+    ) throws IOException {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new WritePostResponse(false, "您已被封禁，禁止发帖！", null);
@@ -107,8 +111,12 @@ public class PostController {
             }
         }
 
+        //审核帖子内容
+        if (!reviewService.textReview(title) || !reviewService.textReview(intro) || !reviewService.textReview(content)) {
+            return new WritePostResponse(false, "帖子内容违规", null);
+        }
+    
         //创建帖子并存入数据库
-        
         Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
@@ -120,6 +128,11 @@ public class PostController {
         if (images != null) {
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
+                    
+                    //审核图片是否合规
+                    if (!reviewService.imageReview(imageUrl)) {
+                        return new WritePostResponse(false, "图片不合规", null);
+                    }
                     Integer image_id = imageService.getImageIdByUrl(imageUrl);
                     postService.postInsertImage(post_id, image_id);
                 }
@@ -137,6 +150,10 @@ public class PostController {
         //向 post_tag表插入数据
         if (tags != null) {
             for (String tagName : tags) {
+                //审核tag
+                if (!reviewService.textReview(tagName)) {
+                    return new WritePostResponse(false, "tag违规", null);
+                }
                 Integer tagId;
                 if (tagService.getIdByName(tagName) == null) {
                     tagService.addTag(tagName);
@@ -176,13 +193,14 @@ public class PostController {
             @RequestParam(name = "section_id", required = false) Integer section_id,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sort", required = false) Integer sort,
-            @RequestParam(name = "tag", required = false) String tag
+            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "type", required = false) Integer type
     ) {
         if (userId.isEmpty()) {
             return new SearchResponse(false,"用户未登录",null);
         }
     
-        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag);
+        List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag, type);
         
         if (list.isEmpty()) {
             return new SearchResponse(true,"未检索到响应结果",list);
