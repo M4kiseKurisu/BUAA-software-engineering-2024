@@ -26,14 +26,36 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 export default {
     data() {
         return {
+            school_id: 0,
             school_avatar: "./src/Images/buaa-avatar.jpg",
             school_name: "北京航空航天大学",
             school_website: "jiaowu.buaa.edu.cn",
             school_information: "北京航空航天大学教务处是主管学校本科教学工作和实施教学管理的职能部门。近年来，在学校党政领导下，教务处坚持以教师为本、以学生为本，注重课内与课外结合、教学与研究结合、传授知识与能力培养结合，坚持“厚植情怀、强化基础、突出实践、科教融通”的本科人才培养方针，积极探索新形势下人才培养的新思路，努力培养综合素质高、知识结构合理、基础扎实、知识面宽、具有创新精神和实践能力的一流拔尖创新人才。",
+            school_posts: [],
         }
+    },
+    created() {
+        this.school_id = this.$route.params.school_id;
+        axios({
+            method: "GET",
+            url: "/api/progression/schoolInfo",
+            params: {
+                school_id: this.school_id
+            }
+        }).then((result) => {
+            //console.log(result);
+            this.school_avatar = result.data.school_badge;
+            this.school_name = result.data.school_name;
+            this.school_information = result.data.school_intro;
+            this.school_website = result.data.school_web;
+            this.school_posts = result.data.posts;
+        })
     }
 }
 </script>

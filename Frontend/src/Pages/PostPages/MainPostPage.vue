@@ -101,7 +101,7 @@
             <div class="post-reply-first-line">
                 <!-- 回复者头像 -->
                 <div class="reply-avatar-container">
-                    <el-avatar shape="square" :size="50" :src="this.avatarPicture" />
+                    <el-avatar shape="square" :size="50" :src="this.user_avatar" />
                 </div>
 
 
@@ -379,6 +379,8 @@ export default {
             isReplyLiked2: [[false, false, false], [false, false, false], [false, false, false]],
             isReplyLiked2_1: [false, false, false],
             replyLikes: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+
+            user_avatar: "",
         }
     },
     computed: {
@@ -562,6 +564,17 @@ export default {
             }).then((result) => {
                 console.log(result)
                 this.avatarPicture = result.data.info;
+            })
+
+            axios({
+                method: "GET",
+                url: "/api/user/head",
+                params: {
+                    user_id: this.userId
+                }
+            }).then((result) => {
+                console.log(result)
+                this.user_avatar = result.data.info;
             })
         },
         deletePost() {

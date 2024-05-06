@@ -48,7 +48,7 @@
             <el-menu-item index="/MainPage/Social_Center">打卡信息</el-menu-item>
             <el-menu-item index="/MainPage/StudyGroupCenter">学习团体中心</el-menu-item>
             <el-menu-item index="/MainPage/SchoolInformation/Main">测试1</el-menu-item>
-            <el-menu-item index="/MainPage/SchoolInformation/Detail">测试2</el-menu-item>
+            <!-- <el-menu-item index="/MainPage/SchoolInformation/Detail">测试2</el-menu-item> -->
         </el-sub-menu>
 
     </el-menu>
