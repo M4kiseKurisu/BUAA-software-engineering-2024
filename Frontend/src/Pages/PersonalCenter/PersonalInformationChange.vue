@@ -46,6 +46,10 @@
                     <!-- <div class="grey-card-changee-link">修改</div> -->
                 </div>
 
+                <div class="line-container" v-if="this.is_blocked">
+                    <div class="grey-card-information-red-version">该用户已被封禁</div>
+                </div>
+
             </div>
 
         </div>
@@ -171,6 +175,7 @@ export default {
             inputOldPassword: "",
             inputNewPassword: "",
             inputNewPassword2: "",
+            is_blocked: false,
         }
     },
     mounted() {
@@ -198,6 +203,14 @@ export default {
         }).then((result) => {
             console.log(result)
             this.avatarPicture = result.data.info;
+        })
+
+        //获取封禁信息
+        axios({
+            method: "GET",
+            url: "/api/user/social/self",
+        }).then((result) => {
+            this.is_blocked = result.data.flag_blocked;
         })
     },
     methods: {
@@ -534,5 +547,12 @@ textarea::placeholder {
 .right-content-container {
     width: 485px;
     margin-left: 103px;
+}
+
+.grey-card-information-red-version {
+    height: 20px;
+    font-size: 14px;
+    color: red;
+    margin-right: 14px;
 }
 </style>
