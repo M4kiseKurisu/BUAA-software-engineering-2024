@@ -3,6 +3,7 @@ package com.hxt.backend.service;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.message.ManagerNotice;
 import com.hxt.backend.entity.message.PrivateChat;
+import com.hxt.backend.entity.message.PrivateMessage;
 import com.hxt.backend.entity.message.UserNotice;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
@@ -30,12 +31,7 @@ public class MessageService {
     public ArrayList<ChatElement> getChatList(Integer id) {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
-        Collections.sort(elements, new Comparator<>() {
-            @Override
-            public int compare(PrivateChat chat1, PrivateChat chat2) {
-                return chat1.getLast_message_time().compareTo(chat2.getLast_message_time());
-            }
-        });
+        elements.sort(Comparator.comparing(PrivateChat::getLast_message_time));
         for (PrivateChat element: elements) {
             if (element.getSender_id().equals(id)) {
                 list.add(new ChatElement(element.getSender_id(),element.getReceiver_id(),
@@ -52,11 +48,27 @@ public class MessageService {
     }
 
     public ArrayList<PrivateElement> getPrivateMessage(Integer senderId, Integer receiverId) {
+        List<PrivateMessage> messages = messageMapper.selectPrivateMessageListByUserId(senderId,receiverId);
+        messageMapper.updatePrivateMessageIsRead(receiverId,senderId);
+        messages.sort(Comparator.comparing(PrivateMessage::getSend_time));
         ArrayList<PrivateElement> list = new ArrayList<>();
+        for (PrivateMessage message: messages) {
+            PrivateElement element = new PrivateElement();
+            element.setMessage_sender_id(message.getSender_id());
+            element.setMessage_receiver_id(message.getReceiver_id());
+            element.setMessage_content(message.getContent());
+            element.setMessage_time(message.getSend_time().toString());
+            element.setIs_read(message.getIs_read());
+        }
         return list;
     }
 
-    public Boolean sendPrivateMessage(Integer senderId, Integer receiverId, String content) {
+    public Boolean sendPrivateMessage(Integer senderId, Integer receiverId, String content, boolean is_read, Timestamp time) {
+        messageMapper.insertPrivateMessage(senderId,receiverId,time,content,is_read);
+        return false;
+    }
+
+    public Boolean sendGroupMessage(Integer senderId, Integer groupId, String content, Timestamp time) {
 
         return false;
     }
@@ -82,12 +94,7 @@ public class MessageService {
         messageMapper.updateUserSystemNoticeIsRead(userId);
 
         // 按照推送时间排序
-        Collections.sort(notices, new Comparator<>() {
-            @Override
-            public int compare(UserNotice notice1, UserNotice notice2) {
-                return notice1.getPull_time().compareTo(notice2.getPull_time());
-            }
-        });
+        notices.sort(Comparator.comparing(UserNotice::getPull_time));
 
         for (UserNotice notice: notices) {
             ManagerNotice managerNotice = messageMapper.selectManagerSystemNoticeById(notice.getSystem_notice_id());

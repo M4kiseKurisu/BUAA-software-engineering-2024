@@ -134,6 +134,7 @@ public class SectionService {
             element.setPost_time(post.getPostTime());
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
+            element.setPost_intro(post.getIntro());
             List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
             element.setTag_list(tags);
             element.setPost_photo("");
