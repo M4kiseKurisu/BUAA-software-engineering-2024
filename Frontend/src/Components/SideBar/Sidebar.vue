@@ -45,7 +45,6 @@
             </template>
 
             <!-- 设置学业模块子菜单内容：学习团体，打卡信息 -->
-            <el-menu-item index="/MainPage/Course_Center/Personal_Course">学习团体</el-menu-item>
             <el-menu-item index="/MainPage/Social_Center">打卡信息</el-menu-item>
             <el-menu-item index="/MainPage/StudyGroupCenter">学习团体中心</el-menu-item>
             <el-menu-item index="/MainPage/SchoolInformation/Main">测试1</el-menu-item>
