@@ -77,6 +77,16 @@
                     <div style="display: grid;place-items: center;">
                         <GroupCard></GroupCard>
                     </div>
+                    <div style="display: grid;place-items: center;">
+                        <GroupCard></GroupCard>
+                    </div>
+                    <div style="display: grid;place-items: center;">
+                        <GroupCard></GroupCard>
+                    </div>
+                    <div style="display: grid;place-items: center;">
+                        <GroupCard></GroupCard>
+                    </div>
+                    
                 </div>
                 <div style="width: 100%;height: 40px;display: flex;align-items: center;background-color: white;justify-content: end;">
                     <el-pagination background layout="prev, pager, next" :total="1000" style="margin-right: 20px;"/>
@@ -130,11 +140,13 @@ export default {
 
 .study_group_center_container {
     width: calc(100vw - 220px);
-    min-width: 1080px;
+    /* min-width: 1080px; */
+    min-width: 1300px;
     /* background-color: rgba(247, 248, 250, 0.7); */
     background-color: white;
     height: calc(100vh - 120px);
-    min-height: 820px;
+    /* min-height: 820px; */
+    min-height: 700px;
 }
 
 .study_group_center_header {

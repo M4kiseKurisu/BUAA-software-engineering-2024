@@ -25,6 +25,7 @@ import SocialCenter from "@/Pages/SocialCenter/SocialPageContainer.vue"
 import ShowPersonalInformation from "./Pages/PersonalCenter/ShowPersonalInformation.vue"
 import StudyGroupCenter from './Components/GroupCenter/StudyGroupCenter.vue'
 import CreateGroup from './Components/GroupCenter/CreateGroup.vue'
+import UpGradeCenter from './Components/UpGrade/UpGradeCenter.vue'
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -102,11 +103,6 @@ const router = createRouter({
                             path: 'CreatePost/:sectionId',
                             component: CreatePost,
                         },
-                        {
-                            path: 'ChatCenter',
-                            name: 'ChatCenter',
-                            component: ChatCenter,
-                        },
                     ]
                 },
                 {
@@ -121,6 +117,15 @@ const router = createRouter({
                     path: 'CreateGroup',
                     component: CreateGroup,
                 },
+                {
+                    path: 'ChatCenter/:personId/:groupId',
+                    name: 'ChatCenter',
+                    component: ChatCenter,
+                },
+                {
+                    path: 'UpGradeCenter',
+                    component: UpGradeCenter,
+                }
             ]
         }
     ]
