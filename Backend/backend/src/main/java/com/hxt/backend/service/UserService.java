@@ -98,7 +98,8 @@ public class UserService {
             replyLike = 0;
         }
         List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
-        if (adminMapper.checkGlobalAuthority(id) > 0) {
+        Integer check = adminMapper.checkGlobalAuthority(id);
+        if (check != null && check > 0) {
             authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
         } else {
             authorityInfo = adminMapper.getUserAuthorities(id);
