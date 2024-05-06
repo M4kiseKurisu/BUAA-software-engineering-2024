@@ -115,6 +115,14 @@ public interface PostMapper {
             "where pt.post_id = #{id} ORDER BY pt.pt_id")
     List<String> getTagNameByPost(Integer id);
     
+    //获取升学模块中包含某tag的所有帖子
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on pt.post_id = p.post_id " +
+            "join tag t on t.tag_id = pt.tag_id " +
+            "where t.name = #{name} " +
+            "and p.section_id = 0")
+    List<Post> getPostByTagName(String name);
+    
     //帖子-点赞
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_like (post_id, user_id, status, time) VALUES (#{postId}, #{userId}, #{status}, #{time})")
@@ -191,10 +199,11 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name like concat('%', #{tag}, '%') " +
+            "and p.category = #{type} " +
+            "and t.name = #{tag} " +
             "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
-    List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag);
+    List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag, Integer type);
     
     //根据关键词和tag在特定版块搜索帖子(热度)
     @Select("SELECT p.* from post p " +
@@ -204,10 +213,11 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name like concat('%', #{tag}, '%') " +
+            "and p.category = #{type} " +
+            "and t.name = #{tag} " +
             "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
-    List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag);
+    List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag, Integer type);
     
 
     //  以下为删除帖子时删除附加信息用
