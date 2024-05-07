@@ -54,28 +54,28 @@ public class MessageController {
         }
     }
 
-    @PostMapping("/message/private")
-    public BasicInfoResponse sendPrivate(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
-            @RequestParam(name = "receiver_id",  defaultValue = "", required = false) String receiver_id,
-            @RequestParam(name = "content",  defaultValue = "", required = false) String content
-    ) {
-        if (user_id.equals("")) {
-            return new BasicInfoResponse(false,"用户未登录");
-        }
-        if (receiver_id.equals("") || content.equals("")) {
-            return new BasicInfoResponse(false,"缺少请求参数");
-        }
-        Integer id = Integer.parseInt(user_id);
-        Integer receiver = Integer.parseInt(receiver_id);
-        Boolean status = messageService.sendPrivateMessage(id, receiver, content);
-        if (status) {
-            return new BasicInfoResponse(true,"");
-        }
-        else {
-            return new BasicInfoResponse(false,"服务器错误");
-        }
-    }
+//    @PostMapping("/message/private")
+//    public BasicInfoResponse sendPrivate(
+//            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+//            @RequestParam(name = "receiver_id",  defaultValue = "", required = false) String receiver_id,
+//            @RequestParam(name = "content",  defaultValue = "", required = false) String content
+//    ) {
+//        if (user_id.equals("")) {
+//            return new BasicInfoResponse(false,"用户未登录");
+//        }
+//        if (receiver_id.equals("") || content.equals("")) {
+//            return new BasicInfoResponse(false,"缺少请求参数");
+//        }
+//        Integer id = Integer.parseInt(user_id);
+//        Integer receiver = Integer.parseInt(receiver_id);
+//        Boolean status = messageService.sendPrivateMessage(id, receiver, content);
+//        if (status) {
+//            return new BasicInfoResponse(true,"");
+//        }
+//        else {
+//            return new BasicInfoResponse(false,"服务器错误");
+//        }
+//    }
 
     @GetMapping("/message/reply")
     public ReplyMessageResponse getReply(

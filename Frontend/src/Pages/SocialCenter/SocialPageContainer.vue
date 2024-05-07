@@ -22,6 +22,7 @@
             <el-divider v-if="radio === '0'" direction="vertical"/>
             <div class="container-right">
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
+                <!-- <div v-if="true"><SocialPostDetail :social_post_id="1"/></div> -->
             </div>
         </div>    
         

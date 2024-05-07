@@ -18,7 +18,7 @@
             </div>
 
             <!-- "点击进入"字样 -->
-            <div class="group-information-link">>点击进入</div>
+            <button style="border: none; background-color: white;" class="group-information-link" @click="toGroup">>点击进入</button>
         </div>
 
         <div class="group-seperator" />
@@ -27,7 +27,12 @@
 
 <script>
 export default {
-    props: ["title", "amount", "avatar"],
+    props: ["title", "amount", "avatar", "id"],
+    methods: {
+        toGroup() {
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.id }});
+        }
+    }
 }
 </script>
 

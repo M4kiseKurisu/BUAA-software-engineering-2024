@@ -17,22 +17,33 @@
                     <el-input v-model="nameKeyWord" style="width: 100%; margin-top: 5px;" placeholder="Please input"
                         clearable />
                     <div style="background-color: white;margin-top: 5px;">
-                        <img src="../../Images/搜索.png">
+                        <el-button text><img src="../../Images/搜索.png"></el-button>
                     </div>
                 </div>
-                <el-scrollbar style="height: 95%;">
-                    <GroupItem @getGroupId = "getGroupId"></GroupItem>
+                <el-scrollbar v-if="this.chatKindChose == 2" style="height: 95%;">
+                    <GroupItem @getGroupId="getGroupId"></GroupItem>
+                </el-scrollbar>
+                <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
+                    <PersonItem @getPersonId="getPersonId"></PersonItem>
                 </el-scrollbar>
             </div>
         </div>
         <div style="width: 82%;height: 100%;min-width: 760px;">
-            <div class="header">
-                {{ senderName }}
+            <div class="header" v-if="this.chatKindChose == 1" style="justify-content: center;">
+                {{ personName }}
             </div>
+            <div class="header" v-if="this.chatKindChose == 2">
+                <span style="flex: 1;display: flex;align-items: center;justify-content: center;">{{ groupName }}</span>
+                <el-tooltip class="box-item" effect="dark" content="团体详情" placement="bottom-end"><el-button text><img
+                            src="../../Images/省略号.png" alt="" @click = "this.showGroupInfo = true"></el-button></el-tooltip>
+            </div>
+            <el-dialog v-model="showGroupInfo" title="团体信息" width="650">
+                <GroupInfo v-if = "this.showGroupInfo"></GroupInfo>
+            </el-dialog>
             <div style="height: 88%;width: 100%;">
                 <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length == 0">
-                    <ChatMessage ></ChatMessage>
-                    <ChatMessage ></ChatMessage>
+                    <ChatMessage></ChatMessage>
+                    <ChatMessage></ChatMessage>
                 </el-scrollbar>
             </div>
 
@@ -49,21 +60,24 @@ import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 import ChatMessage from './ChatMessage.vue';
 import GroupItem from './GroupItem.vue';
+import PersonItem from './PersonItem.vue';
 import { result } from 'lodash';
+import GroupInfo from './GroupInfo.vue';
 export default {
     data() {
         return {
-            headImg: '',
-            senderId: 1,
-            senderName: 'huazhi',
-            content: 'hello hxt!',
+
             time: '2022.2.2.2',
             textinput: '',
             nameKeyWord: '',
-            chatKindChose: 1,
+            chatKindChose: 0,
             messageList: [],
             messageCount: '',
-            groupId: '',
+            groupId: 1,
+            personId: 1,
+            personName: 'huazhi',
+            groupName: '元神讨论组',
+            showGroupInfo: false,
         }
     },
     methods: {
@@ -89,7 +103,7 @@ export default {
         choseGroupChat() {
             this.chatKindChose = 2;
         },
-        getGroupId(value){
+        getGroupId(value) {
             this.getGroupId = value;
             //console.log("diaoshangl")
             console.log(this.getGroupId);
@@ -112,6 +126,20 @@ export default {
     components: {
         ChatMessage,
         GroupItem,
+        PersonItem,
+        GroupInfo,
+    },
+    created() {
+        console.log(this.$route.params);
+        this.groupId = this.$route.params.groupId;
+        this.personId = this.$route.params.personId;
+        if (this.groupId == -1) {
+            this.chatKindChose = 1;
+        } else if (this.personId == -1) {
+            this.chatKindChose = 2;
+        }
+        console.log(this.groupId);
+        console.log(this.personId);
     }
 }
 </script>
@@ -123,8 +151,8 @@ export default {
 }
 
 .aside {
-    width: 280px;
-    min-width: 200px;
+    width: 350px;
+    min-width: 300px;
     height: 100%;
     background-color: white;
 }
@@ -139,7 +167,6 @@ export default {
 
 .header {
     display: flex;
-    justify-content: center;
     align-items: center;
     font-size: xx-large;
     font-weight: bolder;
@@ -159,4 +186,5 @@ export default {
 .chatKindChose.active {
     background-color: rgb(218, 234, 234);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}</style>
+}
+</style>

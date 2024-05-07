@@ -1,6 +1,6 @@
 <template>
-    <div class="group_card_container">
-        <div style="width: 100%;height: 40%;display: flex;">
+    <div class="group_card_container" @click = "showSubmitForm = true">
+        <!-- <div style="width: 100%;height: 40%;display: flex;">
             <div style="height: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
                 <img src="../../Images/buaaLogo.png" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
             </div>
@@ -47,7 +47,23 @@
                 <el-button type="primary" style="margin-left: auto;margin-right: 20px;"
                     @click="showSubmitForm = true">申请加入</el-button>
             </div>
+        </div> -->
+        <!-- 新尝试卡片 -->
+        <div style="height: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
+            <img src="../../Images/buaaLogo.png" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
         </div>
+        <div style="flex-grow: 1;">
+            <div style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
+                <span style="font-size: 1.3em;font-weight: bold;">{{ groupName }}</span>
+            </div>
+            <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">创建者：{{ this.groupCreaterName }}</span>
+            </div>
+            <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if = "this.isExamine">是</span> <span v-else>否</span></span>
+            </div>
+        </div>
+        <!-- 新尝试卡片 -->
         <el-dialog v-model="showSubmitForm" title="团体申请" width="900">
             <div style="width: 100%;display: flex;">
                 <div style="width: 420px;border-right: 1px solid darkgray;">
@@ -78,7 +94,8 @@
                         </div>
                     </div>
                     <div style="margin-top: 10px;">
-                        <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupLeaderName }}</span>
+                        <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupCreaterName
+                        }}</span>
                     </div>
                     <div style="margin-top: 10px;">
                         <span v-if="isExamine" style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
@@ -101,7 +118,18 @@
                         </div>
                         <div
                             style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem></GroupMemberItem>
+                            <!-- <img src="../../Images/testAvatar.jpg" alt=""
                                 style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
                             <img src="../../Images/testAvatar.jpg" alt=""
                                 style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
@@ -124,7 +152,7 @@
                             <img src="../../Images/testAvatar.jpg" alt=""
                                 style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
                             <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
+                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;"> -->
                         </div>
                     </div>
                 </div>
@@ -133,10 +161,12 @@
                         <span style="font-size: 1.3em;font-weight: bold;">申请信息</span>
                     </div>
                     <div style="margin-left: 20px;">
-                        <textarea id = "submitText" type="text" class="custom-input" placeholder="请输入申请信息" v-model="inputSubmitText"></textarea>
+                        <textarea id="submitText" type="text" class="custom-input" placeholder="请输入申请信息"
+                            v-model="inputSubmitText"></textarea>
                     </div>
                     <div style="display: flex;justify-content: end;margin-top: 5px;">
-                        <el-button style="margin-left: auto;margin-right: 4px;" type = "primary" @click = "pushSubmitText">提交申请</el-button>
+                        <el-button style="margin-left: auto;margin-right: 4px;" type="primary"
+                            @click="pushSubmitText">提交申请</el-button>
                     </div>
                 </div>
             </div>
@@ -145,20 +175,33 @@
 </template>
 
 <script>
+import GroupMemberItem from '../Chat/GroupMemberItem.vue';
+
 export default {
+    props: {
+        groupInfo: {
+            type: Object,
+            default: null,
+        }
+    },
     data() {
         return {
-            groupAvatar: '',
+            groupId: 1,
+            groupAvatar: '../../Images/buaaLogo.png',
             groupName: '元神讨论中心',
-            groupLeaderName: '博酱',
+            groupCreaterName: '博酱',
             groupBriefIntor: "O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！",
             groupCapacity: 100,
             groupMemberNum: 50,
             groupMemberAvatar: [],
+            groupCreaterId: '',
             showSubmitForm: false,
             isExamine: false,
             inputSubmitText: '',
         }
+    },
+    components:{
+        GroupMemberItem,
     },
     computed: {
         briefIntro() {
@@ -171,42 +214,65 @@ export default {
             }
         }
     },
-    methods:{
-        pushSubmitText(){
+    methods: {
+        pushSubmitText() {
             //var textarea = document.getElementById("submitText");
             //this.inputSubmitText = textarea.value;
+        },
+
+    },
+    created() {
+        if (this.groupInfo != null) {
+            this.groupId = this.groupInfo.group_id;
+            this.groupName = this.groupInfo.name;
+            this.groupCreaterId = this.groupInfo.creater_id;
+            this.groupMemberNum = this.groupInfo.member_count;
+            this.groupBriefIntor = this.groupInfo.content;
+            this.groupCapacity = this.groupInfo.permitted_num;
+            this.isExamine = this.groupInfo.is_examine;
+            this.groupAvatar = this.groupInfo.image;
         }
+
     }
 }
 </script>
 
 <style scoped>
-.group_card_container {
+/* .group_card_container {
     width: 420px;
     height: 320px;
     background-color: rgb(244, 250, 250);
     border-radius: 2%;
     border: 1px solid rgb(242, 237, 237);
+} */
+.group_card_container {
+    width: 440px;
+    height: 160px;
+    background-color: rgb(244, 250, 250);
+    border-radius: 2%;
+    border: 1px solid rgb(242, 237, 237);
+    display: flex;
 }
+
 
 .group_card_container:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .custom-input {
-  width: 400px;
-  height: 200px;
-  padding: 10px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #333;
-  outline: none;
-  transition: border-color 0.3s ease;
-  resize: none;
+    width: 400px;
+    height: 200px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease;
+    resize: none;
 }
 
 .custom-input:focus {
-  border-color: #5e9cd3;
+    border-color: #5e9cd3;
 }
 </style>

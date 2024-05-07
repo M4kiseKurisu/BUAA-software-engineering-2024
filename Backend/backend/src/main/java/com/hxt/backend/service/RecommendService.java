@@ -179,25 +179,35 @@ public class RecommendService {
         String title = post.getTitle();
         String intro = post.getIntro();
         String content = extractTextFromHtml(post.getContent());
+        
+        /*
         List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
+         */
         
         // 提取关键词并合并
         Set<String> keywords = new HashSet<>();
         keywords.addAll(extractKeywords(title));
         keywords.addAll(extractKeywords(intro));
         keywords.addAll(extractKeywords(content));
+        
+        /*
         for (String tag : tags) {
             keywords.addAll(extractKeywords(tag));
         }
+        */
+        
         
         // 计算每个关键词的 TF-IDF
         for (String keyword : keywords) {
             double tf = calculateTF(title, keyword) * TITLE_WEIGHT +
                     calculateTF(intro, keyword) * INTRO_WEIGHT +
                     calculateTF(content, keyword) * CONTENT_WEIGHT;
+            
+            /*
             for (String tag : tags) {
                 tf += calculateTF(tag, keyword) * TAG_WEIGHT;
             }
+             */
             
             double idf = calculateIDF(keyword, posts);
             tfidfScores.put(keyword, tf * idf);
@@ -289,10 +299,14 @@ public class RecommendService {
         int count = 0;
         for (Post post : posts) {
             String allText = post.getTitle() + " " + post.getIntro() + " " + extractTextFromHtml(post.getContent());
+            
+            /*
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
             for (String tag : tags) {
                 allText += " " + tag;
             }
+             */
+            
             if (extractKeywords(allText).contains(keyword)) {
                 count++;
             }
