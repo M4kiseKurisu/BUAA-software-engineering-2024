@@ -24,7 +24,7 @@
                     <GroupItem @getGroupId="getGroupId"></GroupItem>
                 </el-scrollbar>
                 <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
-                    <PersonItem @getPersonId="getPersonId"></PersonItem>
+                    <PersonItem @getPersonId="getPersonId" v-for = "item in personItemList" :chatItemInfo = "item"></PersonItem>
                 </el-scrollbar>
             </div>
         </div>
@@ -35,22 +35,21 @@
             <div class="header" v-if="this.chatKindChose == 2">
                 <span style="flex: 1;display: flex;align-items: center;justify-content: center;">{{ groupName }}</span>
                 <el-tooltip class="box-item" effect="dark" content="团体详情" placement="bottom-end"><el-button text><img
-                            src="../../Images/省略号.png" alt="" @click = "this.showGroupInfo = true"></el-button></el-tooltip>
+                            src="../../Images/省略号.png" alt="" @click="this.showGroupInfo = true"></el-button></el-tooltip>
             </div>
             <el-dialog v-model="showGroupInfo" title="团体信息" width="650">
-                <GroupInfo v-if = "this.showGroupInfo"></GroupInfo>
+                <GroupInfo v-if="this.showGroupInfo"></GroupInfo>
             </el-dialog>
             <div style="height: 88%;width: 100%;">
                 <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length == 0">
-                    <ChatMessage></ChatMessage>
-                    <ChatMessage></ChatMessage>
+                    <ChatMessage v-for = "item in messageList" :messageInfomation = "item"></ChatMessage>
                 </el-scrollbar>
             </div>
 
             <div class="footer">
                 <el-input v-model="textinput" style="width: 100%;margin-left: 5px;" :autosize="{ minRows: 1, maxRows: 10 }"
-                    size="large" placeholder="Please input" @keyup.enter.native="send" />
-                <el-button type="primary" style="margin-left: 5px;margin-right: 5px;">发送 &#x2708;</el-button>
+                    size="large" placeholder="Please input" @keyup.enter.native="sendMessage" />
+                <el-button type="primary" style="margin-left: 5px;margin-right: 5px;" @click = "sendMessage">发送 &#x2708;</el-button>
             </div>
         </div>
     </div>
@@ -64,9 +63,10 @@ import PersonItem from './PersonItem.vue';
 import { result } from 'lodash';
 import GroupInfo from './GroupInfo.vue';
 export default {
+
     data() {
         return {
-
+            selfId: JSON.parse(sessionStorage.getItem("id")),
             time: '2022.2.2.2',
             textinput: '',
             nameKeyWord: '',
@@ -78,25 +78,28 @@ export default {
             personName: 'huazhi',
             groupName: '元神讨论组',
             showGroupInfo: false,
+            personItemList:[],
+            groupItemList:[],
+            ws: null,
         }
     },
     methods: {
-        send() {
-            /* 发送消息 */
-            console.log(this.textinput);
-            /* 清空输入框 */
-            axios({
-                method: "POST",
-                url: "api/message/private",
-                data: {
-                    receiver_id: this.sendId,
-                    content: this.textinput,
-                }
-            }).then((result) => {
-                console.log(result);
-            });
-            this.textinput = '';
-        },
+        // send() {
+        //     /* 发送消息 */
+        //     console.log(this.textinput);
+        //     /* 清空输入框 */
+        //     axios({
+        //         method: "POST",
+        //         url: "api/message/private",
+        //         data: {
+        //             receiver_id: this.sendId,
+        //             content: this.textinput,
+        //         }
+        //     }).then((result) => {
+        //         console.log(result);
+        //     });
+        //     this.textinput = '';
+        // },
         chosePersonChat() {
             this.chatKindChose = 1;
         },
@@ -113,15 +116,56 @@ export default {
                 method: 'GET',
                 url: 'api/message/private',
                 params: {
-                    receiver_id: this.sendId,
+                    receiver_id: this.personId,
                 }
             }).then((result) => {
                 console.log(result);
                 this.messageCount = result.data.message_count;
-                this.messageList = result.data.message_list
+                this.messageList = result.data.message_list;
             });
 
-        }
+        },
+        getPersonItemList(){
+            axios({
+                method: 'GET',
+                url: 'api/message/chats',
+            }).then((result) => {
+                console.log(result);
+                this.personItemList = result.data.chat_list;
+            })
+        },
+
+        handleWsOpen() {
+            console.log("ws 打开了！");
+        },
+        handleWsClose() {
+            console.log("ws 关闭了！");
+        },
+        handleWsError() {
+            console.log("ws 爆炸了！");
+        },
+        handleWsMessage(data) {
+            console.log(data);
+        },
+        sendMessage() {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                var messageToSend;
+                // 发送消息
+                messageToSend = {
+                    sender_id: this.selfId,
+                    content: this.textinput,
+                    receiver_id: this.personId,
+                    group_id:this.groupId,
+                };
+                let jsonData = JSON.stringify(messageToSend);
+                this.ws.send(jsonData);
+                console.log(jsonData);
+                // 清空消息输入框
+                this.textinput = '';
+            } else {
+                console.error('WebSocket连接未打开或已关闭');
+            }
+        },
     },
     components: {
         ChatMessage,
@@ -130,11 +174,19 @@ export default {
         GroupInfo,
     },
     created() {
+        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
+        this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
+        this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
+        this.ws.addEventListener('error', this.handleWsError.bind(this), false);
+        this.ws.addEventListener('message', this.handleWsMessage.bind(this), false);
+        //this.ws.open();
         console.log(this.$route.params);
         this.groupId = this.$route.params.groupId;
         this.personId = this.$route.params.personId;
         if (this.groupId == -1) {
             this.chatKindChose = 1;
+            this.getPersonItemList();
+            this.getPersonMessageList();
         } else if (this.personId == -1) {
             this.chatKindChose = 2;
         }

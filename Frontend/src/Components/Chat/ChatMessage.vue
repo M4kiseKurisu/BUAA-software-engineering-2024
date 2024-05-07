@@ -77,7 +77,9 @@ export default {
         }
     },
     created() {
-
+        if(this.messageInfomation != null){
+            this.getMessageInfomation();
+        }
     },
 }
 </script>

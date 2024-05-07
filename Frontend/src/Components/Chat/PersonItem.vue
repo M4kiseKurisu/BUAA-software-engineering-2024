@@ -9,15 +9,16 @@
                     {{ personName }}
                 </div>
                 <div style="margin-left: auto;">
-                    <el-button text @click = "showQuit = true">取消关注</el-button>
+                    <el-button text @click="showQuit = true">取消关注</el-button>
                 </div>
             </div>
             <div style="width: 100%;height: 50%;display: flex;align-items: center;">
-                <div style="font-size: 1em;padding-left: 5px;color:dimgray;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
-                    {{this.lastMessageContent }}
+                <div
+                    style="font-size: 1em;padding-left: 5px;color:dimgray;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                    {{ this.lastMessageContent }}
                 </div>
                 <div style="margin-left: auto;">
-                    <el-button  type = "primary" plain style="margin-right: 5px;" @click = "goToChatCenter">去聊天</el-button>
+                    <el-button type="primary" plain style="margin-right: 5px;" @click="goToChatCenter">去聊天</el-button>
                 </div>
             </div>
         </div>
@@ -25,17 +26,46 @@
 </template>
 
 <script>
-export default{
-    data(){
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+export default {
+    props: {
+        chatItemInfo: {
+            type: Object,
+            default: null,
+        }
+    },
+    data() {
         return {
+            selfId: JSON.parse(sessionStorage.getItem("id")),
             personId: 1,
             personAvatar: './src/Images/testAvatar.jpg',
             personName: 'cjh',
             lastMessageContent: '上一条消息上一条消息上一条消息',
         }
     },
-    computed:{
-        
+    methods: {
+        getPersonInfo() {
+            axios({
+                method: "GET",
+                url: 'api/user/social/simple',
+            }).then((result) =>{
+                this.personName = result.data.name;
+                this.personAvatar = result.data.user_avatar
+            })
+        }
+
+    },
+    computed() {
+        if (this.chatItemInfo != null) {
+            if (this.selfId != this.chatItemInfo.sender_id) {
+                this.personId = this.chatItemInfo.sender_id;
+            } else {
+                this.personId = this.chatItemInfo.receiver_id;
+            }
+            this.lastMessageContent = this.chatItemInfo.last_message_content;
+            this.getPersonInfo();
+        }
     }
 }
 </script>
@@ -50,6 +80,7 @@ export default{
     margin-bottom: 5px;
     min-width: 300px;
 }
+
 .personItemContainer:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }

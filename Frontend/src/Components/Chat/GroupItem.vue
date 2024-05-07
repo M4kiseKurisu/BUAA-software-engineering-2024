@@ -45,6 +45,12 @@
 import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
+    props:{
+        groupInfo:{
+            type: Object,
+            default:null
+        },
+    },
     data() {
         return {
             groupId: 1,
@@ -65,7 +71,13 @@ export default {
         }
     },
     created(){
-
+        if(this.groupInfo != null){
+            this.groupId = this.groupInfo.group_id;
+            this.groupHead = this.groupInfo.image;
+            this.groupName = this.groupInfo.name;
+            this.groupPersonNum = this.groupInfo.member_count;
+            this.groupCapacity = this.groupInfo.permitted_num;
+        }
     }
 }
 </script>
