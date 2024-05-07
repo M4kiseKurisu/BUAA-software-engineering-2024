@@ -62,13 +62,13 @@ public class PostService {
     
     
     
-    public Integer deletePost(Integer userId, Integer postId) {
+    public Integer deletePost(Integer userId, Integer postId, boolean flagAdmin) {
         Post p = postMapper.getPost(postId);
         if (p == null) {
             return -1;
         }
         //  检查权限
-        if (!p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+        if (!flagAdmin && !p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
                 && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
             return -2;
         }

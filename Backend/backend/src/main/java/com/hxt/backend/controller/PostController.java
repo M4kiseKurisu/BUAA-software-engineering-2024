@@ -176,7 +176,7 @@ public class PostController {
         if (user_id.isEmpty()) {
             return new BasicInfoResponse(false, "信息不完整！");
         }
-        Integer res = postService.deletePost(Integer.parseInt(user_id), post_id);
+        Integer res = postService.deletePost(Integer.parseInt(user_id), post_id, false);
         
         if (res == -1) {
             return new BasicInfoResponse(false, "所选帖子不存在");

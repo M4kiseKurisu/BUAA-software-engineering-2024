@@ -193,6 +193,13 @@ public class UserService {
         return sectionListResponse;
     }
 
+    public BasicInfoResponse getSectionAuthority(Integer userid, Integer sectionId) {
+        String info = adminMapper.checkAuthorityType(userid, sectionId);
+        boolean res = (info != null);
+        info = info == null? "" : info;
+        return new BasicInfoResponse(res, info);
+    }
+
     public void resetPassword(Integer id, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         userMapper.resetPassword(id, md5);

@@ -3,6 +3,7 @@ package com.hxt.backend.controller;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
 import com.hxt.backend.response.list.PostTimeInfoResponse;
+import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.service.AdminService;
@@ -121,9 +122,65 @@ public class AdminController {
         return new BasicInfoResponse(res, info);
     }
 
+    @RequestMapping("/admin/section/delete")
+    public BasicInfoResponse deleteSection(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "move_id", required = false) Integer moveId
+    ) {
+        if (id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        String info = adminService.deleteSection(id, moveId);
+        boolean res = info.isEmpty();
+        return new BasicInfoResponse(res, info);
+    }
+
     @RequestMapping("/admin/list/user")
     public UserListResponse getUserList() {
         return adminService.getUserList();
+    }
+
+    @RequestMapping("admin/list/report/post")
+    private ReportListResponse getPostReportList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(0);
+    }
+
+    @RequestMapping("admin/list/report/comment")
+    private ReportListResponse getCommentReportList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(1);
+    }
+
+    @RequestMapping("admin/list/report/reply")
+    private ReportListResponse getReplyReportList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(2);
+    }
+
+    @RequestMapping("admin/list/report/user")
+    private ReportListResponse getUserReportList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(3);
+    }
+
+    @RequestMapping("admin/list/apply")
+    private ReportListResponse getAuthorityApplyList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(4);
     }
 
     @RequestMapping("/admin/block")

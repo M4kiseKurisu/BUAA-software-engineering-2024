@@ -354,4 +354,15 @@ public class UserController {
         }
         return userService.getSection(Integer.parseInt(user_id));
     }
+
+    @RequestMapping("/user/authority")
+    public BasicInfoResponse getSectionAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section
+    ) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return userService.getSectionAuthority(Integer.parseInt(user_id), section);
+    }
 }

@@ -423,4 +423,8 @@ public interface PostMapper {
     //  删除回复时删除所有点赞信息
     @Delete("DELETE FROM reply_like WHERE reply_id = #{id}")
     int deleteReplyLike(Integer id);
+
+    //  以下供管理员使用
+    @Update("UPDATE post SET section_id = #{section} WHERE post_id = #{post}")
+    int movePostSection(Integer post, Integer section);
 }
