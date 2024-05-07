@@ -31,6 +31,12 @@ public class PostController {
             @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        if (user_id.equals("")) {
+            return new PostResponse(false, null, null, null, null,
+                    null, null, null, null, null, null,
+                    null, null, null, null, null);
+        }
+        
         if (post_id == null) {
             Post post = null;
             PostResponse postResponse = new PostResponse(post);
@@ -174,7 +180,7 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
-        if (user_id.isEmpty()) {
+        if (user_id.equals("")) {
             return new BasicInfoResponse(false, "信息不完整！");
         }
         Integer res = postService.deletePost(Integer.parseInt(user_id), post_id, false);
@@ -197,7 +203,7 @@ public class PostController {
             @RequestParam(name = "tag", required = false) String tag,
             @RequestParam(name = "type", required = false) Integer type
     ) {
-        if (userId.isEmpty()) {
+        if (userId.equals("")) {
             return new SearchResponse(false,"用户未登录",null);
         }
     
@@ -218,6 +224,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false,"用户未登录",null);
+        }
         //更改点赞状态
         Integer status = postService.thumbPost(post_id, Integer.parseInt(user_id));
         
@@ -242,6 +251,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.postLikeStatus(post_id, Integer.parseInt(user_id));
         
@@ -259,6 +271,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
         //向favorite表中插入数据
         Integer status = postService.favoritePost(post_id, Integer.parseInt(user_id));
     
@@ -282,6 +297,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
         //从favorite表中删除数据
         Integer status = postService.unfavoritePost(post_id, Integer.parseInt(user_id));
     
@@ -305,6 +323,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取帖子收藏状态
         Integer status = postService.postFavoriteStatus(post_id, Integer.parseInt(user_id));
         
@@ -375,6 +396,11 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
+        
         Integer post_id = postService.getPostIdByCommentId(comment_id);
         Integer res = postService.deleteComment(false, Integer.parseInt(user_id), comment_id);
         
@@ -397,6 +423,9 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id
     
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false, "用户未登录", null);
+        }
         //更改点赞状态
         Integer status = postService.thumbComment(comment_id, Integer.parseInt(user_id));
         
@@ -421,6 +450,9 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.commentLikeStatus(comment_id, Integer.parseInt(user_id));
         
@@ -468,6 +500,10 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
+        
         Integer comment_id = postService.getCommentIdByReplyId(reply_id);
         Integer post_id = postService.getPostIdByCommentId(comment_id);
         Integer res = postService.deleteReply(false, Integer.parseInt(user_id), reply_id);
@@ -494,6 +530,9 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id
     
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false, "用户未登录", null);
+        }
         //更改点赞状态
         Integer status = postService.thumbReply(reply_id, Integer.parseInt(user_id));
         
@@ -518,6 +557,9 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.replyLikeStatus(reply_id, Integer.parseInt(user_id));
         
