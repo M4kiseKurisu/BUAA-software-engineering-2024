@@ -17,7 +17,7 @@
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span>
                     </div>
                     <div style="height: 25%;width: 70%;font-size: large;
-                                border-bottom: 1px solid darkgray;display: flex;align-items: center;">
+                                        border-bottom: 1px solid darkgray;display: flex;align-items: center;">
                         <span>个性签名：
                             {{ sign }}
                         </span>
@@ -41,10 +41,10 @@
                         <div style="width: 25%;display: flex;">
                             <el-button v-if="!isFollow" type="primary" size="large" plain @click="followOther"><span
                                     style="font-size: large;">关注</span></el-button>
-                            <el-button v-if="isFollow" type="primary" size="large" plain @click = "cancleFollow"><span
+                            <el-button v-if="isFollow" type="primary" size="large" plain @click="cancleFollow"><span
                                     style="font-size: large;">取消关注</span></el-button>
-                            <el-button type="primary" size="large" plain style="margin-left: 50px;"><span
-                                    style="font-size: large;">私信</span></el-button>
+                            <el-button type="primary" size="large" plain style="margin-left: 50px;"
+                                @click="goToChatCenter"><span style="font-size: large;">私信</span></el-button>
                         </div>
                         <div style="margin-right: 50px;">
                             <el-button type="warning" size="large" plain><span
@@ -56,7 +56,8 @@
         </div>
         <div style="height: 70%;background-color: aliceblue;width: 100%;display: flex;">
             <div style="width: 30%;height: 100%;display: flex;align-items: center;justify-content: center;margin-left: 2%;">
-                <div style="min-height: 470px;width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
+                <div
+                    style="min-height: 470px;width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
                     <div style="width: 100%;height: 10%;display: flex;justify-content: center;align-items: center;">
                         <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
                                 的 帖
@@ -91,6 +92,7 @@ import PostItem from "../PostCenter/PostItem.vue";
 import axios from 'axios';
 import { result } from 'lodash';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 export default {
     props: {
 
@@ -120,7 +122,7 @@ export default {
             axios({
                 method: "GET",
                 url: "/api/user/social/others",
-                params: { id: this.userId}
+                params: { id: this.userId }
             }).then((result) => {
                 console.log(result);
                 this.userName = result.data.name;
@@ -138,30 +140,40 @@ export default {
                 method: "POST",
                 url: "/api/user/follow",
                 data: {
-                    follow_id : this.userId,
+                    follow_id: this.userId,
                 }
             }).then((result) => {
                 console.log(result);
-                if(result.data.success){
-                     this.isFollow = true;
+                if (result.data.success) {
+                    this.isFollow = true;
                 }
             })
-            
+
         },
         cancleFollow() {
             axios({
                 method: "POST",
                 url: "/api/user/unfollow",
                 data: {
-                    unfollow_id : this.userId,
+                    unfollow_id: this.userId,
                 }
             }).then((result) => {
                 console.log(result);
-                if(result.data.success){
-                     this.isFollow = false;
+                if (result.data.success) {
+                    this.isFollow = false;
                 }
             })
         },
+        goToChatCenter() {
+            if (this.isFollow == true) {
+                this.$router.push({ name: 'ChatCenter', params: { personId: this.userId, groupId: -1 } });
+            } else {
+                ElMessage({
+                    message: '请先关注用户！',
+                    type: 'warning',
+                })
+            }
+        }
 
     },
     created() {

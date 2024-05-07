@@ -57,7 +57,7 @@
                 <span style="font-size: 1.3em;font-weight: bold;">{{ groupName }}</span>
             </div>
             <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
-                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">创建者：{{ this.groupCreaterName }}</span>
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">团体人数：{{ this.groupMemberNum }}/{{ this.groupCapacity }}</span>
             </div>
             <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
                 <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if = "this.isExamine">是</span> <span v-else>否</span></span>
@@ -130,29 +130,7 @@
                             <GroupMemberItem></GroupMemberItem>
                             <GroupMemberItem></GroupMemberItem>
                             <!-- <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">
-                            <img src="../../Images/testAvatar.jpg" alt=""
-                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;"> -->
+                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">-->
                         </div>
                     </div>
                 </div>

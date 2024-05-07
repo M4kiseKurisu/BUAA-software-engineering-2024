@@ -135,7 +135,7 @@ export default {
             method: "GET",
             url: "/api/pyq/detail",
             params: {
-                post_id: social_post_id
+                post_id: this.social_post_id
             }
         }).then((result) => {
             this.poster_id = result.data.poster_id;

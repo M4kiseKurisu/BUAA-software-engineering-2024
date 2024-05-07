@@ -52,15 +52,17 @@
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                        <span>
-                            <el-select v-model="value" placeholder="选择标签" style="width: 120px">
+                        <span style="padding-right: 3% ;">
+                            <!-- <el-select v-model="value" placeholder="选择标签" style="width: 120px">
                                 <el-option v-for="item in options" :key="item.value" :label="item.label"
                                     :value="item.value" />
-                            </el-select>
+                            </el-select> -->
+                            <el-input v-model="tagKind" style="width: 160px"
+                                placeholder="输入标签" />
                         </span>
-                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 240px"
+                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 160px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain>模块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
                     </div>
                 </div>
             </div>
@@ -227,6 +229,9 @@ export default {
                 console.log(result);
             })
         },
+        searchPost(){
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+        },
         getPostList(sort,post_type,tag_name) {
             axios({
                 method: "GET",
@@ -245,7 +250,7 @@ export default {
                 url: "/api/section/info",
                 params: { section_id: this.sectionId },
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.courseName = result.data.course_name;
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
