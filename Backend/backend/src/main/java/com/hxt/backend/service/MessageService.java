@@ -1,25 +1,23 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
-import com.hxt.backend.entity.message.ManagerNotice;
-import com.hxt.backend.entity.message.PrivateChat;
-import com.hxt.backend.entity.message.PrivateMessage;
-import com.hxt.backend.entity.message.UserNotice;
+import com.hxt.backend.entity.message.*;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.messageResponse.*;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MessageService {
     @Resource
@@ -44,6 +42,15 @@ public class MessageService {
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
+        
+        List<Integer> follows = userMapper.getFollow(id);
+        for (Integer follow: follows) {
+            PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);
+            PrivateChat chat2 = messageMapper.selectPrivateChatItem(id, follow);
+            if (chat1 == null && chat2 == null){
+                list.add(new ChatElement(id, follow,"","",false));
+            }
+        }
         return list;
     }
 
@@ -65,12 +72,19 @@ public class MessageService {
 
     public Boolean sendPrivateMessage(Integer senderId, Integer receiverId, String content, boolean is_read, Timestamp time) {
         messageMapper.insertPrivateMessage(senderId,receiverId,time,content,is_read);
+        messageMapper.deletePrivateChatById(senderId,receiverId);
+        messageMapper.deletePrivateChatById(receiverId,senderId);
+        messageMapper.insertPrivateChatList(senderId,receiverId,content,time,is_read);
         return false;
     }
 
     public Boolean sendGroupMessage(Integer senderId, Integer groupId, String content, Timestamp time) {
-
+        messageMapper.insertGroupMessage(content,groupId,senderId,time);
         return false;
+    }
+
+    public List<GroupMessage> getGroupMessage(Integer groupId) {
+        return messageMapper.selectGroupMessageByGroupId(groupId);
     }
 
     public ArrayList<ApplyElement> getApplyMessage(Integer id) {
