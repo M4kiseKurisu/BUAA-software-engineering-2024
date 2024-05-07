@@ -72,7 +72,7 @@ export default {
     },
     data() {
         return {
-            avatarPicture: "./src/Images/testAvatar.jpg",  //测试的头像信息
+            avatarPicture: "",  //测试的头像信息
             //showNotice : 0,
             name_input: "",  //要搜索的用户名
             sort: 0,
@@ -96,6 +96,18 @@ export default {
             ],
             user_list: [],
         }
+    },
+    mounted() {
+        // 获取头像信息
+        axios({
+            method: "GET",
+            url: "/api/user/head",
+            params: {
+                user_id: JSON.parse(sessionStorage.getItem("id"))
+            }
+        }).then((result) => {
+            this.avatarPicture = result.data.info;
+        })
     },
     methods: {
         logout() {

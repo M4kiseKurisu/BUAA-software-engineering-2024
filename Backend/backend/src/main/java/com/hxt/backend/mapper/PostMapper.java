@@ -59,12 +59,16 @@ public interface PostMapper {
     
     @Select("SELECT category from post where post_id = #{id}")
     int getCategoryByPostId(Integer id);
-    
+
+    //  以下三者均为统计信息
     @Select("SELECT COUNT(*) FROM post")
     int getPostNum();
 
     @Select("SELECT COUNT(*) FROM post WHERE time > #{time}")
     int getPostNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM post WHERE time > #{start} AND time < #{end}")
+    int getPostNumRange(Timestamp start, Timestamp end);
     
     //更新帖子浏览数
     @Update("UPDATE post SET view_count = #{viewCount} WHERE post_id = #{id}")
@@ -303,6 +307,9 @@ public interface PostMapper {
 
     @Select("SELECT COUNT(*) FROM comment WHERE time > #{time}")
     int getCommentNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM comment WHERE time > #{start} AND time < #{end}")
+    int getCommentNumRange(Timestamp start, Timestamp end);
     
     //评论-图片
     @Options(useGeneratedKeys = true)
@@ -391,6 +398,9 @@ public interface PostMapper {
 
     @Select("SELECT COUNT(*) FROM reply WHERE time > #{time}")
     int getReplyNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM reply WHERE time > #{start} AND time < #{end}")
+    int getReplyNumRange(Timestamp start, Timestamp end);
     
     //回复-点赞
     @Options(useGeneratedKeys = true)

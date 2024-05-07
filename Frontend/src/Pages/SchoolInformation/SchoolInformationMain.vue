@@ -39,7 +39,7 @@ export default {
             method: "GET",
             url: "/api/progression/schools",
         }).then((result) => {
-            //console.log(result);
+            console.log(result);
             this.school_list = result.data.schools;
         })
     },

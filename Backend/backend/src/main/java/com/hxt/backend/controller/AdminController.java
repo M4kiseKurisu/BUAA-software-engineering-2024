@@ -2,11 +2,11 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.service.AdminService;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +76,11 @@ public class AdminController {
     @RequestMapping("/admin/info")
     public TotalInfoResponse getTotalInfo() {
         return adminService.getTotalInfo();
+    }
+
+    @RequestMapping("/admin/data/post")
+    public PostTimeInfoResponse getPostTimeInfo() {
+        return adminService.getPostTimeInfo();
     }
 
     @RequestMapping("/admin/section/add/course")
