@@ -184,9 +184,11 @@ public class RecommendService {
         
         // 提取关键词并合并
         Set<String> keywords = new HashSet<>();
+        
         List<String> titleKeywords = extractKeywords(title);
         List<String> introKeywords = extractKeywords(intro);
         List<String> contentKeywords = extractKeywords(content);
+        
         
         keywords.addAll(titleKeywords);
         if (introKeywords != null) {
@@ -265,15 +267,16 @@ public class RecommendService {
         }
         
         List<Term> terms = HanLP.segment(content);
-    
         // 定义需要保留的词性
         List<String> importantPosTags = Arrays.asList("n", "v"); // 名词和动词
         int minWordLength = 2; // 最小词语长度阈值
-    
+        
         // 过滤结果
         List<String> importantWords = new ArrayList<>();
         for (Term term : terms) {
-            if (importantPosTags.contains(term.nature.firstChar()) && term.word.length() >= minWordLength) {
+            
+            if (importantPosTags.contains(String.valueOf(term.nature.firstChar()))
+                    && term.word.length() >= minWordLength) {
                 importantWords.add(term.word.toLowerCase());
             }
         }

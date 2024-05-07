@@ -51,8 +51,6 @@ public class PostController {
         
         Map<String, Double> postTFIDF = recommendService.calculatePostTFIDF(post_id);
         recommendService.updateUserPreference(Integer.parseInt(user_id), postTFIDF);
-        
-        
         recommendService.updateViewHistory(Integer.parseInt(user_id), post_id);
         
         // 获取发帖者名字和头像
@@ -151,9 +149,12 @@ public class PostController {
         if (tags != null) {
             for (String tagName : tags) {
                 //审核tag
+                /*
                 if (!reviewService.textReview(tagName)) {
                     return new WritePostResponse(false, "tag违规", null);
                 }
+               
+                 */
                 Integer tagId;
                 if (tagService.getIdByName(tagName) == null) {
                     tagService.addTag(tagName);
