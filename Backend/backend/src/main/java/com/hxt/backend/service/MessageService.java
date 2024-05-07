@@ -7,6 +7,7 @@ import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.messageResponse.*;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MessageService {
     @Resource
@@ -40,6 +42,7 @@ public class MessageService {
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
+        
         List<Integer> follows = userMapper.getFollow(id);
         for (Integer follow: follows) {
             PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);

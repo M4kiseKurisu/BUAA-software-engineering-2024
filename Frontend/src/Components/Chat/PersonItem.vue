@@ -49,9 +49,12 @@ export default {
             axios({
                 method: "GET",
                 url: 'api/user/social/simple',
+                params:{
+                    id: this.personId,
+                }
             }).then((result) =>{
                 this.personName = result.data.name;
-                this.personAvatar = result.data.user_avatar
+                this.personAvatar = result.data.user_avatar;
             })
         },
         givePersonId() {
@@ -60,7 +63,8 @@ export default {
         },
 
     },
-    computed() {
+    created() {
+        console.log(this.chatItemInfo);
         if (this.chatItemInfo != null) {
             if (this.selfId != this.chatItemInfo.sender_id) {
                 this.personId = this.chatItemInfo.sender_id;
