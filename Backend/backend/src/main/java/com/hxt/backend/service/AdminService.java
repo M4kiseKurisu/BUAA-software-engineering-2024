@@ -2,7 +2,9 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
 import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.singleInfo.TimeValueResponse;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
@@ -15,6 +17,7 @@ import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +25,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminService {
     @Resource
-    SectionMapper sectionMapper;
+    private SectionMapper sectionMapper;
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Resource
-    PostMapper postMapper;
+    private PostMapper postMapper;
     @Resource
-    AdminMapper adminMapper;
+    private AdminMapper adminMapper;
     @Resource
-    ImageMapper imageMapper;
+    private ImageMapper imageMapper;
+
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Integer checkPassword(String name, String password) {
         Timestamp lock = adminMapper.checkLock(name);
@@ -75,6 +80,34 @@ public class AdminService {
                 postAll,
                 postAll + postMapper.getCommentNum() + postMapper.getReplyNum()
         );
+    }
+
+    public PostTimeInfoResponse getPostTimeInfo() {
+        long now = System.currentTimeMillis();
+        PostTimeInfoResponse res = new PostTimeInfoResponse(
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+        );
+        long hourStart = now / 3600000 * 3600000;
+        for (int i = 0; i < 24; i++) {
+            Timestamp start = new Timestamp(hourStart - i * 3600000);
+            Timestamp end = new Timestamp(hourStart - (i - 1) * 3600000);
+            int postNum = postMapper.getPostNumRange(start, end);
+            int commentNum = postNum + postMapper.getCommentNumRange(start, end)
+                    + postMapper.getReplyNumRange(start, end);
+            res.getPost_24h().add(0, new TimeValueResponse(df.format(start), postNum));
+            res.getComment_24h().add(0, new TimeValueResponse(df.format(start), commentNum));
+        }
+        long dayStart = now / 86400000 * 86400000;
+        for (int i = 0; i < 30; i++) {
+            Timestamp start = new Timestamp(dayStart - i * 86400000L);
+            Timestamp end = new Timestamp(dayStart - (i - 1) * 86400000L);
+            int postNum = postMapper.getPostNumRange(start, end);
+            int commentNum = postNum + postMapper.getCommentNumRange(start, end)
+                    + postMapper.getReplyNumRange(start, end);
+            res.getPost_30d().add(0, new TimeValueResponse(df.format(start), postNum));
+            res.getComment_30d().add(0, new TimeValueResponse(df.format(start), commentNum));
+        }
+        return res;
     }
 
     public boolean checkPassword(Integer id, String password) {
