@@ -1,5 +1,5 @@
 <template>
-    <div class="personContainer">
+    <div class="groupItemContainer">
         <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;">
             <el-avatar :size="70" :src="groupHead" shape="square" />
         </div>
@@ -63,12 +63,15 @@ export default {
         goToChatCenter(){
             this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }});
         }
+    },
+    created(){
+
     }
 }
 </script>
 
 <style scoped>
-.personContainer {
+.groupItemContainer {
     width: 100%;
     height: 85px;
     display: flex;
@@ -77,7 +80,7 @@ export default {
     margin-bottom: 5px;
     min-width: 300px;
 }
-.personContainer:hover {
+.groupItemContainer:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>

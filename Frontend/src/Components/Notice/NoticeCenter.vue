@@ -45,7 +45,7 @@
             <ReplyNotice v-for="item in selectReplyMessage" :replyInformation="item" :key="item.reply_id"></ReplyNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 3">
-
+            <JudgeNotice></JudgeNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 4">
 
@@ -75,6 +75,7 @@
 <script>
 import ReplyNotice from './ReplyNotice.vue';
 import DirectMessage from './DirectMessage.vue';
+import JudgeNotice from './JudgeNotice.vue';
 import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
@@ -184,6 +185,7 @@ export default {
     components: {
         DirectMessage,
         ReplyNotice,
+        JudgeNotice,
     }
 }
 </script>

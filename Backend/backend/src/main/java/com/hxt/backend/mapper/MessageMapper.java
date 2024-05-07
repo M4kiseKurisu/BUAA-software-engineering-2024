@@ -65,8 +65,8 @@ public interface MessageMapper {
 
     // 发送新的私信
     @Insert("insert into private_message (content, sender_id, receiver_id, send_time, is_read) \n" +
-            "values (#{content}, #{sender}, #{receiver}, #{time}, false)")
-    int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content);
+            "values (#{content}, #{sender}, #{receiver}, #{time}, #{is_read})")
+    int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content, boolean is_read);
 
     // 更新私信阅读状态
     @Update("update private_message set is_read = true where sender_id = #{sender} and receiver_id = #{receiver};")
