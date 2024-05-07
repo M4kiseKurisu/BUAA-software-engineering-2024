@@ -47,8 +47,7 @@
                                     style="font-size: large;">私信</span></el-button>
                         </div>
                         <div style="margin-right: 50px;">
-                            <el-button type="warning" size="large" plain><span
-                                    style="font-size: large;">举报</span></el-button>
+                            <Report  :type="0" :id="this.userId"/>
                         </div>
                     </div>
                 </div>
@@ -87,6 +86,7 @@
 <script>
 import { ElMessage } from 'element-plus'
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
+import Report from "../../Components/Tool/reportButton.vue"
 import PostItem from "../PostCenter/PostItem.vue";
 import axios from 'axios';
 import { result } from 'lodash';
@@ -98,6 +98,7 @@ export default {
     components: {
         BreadcrumbLabel,
         PostItem,
+        Report,
     },
     data() {
         return {

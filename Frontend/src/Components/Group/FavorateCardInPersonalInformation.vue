@@ -18,10 +18,10 @@
         <!-- 卡片最下面一行的内容 -->
         <div class="last-line-information">
             <!-- 收藏帖子作者头像，昵称 -->
-            <div class="avatar-writername">
+            <button class="avatar-writername" style="border: none; background-color: white;" @click="toDetail">
                 <el-avatar :size="24" :src="avatarSrc"/>
                 <div class="writername">{{ writerName }}</div>
-            </div>
+            </button>
 
             <!-- 点击跳转至收藏帖子 -->
             <button class="content-link" @click="jump">>点击进入</button>
@@ -84,6 +84,9 @@ export default {
         },
         jump() {
             this.$router.push({ path: "/MainPage/Course_Center/PostPage/" + this.postId});
+        },
+        toDetail() {
+            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.writerId});
         }
     }
 }

@@ -17,7 +17,7 @@
                     </el-button>
                 </div>
                 <div v-if="radio === '0'"><MySocialPost @childMethod="showDetail"/></div>
-                <div v-if="radio === '1'"><OthersSocialPost /></div>
+                <div v-if="radio === '1'"><OthersSocialPost @childMethod="showDetail" /></div>
             </div>
             <el-divider v-if="radio === '0'" direction="vertical"/>
             <div class="container-right">
