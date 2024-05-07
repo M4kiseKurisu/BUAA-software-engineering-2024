@@ -95,7 +95,7 @@ export default {
             this.title = this.postInfo.post_title;
             this.authorId = this.postInfo.author_id;
             this.authorName = this.postInfo.author_name;
-            this.introduction = this.postInfo.intro;
+            this.introduction = this.postInfo.post_intro;
             this.time = this.postInfo.post_time;
             this.tags = this.postInfo.tag_list;
             this.likeNum = this.postInfo.post_likes;

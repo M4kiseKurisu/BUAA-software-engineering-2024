@@ -13,6 +13,10 @@
                     <button class="post-main-delete-button" v-if="this.author_id === userId" @click="deletePost">
                         <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                     </button>
+
+                    <div style="margin-left: 10px; margin-top: 4px;">
+                        <Report  :type="1" :id="this.post_id"/>
+                    </div>       
                 </div>
 
                 <!-- 帖子头部右侧 -->
@@ -178,6 +182,10 @@
                                 <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                             </button>
                         </div>
+
+                        <div style="margin-left: 5px; margin-top: 12px;">
+                            <Report  :type="2" :id="this.post_id"/>
+                        </div>  
                     </div>
 
                     <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -250,6 +258,10 @@
                                     <el-icon :size="16" color="#86909C"><Delete /></el-icon>
                                 </button>
                             </div>
+
+                            <div style="margin-left: 14px; margin-top: 12px;">
+                                <Report  :type="3" :id="this.post_id"/>
+                            </div>  
                         </div>
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -306,6 +318,7 @@ import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
+import Report from "../../Components/Tool/reportButton.vue"
 
 import WangEditor from "./WangEditor.vue"
 import WangEditor2 from "./WangEditor2.vue"
@@ -318,6 +331,7 @@ export default {
         Delete,
         WangEditor,
         WangEditor2,
+        Report,
     },
     data() {
         return {
@@ -341,7 +355,7 @@ export default {
             ],
             sortValue: "",
             ReplysReplyTextarea: "",  //回复回复内容监听
-            post_id: 21,
+            post_id: 0,
             title: "",
             content: "",
             author_id: "",

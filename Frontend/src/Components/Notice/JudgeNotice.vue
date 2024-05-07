@@ -16,8 +16,13 @@
             </div>
         </div>
     </div>
-    <div v-else class="judgeNoticeContainer">
-        
+    <div v-else style=" width: 100%;height: 100px;">
+        <div style="width: 100%;height: 40px;display: flex;align-items: center;">
+
+        </div>
+        <div>
+
+        </div>
     </div>
 </template>
 
@@ -31,7 +36,7 @@ export default {
             groupLeaderId: 1,
             groupName: '元神讨论组',
             applyTitle: '',
-            applyFeedBack: '',
+            applyFeedBack: true,
             isFeedBack: '',
             userName: '博酱',
             userAvatar: '',
