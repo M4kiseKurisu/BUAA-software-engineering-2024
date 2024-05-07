@@ -41,11 +41,10 @@
                 <GroupInfo v-if="this.showGroupInfo"></GroupInfo>
             </el-dialog>
             <div style="height: 88%;width: 100%;">
-                <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length == 0">
+                <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length != 0">
                     <ChatMessage v-for = "item in messageList" :messageInfomation = "item"></ChatMessage>
                 </el-scrollbar>
             </div>
-
             <div class="footer">
                 <el-input v-model="textinput" style="width: 100%;margin-left: 5px;" :autosize="{ minRows: 1, maxRows: 10 }"
                     size="large" placeholder="Please input" @keyup.enter.native="sendMessage" />
@@ -102,19 +101,29 @@ export default {
         // },
         chosePersonChat() {
             this.chatKindChose = 1;
+
         },
         choseGroupChat() {
             this.chatKindChose = 2;
         },
         getGroupId(value) {
-            this.getGroupId = value;
+            this.groupId = value;
             //console.log("diaoshangl")
+            this.chatKindChose = 2;
             console.log(this.getGroupId);
         },
-        getPersonMessageList() {
+        getPersonId(value) {
+            this.personId = value;
+            this.groupId = -1;
+            this.chatKindChose = 1;
+            console.log(this.personId);
+            this.getMessageList();
+        },
+        getMessageList() {
             axios({
                 method: 'GET',
                 url: 'api/message/private',
+                //url: 'http://127.0.0.1:4523/m2/4272722-0-default/166110437',
                 params: {
                     receiver_id: this.personId,
                 }
@@ -186,7 +195,7 @@ export default {
         if (this.groupId == -1) {
             this.chatKindChose = 1;
             this.getPersonItemList();
-            this.getPersonMessageList();
+            this.getMessageList();
         } else if (this.personId == -1) {
             this.chatKindChose = 2;
         }

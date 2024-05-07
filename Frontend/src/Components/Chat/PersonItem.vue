@@ -53,7 +53,11 @@ export default {
                 this.personName = result.data.name;
                 this.personAvatar = result.data.user_avatar
             })
-        }
+        },
+        givePersonId() {
+            console.log(this.personId);
+            this.$emit('getPersonId', this.personId);
+        },
 
     },
     computed() {

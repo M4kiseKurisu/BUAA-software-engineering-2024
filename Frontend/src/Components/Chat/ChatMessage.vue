@@ -1,7 +1,7 @@
 <template>
     <div v-if="senderId != meId" class="container-o">
         <div class="" style="padding-right: 5px;padding-top: 5px;">
-            <el-avatar :size="55" src="./src/Images/私信.png" />
+            <el-avatar :size="55" :src="headImg" />
         </div>
         <div style="width: 100%;">
             <div style="font-size: medium;font-weight: bold;color:darkgray;">{{ senderName }}</div>
@@ -43,7 +43,7 @@ export default {
             senderId: 0,
             content: 'hello hxt!',
             time: '2022.2.2.2',
-            meId: 999,
+            meId: JSON.parse(sessionStorage.getItem("id")),
             meName: '中文名',
             time: '',
         }
@@ -57,7 +57,10 @@ export default {
             if (this.meId == this.senderId) {
                 axios({
                     method: "GET",
-                    url: "api/user/social/self",
+                    url: "api/user/social/simple",
+                    params: {
+                        id: this.meId,
+                    }
                 }).then((result) => {
                     this.headImg = result.data.user_avatar;
                     this.meName = result.data.name;
@@ -65,7 +68,7 @@ export default {
             } else {
                 axios({
                     method: "GET",
-                    url: "api/user/social/others",
+                    url: "api/user/social/simple",
                     params: {
                         id: this.senderId,
                     }
