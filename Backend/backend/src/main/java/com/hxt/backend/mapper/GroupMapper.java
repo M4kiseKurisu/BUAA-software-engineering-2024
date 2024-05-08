@@ -41,8 +41,8 @@ public interface GroupMapper {
     Group selectGroupById(Integer groupId);
 
     @Update("update study_group" +
-            "set member_count = member_count + #{num}" +
-            "where group_id = #{groupId};")
+            " set member_count = member_count + #{num}" +
+            " where group_id = #{groupId};")
     int updateGroupMember(Integer groupId, Integer num);
 
 

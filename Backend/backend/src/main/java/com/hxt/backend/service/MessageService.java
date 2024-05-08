@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class MessageService {
     public ArrayList<ChatElement> getChatList(Integer id) {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
-        elements.sort(Comparator.comparing(PrivateChat::getLast_message_time));
+        elements.sort(Comparator.comparing(PrivateChat::getLast_message_time).reversed());
         for (PrivateChat element: elements) {
             if (element.getSender_id().equals(id)) {
                 list.add(new ChatElement(element.getSender_id(),element.getReceiver_id(),

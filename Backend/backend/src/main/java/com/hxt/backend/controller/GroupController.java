@@ -29,7 +29,6 @@ public class GroupController {
             @RequestParam(name = "image", defaultValue = "") String image,
             @RequestParam(name = "tags") String[] tags
             ) {
-        System.out.println(tags);
         if (user_id.isEmpty() || name.isEmpty() || permitted_num.isEmpty() || content.isEmpty() || is_examine == null || image.isEmpty() || tags.length == 0) {
             return new BasicInfoResponse(false,"请填写所有信息");
         }
@@ -88,7 +87,7 @@ public class GroupController {
 
     @PostMapping("/group/join")
     public BasicInfoResponse applyToJoinGroup(
-            @CookieValue(name = "user_Id", defaultValue = "") String user_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "group_id", defaultValue = "") String group_id,
             @RequestParam(name = "submit_info", defaultValue = "") String submit_info
     ) {
