@@ -100,7 +100,6 @@ public class UserController {
         int id = userService.checkPassword(name, password);
         if (id > 0) {
             userService.setUserCookie("user_id", String.valueOf(id), response);
-            userService.setUserCookie("type", "user", response);
             return new LoginResponse(true, id, "", userService.setToken(id));
         } else {
             return new LoginResponse(false, id, "用户名或密码错误！", "");
