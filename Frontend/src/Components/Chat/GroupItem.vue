@@ -1,6 +1,6 @@
 <template>
     <!-- <div class="groupItemContainer" @click = "giveGroupId"> -->
-    <div style="width: 100%;" @click = "giveGroupId">
+    <div class = "groupItemContainer" style="width: 100%;" @click = "giveGroupId">
         <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;">
             <el-avatar :size="70" :src="groupHead" shape="square" />
         </div>
@@ -11,7 +11,7 @@
                     {{ groupName }}
                 </div>
                 <div style="margin-left: auto;">
-                    <el-button text @click = "showQuit = true">退出团体</el-button>
+                    <el-button text @click = "showGroupInfo = true">查看详情</el-button>
                 </div>
             </div>
             <div style="width: 100%;height: 50%;display: flex;align-items: center;">
@@ -19,11 +19,11 @@
                     团体人数:{{ groupPersonNum }}/{{ groupCapacity }}
                 </div>
                 <div style="margin-left: auto;">
-                    <el-button  type = "primary" plain style="margin-right: 5px;" @click = "goToChatCenter">去聊天</el-button>
+                    <el-button  type = "primary" plain style="margin-right: 5px;" @click = "goToChatCenter" text>去聊天</el-button>
                 </div>
             </div>
         </div>
-        <el-dialog v-model="showQuit" title="退出提醒" width="600">
+        <!-- <el-dialog v-model="showQuit" title="退出提醒" width="600">
             <div style="width: 100%;height: 100px;align-items: center;justify-content: center;display: flex;">
                 <span style="font-size: x-large;color:coral;">是否确定退出团体{{groupName}}</span>
             </div>
@@ -35,6 +35,9 @@
                     <el-button type = "primary" >确定</el-button>
                 </div>
             </div>
+        </el-dialog> -->
+        <el-dialog v-model="showGroupInfo" title="团体信息" width="650">
+                <GroupInfo v-if="this.showGroupInfo" :groupId = "this.groupId"></GroupInfo>
         </el-dialog>
         <!-- <div style="margin-left: auto;">
             <el-button text @click="giveGroupId" style="font-size: 1em;"> 去聊天</el-button>
@@ -45,12 +48,16 @@
 <script>
 import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import GroupInfo from './GroupInfo.vue';
 export default {
     props:{
         groupInfo:{
             type: Object,
             default:null
         },
+    },
+    components:{
+        GroupInfo,
     },
     data() {
         return {
@@ -60,6 +67,7 @@ export default {
             groupPersonNum : 50,
             groupCapacity : 200,
             showQuit: false,
+            showGroupInfo: false,
         }
     },
     methods: {
@@ -94,6 +102,6 @@ export default {
     min-width: 300px;
 }
 .groupItemContainer:hover {
-    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>
