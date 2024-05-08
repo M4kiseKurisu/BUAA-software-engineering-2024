@@ -231,7 +231,7 @@ public class UserService {
     }
 
     public String setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone,
-                              Integer showPost, Integer showFavorite) {
+                              Boolean showPost, Boolean showFavorite) {
         if (userMapper.selectUserByName(name) != null) {
             return "用户昵称重名！";
         }
@@ -240,8 +240,8 @@ public class UserService {
         boolean yearSuccess = year == null || userMapper.updateYear(id, year) > 0;
         boolean signSuccess = sign == null || userMapper.updateSign(id, sign) > 0;
         boolean phoneSuccess = phone == null || userMapper.updatePhone(id, phone) > 0;
-        boolean postSuccess = showPost == null || userMapper.updateShowPost(id, showPost) > 0;
-        boolean favoriteSuccess = showFavorite == null || userMapper.updateShowFavorite(id, showFavorite) > 0;
+        boolean postSuccess = showPost == null || userMapper.updateShowPost(id, (showPost? 1 : 0)) > 0;
+        boolean favoriteSuccess = showFavorite == null || userMapper.updateShowFavorite(id, (showFavorite? 1 : 0)) > 0;
         return (nameSuccess && majorSuccess && yearSuccess && signSuccess
                 && phoneSuccess && postSuccess && favoriteSuccess)? "" : "服务器错误！";
     }
