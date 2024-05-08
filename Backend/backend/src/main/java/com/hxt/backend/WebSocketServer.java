@@ -133,6 +133,7 @@ public class WebSocketServer {
             if (webSocketServer != null) {
                 try {
                     webSocketServer.session.getBasicRemote().sendText(message);
+                    log.info("【websocket消息】推送消息, message={}", message);
                 } catch (Exception e) {
                     log.error("[连接ID:{}] 发送消息失败, 消息:{}", this.userId, message, e);
                 }

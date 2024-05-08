@@ -19,9 +19,9 @@ public interface GroupMapper {
     int insertGroupTag(Integer groupId, Integer tag_id);
 
 
-    @Select("SELECT t.name AS tag_name" +
-            "FROM group_tag gt" +
-            "         JOIN tag t ON gt.tag_id = t.tag_id" +
+    @Select("SELECT t.name " +
+            "FROM group_tag gt " +
+            "JOIN tag t ON gt.tag_id = t.tag_id " +
             "WHERE gt.group_id = #{group_id};")
     List<String> selectGroupTag(Integer group_id);
 

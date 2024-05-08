@@ -107,11 +107,13 @@ public class MessageService {
         return list;
     }
 
+
+    // todo
     public ArrayList<ApplyElement> getApplyMessage(Integer id) {
         ArrayList<ApplyElement> list = new ArrayList<>();
         return list;
     }
-
+    // todo
     public ArrayList<ReplyElement> getReplyMessage(Integer id) {
         ArrayList<ReplyElement> list = new ArrayList<>();
         return list;

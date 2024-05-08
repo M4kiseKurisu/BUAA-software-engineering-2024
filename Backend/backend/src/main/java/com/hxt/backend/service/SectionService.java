@@ -67,10 +67,13 @@ public class SectionService {
         }
         ArrayList<SectionElement> list = new ArrayList<>();
         for (Section section: sections) {
-            if (!academy.isEmpty() && !section.getAcademy().equals(academy)) {
+            if (!academy.isEmpty() && (section.getAcademy() == null || !section.getAcademy().equals(academy))) {
                 continue;
             }
             if (type != 0) {
+                if (section.getType() == null) {
+                    continue;
+                }
                 if (type == 1 && !section.getType().equals("一般专业课")) {
                     continue;
                 }
