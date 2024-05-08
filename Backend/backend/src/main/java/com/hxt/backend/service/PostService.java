@@ -186,8 +186,9 @@ public class PostService {
         List<Integer> tagIds = postMapper.getTagIdByPost(postId);
         List<String> tagNames = new ArrayList<>();
         for (Integer tagId : tagIds) {
-            if (tagMapper.getTag(tagId) != null) {
-                tagNames.add(tagMapper.getTag(tagId).getName());
+            Tag tag = tagMapper.getTag(tagId);
+            if (tag != null) {
+                tagNames.add(tag.getName());
             }
         }
         return tagNames;
@@ -215,8 +216,9 @@ public class PostService {
             
             //获取评论者的名称和头像
             Integer authorId = comment.getAuthor_id();
-            String authorName = userMapper.selectUserById(authorId).getName();
-            String authorHead = imageMapper.getImage(userMapper.selectUserById(authorId).getHeadId());
+            User author = userMapper.selectUserById(authorId);
+            String authorName = author.getName();
+            String authorHead = imageMapper.getImage(author.getHeadId());
             commentResponse.setComment_author_name(authorName);
             commentResponse.setComment_author_head(authorHead);
             
@@ -537,7 +539,9 @@ public class PostService {
     //根据post获得postIntroResponse
     public List<PostIntroResponse> getPostIntroResponseByPost(List<Post> posts) {
         List<PostIntroResponse> postIntroResponses = new ArrayList<>();
-        
+        if (posts.isEmpty()) {
+            return postIntroResponses;
+        }
         for (Post post : posts) {
             PostIntroResponse postIntroResponse = new PostIntroResponse(post);
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
@@ -545,7 +549,7 @@ public class PostService {
             
             String imageUrl = null;
             List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if (!(imageIds == null) && !imageIds.isEmpty()) {
+            if (!imageIds.isEmpty()) {
                 imageUrl = imageMapper.getImage(imageIds.get(0));
             }
             

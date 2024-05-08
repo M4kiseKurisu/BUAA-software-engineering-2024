@@ -128,7 +128,7 @@ public class RecommendService {
             //第一张图url
             String imageUrl = null;
             List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if ((imageIds != null) && !imageIds.isEmpty()) {
+            if (!imageIds.isEmpty()) {
                 imageUrl = imageMapper.getImage(imageIds.get(0));
             }
     
@@ -191,7 +191,7 @@ public class RecommendService {
         
         
         keywords.addAll(titleKeywords);
-        if (introKeywords != null) {
+        if (!introKeywords.isEmpty()) {
             keywords.addAll(introKeywords);
         }
         keywords.addAll(contentKeywords);
@@ -263,7 +263,7 @@ public class RecommendService {
     //从文本中提取关键词
     private List<String> extractKeywords(String content) {
         if (content == null) {
-            return null;
+            return new ArrayList<>();
         }
         
         List<Term> terms = HanLP.segment(content);

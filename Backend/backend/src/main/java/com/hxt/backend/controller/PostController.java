@@ -228,7 +228,7 @@ public class PostController {
     
         List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag, type);
         
-        if (list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             return new SearchResponse(true,"未检索到响应结果",list);
         } else {
             return new SearchResponse(true,"检索成功",  list);

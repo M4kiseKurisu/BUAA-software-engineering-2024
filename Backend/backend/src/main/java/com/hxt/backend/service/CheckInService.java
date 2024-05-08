@@ -33,6 +33,7 @@ public class CheckInService {
         List<CheckInIntroResponse> checkInIntroResponses = new ArrayList<>();
         
         List<CheckIn> checkIns = checkInMapper.getCheckInByAuthorId(userId);
+        
         for (CheckIn checkIn : checkIns) {
             CheckInIntroResponse checkInIntroResponse = new CheckInIntroResponse(checkIn);
             List<String> imageUrls = checkInMapper.getImageByCheckInId(checkIn.getCheck_in_id());
@@ -67,12 +68,22 @@ public class CheckInService {
         CheckIn checkIn = checkInMapper.getCheckInById(checkInId);
         CheckInDetailResponse checkInDetailResponse = new CheckInDetailResponse(checkIn);
         
+        if (checkIn == null) {
+            return checkInDetailResponse;
+        }
+        
         //获取打卡基本信息
         Integer authorId = checkIn.getAuthor_id();
         User author = userMapper.selectUserById(authorId);
-        String authorName = author.getName();
-        String authorSign = author.getSign();
-        String headUrl = imageMapper.getImage(author.getHeadId());
+    
+        String authorName = null;
+        String authorSign = null;
+        String headUrl = null;
+        if (author != null) {
+            authorName = author.getName();
+            authorSign = author.getSign();
+            headUrl = imageMapper.getImage(author.getHeadId());
+        }
         List<String> images = checkInMapper.getImageByCheckInId(checkInId);
         
         checkInDetailResponse.setPoster_avatar(headUrl);
