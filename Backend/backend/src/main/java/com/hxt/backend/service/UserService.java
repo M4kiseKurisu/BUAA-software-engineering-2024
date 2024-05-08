@@ -264,7 +264,7 @@ public class UserService {
 
     public boolean applyForAuthority(Integer user, Integer section, Integer type, String detail, String resource) {
         if (adminMapper.checkSameReport(4, section * 3 + type, user) > 0
-            || adminMapper.checkAuthority(user, section) > 0) {
+            || adminMapper.checkAuthority(user, section) != null) {
             return true;
         }
         return adminMapper.insertReport(user, 4, section * 3 + type, detail, resource) > 0;
