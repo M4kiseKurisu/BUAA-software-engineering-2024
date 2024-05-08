@@ -1,6 +1,8 @@
 <template>
     <div class="personItemContainer" @click="givePersonId">
-        <button style="align-items: center;justify-content: center;display: flex; width: 64px; height: 64px; border: none; background-color: #efefef;" @click="goToOtherPage">
+        <button
+            style="align-items: center;justify-content: center;display: flex; width: 64px; height: 64px; border: none; background-color: #efefef;"
+            @click="goToOtherPage">
             <el-avatar style="width: 100%; height: 100%;" :src="personAvatar" shape="square" />
         </button>
         <div style="width: calc(100% - 70px);">
@@ -14,7 +16,7 @@
             </div>
             <div style="width: 100%; display: flex;">
                 <div style="font-size: 15px; margin-left: 12px; margin-top: 4px; color:#86909c;
-                            white-space: nowrap;overflow: hidden;text-overflow: ellipsis;width: 85%;">
+                                white-space: nowrap;overflow: hidden;text-overflow: ellipsis;width: 85%;">
                     {{ this.lastMessageContent }}
                 </div>
             </div>
@@ -59,7 +61,12 @@ export default {
             this.$emit('getPersonId', this.personId);
         },
         goToOtherPage() {
-            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.personId});
+            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.personId }).then(() => {
+                this.$nextTick(() => {
+                    // 强制重新加载当前页面
+                    location.reload();
+                });
+            });;
         }
     },
     created() {

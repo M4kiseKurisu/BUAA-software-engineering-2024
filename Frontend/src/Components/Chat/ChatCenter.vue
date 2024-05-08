@@ -221,14 +221,24 @@ export default {
             //console.log("diaoshangl")
             this.personId = -1;
             this.chatKindChose = 2;
-            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId } });
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId } }).then(() => {
+                this.$nextTick(() => {
+                    // 强制重新加载当前页面
+                    location.reload();
+                });
+            });
             console.log(this.getGroupId);
         },
         getPersonId(value) {
             this.personId = value;
             this.groupId = -1;
             this.chatKindChose = 1;
-            this.$router.push({ name: 'ChatCenter', params: { personId: this.personId, groupId: -1 } });
+            this.$router.push({ name: 'ChatCenter', params: { personId: this.personId, groupId: -1 } }).then(() => {
+                this.$nextTick(() => {
+                    // 强制重新加载当前页面
+                    location.reload();
+                });
+            });
             console.log(this.personId);
             this.getPersonInfo();
             this.getPersonMessageList();
@@ -295,7 +305,9 @@ export default {
             this.messageList.push(message);
         },
         sendMessage() {
-            if (this.textinput == '') {
+            var textTest = this.textinput;
+            if (textTest.trim() == '') {
+                this.textinput = '';
                 return;
             }
             if (this.ws && this.ws.readyState === WebSocket.OPEN) {

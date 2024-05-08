@@ -76,7 +76,12 @@ export default {
             this.$emit('getGroupId', this.groupId);
         },
         goToChatCenter(){
-            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }});
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }}).then(() => {
+                this.$nextTick(() => {
+                    // 强制重新加载当前页面
+                    location.reload();
+                });
+            });;
         }
     },
     created(){

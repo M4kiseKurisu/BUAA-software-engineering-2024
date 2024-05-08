@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <div class="first-line" v-if="this.sectionId === 0">
+    <div class="first-line" v-if="this.sectionId == 0">
         <div class="post-title-font">学校信息：</div>
         <div>
             <el-select v-model="this.school_choice" placeholder="选择学校" style="width: 240px">
@@ -176,7 +176,7 @@ export default {
 
             //注册账号信息打包
 
-            if (this.sectionId === 0) {
+            if (this.sectionId == 0) {
                 this.dynamicTags.push(this.school_choice);
                 this.dynamicTags.push(this.graduate_choice);
             }
@@ -273,6 +273,7 @@ export default {
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
+        console.log(this.sectionId);
     },
     data() {
         return {
