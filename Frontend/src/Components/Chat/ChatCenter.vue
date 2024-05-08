@@ -48,9 +48,9 @@
                 </div>
 
                 <div style="width: 90%; margin-left: 5%; margin-top: 16px; display: flex;">
-                    <div class="chatKindChose" :class="{ active: chatKindChose === 1 }"
+                    <div class="chatKindChose" :class="{ active: chatKindChose === 1 }" @click="chosePersonChat"
                         style="width: 50% ; display: flex; justify-content: center;align-items: center;height: 30px;">
-                        <button @click="chosePersonChat"
+                        <button 
                             style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
                             <svg t="1715140629455" style="width: 100%; height: 100%" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="4751" width="200" height="200">
@@ -66,9 +66,9 @@
 
                     <el-divider direction="vertical" />
 
-                    <div class="chatKindChose" :class="{ active: chatKindChose === 2 }"
+                    <div class="chatKindChose" :class="{ active: chatKindChose === 2 }" @click="choseGroupChat"
                         style="width: 50%; display: flex; justify-content: center;align-items: center;height: 30px;">
-                        <button @click="choseGroupChat"
+                        <button 
                             style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
                             <svg t="1715140591634" style="width: 100%; height: 100%" class="icon" viewBox="0 0 1024 1024"
                                 version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3300" width="200" height="200">
