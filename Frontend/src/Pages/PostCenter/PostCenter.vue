@@ -71,7 +71,7 @@
         <div style="width: 100%;height: 785px;background-color: white;display: flex;">
             <div style="width: 75%;height: 100%;border-right: 1px solid darkgray;">
                 <div style="width: 100%;height: 735px;">
-                    <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id"></PostItem>
+                    <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id" :getSectionId="this.sectionId"></PostItem>
                 </div>
                 <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
                     <el-pagination background layout="prev, pager, next" :page-size="5" :total="total"
