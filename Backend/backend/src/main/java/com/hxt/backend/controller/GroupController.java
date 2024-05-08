@@ -27,7 +27,7 @@ public class GroupController {
             @RequestParam(name = "content", defaultValue = "") String content,
             @RequestParam(name = "is_examine", defaultValue = "") Boolean is_examine,
             @RequestParam(name = "image", defaultValue = "") String image,
-            @RequestParam(name = "tags") String[] tags
+            @RequestParam(name = "tags[]") String[] tags
             ) {
         if (user_id.isEmpty() || name.isEmpty() || permitted_num.isEmpty() || content.isEmpty() || is_examine == null || image.isEmpty() || tags.length == 0) {
             return new BasicInfoResponse(false,"请填写所有信息");

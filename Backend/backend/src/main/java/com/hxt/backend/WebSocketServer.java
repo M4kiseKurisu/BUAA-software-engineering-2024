@@ -134,6 +134,9 @@ public class WebSocketServer {
         messageService.sendGroupMessage(senderId,groupId,receive.get("content").toString(),time);
         List<Integer> groupMember = groupMapper.selectMemberByGroupId(groupId);
         for (Integer userId: groupMember) {
+            if (userId == senderId) {
+                continue;
+            }
             WebSocketServer webSocketServer = webSocketMap.get(String.valueOf(userId));
             if (webSocketServer != null) {
                 try {
