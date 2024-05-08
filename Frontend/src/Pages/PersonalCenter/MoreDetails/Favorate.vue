@@ -31,12 +31,12 @@
         <FavorateShow class="singe-show"
                       v-for="(item, index) in favorateList"
                       :key="index"
-                      :title="item.title"
-                      :content="item.content"
-                      :image="item.image"
-                      :avatarSrc="item.avatarSrc"
-                      :writerName="item.writerName"
-                      :tags="item.tags"
+                      :title="item.post_title"
+                      :post_id="item.post_id"
+                      :content="item.post_intro"
+                      :writer-id="item.author_id"
+                      :writerName="item.author_name"
+                      :tags="item.post_tags"
         />
         <el-pagination background layout="prev, pager, next" :total="100" page-size="10" style="justify-content: center"></el-pagination>
 
@@ -67,44 +67,7 @@ export default {
         { value: 'tag2', label: '标签2' },
         // 其他标签选项...
       ],
-      favorateList: [
-        {
-          //收藏帖子1
-          title: "收藏帖子A标题",
-          image :"./src/images/postImage.jpg",
-          content: "收藏帖子A简介：ABCDABCDABCDABCD",
-          avatarSrc: "./src/Images/testAvatar.jpg",
-          writerName: "MakiseKurisuA",
-          tags:["标签一","标签二"]
-        },
-        {
-          //收藏帖子2
-          title: "收藏帖子B标题",
-          image :"./src/images/postImage.jpg",
-          content: "收藏帖子B简介：ABCDABCDABCDABCD",
-          avatarSrc: "./src/Images/testAvatar.jpg",
-          writerName: "MakiseKurisuB",
-          tags:["标签一","标签二"]
-        },
-        {
-          //收藏帖子3
-          title: "收藏帖子C标题",
-          image :"./src/images/postImage.jpg",
-          content: "收藏帖子C简介：ABCDABCDABCDABCD",
-          avatarSrc: "./src/Images/testAvatar.jpg",
-          writerName: "MakiseKurisuC",
-          tags:["标签一","标签二"]
-        },
-        {
-          //收藏帖子4
-          title: "收藏帖子D标题",
-          image :"./src/images/postImage.jpg",
-          content: "收藏帖子D简介：ABCDABCDABCDABCD",
-          avatarSrc: "./src/Images/testAvatar.jpg",
-          writerName: "MakiseKurisuD",
-          tags:["标签一","标签二"]
-        }
-      ]
+      favorateList: []
     }
   },
   mounted() {

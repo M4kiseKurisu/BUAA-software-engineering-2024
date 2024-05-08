@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
-			<scope>provided</scope>
+			<!-- <scope>provided</scope> -->
 		</dependency>
 
 		<!-- 从html中提取内容 -->
