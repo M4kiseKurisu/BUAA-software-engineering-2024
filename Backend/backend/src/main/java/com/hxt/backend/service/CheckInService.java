@@ -148,18 +148,14 @@ public class CheckInService {
     
     //点赞/取消点赞打卡
     public Integer thumbCheckIn(Integer postId, Integer user_id) {
-        CheckInLike checkInLike = checkInMapper.getCheckInLike(postId, user_id);
-        if (checkInLike == null) {
+        Integer res = checkInMapper.deleteCheckInLike(postId, user_id);
+        if (res == 0) {
             Timestamp likeTime = new Timestamp(System.currentTimeMillis());
             return checkInMapper.insertCheckInLike(postId, user_id, likeTime); //点赞
             
-        } else {
-            Integer res = checkInMapper.deleteCheckInLike(postId, user_id);
-            if (res == 1) {
-                return 2;   //取消点赞
-            }
-            return res;
         }
+        return 2;   //取消点赞
+        
     }
     
     //更新打卡点赞数
