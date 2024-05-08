@@ -25,7 +25,7 @@
         <!-- 一个月份的打卡图像 -->
         <div v-for="item2 in item1.posts" class="flex-layout" style="margin-top: 12px; margin-left: 5%">
 
-            <div class="post-time-font-style" style="margin-right: 10%">{{item2.month}}月</div>
+            <div class="post-time-font-style" style="margin-right: 10%; width: 24%;">{{item2.month}}月</div>
 
             <div style="flex-grow: 1; margin-right: 5%">
                 <el-row v-for="item3 in item2.posts" :gutter="20" style="margin-bottom: 6px;">
@@ -104,8 +104,10 @@ export default {
             method: "GET",
             url: "/api/pyq/userInfo"
         }).then((result) => {
+            console.log(result);
             this.get_posts = result.data.social_post;
             this.dividePosts(result.data.social_post);
+            this.finalDivide();
         })
     },
     methods: {
@@ -127,21 +129,24 @@ export default {
                             posts: month_posts,
                         }
                         this.divided_posts.push(element1);
-                        now_year = posts[i].year;
-                        month_posts = [];
                     }  //切分年份
+                    now_year = posts[i].year;
+                    month_posts = [];
                 }
 
                 if (posts[i].month != now_month) {  //这个判断可能有bug
                     if (date_posts.length != 0) {
+                        // console.log("month change");
+                        // console.log(posts[i].month);
+                        // console.log(now_month);
                         let element2 = {
                             month: posts[i].month,
                             posts: date_posts,
                         }
-                        this.month_posts.push(element2);
-                        now_month = posts[i].month;
-                        date_posts = [];
+                        month_posts.push(element2);
                     }  //切分月份
+                    now_month = posts[i].month;
+                    date_posts = [];
                 }
 
                 for (let j = 0; j < posts[i].image_urls.length; j++) {
@@ -151,9 +156,23 @@ export default {
                     }
                     date_posts.push(element3);
                 } //将所有图片,id放入对应日期
+                console.log(date_posts);
+
+                if (i === posts.length - 1) {  //切最后一段
+                    let element2 = {
+                        month: posts[i].month,
+                        posts: date_posts,
+                    }
+                    month_posts.push(element2);
+                    let element1 = {
+                        year: posts[i].year,
+                        posts: month_posts,
+                    }
+                    this.divided_posts.push(element1);
+                }
             }
 
-            // console.log(this.divided_posts); // 测评
+            console.log(this.divided_posts); // 测评
         },
         finalDivide() {
             // 将每个月的信息以4分组
@@ -167,7 +186,7 @@ export default {
                 }
             }
 
-            // console.log(this.divided_posts); // 测评
+            console.log(this.divided_posts); // 测评
         }
     }
 }
