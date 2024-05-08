@@ -230,7 +230,7 @@ export default {
                         message: '删除评论成功！',
                         type: 'success',
                     });
-                    location.reload();
+                    ocation.reload();
                 }
             })
         },

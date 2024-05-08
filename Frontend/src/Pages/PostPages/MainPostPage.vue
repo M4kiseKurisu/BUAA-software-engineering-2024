@@ -421,6 +421,7 @@ export default {
             user_avatar: "",
             authority: "",
             authority_num: 3,
+            section_id: 0,
         }
     },
     computed: {
@@ -516,6 +517,7 @@ export default {
             this.collect_count = result.data.collectCount;
             this.comment_count = result.data.comment_count;
             this.view_count = result.data.view_count;
+            this.section_id = result.data.section_id;
 
             const count = (result.data.comments.length % 3 === 0) ? 
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
@@ -937,6 +939,21 @@ export default {
             // this.authority_num = this.authority === "teacher" ? 0 :
             //                      this.authority === "assistant" ? 1 : 3;
             this.authority_num = 3;
+            axios({
+                method: "GET",
+                url: "/api/user/authority",
+                params: { section: this.section_id, },
+            }).then((result) => {
+                //console.log(result);
+                console.log(result);
+                if (result.data.success) {
+                    let authority_get = result.data.info; 
+                    this.authority_num = authority_get === "teacher" ? 0 :
+                                         authority_get === "assistant" ? 1 : 3;
+                    console.log(this.authority_num);
+                } 
+            });
+            
         }
     }
 }

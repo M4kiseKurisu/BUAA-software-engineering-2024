@@ -167,7 +167,7 @@ public class CheckInController {
         if (user_id.equals("")) {
             return new IsSuccessResponse(false);
         }
-        
+
         //删除打卡
         Integer res = checkInService.deleteCheckIn(post_id, Integer.parseInt(user_id));
         if (res == 0) {
