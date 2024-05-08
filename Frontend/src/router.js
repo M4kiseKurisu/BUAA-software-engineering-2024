@@ -84,7 +84,7 @@ const router = createRouter({
                             component: PersonalCourse,
                         },
                         {
-                            path: 'PostPage/:postId',
+                            path: 'PostPage/:postId/:authority',
                             component: PostPage,
                         },
                         {
