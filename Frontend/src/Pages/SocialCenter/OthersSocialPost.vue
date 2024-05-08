@@ -7,6 +7,7 @@
                     <OthersPostCard 
                         :post="item2"
                         @childMethod="showDetail"
+                        :key="this.refreshKey"
                     />
 
                 </el-col>
@@ -33,6 +34,7 @@ export default {
             total_pages: 0,
             current_page: 1,
             is_background: true,
+            refreshKey: 0,
         }
     },
     components: {
@@ -51,6 +53,7 @@ export default {
     computed: {
         showPosts() {
             let slice = this.post_list.slice((this.current_page - 1) * 6, this.current_page * 6);
+            console.log(slice);
             let output = [];
             if (slice.length === 0) {
                 return output;
@@ -58,6 +61,7 @@ export default {
             for (let i = 0; i < slice.length; i += 2) {
                 output.push(slice.slice(i, i + 2));
             }
+            this.refreshKey++;
             return output;
         }
     },

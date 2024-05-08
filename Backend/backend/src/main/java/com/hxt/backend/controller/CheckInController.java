@@ -141,17 +141,17 @@ public class CheckInController {
     }
     
     //删除评论
-    @DeleteMapping (value = "/pyq/comment/delete")
+    @RequestMapping (value = "/pyq/comment/delete")
     public IsSuccessResponse deleteComment(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
-            @RequestParam(name = "post_id", required = false) Integer post_id
+            @RequestParam(name = "comment_id", required = false) Integer comment_id
     ) {
         if (user_id.equals("")) {
             return new IsSuccessResponse(false);
         }
         
         //删除评论
-        Integer res = checkInService.deleteComment(post_id, Integer.parseInt(user_id));
+        Integer res = checkInService.deleteComment(comment_id, Integer.parseInt(user_id));
         if (res == 0) {
             return new IsSuccessResponse(false);
         }
@@ -159,7 +159,7 @@ public class CheckInController {
     }
     
     //删除打卡
-    @DeleteMapping (value = "/pyq/delete")
+    @RequestMapping (value = "/pyq/delete")
     public IsSuccessResponse deleteCheckIn(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
@@ -167,9 +167,9 @@ public class CheckInController {
         if (user_id.equals("")) {
             return new IsSuccessResponse(false);
         }
-        
+
         //删除打卡
-        Integer res = checkInService.deleteCheckIn(post_id, Integer.parseInt(user_id));
+        Integer res = checkInService.deleteCheckIn(post_id);
         if (res == 0) {
             return new IsSuccessResponse(false);
         }

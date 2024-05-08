@@ -23,11 +23,11 @@
         <div class="post-time-font-style" style="margin-top: 24px; margin-left: 5%">{{item1.year}}年</div>
 
         <!-- 一个月份的打卡图像 -->
-        <div v-for="item2 in item1.posts" class="flex-layout" style="margin-top: 12px; margin-left: 5%">
+        <div v-for="item2 in item1.posts" class="flex-layout" style="margin-top: 12px; margin-left: 5%; width: 90%">
 
-            <div class="post-time-font-style" style="margin-right: 10%; width: 24%;">{{item2.month}}月</div>
+            <div class="post-time-font-style" style="width: 12%; margin-right: 6%;">{{item2.month}}月</div>
 
-            <div style="flex-grow: 1; margin-right: 5%">
+            <div style="width:83%">
                 <el-row v-for="item3 in item2.posts" :gutter="20" style="margin-bottom: 6px;">
                     <el-col v-for="item4 in item3" :span="6">
                         <button style="border: none; background-color: white; width: 100%; aspect-ratio: 1/1;" @click="getDetail(item4.id)">

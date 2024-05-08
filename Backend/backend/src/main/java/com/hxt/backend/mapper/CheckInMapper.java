@@ -81,10 +81,10 @@ public interface CheckInMapper {
     int insertCheckInComment(String content, Integer authorId, Integer checkInId, Timestamp time);
     
     //删除评论
-    @Delete("DELETE FROM checkin_comment WHERE check_in_id = #{checkInId} and author_id = #{userId}")
-    int deleteCheckInComment(Integer checkInId, Integer userId);
+    @Delete("DELETE FROM checkin_comment WHERE cic_id = #{commentId} and author_id = #{userId}")
+    int deleteCheckInComment(Integer commentId, Integer userId);
     
     //删除打卡
-    @Delete("DELETE FROM check_in WHERE check_in_id = #{checkInId} and author_id = #{userId}")
-    int deleteCheckIn(Integer checkInId, Integer userId);
+    @Delete("DELETE FROM check_in WHERE check_in_id = #{checkInId}")
+    int deleteCheckIn(Integer checkInId);
 }
