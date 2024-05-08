@@ -528,8 +528,9 @@ public class PostService {
     public PostIntroResponse getPostIntroByPostId(Integer postId) {
         Post post = postMapper.getPost(postId);
         List<Post> posts = new ArrayList<>();
-        posts.add(post);
+        
         if (post != null) {
+            posts.add(post);
             List<PostIntroResponse> postIntroResponses = getPostIntroResponseByPost(posts);
             return postIntroResponses.get(0);
         }
