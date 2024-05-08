@@ -77,7 +77,7 @@ public interface AdminMapper {
     @Select("SELECT COUNT(*) FROM report WHERE type = #{type} and target = #{target} and user_id = #{id} and active = 1")
     Integer checkSameReport(Integer type, Integer target, Integer id);
 
-    @Select("SELECT report_id, user_id, target, detail, resource FROM report WHERE report_id = #{id} and active = 1")
+    @Select("SELECT report_id, user_id, type, target, detail, resource FROM report WHERE report_id = #{id} and active = 1")
     @Results({
             @Result(column = "report_id", property = "reportId"),
             @Result(column = "user_id", property = "userId")
