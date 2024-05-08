@@ -169,7 +169,7 @@ public class CheckInController {
         }
 
         //删除打卡
-        Integer res = checkInService.deleteCheckIn(post_id);
+        Integer res = checkInService.deleteCheckIn(post_id, Integer.parseInt(user_id));
         if (res == 0) {
             return new IsSuccessResponse(false);
         }

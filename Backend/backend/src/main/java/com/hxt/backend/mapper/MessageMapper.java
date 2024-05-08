@@ -22,6 +22,7 @@ public interface MessageMapper {
     ManagerNotice selectManagerSystemNoticeById(Integer id);
 
     //  发送系统通知
+    @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO manager_system_notice (title, content, is_public, receiver_id, publish_time, pushed)\n" +
             "VALUES (#{title}, #{content}, 0, #{receiver}, NOW(), 0);")
     int sendSystemNoticeToUser(String title, String content, Integer receiver);
@@ -29,6 +30,7 @@ public interface MessageMapper {
     // 用户系统通知表
 
     // 插入新的通知
+    @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO user_system_notice (is_read, system_notice_id, receiver_id, pull_time)\n" +
             "VALUES (false, #{system_notice_id}, #{receiver_id}, #{pull_time});")
     int insertUserNotice(Integer system_notice_id, Integer receiver_id, Timestamp pull_time);
@@ -55,6 +57,7 @@ public interface MessageMapper {
     @Delete("delete from private_chat where sender_id = #{sender} and receiver_id = #{receiver};")
     int deletePrivateChatById(Integer sender, Integer receiver);
 
+    @Options(useGeneratedKeys = true)
     @Insert("insert into private_chat (sender_id, receiver_id, last_message_content, last_message_time, is_read) " +
             "VALUES (#{sender}, #{receiver}, #{content}, #{time}, #{isRead})")
     int insertPrivateChatList(Integer sender, Integer receiver, String content, Timestamp time, boolean isRead);
@@ -66,6 +69,7 @@ public interface MessageMapper {
     List<PrivateMessage> selectPrivateMessageListByUserId(Integer id1, Integer id2);
 
     // 发送新的私信
+    @Options(useGeneratedKeys = true)
     @Insert("insert into private_message (content, sender_id, receiver_id, send_time, is_read) \n" +
             "values (#{content}, #{sender}, #{receiver}, #{time}, #{is_read})")
     int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content, boolean is_read);
@@ -77,6 +81,7 @@ public interface MessageMapper {
     //  群聊信息表部分
 
     // 发送新的群聊消息
+    @Options(useGeneratedKeys = true)
     @Insert("insert into group_message (content, group_id, send_id, time) VALUES (#{content},#{group_id},#{send_id},#{time});")
     int insertGroupMessage(String content, Integer group_id, Integer send_id, Timestamp time);
 

@@ -2,7 +2,7 @@
     <div style="width: 100%;">
         <div style="width: 100%;display: flex;">
             <div style="height: 120px;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-                <img src="../../Images/buaaLogo.png" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
+                <img :src="groupAvatar" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
             </div>
             <div style="width: 280px;height: 100%;">
                 <div
@@ -47,7 +47,7 @@
         </div>
         <div style="width: 100%;height: 20px;display: flex;margin-top: 40px;">
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
-                <el-button @click="this.showQuit = true" type="primary" plain>退出团体</el-button>
+                <el-button v-if="this.selfId != this.groupCreaterId" @click="this.showQuit = true" type="primary" plain>退出团体</el-button>
             </div>
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
                 <el-button type="warning" plain v-if="this.selfId != this.groupCreaterId">举报团体</el-button>
@@ -173,9 +173,9 @@ export default {
         },
     },
     created(){
-        this.getGroupInfo();
-        this.getCreaterInfo();
-        this.getGroupMemberItem();
+        // this.getGroupInfo();
+        // this.getCreaterInfo();
+        // this.getGroupMemberItem();
     }
 }
 </script>

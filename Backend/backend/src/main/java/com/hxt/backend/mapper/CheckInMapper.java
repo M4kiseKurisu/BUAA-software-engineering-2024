@@ -85,6 +85,6 @@ public interface CheckInMapper {
     int deleteCheckInComment(Integer commentId, Integer userId);
     
     //删除打卡
-    @Delete("DELETE FROM check_in WHERE check_in_id = #{checkInId}")
-    int deleteCheckIn(Integer checkInId);
+    @Delete("DELETE FROM check_in WHERE check_in_id = #{checkInId} and author_id = #{userId}")
+    int deleteCheckIn(Integer checkInId, Integer userId);
 }

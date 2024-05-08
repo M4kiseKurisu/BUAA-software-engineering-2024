@@ -45,10 +45,10 @@
             <ReplyNotice v-for="item in selectReplyMessage" :replyInformation="item" :key="item.reply_id"></ReplyNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 3">
-            <JudgeNotice></JudgeNotice>
+            <JudgeNotice v-for = "item in selectJudgeMessage" :noticeInfo = "item"></JudgeNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 4">
-
+            <SystemNotice v-for = "item in selectSystemMessage" :noticeInfo = "item" :key = "item.notice_id"></SystemNotice>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 1">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total1"
@@ -76,6 +76,7 @@
 import ReplyNotice from './ReplyNotice.vue';
 import DirectMessage from './DirectMessage.vue';
 import JudgeNotice from './JudgeNotice.vue';
+import SystemNotice from './SystemNotice.vue';
 import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
@@ -93,10 +94,10 @@ export default {
             total4: 1,
             centerDialogVisible: false,
             haveNotice: 1,
-            allDirectMessage: '',
-            allReplyMessage: '',
-            allCheckMessage: '',
-            allSystemMessage: '',
+            allDirectMessage: [],
+            allReplyMessage: [],
+            allJudgeMessage: [],
+            allSystemMessage: [],
         };
     },
     computed: {
@@ -117,7 +118,25 @@ export default {
                 end = this.total2;
             }
             return this.allReplyMessage.slice(begin, end);
-        }
+        },
+        selectJudgeMessage() {
+            var begin, end;
+            begin = this.currentPage3 * 6 - 6;
+            end = this.currentPage3 * 6;
+            if (end > this.total3) {
+                end = this.total3;
+            }
+            return this.allJudgeMessage.slice(begin, end);
+        },
+        selectSystemMessage() {
+            var begin, end;
+            begin = this.currentPage4 * 6 - 6;
+            end = this.currentPage4 * 6;
+            if (end > this.total4) {
+                end = this.total4;
+            }
+            return this.allSystemMessage.slice(begin, end);
+        },
     },
     methods: {
         handleCurrentChange1(val) {
@@ -135,8 +154,8 @@ export default {
         getDirectMessage() {
             axios({
                 method: "GET",
-                //url: "/api/message/chats",
-                url: 'http://127.0.0.1:4523/m1/4272722-0-default/message/chats',
+                url: "/api/message/chats",
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/message/chats',
                 //data: {receiver_id:this.meId,},
             }).then((result) => {
                 //console.log(result);
@@ -148,8 +167,8 @@ export default {
         getReplyMessage() {
             axios({
                 method: "GET",
-                // url: "/api/message/reply",
-                url: "http://127.0.0.1:4523/m1/4272722-0-default/message/reply",
+                url: "/api/message/reply",
+                //url: "http://127.0.0.1:4523/m1/4272722-0-default/message/reply",
                 //data: {receiver_id:this.meId,},
             }).then((result) => {
                 //console.log(result);
@@ -158,11 +177,31 @@ export default {
                 this.noticeChoice = 2;
             })
         },
-        getCheckMessage(){
-
+        getJudgeMessage(){
+            axios({
+                method: "GET",
+                url: "/api/message/apply",
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/message/chats',
+                //data: {receiver_id:this.meId,},
+            }).then((result) => {
+                //console.log(result);
+                this.total3 = result.data.apply_count;
+                this.allJudgeMessage = result.data.apply_list;
+                this.noticeChoice = 3;
+            })
         },
         getSystemMessage(){
-
+            axios({
+                method: "GET",
+                url: "/api/message/notice",
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/message/chats',
+                //data: {receiver_id:this.meId,},
+            }).then((result) => {
+                //console.log(result);
+                this.total4 = result.data.notice_count;
+                this.allSystemMessage = result.data.notice_list;
+                this.noticeChoice = 4;
+            })
         },
         changeNoticeOne() {
             //this.noticeChoice = 1;
@@ -173,10 +212,12 @@ export default {
             this.getReplyMessage();
         },
         changeNoticeThree() {
-            this.noticeChoice = 3;
+            //this.noticeChoice = 3;
+            this.getJudgeMessage();
         },
         changeNoticeFour() {
-            this.noticeChoice = 4;
+            //this.noticeChoice = 4;
+            this.getSystemMessage();
         },
     },
     created() {
@@ -186,6 +227,7 @@ export default {
         DirectMessage,
         ReplyNotice,
         JudgeNotice,
+        SystemNotice,
     }
 }
 </script>

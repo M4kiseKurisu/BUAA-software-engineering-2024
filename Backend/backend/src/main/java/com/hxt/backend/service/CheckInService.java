@@ -179,8 +179,8 @@ public class CheckInService {
     }
     
     //删除打卡
-    public Integer deleteCheckIn(Integer checkInId) {
-        return checkInMapper.deleteCheckIn(checkInId);
+    public Integer deleteCheckIn(Integer checkInId, Integer userId) {
+        return checkInMapper.deleteCheckIn(checkInId, userId);
     }
     
     

@@ -326,7 +326,7 @@ public class UserController {
             }
         }
         String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year,
-                sign, phone, (showPost? 1 : 0), (showFavorite? 1 : 0));
+                sign, phone, showPost, showFavorite);
         frequencyLogService.setLog(Integer.parseInt(user_id), 9);
         return new BasicInfoResponse(info.isEmpty(), info);
     }

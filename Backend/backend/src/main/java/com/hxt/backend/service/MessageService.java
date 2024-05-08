@@ -4,6 +4,7 @@ import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.message.*;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.response.group.GroupMessageElement;
 import com.hxt.backend.response.messageResponse.*;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,9 @@ public class MessageService {
     @Resource
     UserMapper userMapper;
 
+    @Resource
+    UserService userService;
+
     public ArrayList<ChatElement> getChatList(Integer id) {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
@@ -42,7 +46,7 @@ public class MessageService {
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
-        
+
         List<Integer> follows = userMapper.getFollow(id);
         for (Integer follow: follows) {
             PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);
@@ -61,11 +65,13 @@ public class MessageService {
         ArrayList<PrivateElement> list = new ArrayList<>();
         for (PrivateMessage message: messages) {
             PrivateElement element = new PrivateElement();
-            element.setMessage_sender_id(message.getSender_id());
-            element.setMessage_receiver_id(message.getReceiver_id());
-            element.setMessage_content(message.getContent());
-            element.setMessage_time(message.getSend_time().toString());
+            element.setId(message.getPrivate_message_id());
+            element.setSender_id(message.getSender_id());
+            element.setReceiver_id(message.getReceiver_id());
+            element.setContent(message.getContent());
+            element.setTime(message.getSend_time().toString());
             element.setIs_read(message.getIs_read());
+            list.add(element);
         }
         return list;
     }
@@ -83,8 +89,22 @@ public class MessageService {
         return false;
     }
 
-    public List<GroupMessage> getGroupMessage(Integer groupId) {
-        return messageMapper.selectGroupMessageByGroupId(groupId);
+    public List<GroupMessageElement> getGroupMessage(Integer groupId) {
+        List<GroupMessageElement> list = new ArrayList<>();
+        List<GroupMessage> messages =  messageMapper.selectGroupMessageByGroupId(groupId);
+        messages.sort(Comparator.comparing(GroupMessage::getTime));
+        for (GroupMessage message: messages) {
+            GroupMessageElement element = new GroupMessageElement();
+            element.setId(message.getGroup_message_id());
+            Integer sender = message.getSend_id();
+            element.setSender_id(sender);
+            element.setSender_name(userMapper.getUserNameById(sender));
+            element.setSender_avatar(userService.getUserHead(sender));
+            element.setContent(message.getContent());
+            element.setTime(message.getTime().toString());
+            list.add(element);
+        }
+        return list;
     }
 
     public ArrayList<ApplyElement> getApplyMessage(Integer id) {
