@@ -4,97 +4,89 @@
     <div class="follow-header-container">
       <div class="follow-header-1">关注用户</div>
       <div class="follow-header-2">
-
         <div class="search-and-avatar">
           <!-- 搜索框 -->
-          <el-input placeholder="搜索用户" class="search-box"></el-input>
+          <el-input v-model="searchKeyword" placeholder="搜索用户" class="search-box"></el-input>
           <!-- 图标 -->
-          <div class="circle-bound">
+          <div class="circle-bound-page" @click="searchUser">
             <el-icon color="#bbbbbb" :size="20"><Search /></el-icon>
           </div>
         </div>
-
       </div>
     </div>
-    <div class="follow-cards-container">
-      <div class="follow-cards" v-for="item in followingListSort">
+    <div v-if="filteredFollowingList.length === 0" class="no-matching-users">没有匹配的用户</div>
+    <div v-else class="follow-cards-container">
+      <div class="follow-cards" v-for="item in filteredFollowingList" :key="item.id">
         <FollowingShow
-            :username="item.username"
-            :signature="item.signature"
-            :avatar="item.avatar"
-            :concerns="item.concerns"
-            :posts="item.posts"
+            :username="item.name"
+            :signature="item.sign"
+            :avatar="item.user_avatar"
+            :id="item.user_id"
+            :concerns="item.following_count"
+            :posts="item.post_count"
         />
       </div>
     </div>
-
   </div>
-
 </template>
 
-
 <script>
-
 import FollowingShow from "@/Components/Group/FollowingShow.vue";
-import {Search} from "@element-plus/icons-vue";
+import { Search } from "@element-plus/icons-vue";
 import axios from "axios";
+import FollowingCard from "@/Components/Group/FollowingCardInPersonalInformation.vue";
+
 export default {
-  data(){
-    return{
-      followingList: [
-        {
-          //关注用户1
-          username: "M4kiseKurisu1",
-          signature: "好好做好软工作业是命运石之门的选择！",
-          avatar: "./src/Images/testAvatar.jpg",
-          concerns:"a",
-          posts:"b",
-        },
-        {
-          //关注用户2
-          username: "M4kiseKurisu2",
-          signature: "好好做好软工作业是命运石之门的选择！",
-          avatar: "./src/Images/testAvatar.jpg",
-          concerns:"a",
-          posts:"b",
-        },
-        {
-          //关注用户3
-          username: "M4kiseKurisu3",
-          signature: "好好做好软工作业是命运石之门的选择！",
-          avatar: "./src/Images/testAvatar.jpg",
-          concerns:"a",
-          posts:"b",
-        },
-        {
-          //关注用户4
-          username: "M4kiseKurisu4",
-          signature: "好好做好软工作业是命运石之门的选择！",
-          avatar: "./src/Images/testAvatar.jpg",
-          concerns:"a",
-          posts:"b",
-        },
-      ],
+  data() {
+    return {
+      searchKeyword: '', // 搜索关键词
+      followingList: [],
+      filteredFollowingList: [], // 将 filteredFollowingList 改为普通属性
     }
   },
-  components:{
+  components: {
+    FollowingCard,
     Search,
     FollowingShow
   },
-  computed:{
+  computed: {
     followingListSort() {
       //分离关注用户的前四个内容
       return (this.followingList.length === 0) ? null : this.followingList.slice(0, 4);
+    }
+  },
+  methods: {
+    // 获取搜索结果
+    searchUser() {
+      const keyword = this.searchKeyword.trim().toLowerCase(); // 去除首尾空格并转换为小写
+      if (!keyword) {
+        // 如果搜索关键词为空，则返回全部用户列表
+        this.filteredFollowingList = this.followingList;
+      } else {
+        // 使用 filter 方法根据关键词过滤用户列表
+        this.filteredFollowingList = this.followingList.filter(user => {
+          // 这里根据需要修改过滤条件，比如搜索用户名、用户ID等
+          return user.name?.toLowerCase().includes(keyword);
+        });
+        console.log(keyword)
+        console.log(this.filteredFollowingList)
+      }
     },
+    // 从后端获取关注用户列表
+    getFollowingList() {
+      axios({
+        method: "GET",
+        url: "/api/user/following"
+      }).then((result) => {
+        console.log(result);
+        this.followingList = result.data.user;
+        this.filteredFollowingList = result.data.user; // 初始化 filteredFollowingList
+      })
+    }
   },
   mounted() {
-    axios({
-      method: "GET",
-      url: "/api/user/following"
-    }).then((result) => {
-      console.log(result);
-      this.followingList = result.data.user;
-    })
+    // 初始化页面时获取关注用户列表
+    this.getFollowingList();
   }
 }
 </script>
@@ -119,7 +111,7 @@ export default {
 
 /* 搜索按钮的圆形边框样式 */
 /* 图标容器样式 */
-.circle-bound {
+.circle-bound-page {
   width: 32px;
   height: 32px;
   border: 1px solid #f2f3f5;
@@ -131,6 +123,9 @@ export default {
   display: flex;
 }
 
+.circle-bound-page:hover {
+  background-color: #cccccc; /* 按钮的背景色变为灰色 */
+}
 
 .follow-header-2 {
   margin-right: 0px;
@@ -145,6 +140,14 @@ export default {
   justify-content: space-between;
   align-items: center;
   border-bottom: 0.5px solid #000; /* 黑色边框线 */
+}
+
+.no-matching-users{
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px ;
+  font-size: 20px;
 }
 
 /* 模块标题样式 */

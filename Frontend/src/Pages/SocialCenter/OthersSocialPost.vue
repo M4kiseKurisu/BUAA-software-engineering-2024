@@ -6,6 +6,7 @@
                     
                     <OthersPostCard 
                         :post="item2"
+                        @childMethod="showDetail"
                     />
 
                 </el-col>
@@ -58,6 +59,14 @@ export default {
                 output.push(slice.slice(i, i + 2));
             }
             return output;
+        }
+    },
+    methods: {
+        getDetail(id) {
+            this.$emit('childMethod', id);
+        },
+        showDetail(id) {
+            this.getDetail(id);
         }
     }
 }

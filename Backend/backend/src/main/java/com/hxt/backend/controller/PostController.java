@@ -22,7 +22,10 @@ public class PostController {
     private final UserService userService;
     private final RecommendService recommendService;
     private final ReviewService reviewService;
+    private final FrequencyLogService frequencyLogService;
     private final String authorityError = "权限不匹配！";
+    private final String hasEmptyResponse = "信息填写不完整！";
+    private final String frequencyResponse = "操作太频繁了，休息一下再来吧！";
     
     //帖子详情
     @RequestMapping (value="/posts/post")
@@ -31,6 +34,12 @@ public class PostController {
             @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        if (user_id.equals("")) {
+            return new PostResponse(false, null, null, null, null,
+                    null, null, null, null, null, null,
+                    null, null, null, null, null, null);
+        }
+        
         if (post_id == null) {
             Post post = null;
             PostResponse postResponse = new PostResponse(post);
@@ -97,9 +106,11 @@ public class PostController {
             @RequestParam(name = "images[]", required = false) String[] images,
             @RequestParam(name = "resources[]", required = false) String[] resources
     ) throws IOException {
-        //检查用户是否被封禁
+        //检查用户是否被封禁、检查用户操作频率
         if (userService.checkBlocked(author_id)) {
             return new WritePostResponse(false, "您已被封禁，禁止发帖！", null);
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new WritePostResponse(false, frequencyResponse, null);
         }
         
         //检查是否允许上传资源
@@ -163,7 +174,7 @@ public class PostController {
                 postService.postInsertTag(post_id, tagId);
             }
         }
-        
+        frequencyLogService.setLog(author_id, 5);
         return new WritePostResponse(true, "发帖成功", post_id);
     }
     
@@ -174,7 +185,7 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
-        if (user_id.isEmpty()) {
+        if (user_id.equals("")) {
             return new BasicInfoResponse(false, "信息不完整！");
         }
         Integer res = postService.deletePost(Integer.parseInt(user_id), post_id, false);
@@ -197,7 +208,7 @@ public class PostController {
             @RequestParam(name = "tag", required = false) String tag,
             @RequestParam(name = "type", required = false) Integer type
     ) {
-        if (userId.isEmpty()) {
+        if (userId.equals("")) {
             return new SearchResponse(false,"用户未登录",null);
         }
     
@@ -218,6 +229,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false,"用户未登录",null);
+        }
         //更改点赞状态
         Integer status = postService.thumbPost(post_id, Integer.parseInt(user_id));
         
@@ -242,6 +256,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.postLikeStatus(post_id, Integer.parseInt(user_id));
         
@@ -259,6 +276,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
         //向favorite表中插入数据
         Integer status = postService.favoritePost(post_id, Integer.parseInt(user_id));
     
@@ -282,6 +302,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
         //从favorite表中删除数据
         Integer status = postService.unfavoritePost(post_id, Integer.parseInt(user_id));
     
@@ -305,6 +328,9 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id
 
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取帖子收藏状态
         Integer status = postService.postFavoriteStatus(post_id, Integer.parseInt(user_id));
         
@@ -327,6 +353,8 @@ public class PostController {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止评论！");
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new BasicInfoResponse(false, frequencyResponse);
         }
         
         //检查是否允许上传资源
@@ -365,6 +393,7 @@ public class PostController {
         }
         //帖子评论数 +1
         postService.updatePostCommentCount(post_id, 1);
+        frequencyLogService.setLog(author_id, 6);
         
         return new BasicInfoResponse(true, "评论成功");
     }
@@ -375,6 +404,11 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
+        
         Integer post_id = postService.getPostIdByCommentId(comment_id);
         Integer res = postService.deleteComment(false, Integer.parseInt(user_id), comment_id);
         
@@ -397,6 +431,9 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id
     
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false, "用户未登录", null);
+        }
         //更改点赞状态
         Integer status = postService.thumbComment(comment_id, Integer.parseInt(user_id));
         
@@ -421,6 +458,9 @@ public class PostController {
             @RequestParam(name = "comment_id", required = false) Integer comment_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.commentLikeStatus(comment_id, Integer.parseInt(user_id));
         
@@ -444,6 +484,8 @@ public class PostController {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new BasicInfoResponse(false, frequencyResponse);
         }
 
         //向数据库插入 reply
@@ -458,7 +500,7 @@ public class PostController {
         
         // 该帖子的评论数 +1
         postService.updatePostCommentCount(post_id, 1);
-        
+        frequencyLogService.setLog(author_id, 7);
         return new BasicInfoResponse(true, "回复成功");
     }
     
@@ -468,6 +510,10 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
+        if (user_id.equals("")) {
+            return new BasicInfoResponse(false, "用户未登录");
+        }
+        
         Integer comment_id = postService.getCommentIdByReplyId(reply_id);
         Integer post_id = postService.getPostIdByCommentId(comment_id);
         Integer res = postService.deleteReply(false, Integer.parseInt(user_id), reply_id);
@@ -494,6 +540,9 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id
     
     ) {
+        if (user_id.equals("")) {
+            return new StatusResponse(false, "用户未登录", null);
+        }
         //更改点赞状态
         Integer status = postService.thumbReply(reply_id, Integer.parseInt(user_id));
         
@@ -518,6 +567,9 @@ public class PostController {
             @RequestParam(name = "reply_id", required = false) Integer reply_id
     
     ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
         //获取点赞状态
         Integer status = postService.replyLikeStatus(reply_id, Integer.parseInt(user_id));
         
@@ -527,5 +579,61 @@ public class PostController {
         
         return new IsLikeResponse(false);
     }
-    
+
+    @RequestMapping("/posts/report")
+    public BasicInfoResponse reportPost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportPost(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 0);
+        }
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/comment/report")
+    public BasicInfoResponse reportComment(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportComment(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 1);
+        }
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/reply/report")
+    public BasicInfoResponse reportReply(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportReply(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 2);
+        }
+        return new BasicInfoResponse(res, info);
+    }
 }

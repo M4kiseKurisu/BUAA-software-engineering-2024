@@ -46,6 +46,10 @@ export default {
         postInfo: {
             type: Object,
             default: null,
+        },
+        getSectionId: {
+            type: Number,
+            default: 1,
         }
     },
     data() {
@@ -60,6 +64,7 @@ export default {
             likeNum: 999,
             postId: 1,
             authorId: 1,
+            sectionId: 0,
         }
     },
     methods: {
@@ -85,7 +90,20 @@ export default {
             });
         },
         goToPost(){
-            this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
+            let authority = "none";
+            console.log(this.sectionId);
+            axios({
+                method: "GET",
+                url: "/api/user/authority",
+                params: { section: this.sectionId, },
+            }).then((result) => {
+                //console.log(result);
+                console.log(result);
+                if (result.data.success) {
+                    authority = result.data.info; 
+                } 
+                this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
+            });
         }
     },
     created() {
@@ -101,8 +119,10 @@ export default {
             this.likeNum = this.postInfo.post_likes;
             this.starNum = this.postInfo.post_favorites;
             this.cover = this.postInfo.post_photo;
+            this.sectionId = this.getSectionId;
         } else {
             this.postId = this.getPostId;
+            this.sectionId = this.getSectionId;
             this.GetInfomation();
         }
     }

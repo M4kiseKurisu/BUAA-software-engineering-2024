@@ -68,8 +68,9 @@ public class PostService {
             return -1;
         }
         //  检查权限
-        if (!flagAdmin && !p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         List<Comment> comments = postMapper.getCommentSortByTimeAsc(postId);
@@ -227,7 +228,7 @@ public class PostService {
                 commentResponse.setComment_isLike(false);
             }
 
-            //获取评论的图片
+            /*获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
             List<String> imageUrls = new ArrayList<>();
             for (Integer imageId : imageIds) {
@@ -237,15 +238,11 @@ public class PostService {
             }
             commentResponse.setComment_images(imageUrls);
             
+             */
+            
             //获取评论的资源
-            List<Integer> resourceIds = postMapper.getResourceIdByComment(postId);
-            Map<Integer, String> resourceMap = new LinkedHashMap<>();
-            for (Integer resourceId : resourceIds) {
-                if (resourceMapper.getResource(resourceId) != null) {
-                    resourceMap.put(resourceId, resourceMapper.getResource(resourceId).getName());
-                }
-            }
-            commentResponse.setComment_resources(resourceMap);
+            List<String> resourceUrls = postMapper.getResourceUrlByComment(postId);
+            commentResponse.setComment_resources(resourceUrls);
             
             //获取评论的回复
             List<Reply> replies = postMapper.getReplyByCommentId(comment.getComment_id());
@@ -255,8 +252,9 @@ public class PostService {
                 
                 //获取回复者的名称和头像
                 Integer replyAuthorId = reply.getAuthor_id();
-                String replyAuthorName = userMapper.selectUserById(replyAuthorId).getName();
-                String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
+                User replyAuthor = userMapper.selectUserById(replyAuthorId);
+                String replyAuthorName = replyAuthor.getName();
+                String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
                 
@@ -309,9 +307,7 @@ public class PostService {
     
     //更新帖子点赞数
     public Integer updatePostLikeCount(Integer postId, Integer op) {
-        postMapper.updatePostLikeCount(postId, op);
-        Post post = postMapper.getPost(postId);
-        return post.getLike_count();
+        return postMapper.updatePostLikeCount(postId, op);
     }
     
     // 收藏帖子
@@ -410,8 +406,9 @@ public class PostService {
         if (c == null) {
             return -1;
         }
-        if (!flag && !c.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
@@ -494,8 +491,9 @@ public class PostService {
             return -1;
         }
         Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
-        if (!flag && !r.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         postMapper.deleteReplyLike(replyId);
@@ -560,5 +558,25 @@ public class PostService {
         }
         return postIntroResponses;
     }
-    
+
+    public boolean reportPost(Integer userId, Integer postId, String detail) {
+        if (adminMapper.checkSameReport(0, postId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 0, postId, detail, null) > 0;
+    }
+
+    public boolean reportComment(Integer userId, Integer commentId, String detail) {
+        if (adminMapper.checkSameReport(1, commentId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 1, commentId, detail, null) > 0;
+    }
+
+    public boolean reportReply(Integer userId, Integer replyId, String detail) {
+        if (adminMapper.checkSameReport(2, replyId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 2, replyId, detail, null) > 0;
+    }
 }

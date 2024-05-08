@@ -1,5 +1,5 @@
 <template>
-    <div class="group_card_container" @click = "showSubmitForm = true">
+    <div class="group_card_container" @click="toShowSubmitForm">
         <!-- <div style="width: 100%;height: 40%;display: flex;">
             <div style="height: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
                 <img src="../../Images/buaaLogo.png" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
@@ -50,17 +50,21 @@
         </div> -->
         <!-- 新尝试卡片 -->
         <div style="height: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-            <img src="../../Images/buaaLogo.png" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
+            <img :src="groupAvatar" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
         </div>
         <div style="flex-grow: 1;">
-            <div style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
-                <span style="font-size: 1.3em;font-weight: bold;">{{ groupName }}</span>
+            <div style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
+                <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
             </div>
-            <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
-                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">团体人数：{{ this.groupMemberNum }}/{{ this.groupCapacity }}</span>
+            <div
+                style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">团体人数：{{ this.groupMemberNum }}/{{
+                    this.groupCapacity }}</span>
             </div>
-            <div style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
-                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if = "this.isExamine">是</span> <span v-else>否</span></span>
+            <div
+                style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if="this.isExamine">是</span>
+                    <span v-else>否</span></span>
             </div>
         </div>
         <!-- 新尝试卡片 -->
@@ -70,7 +74,7 @@
                     <div style="width: 100%;display: flex;">
                         <div
                             style="height: 120px;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-                            <img src="../../Images/buaaLogo.png" alt=""
+                            <img :src="groupAvatar" alt=""
                                 style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
                         </div>
                         <div style="width: 280px;height: 100%;">
@@ -78,18 +82,10 @@
                                 style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
                             </div>
-                            <div
-                                style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
-                                <el-tag type="primary"
-                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                                <el-tag type="primary"
-                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                                <el-tag type="primary"
-                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                                <el-tag type="primary"
-                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                                <el-tag type="primary"
-                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
+                            <div style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
+                                <el-tag v-for="item in tags" type="primary"
+                                    style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">{{ item
+                                    }}</el-tag>
                             </div>
                         </div>
                     </div>
@@ -116,19 +112,9 @@
                             <span style="font-size: 1.3em;font-weight: bold;">团体成员 {{ groupMemberNum }}/{{ groupCapacity
                             }}</span>
                         </div>
-                        <div
+                        <div v-if="this.groupMemberList.length != 0"
                             style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
-                            <GroupMemberItem></GroupMemberItem>
+                            <GroupMemberItem v-for="item in groupMemberList" :memberInfo="item"></GroupMemberItem>
                             <!-- <img src="../../Images/testAvatar.jpg" alt=""
                                 style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">-->
                         </div>
@@ -153,7 +139,9 @@
 </template>
 
 <script>
+import { result } from 'lodash';
 import GroupMemberItem from '../Chat/GroupMemberItem.vue';
+import axios from 'axios';
 
 export default {
     props: {
@@ -171,14 +159,16 @@ export default {
             groupBriefIntor: "O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！",
             groupCapacity: 100,
             groupMemberNum: 50,
-            groupMemberAvatar: [],
+            groupMemberList: [],
             groupCreaterId: '',
             showSubmitForm: false,
             isExamine: false,
             inputSubmitText: '',
+            tags: [],
+
         }
     },
-    components:{
+    components: {
         GroupMemberItem,
     },
     computed: {
@@ -194,9 +184,44 @@ export default {
     },
     methods: {
         pushSubmitText() {
-            //var textarea = document.getElementById("submitText");
-            //this.inputSubmitText = textarea.value;
+            axios({
+                method: "POST",
+                url: 'api/group/join',
+                data: {
+                    group_id: this.groupId,
+                    submit_info: this.inputSubmitText,
+                }
+            }).then((result) => {
+                console.log(result);
+            })
         },
+        getCreaterInfo() {
+            axios({
+                method: "GET",
+                url: 'api/user/social/simple',
+                params: {
+                    id: this.groupCreaterId,
+                }
+            }).then((result) => {
+                this.groupCreaterName = result.data.name;
+            })
+        },
+        getGroupMemberItem() {
+            axios({
+                method: "GET",
+                //url: 'api/group/memberList',
+                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
+                params: {
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                this.groupMemberList = result.data.member;
+            })
+        },
+        toShowSubmitForm() {
+            this.getGroupMemberItem();
+            this.showSubmitForm = true;
+        }
 
     },
     created() {
@@ -209,6 +234,8 @@ export default {
             this.groupCapacity = this.groupInfo.permitted_num;
             this.isExamine = this.groupInfo.is_examine;
             this.groupAvatar = this.groupInfo.image;
+            this.tags = this.groupInfo.tags;
+            this.getCreaterInfo();
         }
 
     }
@@ -252,5 +279,4 @@ export default {
 
 .custom-input:focus {
     border-color: #5e9cd3;
-}
-</style>
+}</style>

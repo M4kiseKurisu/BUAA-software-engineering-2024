@@ -5,7 +5,7 @@
       <div class="following-left-container">
 
         <!-- 关注用户图片 -->
-        <div class="following-avatar">
+        <div class="following-avatar"  @click="toInformationShow(this.id)">
           <el-avatar :size="48" :src="avatar"/>
         </div>
 
@@ -25,8 +25,8 @@
       </div>
 
       <!-- 取消关注按钮 -->
-      <button class="cancel-following-button">
-        <div class="button-font">取消关注</div>
+      <button class="cancel-following-button-page" @click="notFollow">
+        <div class="button-font" >取消关注</div>
       </button>
 
     </div>
@@ -36,8 +36,43 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  props: ["username", "signature", "avatar","concerns","posts"],
+  props: ["username", "signature", "avatar","concerns","posts","id"],
+  data(){
+    return{
+      avatarSrc:" "
+    }
+  },
+  methods: {
+    notFollow() {
+      // 取消关注作者
+      let content = {
+        unfollow_id: this.id,
+      }
+      axios({
+        method: "POST",
+        url: "/api/user/unfollow",
+        data: content,
+      }).then((result) => {
+        console.log(result);
+        if (result.data.success) {
+          this.$message({
+            showClose: true,
+            message: '作者取消关注成功！',
+            type: 'success',
+          });
+          location.reload();
+          this.isFollowingWriter = false;
+        }
+      })
+
+    },
+    toInformationShow(id) {
+      this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + id});
+    }
+  }
 }
 </script>
 
@@ -61,7 +96,7 @@ export default {
 }
 .name-and-counts{
   display: flex;
-  justify-content: space-between;
+
 }
 .following-information-container {
   margin-left: 10px;
@@ -97,7 +132,7 @@ export default {
   margin-top: 7px !important;
 }
 
-.cancel-following-button {
+.cancel-following-button-page {
   border: 0px;
   width: 80px;
   height: 30px;
@@ -110,5 +145,9 @@ export default {
 .button-font {
   font-size: 13px;
   color: #86909c;
+}
+/* 鼠标移上去变灰的效果 */
+.cancel-following-button-page:hover {
+  background-color: #cccccc; /* 按钮的背景色变为灰色 */
 }
 </style>

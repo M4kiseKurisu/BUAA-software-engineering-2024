@@ -7,6 +7,7 @@ import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
+import com.hxt.backend.service.FrequencyLogService;
 import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.UserService;
@@ -29,13 +30,13 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    
     private final ObsService obsService;
-    
     private final ImageService imageService;
-    private String emailPattern = "([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}";
-    private String phonePattern = "^\\d+";
-    private String hasEmptyResponse = "信息填写不完整！";
+    private final FrequencyLogService frequencyLogService;
+    private final String emailPattern = "([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}";
+    private final String phonePattern = "^\\d+";
+    private final String hasEmptyResponse = "信息填写不完整！";
+    private final String frequencyResponse = "操作太频繁了，休息一下再来吧！";
 
     @RequestMapping("/user/register")
     public BasicInfoResponse register(
@@ -238,12 +239,24 @@ public class UserController {
 
     @RequestMapping("/user/favorites")
     public PostListResponse getUserFavorite(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
     ) {
         if (user_id.isEmpty()) {
             return new PostListResponse(-1, new ArrayList<>());
         }
-        return userService.getFavorite(Integer.parseInt(user_id));
+        return userService.getFavorite(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
+    }
+
+    @RequestMapping("/user/posts")
+    public PostListResponse getUserPost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (user_id.isEmpty()) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
+        return userService.getPost(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
     }
 
     @RequestMapping("/user/password/update")
@@ -254,12 +267,15 @@ public class UserController {
     ) {
         if (user_id.isEmpty() || op == null || np == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
         } else if (!userService.checkPassword(Integer.parseInt(user_id), op)) {
             return new BasicInfoResponse(false, "旧密码错误！");
         } else if (!userService.lengthCheck(np, 6, 18)) {
             return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
             userService.resetPassword(Integer.parseInt(user_id), np);
+            frequencyLogService.setLog(Integer.parseInt(user_id), 8);
             return new BasicInfoResponse(true, "");
         }
     }
@@ -286,10 +302,14 @@ public class UserController {
             @RequestParam(name = "major", required = false) String major,
             @RequestParam(name = "enrollment_year", required = false) Integer year,
             @RequestParam(name = "sign", required = false) String sign,
-            @RequestParam(name = "phone", required = false) String phone
+            @RequestParam(name = "phone", required = false) String phone,
+            @RequestParam(name = "show_post", required = false) Boolean showPost,
+            @RequestParam(name = "show_favorite", required = false) Boolean showFavorite
     ) {
         if (user_id.isEmpty()) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
         }
         if (!(name == null || userService.lengthCheck(name, 0, 16))
                 || !(major == null || userService.lengthCheck(major, 0, 64))
@@ -305,7 +325,9 @@ public class UserController {
                 return new BasicInfoResponse(false, "手机号格式不正确！");
             }
         }
-        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
+        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year,
+                sign, phone, showPost, showFavorite);
+        frequencyLogService.setLog(Integer.parseInt(user_id), 9);
         return new BasicInfoResponse(info.isEmpty(), info);
     }
 
@@ -364,5 +386,47 @@ public class UserController {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         return userService.getSectionAuthority(Integer.parseInt(user_id), section);
+    }
+
+    @RequestMapping("/user/report")
+    public BasicInfoResponse reportUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = userService.reportUser(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 3);
+        }
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/user/apply")
+    public BasicInfoResponse ApplyForAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section_id", required = false) Integer section_id,
+            @RequestParam(name = "type", required = false) Integer type,
+            @RequestParam(name = "detail", required = false) String detail,
+            @RequestParam(name = "file", required = false) String file
+    ) {
+        if (user_id.isEmpty() || section_id == null || type == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (file == null) {
+            file = "";
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = userService.applyForAuthority(Integer.parseInt(user_id), section_id, type, detail, file);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 4);
+        }
+        return new BasicInfoResponse(res, info);
     }
 }

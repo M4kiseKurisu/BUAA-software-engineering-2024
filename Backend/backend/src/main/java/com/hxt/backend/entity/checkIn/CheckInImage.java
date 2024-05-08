@@ -1,4 +1,4 @@
-package com.hxt.backend.entity;
+package com.hxt.backend.entity.checkIn;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,19 +6,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
-@Table(name = "report")
+@Table(name = "checkin_image")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Report {
+public class CheckInImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer reportId;
-    private Integer userId;
-    private Integer type;
-    private Integer target;
-    private String detail;
-    private String resource;
+    private Integer cii_id;
+    private Integer check_in_id;
+    private Integer image_id;
 }
