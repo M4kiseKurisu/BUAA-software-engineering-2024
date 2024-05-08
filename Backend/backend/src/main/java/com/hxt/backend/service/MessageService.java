@@ -42,7 +42,7 @@ public class MessageService {
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
-        
+
         List<Integer> follows = userMapper.getFollow(id);
         for (Integer follow: follows) {
             PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);
@@ -61,11 +61,13 @@ public class MessageService {
         ArrayList<PrivateElement> list = new ArrayList<>();
         for (PrivateMessage message: messages) {
             PrivateElement element = new PrivateElement();
-            element.setMessage_sender_id(message.getSender_id());
-            element.setMessage_receiver_id(message.getReceiver_id());
-            element.setMessage_content(message.getContent());
-            element.setMessage_time(message.getSend_time().toString());
+            element.setId(message.getPrivate_message_id());
+            element.setSender_id(message.getSender_id());
+            element.setReceiver_id(message.getReceiver_id());
+            element.setContent(message.getContent());
+            element.setTime(message.getSend_time().toString());
             element.setIs_read(message.getIs_read());
+            list.add(element);
         }
         return list;
     }

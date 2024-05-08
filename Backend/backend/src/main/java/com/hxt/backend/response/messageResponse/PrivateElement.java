@@ -10,9 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PrivateElement {
-    private Integer message_sender_id;
-    private Integer message_receiver_id;
-    private String message_content;
-    private String message_time;
+    private Integer id;
+    private Integer sender_id;
+    private Integer receiver_id;
+    private String content;
+    private String time;
     private Boolean is_read;
 }
