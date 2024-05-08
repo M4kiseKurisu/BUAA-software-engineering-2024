@@ -2,7 +2,7 @@
     <div class="breadcrumb">
         <BreadcrumbLabel :routeNames="route" />
     </div>
-    <div style="width: calc(100vw - 205px); background-color: aliceblue;height: calc(100vh - 115px);">
+    <div style="width: calc(100vw - 220px); background-color: aliceblue;height: calc(100vh - 115px);min-width: 780px;">
         <div style="width: 100%;height: 30%;min-height: 252px; display: flex;align-items: center;justify-content: center;">
             <div style="width: 95%;height: 90%;background-color: white;display: flex;">
                 <div
@@ -15,9 +15,12 @@
                         <span style="font-size: 2em;font-weight: bold;">{{ userName }}</span>
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">入学年份：{{ jieshu }}</span>
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span>
+                        <el-tag  v-if = "isBlock" type="danger" effect="dark" style="margin-left: 20px;" size="large">
+                            <span style="font-size: large;font-weight: bold;">账号封禁中</span>
+                        </el-tag>
                     </div>
-                    <div style="height: 25%;width: 70%;font-size: large;
-                                        border-bottom: 1px solid darkgray;display: flex;align-items: center;">
+                    <div
+                        style="height: 25%;width: 70%;font-size: large;border-bottom: 1px solid darkgray;display: flex;align-items: center;">
                         <span>个性签名：
                             {{ sign }}
                         </span>
@@ -39,15 +42,19 @@
                     <div
                         style="height: 25%;width: 100%;display: flex; align-items: center;margin-left: 20px;justify-content: space-between;">
                         <div style="width: 25%;display: flex;">
-                            <el-button v-if="!isFollow" type="primary" size="large" plain @click="followOther"><span
-                                    style="font-size: large;">关注</span></el-button>
-                            <el-button v-if="isFollow" type="primary" size="large" plain @click="cancleFollow"><span
-                                    style="font-size: large;">取消关注</span></el-button>
-                            <el-button type="primary" size="large" plain style="margin-left: 50px;"
-                                @click="goToChatCenter"><span style="font-size: large;">私信</span></el-button>
+                            <el-button v-if="!isFollow && !isBlock" type="primary" plain @click="followOther"><span
+                                    style="font-size: 1.2em;">关注</span></el-button>
+                            <el-button v-if="!isFollow && isBlock" type="primary" plain disabled><span
+                                    style="font-size: 1.2em;">关注</span></el-button>
+                            <el-button v-if="isFollow" type="primary" plain @click="cancleFollow"><span
+                                    style="font-size: 1.2em;">取消关注</span></el-button>
+                            <el-button v-if="!isBlock" type="primary" plain style="margin-left: 50px;"
+                                @click="goToChatCenter"><span style="font-size: 1.2em;">私信</span></el-button>
+                            <el-button v-if="isBlock" type="primary" plain style="margin-left: 50px;" disabled><span
+                                    style="font-size: 1.2em;">私信</span></el-button>
                         </div>
                         <div style="margin-right: 50px;">
-                            <Report  :type="0" :id="this.userId"/>
+                            <Report :type="0" :id="this.userId" />
                         </div>
                     </div>
                 </div>
@@ -55,14 +62,13 @@
         </div>
         <div style="height: 70%;background-color: aliceblue;width: 100%;display: flex;">
             <div style="width: 30%;height: 100%;display: flex;align-items: center;justify-content: center;margin-left: 2%;">
-                <div
-                    style="min-height: 470px;width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
-                    <div style="width: 100%;height: 10%;display: flex;justify-content: center;align-items: center;">
+                <div style="width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
+                    <div style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 20px;">
                         <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
                                 的 帖
                                 子</span></el-button>
                     </div>
-                    <div style="width: 100%;height: 10%;display: flex;justify-content: center;align-items: center;">
+                    <div style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 20px;">
                         <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
                                 的 收
                                 藏</span></el-button>
@@ -72,7 +78,7 @@
             <div style="width: 65%;height: 100%;background-color: white;">
                 <div style="width: 100%;height: 100%;">
                     <el-scrollbar style="height: 100%;width: 100%;">
-                        <div style="width: 98.1%;height: 100%;">
+                        <div style="width: 97.8%;height: 100%;">
                             <PostItem></PostItem>
                         </div>
 
@@ -116,6 +122,7 @@ export default {
             jieshu: '2021',
             academy: '计算机学院',
             isFollow: true,
+            isBlock: true,
         }
     },
     methods: {
@@ -134,6 +141,7 @@ export default {
                 this.likeCount = result.data.like_count;
                 this.sign = result.data.sign;
                 this.isFollow = result.data.flag_follow;
+                this.isBlock = result.data.flag_blocked;
             });
         },
         followOther() {
@@ -192,7 +200,7 @@ export default {
 }
 
 .shumuWord {
-    font-size: 1.3em;
+    font-size: 1.2em;
     margin-left: 20px;
 }
 </style>
