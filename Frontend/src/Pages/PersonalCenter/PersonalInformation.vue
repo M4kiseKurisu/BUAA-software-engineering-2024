@@ -129,17 +129,20 @@
                 <!-- 学习小组板块头部信息 -->
                 <div class="study-group-header-container">
                     <div class="favorates-header-1">学习团体/成员</div>
-                    <div class="favorates-header-2">查看更多</div>
+                    <button class="favorates-header-2" style="border: none; background-color: white;" @click="toGroupCenter">查看更多</button>
                 </div>
 
                 <!-- 学习小组团体单元 -->
                 <div v-for="item in groupListSort">
                     <StudyGroupCard
-                        :title="item.title"
-                        :amount="item.amount"
-                        :avatar="item.avatar"
+                        :title="item.name"
+                        :amount="item.member_count"
+                        :avatar="item.image"
+                        :id="item.group_id"
                     />
                 </div>
+
+                <div v-if="!groupListSort" class="no-favorate-card-tip" style="margin-left: 55px;">目前您还没有加入的小组~</div>
             </div>
 
         </div>
@@ -172,7 +175,7 @@
                 <!-- 我的打卡头部信息 -->
                 <div class="my-poster-header-container">
                     <div class="favorates-header-1">我的打卡</div>
-                    <div class="favorates-header-2">查看更多</div>
+                    <button class="favorates-header-2" style="border: none; background-color: white;" @click="toSocialPost">查看更多</button>
                 </div>
 
                 <PosterCard :month="this.poster.month" :pictures="this.poster.pictures"/>
@@ -254,32 +257,7 @@ export default {
             favorateList: [],
 
             //以下是用来测试学习小组板块的数组
-            groupList: [
-                {
-                    //学习小组1
-                    title: "学习小组A名字",
-                    amount: 32,
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //学习小组2
-                    title: "学习小组B名字",
-                    amount: 43,
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //学习小组3
-                    title: "学习小组C名字",
-                    amount: 54,
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-                {
-                    //学习小组4
-                    title: "学习小组D名字",
-                    amount: 65,
-                    avatar: "./src/Images/testAvatar.jpg",
-                },
-            ],
+            groupList: [],
 
             //以下是用来测试关注用户板块的数组
             followingList: [],
@@ -303,7 +281,12 @@ export default {
         toggle_following_user() {
             this.show_userfollowing = true;
         },
-
+        toGroupCenter() {
+            this.$router.push("/MainPage/StudyGroupCenter");
+        },
+        toSocialPost() {
+            this.$router.push("/MainPage/Social_Center");
+        }
     },
     computed: {
         group1() {
@@ -382,6 +365,14 @@ export default {
         }).then((result) => {
             console.log(result);
             this.noticeList = result.data.notice_list;
+        })
+
+        //获取学习团体信息
+        axios({
+            method: "GET",
+            url: "/api/group/joined"
+        }).then((result) => {
+            this.groupList = result.data.group;
         })
     }
 }

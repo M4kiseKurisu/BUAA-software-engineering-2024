@@ -85,6 +85,14 @@ public class UserService {
     public UserSocialInfoResponse getUserSocialInfo(Integer searcher, Integer id) {
         User user = userMapper.selectUserById(id);
         if (user == null) return new UserSocialInfoResponse();
+        if (searcher == -1) {
+            return new UserSocialInfoResponse(
+                    user.getName(), null,
+                    (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
+                    null, null, null, null, null,
+                    null, null, null, null
+            );
+        }
         Integer postLike = postMapper.getUserPostLikeNum(id);
         if (postLike == null) {
             postLike = 0;
@@ -98,7 +106,8 @@ public class UserService {
             replyLike = 0;
         }
         List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
-        if (adminMapper.checkGlobalAuthority(id) > 0) {
+        Integer check = adminMapper.checkGlobalAuthority(id);
+        if (check != null && check > 0) {
             authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
         } else {
             authorityInfo = adminMapper.getUserAuthorities(id);
@@ -182,6 +191,13 @@ public class UserService {
             }
         }
         return sectionListResponse;
+    }
+
+    public BasicInfoResponse getSectionAuthority(Integer userid, Integer sectionId) {
+        String info = adminMapper.checkAuthorityType(userid, sectionId);
+        boolean res = (info != null);
+        info = info == null? "" : info;
+        return new BasicInfoResponse(res, info);
     }
 
     public void resetPassword(Integer id, String password) {

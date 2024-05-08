@@ -15,40 +15,20 @@
             <div class="study_group_center_mygroup">
                 <div class="study_group_center_selfinfomation">
                     <div style="height: 100px;width: 100px; display: flex;align-items: center;justify-content: center;">
-                        <img src="../../Images/loginImage.png" alt="" style="width: 90%;height: 90%;border-radius: 10%;">
+                        <img :src="selfAvatar" alt="" style="width: 90%;height: 90%;border-radius: 10%;">
                     </div>
                     <div style="height: 100px;width: calc(100% - 100px);">
                         <div style="height: 60%;width: 100%;display: flex;align-items: center;">
                             <span style="font-size: 1.5em;font-weight: bold;">{{ selfName }}</span>
                         </div>
-                        <div style="height: 40%;width: 100%;display: flex;align-items: center;">
-                            <span style="font-size: 1em;color:dimgray;">已加入团体数:{{ selfGroupCount }}</span>
+                        <div style="height: 40%;width: 100%;display: flex;">
+                            <span style="font-size: 1em;color:dimgray;margin-bottom: 10px;">已加入团体数:{{ selfGroupCount }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="study_group_center_list">
-                    <el-scrollbar>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
-                        <GroupItem></GroupItem>
+                    <el-scrollbar >
+                        <GroupItem v-for = "item in this.myGroupList" :groupInfo = "item"></GroupItem>
                     </el-scrollbar>
                 </div>
             </div>
@@ -64,22 +44,18 @@
                         <el-input v-model="inputTag" style="width: 180px;margin-right: 5px;" placeholder="输入标签" />
                         <el-input v-model="inputTitle" style="width: 180px;margin-right: 5px;" placeholder="输入标题" />
                         <el-button style="margin-right: 5px;" type="primary" plain>搜索</el-button>
-                        <el-button style="margin-right: 10px;" type="primary" @click = "goToCreatGroup">创建团体</el-button>
-                    </div> 
-                </div>
-                <div class="study_group_center_groupcontainer">
-                    <div style="display: grid;place-items: center;">
-                        <GroupCard></GroupCard>
-                    </div>
-                    <div style="display: grid;place-items: center;">
-                        <GroupCard></GroupCard>
-                    </div>
-                    <div style="display: grid;place-items: center;">
-                        <GroupCard></GroupCard>
+                        <el-button style="margin-right: 10px;" type="primary" @click="goToCreatGroup">创建团体</el-button>
                     </div>
                 </div>
-                <div style="width: 100%;height: 40px;display: flex;align-items: center;background-color: white;justify-content: end;">
-                    <el-pagination background layout="prev, pager, next" :total="1000" style="margin-right: 20px;"/>
+                <div class="study_group_center_groupcontainer" >
+                    <div v-for="item in this.selectGroupList" style="display: grid;place-items: center;">
+                        <GroupCard :groupInfo="item" v-if="selectGroupList != 0"></GroupCard>
+                    </div>
+                </div>
+                <div
+                    style="width: 100%;height: 40px;display: flex;align-items: center;background-color: white;justify-content: end;">
+                    <el-pagination background layout="prev, pager, next" :page-size="6" :total="totalGroup"
+                        @current-change="handleCurrentChange" style="margin-right: 20px;" />
                 </div>
                 <!-- <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 1">
                     <el-pagination background layout="prev, pager, next" :page-size="6" :total="total1"
@@ -95,6 +71,9 @@ import { createDOMCompilerError } from "@vue/compiler-dom";
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import GroupItem from "../Chat/GroupItem.vue";
 import GroupCard from "./GroupCard.vue";
+import axios from "axios";
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { result } from "lodash";
 export default {
     components: {
         BreadcrumbLabel,
@@ -105,19 +84,85 @@ export default {
         return {
             route: ["学业团体", "团体广场"],
             groupCount: 20,
-            userAvatar: '',
+            selfAvatar: '',
             selfName: 'hhhhhhhhhhhh',
             selfGroupCount: 10,
             inputTag: '',
             inputTitle: '',
             groupInfoList: [],
+            totalGroup: 20,
+            currentPage: 1,
+            myGroupList: [],
+            selfId: JSON.parse(sessionStorage.getItem("id")),
         }
     },
-    methods:{
-        goToCreatGroup(){
-            this.$router.push({ path: "/MainPage/CreateGroup"});
+    computed: {
+        selectGroupList() {
+            if (this.groupInfoList.length == 0) {
+                return [];
+            } else {
+                var begin, end;
+                begin = this.currentPage * 6 - 6;
+                end = this.currentPage * 6;
+                if (end > this.total) {
+                    end = this.total;
+                }
+                return this.groupInfoList.slice(begin, end);
+            }
         }
     },
+    methods: {
+        goToCreatGroup() {
+            this.$router.push({ path: "/MainPage/CreateGroup" });
+        },
+        handleCurrentChange(val) {
+            this.currentPage = val;
+        },
+        getGroupList() {
+            axios({
+                method: "GET",
+                //url: 'api/group/list',
+                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
+                // data: {
+
+                // }
+            }).then((result) => {
+                console.log(result);
+                this.totalGroup = result.data.group_count;
+                this.groupInfoList = result.data.group;
+            })
+        },
+        getMyGroupList(){
+            axios({
+                method: "GET",
+                //url: 'api/group/joined',
+                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
+            }).then((result) => {
+                this.myGroupList = result.data.group;
+                this.selfGroupCount = result.data.group_count;
+            })
+        },
+        getSelfInfo(){
+            axios({
+                method: "GET",
+                url: 'api/user/social/simple',
+                params:{
+                    id : this.selfId,
+                }
+            }).then((result) =>{
+                console.log(this.selfId)
+                console.log(result);
+                this.selfName = result.data.name;
+                this.selfAvatar = result.data.user_avatar;
+            })
+        },
+
+    },
+    created() {
+        this.getGroupList();
+        this.getMyGroupList();
+        this.getSelfInfo();
+    }
 }
 </script>
 
@@ -130,11 +175,13 @@ export default {
 
 .study_group_center_container {
     width: calc(100vw - 220px);
-    min-width: 1080px;
+    /* min-width: 1080px; */
+    min-width: 1300px;
     /* background-color: rgba(247, 248, 250, 0.7); */
     background-color: white;
     height: calc(100vh - 120px);
-    min-height: 820px;
+    /* min-height: 820px; */
+    min-height: 700px;
 }
 
 .study_group_center_header {
@@ -162,7 +209,7 @@ export default {
 .study_group_center_selfinfomation {
     width: 100%;
     height: 100px;
-    background-color:rgb(238, 241, 244);
+    background-color: rgb(238, 241, 244);
     display: flex;
 }
 

@@ -18,9 +18,9 @@ public interface RecommendMapper {
     int insertUserPreference(Integer userId, String keyword, Double preference, Timestamp time);
     
     //更新用户偏好
-    @Update("UPDATE user_preference SET preference = preference + #{preference} " +
-            "WHERE user_preference_id = #{userPreferenceId}")
-    int updateUserPreference(Integer userPreferenceId, Double preference);
+    @Update("UPDATE user_preference SET preference = preference + #{tfIdf} " +
+            "WHERE user_id = #{userId} AND keyword = #{keyword}")
+    int updateUserPreference(Integer userId, String keyword, Double tfIdf);
     
     //删除用户偏好
     @Delete("DELETE FROM user_preference WHERE user_id = #{userId} AND time < #{time} ")
@@ -33,6 +33,9 @@ public interface RecommendMapper {
     //根据用户id和keyword获取用户偏好
     @Select("SELECT * FROM user_preference WHERE user_id = #{userId} AND keyword = #{keyword}")
     UserPreference getUserPreferenceBYUserIdKeyword(Integer userId, String keyword);
+    
+    @Select("SELECT keyword FROM user_preference WHERE user_id = #{userId}")
+    List<String> getUserPreferenceBYUserId(Integer userId);
     
     
     

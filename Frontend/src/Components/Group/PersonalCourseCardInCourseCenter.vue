@@ -55,6 +55,7 @@ export default {
                         message: '关注板块成功！',
                         type: 'success',
                     });
+                    location.reload();
                 }
             })
         },
@@ -75,6 +76,7 @@ export default {
                         message: '取消关注成功！',
                         type: 'success',
                     });
+                    location.reload();
                 }
             })
         },

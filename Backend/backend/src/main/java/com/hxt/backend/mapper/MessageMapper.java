@@ -1,13 +1,7 @@
 package com.hxt.backend.mapper;
 
-import com.hxt.backend.entity.message.ManagerNotice;
-import com.hxt.backend.entity.message.PrivateChat;
-import com.hxt.backend.entity.message.PrivateMessage;
-import com.hxt.backend.entity.message.UserNotice;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.hxt.backend.entity.message.*;
+import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -53,9 +47,17 @@ public interface MessageMapper {
     @Select("select * from private_chat where receiver_id = #{id} or sender_id = #{id};")
     List<PrivateChat> selectPrivateChatListByUserId(Integer id);
 
+    @Select("select * from private_chat where receiver_id = #{id1} and sender_id = #{id2};")
+    PrivateChat selectPrivateChatItem(Integer id1, Integer id2);
+
     // 发送新消息后更新私聊列表
 
+    @Delete("delete from private_chat where sender_id = #{sender} and receiver_id = #{receiver};")
+    int deletePrivateChatById(Integer sender, Integer receiver);
 
+    @Insert("insert into private_chat (sender_id, receiver_id, last_message_content, last_message_time, is_read) " +
+            "VALUES (#{sender}, #{receiver}, #{content}, #{time}, #{isRead})")
+    int insertPrivateChatList(Integer sender, Integer receiver, String content, Timestamp time, boolean isRead);
 
     // 私信表部分
 
@@ -65,10 +67,20 @@ public interface MessageMapper {
 
     // 发送新的私信
     @Insert("insert into private_message (content, sender_id, receiver_id, send_time, is_read) \n" +
-            "values (#{content}, #{sender}, #{receiver}, #{time}, false)")
-    int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content);
+            "values (#{content}, #{sender}, #{receiver}, #{time}, #{is_read})")
+    int insertPrivateMessage(Integer sender, Integer receiver, Timestamp time, String content, boolean is_read);
 
     // 更新私信阅读状态
     @Update("update private_message set is_read = true where sender_id = #{sender} and receiver_id = #{receiver};")
     int updatePrivateMessageIsRead(Integer sender, Integer receiver);
+
+    //  群聊信息表部分
+
+    // 发送新的群聊消息
+    @Insert("insert into group_message (content, group_id, send_id, time) VALUES (#{content},#{group_id},#{send_id},#{time});")
+    int insertGroupMessage(String content, Integer group_id, Integer send_id, Timestamp time);
+
+    //获取群聊消息
+    @Select("select * from group_message where group_id = #{group_id};")
+    List<GroupMessage> selectGroupMessageByGroupId(Integer group_id);
 }

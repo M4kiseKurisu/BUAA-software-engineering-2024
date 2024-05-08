@@ -2,7 +2,6 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
-import com.hxt.backend.response.UploadResponse;
 import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
@@ -11,12 +10,9 @@ import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import com.hxt.backend.service.ImageService;
 import com.hxt.backend.service.ObsService;
 import com.hxt.backend.service.UserService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -160,6 +156,16 @@ public class UserController {
             return new UserSocialInfoResponse();
         }
         return userService.getUserSocialInfo(Integer.parseInt(user_id), Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/social/simple")
+    public UserSocialInfoResponse getUserNameAndHead(
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new UserSocialInfoResponse();
+        }
+        return userService.getUserSocialInfo(-1, id);
     }
 
     @RequestMapping("/user/social/others")
@@ -347,5 +353,16 @@ public class UserController {
             return new SectionListResponse(-1, new ArrayList<>());
         }
         return userService.getSection(Integer.parseInt(user_id));
+    }
+
+    @RequestMapping("/user/authority")
+    public BasicInfoResponse getSectionAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section
+    ) {
+        if (user_id.isEmpty()) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return userService.getSectionAuthority(Integer.parseInt(user_id), section);
     }
 }

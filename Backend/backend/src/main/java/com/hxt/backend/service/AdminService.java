@@ -1,11 +1,15 @@
 package com.hxt.backend.service;
 
+import com.hxt.backend.entity.Report;
 import com.hxt.backend.entity.User;
+import com.hxt.backend.entity.post.Comment;
+import com.hxt.backend.entity.post.Post;
+import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.list.PostTimeInfoResponse;
+import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
-import com.hxt.backend.response.singleInfo.TotalInfoResponse;
-import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
-import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
+import com.hxt.backend.response.singleInfo.*;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,22 +19,30 @@ import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AdminService {
     @Resource
-    SectionMapper sectionMapper;
+    private SectionMapper sectionMapper;
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Resource
-    PostMapper postMapper;
+    private PostMapper postMapper;
     @Resource
-    AdminMapper adminMapper;
+    private AdminMapper adminMapper;
     @Resource
-    ImageMapper imageMapper;
+    private ImageMapper imageMapper;
+    @Resource
+    private MessageMapper messageMapper;
+    @Resource
+    private PostService postService;
+
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Integer checkPassword(String name, String password) {
         Timestamp lock = adminMapper.checkLock(name);
@@ -77,6 +89,34 @@ public class AdminService {
         );
     }
 
+    public PostTimeInfoResponse getPostTimeInfo() {
+        long now = System.currentTimeMillis();
+        PostTimeInfoResponse res = new PostTimeInfoResponse(
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+        );
+        long hourStart = now / 3600000 * 3600000;
+        for (int i = 0; i < 24; i++) {
+            Timestamp start = new Timestamp(hourStart - i * 3600000);
+            Timestamp end = new Timestamp(hourStart - (i - 1) * 3600000);
+            int postNum = postMapper.getPostNumRange(start, end);
+            int commentNum = postNum + postMapper.getCommentNumRange(start, end)
+                    + postMapper.getReplyNumRange(start, end);
+            res.getPost_24h().add(0, new TimeValueResponse(df.format(start), postNum));
+            res.getComment_24h().add(0, new TimeValueResponse(df.format(start), commentNum));
+        }
+        long dayStart = now / 86400000 * 86400000;
+        for (int i = 0; i < 30; i++) {
+            Timestamp start = new Timestamp(dayStart - i * 86400000L);
+            Timestamp end = new Timestamp(dayStart - (i - 1) * 86400000L);
+            int postNum = postMapper.getPostNumRange(start, end);
+            int commentNum = postNum + postMapper.getCommentNumRange(start, end)
+                    + postMapper.getReplyNumRange(start, end);
+            res.getPost_30d().add(0, new TimeValueResponse(df.format(start), postNum));
+            res.getComment_30d().add(0, new TimeValueResponse(df.format(start), commentNum));
+        }
+        return res;
+    }
+
     public boolean checkPassword(Integer id, String password) {
         String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         return adminMapper.checkPassword(id, md5) > 0;
@@ -96,8 +136,41 @@ public class AdminService {
         return sectionMapper.insertSchool(name, intro, category, web) > 0;
     }
 
+    public String deleteSection(Integer id, Integer moveId) {
+        if (sectionMapper.getSectionNameById(id) == null) {
+            return "欲删除的板块不存在！";
+        }
+        if (moveId != null && moveId != 0 && sectionMapper.getSectionNameById(moveId) == null) {
+            return "移动到的目标版块不存在！";
+        }
+        sectionMapper.removeSectionFollow(id);
+        sectionMapper.removeSectionTeacher(id);
+        sectionMapper.removeSectionAuthority(id);
+        List<Post> posts = sectionMapper.selectPostBySectionId(id);
+        Date date = new Date();
+        if (moveId == null || moveId == 0) {
+            for (Post post : posts) {
+                postService.deletePost(0, post.getPost_id(), true);
+            }
+        } else {
+            for (Post post : posts) {
+                postMapper.movePostSection(post.getPost_id(), moveId);
+                messageMapper.sendSystemNoticeToUser("移动通知",
+                        String.format("您发表的帖子 “%s” 于 %s 被移动至板块 %s", post.getTitle(), df.format(date),
+                                sectionMapper.getSectionNameById(moveId)),
+                        post.getAuthor_id());
+            }
+        }
+        sectionMapper.removeSection(id);
+        return "";
+    }
+
     public boolean blockUser(Integer id, Integer days) {
         Integer realtime = days == null? Integer.MAX_VALUE : days;
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("封禁通知",
+                String.format("您因违反有关规定，被管理员于 %s 被封禁 %d 天（自本通知中的时间点起计算）。",
+                        df.format(date), realtime), id);
         return userMapper.blockUser(id, realtime) > 0;
     }
 
@@ -113,7 +186,8 @@ public class AdminService {
             boolean isBlocked = (tmp != null && tmp != 0);
             User user = userMapper.selectUserById(id);
             List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
-            if (adminMapper.checkGlobalAuthority(id) > 0) {
+            Integer check = adminMapper.checkGlobalAuthority(id);
+            if (check != null && check > 0) {
                 authorityInfo.add(new UserAuthorityInfo(0, "全局管理员"));
             } else {
                 authorityInfo = adminMapper.getUserAuthorities(id);
@@ -127,14 +201,83 @@ public class AdminService {
         return userInfoResponse;
     }
 
+    public ReportListResponse getUnhandledReports(Integer type) {
+        List<Report> reports = adminMapper.getUnhandledReports(type);
+        ReportListResponse response = new ReportListResponse(reports.size(), new ArrayList<>());
+        switch (type) {
+            case 0:
+                for (Report report : reports) {
+                    Integer postId = report.getTarget();
+                    Post post = postMapper.getPost(postId);
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), postId, post.getContent(), null,
+                            post.getAuthor_id(), report.getUserId(), report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+            case 1:
+                for (Report report : reports) {
+                    Integer commentId = report.getTarget();
+                    Comment comment = postMapper.getCommentById(commentId);
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), commentId, comment.getContent(),
+                            comment.getPost_id(), comment.getAuthor_id(),
+                            report.getUserId(), report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+            case 2:
+                for (Report report : reports) {
+                    Integer replyId = report.getTarget();
+                    Reply reply = postMapper.getReplyById(replyId);
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), replyId, reply.getContent(),
+                            postMapper.getCommentById(reply.getComment_id()).getPost_id(),
+                            reply.getAuthor_id(),
+                            report.getUserId(), report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+            case 3:
+                for (Report report : reports) {
+                    Integer userId = report.getTarget();
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), userId, null, null, null,
+                            report.getUserId(), report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+            case 4:
+                for (Report report : reports) {
+                    Integer userId = report.getTarget();
+                    String authorityType = (report.getTarget() == 0)? "teacher" :
+                            (report.getTarget() == 1)? "assistant" : "";
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), userId, authorityType,
+                            null, null, null, report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+        }
+        return response;
+    }
+
     public boolean setAuthority(Integer id, Integer section, String type) {
         if (checkAuthority(id, section)) {
             return true;
         }
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("授权通知",
+                String.format("您于 %s 被授予 %s 版块的 %s 权限，希望您为板块建设贡献自己的一份力量。",
+                        df.format(date), sectionMapper.getSectionNameById(section), type), id);
         return adminMapper.setAuthority(id, section, type) > 0;
     }
 
     public boolean deleteAuthority(Integer id, Integer section) {
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("收回权限通知",
+                String.format("您在 %s 版块的权限于 %s 被收回。",
+                        sectionMapper.getSectionNameById(section), df.format(date)), id);
         return adminMapper.deleteAuthority(id, section) > 0;
     }
 
@@ -146,10 +289,17 @@ public class AdminService {
     }
 
     public boolean setGlobalAuthority(Integer id) {
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("授权通知",
+                String.format("您于 %s 被授予全局管理员权限，希望您为板块建设贡献自己的一份力量。",
+                        df.format(date)), id);
         return adminMapper.setGlobalAuthority(id) > 0;
     }
 
     public boolean deleteGlobalAuthority(Integer id) {
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("收回权限通知",
+                String.format("您的全局管理权限于 %s 被收回。", df.format(date)), id);
         return adminMapper.deleteGlobalAuthority(id) > 0;
     }
 

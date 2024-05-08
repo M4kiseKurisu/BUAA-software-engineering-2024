@@ -1,5 +1,5 @@
 <template>
-    <div class="directMessageContainer">
+    <div class="directMessageContainer" @click="goToChatCenter">
         <div class="headContainer"><el-avatar :size="60" :src="this.headImg" />
         </div>
         <div style="margin-left: 10px;width: 70%;">
@@ -12,7 +12,8 @@
                 {{ content }}
             </div>
         </div>
-        <div v-if = "this.isRead != true" style="width: 20%;height: 100%;display: flex;justify-content: end;align-items: center;">
+        <div v-if="this.isRead != true"
+            style="width: 20%;height: 100%;display: flex;justify-content: end;align-items: center;">
             <el-tag type="danger">未读</el-tag>
         </div>
     </div>
@@ -41,7 +42,7 @@ export default {
     },
     methods: {
         GetSenderInfomation() {
-                this.senderId = this.messageInfomation.sender_id,
+            this.senderId = this.messageInfomation.sender_id,
                 //this.senderName = this.messageInfomation.,
                 this.content = this.messageInfomation.last_message_content,
                 this.time = this.messageInfomation.last_message_time,
@@ -56,6 +57,14 @@ export default {
                     this.headImg = result.data.user_avatar;
                 });
         },
+        goToChatCenter() {
+            this.$router.push({ name: 'ChatCenter', params: { personId: this.senderId, groupId: -1 } }).then(() => {
+                this.$nextTick(() => {
+                    // 强制重新加载当前页面
+                    location.reload();
+                });
+            });
+        }
     },
     created() {
         if (this.messageInfomation != null) {

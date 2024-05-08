@@ -28,4 +28,6 @@ public class Favorite {
     
     @Column(name = "time")
     private Timestamp favoriteTime;
+    
+    
 }

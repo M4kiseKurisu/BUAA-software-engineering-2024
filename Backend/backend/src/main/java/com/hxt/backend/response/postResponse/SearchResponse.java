@@ -12,5 +12,5 @@ import java.util.List;
 public class SearchResponse {
     private boolean success;
     private String info;
-    private List<PostIntroResponse> postIntroResponses;
+    private List<PostIntroResponse> posts;
 }

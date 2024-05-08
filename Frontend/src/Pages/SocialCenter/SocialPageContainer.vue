@@ -17,11 +17,12 @@
                     </el-button>
                 </div>
                 <div v-if="radio === '0'"><MySocialPost @childMethod="showDetail"/></div>
-                <div v-if="radio === '1'"><OthersSocialPost /></div>
+                <div v-if="radio === '1'"><OthersSocialPost @childMethod="showDetail" /></div>
             </div>
             <el-divider v-if="radio === '0'" direction="vertical"/>
             <div class="container-right">
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
+                <!-- <div v-if="true"><SocialPostDetail :social_post_id="1"/></div> -->
             </div>
         </div>    
         
@@ -44,39 +45,48 @@
                 <el-divider direction="vertical"/>
 
                 <div style="width: 36%; margin-right: 4%; margin-left: 3%;">
-                    <div class="title-for-dialog-font" style="margin-top: 15px;">上传打卡图片</div>
+                    
 
-                    <div class="flex-container">
-                        <el-upload
-                            class="avatar-uploader"
-                            :show-file-list="false"
-                            style="margin-top: 16px;"
-                        >
-                            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-                        </el-upload>
-
-                        <el-upload
-                            class="avatar-uploader"
-                            :show-file-list="false"
-                            style="margin-top: 16px; margin-left: 16px;"
-                        >
-                            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                    <div class="flex-container" style="margin-top: 15px;">
+                        <div class="title-for-dialog-font">上传打卡图片</div>
+                        <el-upload v-model:file-list="image_list" :show-file-list="false" :auto-upload="false" :on-change="test" style="margin-left: 16px;">
+                            <el-button type="primary" plain size="small">选择图片</el-button>
                         </el-upload>
                     </div>
+
+                    <el-row v-for="(item, index1) in images" :gutter="20" style="margin-top: 16px;">
+                        <el-col v-for="(item2, index2) in item" :key="index2" :span="8">
+                            <div style="width: 100%; aspect-ratio: 1/1; border: 1px solid #e5e6eb;">
+                                <el-popover
+                                    placement="top-start"
+                                    trigger="hover"
+                                >
+                                    <template #reference>
+                                        <el-image :src="item2" style="width: 100%; height: 100%" />
+                                    </template>
+                                    <div style="width: 100%" class="flex-container-center">
+                                        <el-button type="danger" plain @click="deleteImage(index1, index2)">删除图片</el-button>
+                                    </div>
+                                </el-popover>
+                            </div>
+                        </el-col>
+                    </el-row>
+                    
                     
                 </div>
 
             </div>
 
-            <el-button type="primary" style="margin-left: 4%; margin-top: 16px;">上传打卡</el-button>
+            <el-button type="primary" style="margin-left: 4%; margin-top: 16px;" @click="uploadPost">上传打卡</el-button>
         </el-dialog>
 
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 import BreadcrumbLabel from '@/Components/Tool/BreadcrumbLabel.vue';
 
 import MySocialPost from './MySocialPost.vue'
@@ -97,13 +107,101 @@ export default {
             radio: "0",
             dialogTableVisible: false,
             social_post_text: "",
+            image_list: [],
+            preview_urls: [],
+            image_urls: [],
         }
+    },
+    computed: {
+        images() {
+            let show_images = [];
+            if (this.preview_urls.length === 0) {
+                return show_images;
+            }
+
+            for (let i = 0; i < this.preview_urls.length; i += 3) {
+                show_images.push(this.preview_urls.slice(i, i + 3));
+            }
+
+            return show_images;
+        },
     },
     methods: {
         showDetail(id) {
             this.detail_post_id = id;
             console.log(this.detail_post_id);
         },
+        test(file, fileList) {
+            //console.log(file.raw instanceof Blob);
+            console.log(file.raw);
+            const newfile = file.raw;
+            const formData = new FormData();
+            formData.append("file", newfile);
+            axios.post("/api/posts/write/uploadImage", formData).then(({data})=> {
+                console.log(data);
+                if(data.success) {
+                    this.image_urls.push(data.url);
+                }
+            })
+
+            this.image_list = fileList;
+            //console.log(this.image_list);
+            this.presee(this.image_list);
+            
+            //console.log(this.preview_urls);
+        },
+        presee(image_list) {
+            this.preview_urls = [];
+            // 遍历文件列表
+            for (let i = 0; i < image_list.length; i++) {
+                const file = image_list[i];
+                
+                if (file.raw instanceof Blob) {
+                    // 使用FileReader对象读取文件
+                    const reader = new FileReader();
+
+                    // 在读取完成时触发的回调函数
+                    reader.onload = () => {
+                        const previewUrl = reader.result; // 获取预览链接
+                        this.preview_urls.push(previewUrl); // 将预览链接添加到数组中
+                    };
+
+                    // 读取文件
+                    reader.readAsDataURL(file.raw);
+                }
+            }
+        },
+        deleteImage(index1, index2) {
+            let removeIndex = index1 * 3 + index2;
+            this.image_list.splice(removeIndex, 1);
+            this.image_urls.splice(removeIndex, 1);
+            this.presee(this.image_list);
+        },
+        uploadPost() {
+            console.log(this.image_urls);
+
+            let content = {
+                user_id: JSON.parse(sessionStorage.getItem("id")),
+                image_urls: this.image_urls,
+                content: this.social_post_text,
+            }
+            console.log(content);
+            axios({
+                method: "POST",
+                url: "/api/pyq/send",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '发表打卡成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                }
+            })
+        }
     },
 }
 </script>
@@ -139,5 +237,11 @@ export default {
 .title-for-dialog-font {
     font-size: 18px;
     color: #101010;
+}
+
+.flex-container-center {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
 }
 </style>

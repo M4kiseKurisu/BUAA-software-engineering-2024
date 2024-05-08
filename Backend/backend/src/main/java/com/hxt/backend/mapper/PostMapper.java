@@ -59,12 +59,16 @@ public interface PostMapper {
     
     @Select("SELECT category from post where post_id = #{id}")
     int getCategoryByPostId(Integer id);
-    
+
+    //  以下三者均为统计信息
     @Select("SELECT COUNT(*) FROM post")
     int getPostNum();
 
     @Select("SELECT COUNT(*) FROM post WHERE time > #{time}")
     int getPostNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM post WHERE time > #{start} AND time < #{end}")
+    int getPostNumRange(Timestamp start, Timestamp end);
     
     //更新帖子浏览数
     @Update("UPDATE post SET view_count = #{viewCount} WHERE post_id = #{id}")
@@ -114,6 +118,14 @@ public interface PostMapper {
             "join post_tag pt on t.tag_id = pt.tag_id " +
             "where pt.post_id = #{id} ORDER BY pt.pt_id")
     List<String> getTagNameByPost(Integer id);
+    
+    //获取升学模块中包含某tag的所有帖子
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on pt.post_id = p.post_id " +
+            "join tag t on t.tag_id = pt.tag_id " +
+            "where t.name = #{name} " +
+            "and p.section_id = 0")
+    List<Post> getPostByTagName(String name);
     
     //帖子-点赞
     @Options(useGeneratedKeys = true)
@@ -191,10 +203,24 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name like concat('%', #{tag}, '%') " +
+            "and t.name = #{tag} " +
             "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag);
+    
+    //根据关键词、tag、type在特定版块搜索帖子(时间倒序)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and p.category = #{type} " +
+            "and t.name = #{tag} " +
+            "ORDER BY p.time DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTagTypeTimeDesc(Integer sectionId, String keyword, String tag, Integer type);
     
     //根据关键词和tag在特定版块搜索帖子(热度)
     @Select("SELECT p.* from post p " +
@@ -204,11 +230,25 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name like concat('%', #{tag}, '%') " +
+            "and t.name = #{tag} " +
             "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag);
     
+    
+    //根据关键词、tag、type在特定版块搜索帖子(热度)
+    @Select("SELECT p.* from post p " +
+            "join post_tag pt on p.post_id = pt.post_id " +
+            "join tag t on pt.tag_id = t.tag_id " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and p.category = #{type} " +
+            "and t.name = #{tag} " +
+            "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTagTypeHotDesc(Integer sectionId, String keyword, String tag, Integer type);
 
     //  以下为删除帖子时删除附加信息用
     @Delete("DELETE FROM post_like WHERE post_id = #{id}")
@@ -267,6 +307,9 @@ public interface PostMapper {
 
     @Select("SELECT COUNT(*) FROM comment WHERE time > #{time}")
     int getCommentNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM comment WHERE time > #{start} AND time < #{end}")
+    int getCommentNumRange(Timestamp start, Timestamp end);
     
     //评论-图片
     @Options(useGeneratedKeys = true)
@@ -286,6 +329,13 @@ public interface PostMapper {
     //获取某评论的所有资源的id
     @Select("SELECT resource_id from comment_resource where comment_id = #{id} ORDER BY cr_id ASC")
     List<Integer> getResourceIdByComment(Integer id);
+    
+    //获取某评论的所有资源的url
+    @Select("SELECT r.url from resource r " +
+            "join comment_resource cr on cr.resource_id = r.resource_id " +
+            "where cr.comment_id = #{id} " +
+            "ORDER BY cr.cr_id ASC")
+    List<String> getResourceUrlByComment(Integer id);
     
     //评论-点赞
     @Options(useGeneratedKeys = true)
@@ -355,6 +405,9 @@ public interface PostMapper {
 
     @Select("SELECT COUNT(*) FROM reply WHERE time > #{time}")
     int getReplyNumRecent(Timestamp time);
+
+    @Select("SELECT COUNT(*) FROM reply WHERE time > #{start} AND time < #{end}")
+    int getReplyNumRange(Timestamp start, Timestamp end);
     
     //回复-点赞
     @Options(useGeneratedKeys = true)
@@ -377,4 +430,8 @@ public interface PostMapper {
     //  删除回复时删除所有点赞信息
     @Delete("DELETE FROM reply_like WHERE reply_id = #{id}")
     int deleteReplyLike(Integer id);
+
+    //  以下供管理员使用
+    @Update("UPDATE post SET section_id = #{section} WHERE post_id = #{post}")
+    int movePostSection(Integer post, Integer section);
 }

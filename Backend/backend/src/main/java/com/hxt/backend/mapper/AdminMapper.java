@@ -1,5 +1,6 @@
 package com.hxt.backend.mapper;
 
+import com.hxt.backend.entity.Report;
 import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import org.apache.ibatis.annotations.*;
 
@@ -37,9 +38,12 @@ public interface AdminMapper {
     @Select("SELECT authority_id FROM authority WHERE user_id = #{id} AND section_id = #{section}")
     Integer checkAuthority(Integer id, Integer section);
 
+    @Select("SELECT category FROM authority WHERE user_id = #{id} AND section_id = #{section}")
+    String checkAuthorityType(Integer id, Integer section);
+
     @Select("SELECT section_id, category FROM authority WHERE user_id = #{id}")
     @Results({
-            @Result(column = "section_id", property = "section"),
+            @Result(column = "section_id", property = "section")
     })
     List<UserAuthorityInfo> getUserAuthorities(Integer id);
 
@@ -54,4 +58,15 @@ public interface AdminMapper {
 
     @Update("UPDATE user_info SET global_authority = 0 WHERE user_id = #{id}")
     int deleteGlobalAuthority(Integer id);
+
+    //  举报管理
+    @Select("SELECT report_id, user_id, target, detail, resource FROM report WHERE type = #{type} and active = 1")
+    @Results({
+            @Result(column = "report_id", property = "reportId"),
+            @Result(column = "user_id", property = "userId")
+    })
+    List<Report> getUnhandledReports(Integer type);
+
+    @Update("UPDATE report SET active = 0 WHERE report_id = #{id}")
+    int handleReport(Integer id);
 }

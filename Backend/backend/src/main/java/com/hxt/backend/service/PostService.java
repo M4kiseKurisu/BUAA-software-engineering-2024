@@ -62,13 +62,13 @@ public class PostService {
     
     
     
-    public Integer deletePost(Integer userId, Integer postId) {
+    public Integer deletePost(Integer userId, Integer postId, boolean flagAdmin) {
         Post p = postMapper.getPost(postId);
         if (p == null) {
             return -1;
         }
         //  检查权限
-        if (!p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
+        if (!flagAdmin && !p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
                 && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
             return -2;
         }
@@ -227,7 +227,7 @@ public class PostService {
                 commentResponse.setComment_isLike(false);
             }
 
-            //获取评论的图片
+            /*获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
             List<String> imageUrls = new ArrayList<>();
             for (Integer imageId : imageIds) {
@@ -237,15 +237,11 @@ public class PostService {
             }
             commentResponse.setComment_images(imageUrls);
             
+             */
+            
             //获取评论的资源
-            List<Integer> resourceIds = postMapper.getResourceIdByComment(postId);
-            Map<Integer, String> resourceMap = new LinkedHashMap<>();
-            for (Integer resourceId : resourceIds) {
-                if (resourceMapper.getResource(resourceId) != null) {
-                    resourceMap.put(resourceId, resourceMapper.getResource(resourceId).getName());
-                }
-            }
-            commentResponse.setComment_resources(resourceMap);
+            List<String> resourceUrls = postMapper.getResourceUrlByComment(postId);
+            commentResponse.setComment_resources(resourceUrls);
             
             //获取评论的回复
             List<Reply> replies = postMapper.getReplyByCommentId(comment.getComment_id());
@@ -255,8 +251,9 @@ public class PostService {
                 
                 //获取回复者的名称和头像
                 Integer replyAuthorId = reply.getAuthor_id();
-                String replyAuthorName = userMapper.selectUserById(replyAuthorId).getName();
-                String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
+                User replyAuthor = userMapper.selectUserById(replyAuthorId);
+                String replyAuthorName = replyAuthor.getName();
+                String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
                 
@@ -354,34 +351,28 @@ public class PostService {
     }
     
     //搜索帖子
-    public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag) {
+    public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag, Integer type) {
         List<Post> posts;
         List<PostIntroResponse> postIntroResponses = new ArrayList<>();
         
+        /*
         if (section_id == 0) {
             if (sort == 0) {
                 posts = postMapper.searchPostByKeywordTagHotDesc(keyword, tag);
             } else {
                 posts = postMapper.searchPostByKeywordTagTimeDesc(keyword, tag);
             }
+        }
+        */
+        
+        if (sort == 0) {
+            posts = postMapper.searchPostInSectionByKeywordTagTypeHotDesc(section_id, keyword, tag, type);
         } else {
-            if (sort == 0) {
-                posts = postMapper.searchPostInSectionByKeywordTagHotDesc(section_id, keyword, tag);
-            } else {
-                posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(section_id, keyword, tag);
-            }
+            posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(section_id, keyword, tag, type);
         }
         
-        for (Post post : posts) {
-            PostIntroResponse postIntroResponse = new PostIntroResponse(post);
-            String authorName = userMapper.getUserNameById(post.getAuthor_id());
-            List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
-            postIntroResponse.setPost_author_name(authorName);
-            postIntroResponse.setTags(tags);
-            
-            postIntroResponses.add(postIntroResponse);
-        }
-        return postIntroResponses;
+        
+        return getPostIntroResponseByPost(posts);
     }
     
     
@@ -537,6 +528,34 @@ public class PostService {
         postMapper.updateReplyLikeCount(replyId, op);
         Reply reply = postMapper.getReplyById(replyId);
         return reply.getLike_count();
+    }
+    
+    
+    
+    
+    //根据post获得postIntroResponse
+    public List<PostIntroResponse> getPostIntroResponseByPost(List<Post> posts) {
+        List<PostIntroResponse> postIntroResponses = new ArrayList<>();
+        
+        for (Post post : posts) {
+            PostIntroResponse postIntroResponse = new PostIntroResponse(post);
+            String authorName = userMapper.getUserNameById(post.getAuthor_id());
+            List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
+            
+            String imageUrl = null;
+            List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
+            if (!imageIds.isEmpty()) {
+                imageUrl = imageMapper.getImage(imageIds.get(0));
+            }
+            
+            postIntroResponse.setAuthor_name(authorName);
+            postIntroResponse.setTags(tags);
+            postIntroResponse.setPost_image(imageUrl);
+            
+            
+            postIntroResponses.add(postIntroResponse);
+        }
+        return postIntroResponses;
     }
     
 }

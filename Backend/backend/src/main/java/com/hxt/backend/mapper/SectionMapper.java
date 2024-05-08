@@ -68,4 +68,16 @@ public interface SectionMapper {
     @Insert("INSERT INTO section (name, intro, flag, school_category, web) VALUES (#{name}, #{intro}, 1, " +
             "#{category}, #{web})")
     int insertSchool(String name, String intro, String category, String web);
+
+    @Delete("DELETE FROM section WHERE section_id = #{id}")
+    int removeSection(Integer id);
+
+    @Delete("DELETE FROM section_follow WHERE section_id = #{id}")
+    int removeSectionFollow(Integer id);
+
+    @Delete("DELETE FROM authority WHERE section_id = #{id}")
+    int removeSectionAuthority(Integer id);
+
+    @Delete("DELETE FROM course_teacher WHERE section_id = #{id}")
+    int removeSectionTeacher(Integer id);
 }
