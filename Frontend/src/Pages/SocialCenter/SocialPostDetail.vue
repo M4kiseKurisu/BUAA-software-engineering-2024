@@ -230,8 +230,17 @@ export default {
                         message: '删除评论成功！',
                         type: 'success',
                     });
-                    ocation.reload();
+                    //location.reload();
                 }
+                axios({
+                    method: "GET",
+                    url: "/api/pyq/detail",
+                    params: {
+                        post_id: this.social_post_id
+                    }
+                }).then((result) => {
+                    this.comment_list = result.data.comments_list;
+                })
             })
         },
         getFavorInformation(post_id, user_id) {
@@ -290,8 +299,22 @@ export default {
             }).then((result) => {
                 console.log(result);
                 if(result.data.success) {
-                    location.reload();
+                    //location.reload();
+                    this.$message({
+                        showClose: true,
+                        message: '发布评论成功！',
+                        type: 'success',
+                    });
                 }
+                axios({ 
+                    method: "GET",
+                    url: "/api/pyq/detail",
+                    params: {
+                        post_id: this.social_post_id
+                    }
+                }).then((result) => {
+                    this.comment_list = result.data.comments_list;
+                })
             })
         },
         toInformationShow(id) {

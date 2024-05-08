@@ -179,6 +179,7 @@
                 </div>
 
                 <PosterCard v-if="this.divided_posts.length != 0" :item="this.divided_posts[0].posts[0]"/>
+                <div v-else class="no-favorate-card-tip">您目前还没有打卡信息~</div>
             </div> 
 
             <!-- 站内通知信息 -->
@@ -452,7 +453,11 @@ export default {
             method: "GET",
             url: "/api/group/joined"
         }).then((result) => {
+            console.log(result);
             this.groupList = result.data.group;
+            if (!result.data.group) {
+                this.groupList = [];
+            }
         })
 
         //获取打卡信息
