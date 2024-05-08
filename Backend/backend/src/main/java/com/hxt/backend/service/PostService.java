@@ -68,8 +68,8 @@ public class PostService {
             return -1;
         }
         //  检查权限
-        if (!flagAdmin && !p.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
             return -2;
         }
         List<Comment> comments = postMapper.getCommentSortByTimeAsc(postId);
@@ -407,8 +407,8 @@ public class PostService {
         if (c == null) {
             return -1;
         }
-        if (!flag && !c.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
@@ -491,8 +491,8 @@ public class PostService {
             return -1;
         }
         Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
-        if (!flag && !r.getAuthor_id().equals(userId) && !(adminMapper.checkGlobalAuthority(userId) > 0)
-                && !(adminMapper.checkAuthority(userId, p.getSection_id()) > 0)) {
+        if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
             return -2;
         }
         postMapper.deleteReplyLike(replyId);
@@ -557,5 +557,25 @@ public class PostService {
         }
         return postIntroResponses;
     }
-    
+
+    public boolean reportPost(Integer userId, Integer postId, String detail) {
+        if (adminMapper.checkSameReport(0, postId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 0, postId, detail, null) > 0;
+    }
+
+    public boolean reportComment(Integer userId, Integer commentId, String detail) {
+        if (adminMapper.checkSameReport(1, commentId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 1, commentId, detail, null) > 0;
+    }
+
+    public boolean reportReply(Integer userId, Integer replyId, String detail) {
+        if (adminMapper.checkSameReport(2, replyId, userId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 2, replyId, detail, null) > 0;
+    }
 }

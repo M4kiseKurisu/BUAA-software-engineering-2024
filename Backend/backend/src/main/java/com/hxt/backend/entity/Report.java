@@ -17,6 +17,7 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reportId;
     private Integer userId;
+    private Integer type;
     private Integer target;
     private String detail;
     private String resource;

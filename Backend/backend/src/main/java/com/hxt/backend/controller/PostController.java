@@ -22,7 +22,10 @@ public class PostController {
     private final UserService userService;
     private final RecommendService recommendService;
     private final ReviewService reviewService;
+    private final FrequencyLogService frequencyLogService;
     private final String authorityError = "权限不匹配！";
+    private final String hasEmptyResponse = "信息填写不完整！";
+    private final String frequencyResponse = "操作太频繁了，休息一下再来吧！";
     
     //帖子详情
     @RequestMapping (value="/posts/post")
@@ -103,9 +106,11 @@ public class PostController {
             @RequestParam(name = "images[]", required = false) String[] images,
             @RequestParam(name = "resources[]", required = false) String[] resources
     ) throws IOException {
-        //检查用户是否被封禁
+        //检查用户是否被封禁、检查用户操作频率
         if (userService.checkBlocked(author_id)) {
             return new WritePostResponse(false, "您已被封禁，禁止发帖！", null);
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new WritePostResponse(false, frequencyResponse, null);
         }
         
         //检查是否允许上传资源
@@ -169,7 +174,7 @@ public class PostController {
                 postService.postInsertTag(post_id, tagId);
             }
         }
-        
+        frequencyLogService.setLog(author_id, 5);
         return new WritePostResponse(true, "发帖成功", post_id);
     }
     
@@ -348,6 +353,8 @@ public class PostController {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止评论！");
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new BasicInfoResponse(false, frequencyResponse);
         }
         
         //检查是否允许上传资源
@@ -386,6 +393,7 @@ public class PostController {
         }
         //帖子评论数 +1
         postService.updatePostCommentCount(post_id, 1);
+        frequencyLogService.setLog(author_id, 6);
         
         return new BasicInfoResponse(true, "评论成功");
     }
@@ -476,6 +484,8 @@ public class PostController {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
+        } else if (frequencyLogService.checkFrequency(author_id)) {
+            return new BasicInfoResponse(false, frequencyResponse);
         }
 
         //向数据库插入 reply
@@ -490,7 +500,7 @@ public class PostController {
         
         // 该帖子的评论数 +1
         postService.updatePostCommentCount(post_id, 1);
-        
+        frequencyLogService.setLog(author_id, 7);
         return new BasicInfoResponse(true, "回复成功");
     }
     
@@ -569,5 +579,61 @@ public class PostController {
         
         return new IsLikeResponse(false);
     }
-    
+
+    @RequestMapping("/post/report")
+    public BasicInfoResponse reportPost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportPost(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 0);
+        }
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/comment/report")
+    public BasicInfoResponse reportComment(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportComment(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 1);
+        }
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/reply/report")
+    public BasicInfoResponse reportReply(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = postService.reportReply(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 2);
+        }
+        return new BasicInfoResponse(res, info);
+    }
 }

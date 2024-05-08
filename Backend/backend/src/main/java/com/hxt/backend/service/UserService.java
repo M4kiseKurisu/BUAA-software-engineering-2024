@@ -243,6 +243,22 @@ public class UserService {
         return userMapper.unfollowUser(userId, followId) > 0;
     }
 
+    public boolean reportUser(Integer userId, Integer reportId, String detail) {
+        if (adminMapper.checkSameReport(3, reportId, userId) > 0
+            ||  userMapper.isBlocked(reportId) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(userId, 3, reportId, detail, null) > 0;
+    }
+
+    public boolean applyForAuthority(Integer user, Integer section, Integer type, String detail, String resource) {
+        if (adminMapper.checkSameReport(4, section * 3 + type, user) > 0
+            || adminMapper.checkAuthority(user, section) > 0) {
+            return true;
+        }
+        return adminMapper.insertReport(user, 4, section * 3 + type, detail, resource) > 0;
+    }
+
     public void resetToken(Integer id) {
         userMapper.resetToken(id);
     }

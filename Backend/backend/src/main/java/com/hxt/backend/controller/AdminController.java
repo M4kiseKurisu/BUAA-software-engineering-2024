@@ -143,7 +143,7 @@ public class AdminController {
         return adminService.getUserList();
     }
 
-    @RequestMapping("admin/list/report/post")
+    @RequestMapping("/admin/list/report/post")
     private ReportListResponse getPostReportList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
             return null;
@@ -151,7 +151,7 @@ public class AdminController {
         return adminService.getUnhandledReports(0);
     }
 
-    @RequestMapping("admin/list/report/comment")
+    @RequestMapping("/admin/list/report/comment")
     private ReportListResponse getCommentReportList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
             return null;
@@ -159,7 +159,7 @@ public class AdminController {
         return adminService.getUnhandledReports(1);
     }
 
-    @RequestMapping("admin/list/report/reply")
+    @RequestMapping("/admin/list/report/reply")
     private ReportListResponse getReplyReportList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
             return null;
@@ -167,7 +167,7 @@ public class AdminController {
         return adminService.getUnhandledReports(2);
     }
 
-    @RequestMapping("admin/list/report/user")
+    @RequestMapping("/admin/list/report/user")
     private ReportListResponse getUserReportList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
             return null;
@@ -175,12 +175,29 @@ public class AdminController {
         return adminService.getUnhandledReports(3);
     }
 
-    @RequestMapping("admin/list/apply")
+    @RequestMapping("/admin/list/apply")
     private ReportListResponse getAuthorityApplyList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
             return null;
         }
         return adminService.getUnhandledReports(4);
+    }
+
+    @RequestMapping("/admin/handle")
+    public BasicInfoResponse handleReport(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "choice", required = false) Boolean choice,
+            @RequestParam(name = "days", required = false) Integer days
+    ) {
+        if (id == null || choice == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.handleReport(id, choice, days);
+        String info = res? "" : "处理发生异常！";
+        return new BasicInfoResponse(res, info);
     }
 
     @RequestMapping("/admin/block")

@@ -249,17 +249,62 @@ public class AdminService {
                 break;
             case 4:
                 for (Report report : reports) {
-                    Integer userId = report.getTarget();
-                    String authorityType = (report.getTarget() == 0)? "teacher" :
-                            (report.getTarget() == 1)? "assistant" : "";
+                    Integer sectionId = report.getTarget() / 3;
+                    Integer typeNum = report.getTarget() % 3;
+                    String authorityType = (typeNum == 0)? "teacher" :
+                            (typeNum == 1)? "assistant" : "";
                     response.getReport().add(new ReportResponse(
-                            report.getReportId(), userId, authorityType,
-                            null, null, null, report.getDetail(), report.getResource()
+                            report.getReportId(), sectionId, authorityType, null, null,
+                            report.getUserId(), report.getDetail(), report.getResource()
                     ));
                 }
                 break;
         }
         return response;
+    }
+
+    public boolean handleReport(Integer reportId, boolean choice, Integer days) {
+        Report report = adminMapper.getSingleReport(reportId);
+        if (report == null) {
+            return false;
+        }
+        if (choice) {
+            switch (report.getType()) {
+                case 0:
+                    Integer postId = report.getTarget();
+                    postService.deletePost(0, postId, true);
+                    break;
+                case 1:
+                    Integer commentId = report.getTarget();
+                    postService.deleteComment(true, 0, commentId);
+                    break;
+                case 2:
+                    Integer replyId = report.getTarget();
+                    postService.deleteReply(true, 0, replyId);
+                    break;
+                case 3:
+                    Integer userId = report.getTarget();
+                    blockUser(userId, days);
+                    break;
+                case 4:
+                    Integer user = report.getUserId();
+                    Integer sectionId = report.getTarget() / 3;
+                    Integer typeNum = report.getTarget() % 3;
+                    String authorityType = (typeNum == 0)? "teacher" :
+                            (typeNum == 1)? "assistant" : "";
+                    setAuthority(user, sectionId, authorityType);
+                    break;
+            }
+        }
+        if (report.getType() < 4) {
+            List<Integer> sameIds = adminMapper.getSameTargetReports(report.getType(), report.getTarget());
+            for (Integer sameId : sameIds) {
+                adminMapper.handleReport(sameId, (choice? 2 : 0));
+            }
+        } else {
+            adminMapper.handleReport(reportId, (choice? 2 : 0));
+        }
+        return true;
     }
 
     public boolean setAuthority(Integer id, Integer section, String type) {
