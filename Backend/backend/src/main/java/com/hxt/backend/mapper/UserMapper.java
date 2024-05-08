@@ -44,8 +44,9 @@ public interface UserMapper {
     String getUserNameById(Integer id);
 
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password, token_time, sign, global_authority)" +
-            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0, 'Hello World!', 0)")
+    @Insert("INSERT INTO user_info (account, name, email, phonenum, major, graduate_year, password," +
+            " token_time, sign, global_authority, show_post, show_favorite)" +
+            " VALUES (#{name}, #{name}, #{email}, #{phone}, #{major}, #{year}, #{password}, 0, 'Hello World!', 0, 1, 1)")
     int insertUser(String name, String email, String phone,
                    String major, Integer year, String password);
 
@@ -66,6 +67,18 @@ public interface UserMapper {
     
     @Update("UPDATE user_info SET head_id = #{headId} WHERE user_id = #{id}")
     int updateHead(Integer id, Integer headId);
+
+    @Update("UPDATE user_info SET show_post = #{showPost} WHERE user_id = #{id}")
+    int updateShowPost(Integer id, Integer showPost);
+
+    @Update("UPDATE user_info SET head_id = #{showFavorite} WHERE user_id = #{id}")
+    int updateShowFavorite(Integer id, Integer showFavorite);
+
+    @Select("SELECT show_post FROM user_info WHERE user_id = #{id}")
+    Integer checkUserShowPost(Integer id);
+
+    @Select("SELECT show_favorite FROM user_info WHERE user_id = #{id}")
+    Integer checkUserShowFavorite(Integer id);
 
     @Update("UPDATE user_info SET token = #{token}, token_time = #{time} WHERE user_id = #{id}")
     int setToken(Integer id, String token, Integer time);
@@ -138,4 +151,8 @@ public interface UserMapper {
 
     @Select("SELECT COUNT(*) FROM section_follow WHERE section_id = #{sectionId}")
     int getFocusCount(Integer sectionId);
+
+    //  用户帖子列表
+    @Select("SELECT post_id FROM post WHERE author_id = #{userId}")
+    List<Integer> getPosts(Integer userId);
 }

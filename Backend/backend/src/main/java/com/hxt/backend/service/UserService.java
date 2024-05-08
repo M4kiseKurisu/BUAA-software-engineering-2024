@@ -156,22 +156,30 @@ public class UserService {
         return userListResponse;
     }
 
-    public PostListResponse getFavorite(Integer id) {
+    public PostListResponse getFavorite(Integer id, boolean flag) {
+        if (flag && (userMapper.checkUserShowFavorite(id) == 0)) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
         List<Integer> favorites = userMapper.getCollect(id);
         PostListResponse postListResponse = new PostListResponse(favorites.size(), new ArrayList<>());
         for (Integer favorite : favorites) {
-            Post post = postMapper.getPost(favorite);
-            if (post != null) {
-                PostResponse postResponse = new PostResponse(
-                        post.getPost_id(),
-                        post.getTitle(),
-                        post.getIntro(),
-                        post.getContent(),
-                        userMapper.getUserNameById(post.getAuthor_id()),
-                        post.getAuthor_id(),
-                        sectionMapper.getSectionNameById(post.getSection_id()),
-                        postMapper.getTagNameByPost(post.getPost_id())
-                );
+            PostResponse postResponse = getSinglePostInfo(favorite);
+            if (postResponse != null) {
+                postListResponse.getPosts().add(postResponse);
+            }
+        }
+        return postListResponse;
+    }
+
+    public PostListResponse getPost(Integer id, boolean flag) {
+        if (flag && (userMapper.checkUserShowPost(id) == 0)) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
+        List<Integer> posts = userMapper.getPosts(id);
+        PostListResponse postListResponse = new PostListResponse(posts.size(), new ArrayList<>());
+        for (Integer post : posts) {
+            PostResponse postResponse = getSinglePostInfo(post);
+            if (postResponse != null) {
                 postListResponse.getPosts().add(postResponse);
             }
         }
@@ -222,7 +230,8 @@ public class UserService {
         return token;
     }
 
-    public String setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone) {
+    public String setUserInfo(Integer id, String name, String major, Integer year, String sign, String phone,
+                              Integer showPost, Integer showFavorite) {
         if (userMapper.selectUserByName(name) != null) {
             return "用户昵称重名！";
         }
@@ -231,8 +240,10 @@ public class UserService {
         boolean yearSuccess = year == null || userMapper.updateYear(id, year) > 0;
         boolean signSuccess = sign == null || userMapper.updateSign(id, sign) > 0;
         boolean phoneSuccess = phone == null || userMapper.updatePhone(id, phone) > 0;
-        return (nameSuccess && majorSuccess && yearSuccess && signSuccess && phoneSuccess)?
-                "" : "服务器错误！";
+        boolean postSuccess = showPost == null || userMapper.updateShowPost(id, showPost) > 0;
+        boolean favoriteSuccess = showFavorite == null || userMapper.updateShowFavorite(id, showFavorite) > 0;
+        return (nameSuccess && majorSuccess && yearSuccess && signSuccess
+                && phoneSuccess && postSuccess && favoriteSuccess)? "" : "服务器错误！";
     }
 
     public boolean followUser(Integer userId, Integer followId) {
@@ -245,7 +256,7 @@ public class UserService {
 
     public boolean reportUser(Integer userId, Integer reportId, String detail) {
         if (adminMapper.checkSameReport(3, reportId, userId) > 0
-            ||  userMapper.isBlocked(reportId) > 0) {
+            ||  (userMapper.isBlocked(reportId) != null && userMapper.isBlocked(reportId) > 0)) {
             return true;
         }
         return adminMapper.insertReport(userId, 3, reportId, detail, null) > 0;
@@ -291,5 +302,22 @@ public class UserService {
         cookie.setMaxAge(24 * 60 * 60);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    private PostResponse getSinglePostInfo(Integer id) {
+        Post post = postMapper.getPost(id);
+        if (post != null) {
+            return new PostResponse(
+                    post.getPost_id(),
+                    post.getTitle(),
+                    post.getIntro(),
+                    post.getContent(),
+                    userMapper.getUserNameById(post.getAuthor_id()),
+                    post.getAuthor_id(),
+                    sectionMapper.getSectionNameById(post.getSection_id()),
+                    postMapper.getTagNameByPost(post.getPost_id())
+            );
+        }
+        return null;
     }
 }
