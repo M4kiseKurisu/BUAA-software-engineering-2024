@@ -27,7 +27,7 @@ public interface CheckInMapper {
 
     //插入打卡
     //插入打卡图片
-    @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
+    @Options(useGeneratedKeys = true, keyProperty = "check_in_id", keyColumn = "check_in_id")
     @Insert("INSERT INTO check_in (content, author_id, time, like_count)" +
             " VALUES (#{content}, #{author_id}, #{time}, #{like_count})")
     int insertCheckIn(CheckIn checkIn);

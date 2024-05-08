@@ -33,7 +33,7 @@ public class CheckInService {
         List<CheckIn> checkIns = checkInMapper.getCheckInByAuthorId(userId);
         for (CheckIn checkIn : checkIns) {
             CheckInIntroResponse checkInIntroResponse = new CheckInIntroResponse(checkIn);
-            List<String> imageUrls = checkInMapper.getUrlByCheckInId(checkIn.getCheck_in_id());
+            List<String> imageUrls = checkInMapper.getImageByCheckInId(checkIn.getCheck_in_id());
             checkInIntroResponse.setImage_urls(imageUrls);
             
             checkInIntroResponses.add(checkInIntroResponse);
