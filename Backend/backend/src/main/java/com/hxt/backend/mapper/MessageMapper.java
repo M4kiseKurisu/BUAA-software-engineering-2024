@@ -27,6 +27,11 @@ public interface MessageMapper {
             "VALUES (#{title}, #{content}, 0, #{receiver}, NOW(), 0);")
     int sendSystemNoticeToUser(String title, String content, Integer receiver);
 
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO manager_system_notice (title, content, is_public, receiver_id, publish_time, pushed)\n" +
+            "VALUES (#{title}, #{content}, true, 0, NOW(), 0);")
+    int sendSystemNoticeToAll(String title, String content);
+
     // 用户系统通知表
 
     // 插入新的通知
