@@ -3,10 +3,8 @@ package com.hxt.backend.service;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.entity.section.Teacher;
-import com.hxt.backend.mapper.ImageMapper;
-import com.hxt.backend.mapper.PostMapper;
-import com.hxt.backend.mapper.SectionMapper;
-import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.SectionAuthorityResponse;
 import com.hxt.backend.response.sectionResponse.PostElement;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.sectionResponse.SectionInfoResponse;
@@ -36,6 +34,9 @@ public class SectionService {
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private AdminMapper adminMapper;
 
     public ArrayList<SectionElement> getHotSections(Integer userId) {
         ArrayList<Section> sections = sectionMapper.selectAllSection();
@@ -187,5 +188,13 @@ public class SectionService {
         response.setTeachers(t);
         response.setAssistants(sectionMapper.selectAssistantBySectionId(sectionId));
         return response;
+    }
+
+    public SectionAuthorityResponse getSectionAuthority(Integer id) {
+        return new SectionAuthorityResponse(
+                adminMapper.getSectionTeacherAuthority(id),
+                adminMapper.getSectionAssistantAuthority(id),
+                adminMapper.getSectionOthersAuthority(id)
+        );
     }
 }

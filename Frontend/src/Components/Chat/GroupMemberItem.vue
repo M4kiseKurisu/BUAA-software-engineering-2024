@@ -12,7 +12,8 @@
 
 <script>
 import { objectPick } from '@vueuse/shared';
-
+import axios from 'axios';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default{
     props:{
         memberInfo:{

@@ -88,7 +88,7 @@
             <div style="width: 100%; background-color: #efefef; padding-top: 10px; padding-bottom: 10px;">
                 <el-scrollbar v-if="this.chatKindChose == 2" style="height: 95%;">
                     <div style="width: 90%; margin-left: 5%;">
-                        <GroupItem @getGroupId="getGroupId"></GroupItem>
+                        <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem>
                     </div>
                 </el-scrollbar>
                 <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
@@ -148,13 +148,13 @@
             <div style="height: 60%; width: 100%;">
                 <!-- 这里装聊天内容 -->
                 <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length != 0">
-                    <ChatMessage v-for="item in messageList" :messageInfomation="item"></ChatMessage>
+                    <ChatMessage v-for="item in messageList" :messageInfomation="item" :key="item.id"></ChatMessage>
                 </el-scrollbar>
             </div>
             <el-divider />
             <div style="height: 29%; width: 100%;">
                 <textarea v-model="textinput" placeholder="输入聊天内容" style="width: 95%; margin-left: 2%; margin-top: 20px; height: 64%;
-                                                border: none;" @keydown.enter="sendMessage"></textarea>
+                                                        border: none;" @keydown.enter="sendMessage"></textarea>
                 <div style="width: 94%; display: flex; justify-content: flex-end; margin-top: 8px;">
                     <el-button type="success" plain @click="sendMessage">发送信息</el-button>
                 </div>
@@ -214,6 +214,7 @@ export default {
         },
         choseGroupChat() {
             this.chatKindChose = 2;
+            this.getGroupItemList();
         },
         getGroupId(value) {
             this.groupId = value;
@@ -231,6 +232,20 @@ export default {
             console.log(this.personId);
             this.getPersonInfo();
             this.getPersonMessageList();
+        },
+        getGroupMessageList() {
+            axios({
+                method: 'GET',
+                url: 'api/group/message',
+                //url: 'http://127.0.0.1:4523/m2/4272722-0-default/166110437',
+                params: {
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.messageCount = result.data.message_count;
+                this.messageList = result.data.message_list;
+            });
         },
         getPersonMessageList() {
             axios({
@@ -256,7 +271,15 @@ export default {
                 this.personItemList = result.data.chat_list;
             })
         },
-
+        getGroupItemList() {
+            axios({
+                method: "GET",
+                url: 'api/group/joined',
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
+            }).then((result) => {
+                this.groupItemList = result.data.group;
+            })
+        },
         handleWsOpen() {
             console.log("ws 打开了！");
         },
@@ -272,7 +295,7 @@ export default {
             this.messageList.push(message);
         },
         sendMessage() {
-            if(this.textinput == ''){
+            if (this.textinput == '') {
                 return;
             }
             if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -305,6 +328,17 @@ export default {
                 this.personName = result.data.name;
             })
         },
+        getGroupInfo(){
+            axios({
+                method: "GET",
+                url: "api/group/info",
+                data: {
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                this.groupName = result.data.name;
+            })
+        }
     },
     components: {
         ChatMessage,
@@ -329,6 +363,9 @@ export default {
             this.getPersonInfo();
         } else if (this.personId == -1) {
             this.chatKindChose = 2;
+            this.getGroupItemList();
+            this.getGroupMessageList();
+            this.getGroupInfo();
         }
         console.log(this.groupId);
         console.log(this.personId);

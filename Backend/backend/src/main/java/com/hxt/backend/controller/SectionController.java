@@ -1,6 +1,7 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.SectionAuthorityResponse;
 import com.hxt.backend.response.sectionResponse.*;
 import com.hxt.backend.service.ReviewService;
 import com.hxt.backend.service.SectionService;
@@ -117,5 +118,14 @@ public class SectionController {
         }
         return sectionService.getSectionInfo(Integer.parseInt(sectionId));
     }
-    
+
+    @RequestMapping("/section/authority")
+    public SectionAuthorityResponse getSectionAuthority(
+            @RequestParam(name = "id", defaultValue = "") Integer sectionId
+    ) {
+        if (sectionId == null) {
+            return new SectionAuthorityResponse(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        }
+        return sectionService.getSectionAuthority(sectionId);
+    }
 }

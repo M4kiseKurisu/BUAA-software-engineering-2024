@@ -380,12 +380,16 @@ public class UserController {
     @RequestMapping("/user/authority")
     public BasicInfoResponse getSectionAuthority(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", defaultValue = "") Integer id,
             @RequestParam(name = "section", required = false) Integer section
     ) {
         if (user_id.isEmpty()) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
-        return userService.getSectionAuthority(Integer.parseInt(user_id), section);
+        if (id == null) {
+            id = Integer.parseInt(user_id);
+        }
+        return userService.getSectionAuthority(id, section);
     }
 
     @RequestMapping("/user/report")

@@ -59,6 +59,16 @@ public interface AdminMapper {
     @Update("UPDATE user_info SET global_authority = 0 WHERE user_id = #{id}")
     int deleteGlobalAuthority(Integer id);
 
+    @Select("SELECT user_id FROM authority WHERE section_id = #{id} AND category = 'teacher'")
+    List<Integer> getSectionTeacherAuthority(Integer id);
+
+    @Select("SELECT user_id FROM authority WHERE section_id = #{id} AND category = 'assistant'")
+    List<Integer> getSectionAssistantAuthority(Integer id);
+
+    @Select("SELECT user_id FROM authority WHERE section_id = #{id} " +
+            "AND category != 'teacher' AND category != 'assistant'")
+    List<Integer> getSectionOthersAuthority(Integer id);
+
     //  举报管理
     @Insert("INSERT INTO report (user_id, type, target, detail, resource, active) " +
             "VALUES (#{user}, #{type}, #{target}, #{detail}, #{resource}, 1)")
