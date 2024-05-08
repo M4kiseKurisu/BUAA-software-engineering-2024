@@ -98,7 +98,6 @@
                     <div v-if = "this.assitantIdList == ''" style="font-size: larger;">无</div>
                     <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
-                        <ManagerItem></ManagerItem>
                     </div>
                 </div>
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
@@ -190,15 +189,15 @@ export default {
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
-            techerIdList: '',
-            assitantIdList: '',
-            popAuthorIdList: '',
+            techerIdList: [],
+            assitantIdList: [],
+            popAuthorIdList: [],
         }
     },
     watch:{
         sortKindStr(newValue,oldValue){
             console.log(newValue);
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         }
     },
     methods: {
@@ -207,15 +206,15 @@ export default {
         },
         selectOne() {
             this.kindSelect = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         },
         selectTwo() {
             this.kindSelect = 2;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         },
         selectThree() {
             this.kindSelect = 3;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
@@ -233,13 +232,14 @@ export default {
             })
         },
         searchPost(){
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         },
-        getPostList(sort,post_type,tag_name) {
+        getPostList(sort,post_type,tag_name,keyword) {
+            //console.log(keyword);
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name},
+                params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name,keyword:keyword},
             }).then((result) => {
                 //console.log(result);
                 this.postList = result.data.posts;
@@ -258,6 +258,19 @@ export default {
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
+                this.assitantIdList = result.data.assistants;
+            })
+        },
+        getPopAuthor(){
+            axios({
+                method: "GET",
+                url: 'api/progression/discussion',
+                params: {
+                    section_id : this.sectionId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.popAuthorIdList = result.data.author_id;
             })
         },
         followSection() {
@@ -285,15 +298,13 @@ export default {
             })
         },
     },
-    mounted() {
-
-    },
     created() {
         this.sectionId = this.$route.params.sectionId;
         //console.log(this.$route.params.sectionId);
         //console.log(this.sortIndex);
-        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind);
+        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         this.getSectionInfomation();
+        this.getPopAuthor();
     }
 }
 </script>

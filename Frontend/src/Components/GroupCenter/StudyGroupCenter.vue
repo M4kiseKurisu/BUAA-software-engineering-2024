@@ -94,7 +94,6 @@ export default {
             currentPage: 1,
             myGroupList: [],
             selfId: JSON.parse(sessionStorage.getItem("id")),
-            
         }
     },
     computed: {
@@ -122,8 +121,8 @@ export default {
         getGroupList() {
             axios({
                 method: "GET",
-                //url: 'api/group/list',
-                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
+                url: 'api/group/list',
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
                 // data: {
 
                 // }
@@ -136,8 +135,8 @@ export default {
         getMyGroupList(){
             axios({
                 method: "GET",
-                //url: 'api/group/joined',
-                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
+                url: 'api/group/joined',
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/list',
             }).then((result) => {
                 this.myGroupList = result.data.group;
                 this.selfGroupCount = result.data.group_count;

@@ -43,17 +43,20 @@
             <div style="width: 40%; height: 100%;">
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
+                        <!-- <span style="padding-right: 4%;"><el-button  type="primary"
+                                style="font-size: large;" plain @click = "postRecommend">智能推荐</el-button></span> -->
                         <span style="padding-right: 7%;"><el-button text type="primary"
                                 style="font-size: large;">查看院校信息</el-button></span>
                     </div>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                        <span style="padding-right: 3% ;"><el-input v-model="tagKind" style="width: 150px"
+                        <span style="padding-right: 3% ;"><el-input v-model="tagKind" style="width: 120px"
                                 placeholder="输入标签" /></span>
-                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 150px"
+                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain>板块内搜索</el-button></span>
+                        <span style="padding-right: 3%;"><el-button type="primary" plain @click = "this.getSortPostList();">板块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "postRecommend">智能推荐</el-button></span>
                     </div>
                 </div>
             </div>
@@ -69,9 +72,9 @@
                 </div>
             </div>
             <div style="width: 25%; min-width: 360px;">
-                <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
+                <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
-                </div>
+                </div> -->
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
                     <div style="width: 25%;font-size: larger;">
                         热门作者:
@@ -97,6 +100,7 @@ import PostItem from "../../Pages/PostCenter/PostItem.vue";
 import ManagerItem from "../../Pages/PostCenter/ManagerItem.vue";
 import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
 import axios from 'axios';
+import { result } from "lodash";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     components: {
@@ -117,9 +121,9 @@ export default {
         },
         sortIndex() {
             var sort = 0;
-            if (this.sortKindStr == '' || this.sortKind == '最新') {
+            if (this.sortKindStr == '' || this.sortKind == '热度') {
                 sort = 0;
-            } else if (this.sortKindStr == '热度') {
+            } else if (this.sortKindStr == '最新') {
                 sort = 1;
             }
             return sort;
@@ -132,14 +136,14 @@ export default {
             courseName: "软件工程",
             courseId: 1,
             postNum: '',
-            kindSelect: 1,
+            kindSelect: 3,
             kindSelect2: 1,
             searchWord: "",
             total: 20,
             currentPage: 1,
             updateTime: "2077.7.7.77",
             sectionId: 0,
-            postList: "",
+            postList: [],
             sortKind: [{
                 value: '热度',
                 label: '热度',
@@ -151,8 +155,9 @@ export default {
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
-            popAuthorIdList: '',
-
+            popAuthorIdList: [],
+            target: '保研',
+            recommend: false,
         }
     },
     watch: {
@@ -164,32 +169,94 @@ export default {
     methods: {
         selectOne() {
             this.kindSelect = 1;
-            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind);
+            this.getSortPostList();
         },
         selectTwo() {
             this.kindSelect = 2;
-            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind);
+            this.getSortPostList();
         },
         selectThree() {
             this.kindSelect = 3;
-            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind);
+            this.getSortPostList();
         },
         handleCurrentChange(val) {
             this.currentPage = val;
         },
         selectKindOne() {
             this.kindSelect2 = 1;
+            this.target = '保研';
+            this.getSortPostList();
         },
         selectKindTwo() {
             this.kindSelect2 = 2;
+            this.target = '考研';
+            this.getSortPostList();
         },
         selectKindThree() {
             this.kindSelect2 = 3;
+            this.target = '出国';
+            this.getSortPostList();
         },
         selectKindFour() {
             this.kindSelect2 = 4;
+            this.target = '其他';
+            this.getSortPostList();
+        },
+        getPostList() {
+            axios({
+                method: "GET",
+                url: "api/progression/totalPosts",
+                //params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name,keyword:keyword},
+            }).then((result) => {
+                //console.log(result);
+                this.postList = result.data.posts;
+                this.total = result.data.posts.length;
+                this.postNum = this.total;
+                //console.log(this.postList[0].post_id);
+            })
+        },
+        getPopAuthor() {
+            axios({
+                method: "GET",
+                url: 'api/progression/discussion',
+                params: {
+                    section_id: this.sectionId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.popAuthorIdList = result.data.author_id;
+                this.postNum = result.data.totalPosts;
+            })
+        },
+        getSortPostList() {
+            axios({
+                method: "GET",
+                url: 'api/progression/filter',
+                params:{
+                    target: this.target,
+                    type: this.kindSelect,
+                    keyword: this.searchWord,
+                    sort: this.sortIndex,
+                    recommend: this.recommend,
+                },
+            }).then((result) => {
+                this.postList = result.data.posts;
+                this.total = this.postList.length;
+            })
+        },
+        postRecommend(){
+            this.recommend = true;
+            this.getSortPostList();
+            this.recommend = false;
+        },
+        toPost() {
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + 0});
         },
     },
+    created() {
+        this.getPostList();
+        this.getPopAuthor();
+    }
 }
 </script>
 

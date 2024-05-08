@@ -13,8 +13,8 @@
                 <div style="flex-grow: 1;height: 100%;background-color:white;">
                     <div style="width: 100%;height: 25%; display: flex;align-items: center;">
                         <span style="font-size: 2em;font-weight: bold;">{{ userName }}</span>
-                        <span style="margin-left: 20px;font-size: large;color: darkgrey;">入学年份：{{ jieshu }}</span>
-                        <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span>
+                        <!-- <span style="margin-left: 20px;font-size: large;color: darkgrey;">入学年份：{{ jieshu }}</span>
+                        <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span> -->
                         <el-tag  v-if = "isBlock" type="danger" effect="dark" style="margin-left: 20px;" size="large">
                             <span style="font-size: large;font-weight: bold;">账号封禁中</span>
                         </el-tag>
@@ -78,8 +78,8 @@
             <div style="width: 65%;height: 100%;background-color: white;">
                 <div style="width: 100%;height: 100%;">
                     <el-scrollbar style="height: 100%;width: 100%;">
-                        <div style="width: 97.8%;height: 100%;">
-                            <PostItem></PostItem>
+                        <div v-if = "this.postItemList.length != 0" style="width: 97.8%;height: 100%;">
+                            <PostItem v-for = "item in this.postItemList" :getPostId = "item.post_id" :key = "item.post_id"></PostItem>
                         </div>
 
                     </el-scrollbar>
@@ -123,6 +123,8 @@ export default {
             academy: '计算机学院',
             isFollow: true,
             isBlock: true,
+            postItemList: [],
+            showNum: 0,
         }
     },
     methods: {
@@ -182,12 +184,24 @@ export default {
                     type: 'warning',
                 })
             }
+        },
+        getPersonalPostList(){
+            axios({
+                method: "GET",
+                url: "api/user/posts",
+                params:{
+                    id : this.userId,
+                }
+            }).then((result) => {
+                this.showNum = result.data.count;
+                this.postItemList = result.data.posts;
+            })
         }
-
     },
     created() {
         this.userId = this.$route.params.userId;
         this.GetInfomation();
+        this.getPersonalPostList();
     }
 }
 </script>
