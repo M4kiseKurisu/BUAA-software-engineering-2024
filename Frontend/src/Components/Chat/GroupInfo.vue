@@ -11,21 +11,14 @@
                 </div>
                 <div
                     style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
-                    <el-tag type="primary"
-                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                    <el-tag type="primary"
-                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                    <el-tag type="primary"
-                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                    <el-tag type="primary"
-                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
-                    <el-tag type="primary"
-                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">tag2</el-tag>
+                    <el-tag v-for="item in tags" type="primary"
+                        style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">{{ item
+                        }}</el-tag>
                 </div>
             </div>
         </div>
         <div style="margin-top: 10px;">
-            <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupLeaderName }}</span>
+            <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupCreaterName }}</span>
         </div>
         <div style="margin-top: 10px;">
             <span v-if="isExamine" style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
@@ -45,24 +38,20 @@
                 <span style="font-size: 1.3em;font-weight: bold;">团体成员 {{ groupMemberNum }}/{{ groupCapacity
                 }}</span>
             </div>
-            <div style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
-                <GroupMemberItem></GroupMemberItem>
+            <div v-if="this.groupMemberList.length != 0"
+                style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
+                <GroupMemberItem v-for="item in groupMemberList" :memberInfo="item"></GroupMemberItem>
+                <!-- <img src="../../Images/testAvatar.jpg" alt=""
+                                style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;margin-right: 5px;margin-bottom: 5px;">-->
             </div>
         </div>
         <div style="width: 100%;height: 20px;display: flex;margin-top: 40px;">
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
-                <el-button @click = "this.showQuit = true" type = "primary" plain>退出团体</el-button>
+                <el-button @click="this.showQuit = true" type="primary" plain>退出团体</el-button>
             </div>
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
-                <el-button type="warning" plain v-if = "this.selfId != this.groupCreaterId">举报团体</el-button>
-                <el-button type="warning" plain v-else @click = "showDelect = true">解散团体</el-button>
+                <el-button type="warning" plain v-if="this.selfId != this.groupCreaterId">举报团体</el-button>
+                <el-button type="warning" plain v-else @click="showDelect = true">解散团体</el-button>
             </div>
         </div>
     </div>
@@ -88,7 +77,7 @@
                 <el-button type="primary" @click="showDelect = flase">返回</el-button>
             </div>
             <div style="width: 50%;align-items: center;justify-content: center;display: flex;">
-                <el-button type="primary" @click = "delectGroup">确定</el-button>
+                <el-button type="primary" @click="delectGroup">确定</el-button>
             </div>
         </div>
     </el-dialog>
@@ -97,19 +86,27 @@
 <script>
 import axios from 'axios';
 import GroupMemberItem from './GroupMemberItem.vue';
+import { result } from 'lodash';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
+    props: {
+        groupId: {
+            type: Number,
+            default: 1,
+        }
+    },
     data() {
         return {
-            groupId: 1,
             groupAvatar: '',
             groupName: '元神讨论中心',
-            groupLeaderName: '博酱',
+            groupCreaterName: '博酱',
             groupBriefIntor: "O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！O神60级以上的进！",
             groupCapacity: 100,
             groupMemberNum: 50,
-            groupMemberAvatar: [],
+            groupMemberList: [],
             groupCreaterId: 1,
-            selfId : 1,
+            tags: [],
+            selfId: 1,
             isExamine: false,
             showQuit: false,
             showDelect: false,
@@ -118,21 +115,67 @@ export default {
     components: {
         GroupMemberItem,
     },
-    methods:{
-        delectGroup(){
+    methods: {
+        delectGroup() {
             axios({
                 method: "POST",
                 url: "api/group/delete",
-                data:{
+                data: {
                     group_id: this.groupId,
                 }
-            }).then((result)=>{
-                if(result.data.success){
+            }).then((result) => {
+                if (result.data.success) {
 
                 }
                 console.log(result);
             })
-        }
+        },
+        getGroupInfo() {
+            axios({
+                method: "GET",
+                url: "api/group/info",
+                data: {
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                this.groupName = result.data.name;
+                this.groupCreaterId = result.data.creater_id;
+                this.groupMemberNum = result.data.member_count;
+                this.groupBriefIntor = result.data.content;
+                this.groupCapacity = result.data.permitted_num
+                this.isExamine = result.data.is_examine;
+                this.tags = result.data.tags;
+                this.groupAvatar = result.data.img;
+            })
+        },
+        getCreaterInfo() {
+            axios({
+                method: "GET",
+                url: 'api/user/social/simple',
+                params: {
+                    id: this.groupCreaterId,
+                }
+            }).then((result) => {
+                this.groupCreaterName = result.data.name;
+            })
+        },
+        getGroupMemberItem() {
+            axios({
+                method: "GET",
+                //url: 'api/group/memberList',
+                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
+                params: {
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                this.groupMemberList = result.data.member;
+            })
+        },
+    },
+    created(){
+        this.getGroupInfo();
+        this.getCreaterInfo();
+        this.getGroupMemberItem();
     }
 }
 </script>
