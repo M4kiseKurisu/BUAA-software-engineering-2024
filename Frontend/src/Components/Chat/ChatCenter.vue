@@ -24,7 +24,8 @@
                     <GroupItem @getGroupId="getGroupId"></GroupItem>
                 </el-scrollbar>
                 <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
-                    <PersonItem @getPersonId="getPersonId" v-for = "item in personItemList" :chatItemInfo = "item"></PersonItem>
+                    <!-- <没加key> -->
+                    <PersonItem @getPersonId="getPersonId" v-for="item in personItemList" :chatItemInfo="item" ></PersonItem>
                 </el-scrollbar>
             </div>
         </div>
@@ -42,13 +43,14 @@
             </el-dialog>
             <div style="height: 88%;width: 100%;">
                 <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length != 0">
-                    <ChatMessage v-for = "item in messageList" :messageInfomation = "item"></ChatMessage>
+                    <ChatMessage v-for="item in messageList" :messageInfomation="item"></ChatMessage>
                 </el-scrollbar>
             </div>
             <div class="footer">
                 <el-input v-model="textinput" style="width: 100%;margin-left: 5px;" :autosize="{ minRows: 1, maxRows: 10 }"
                     size="large" placeholder="Please input" @keyup.enter.native="sendMessage" />
-                <el-button type="primary" style="margin-left: 5px;margin-right: 5px;" @click = "sendMessage">发送 &#x2708;</el-button>
+                <el-button type="primary" style="margin-left: 5px;margin-right: 5px;" @click="sendMessage">发送
+                    &#x2708;</el-button>
             </div>
         </div>
     </div>
@@ -77,8 +79,8 @@ export default {
             personName: 'huazhi',
             groupName: '元神讨论组',
             showGroupInfo: false,
-            personItemList:[],
-            groupItemList:[],
+            personItemList: [],
+            groupItemList: [],
             ws: null,
         }
     },
@@ -101,7 +103,7 @@ export default {
         // },
         chosePersonChat() {
             this.chatKindChose = 1;
-
+            this.getPersonItemList();
         },
         choseGroupChat() {
             this.chatKindChose = 2;
@@ -109,17 +111,21 @@ export default {
         getGroupId(value) {
             this.groupId = value;
             //console.log("diaoshangl")
+            this.personId = -1;
             this.chatKindChose = 2;
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }});
             console.log(this.getGroupId);
         },
         getPersonId(value) {
             this.personId = value;
             this.groupId = -1;
             this.chatKindChose = 1;
+            this.$router.push({ name: 'ChatCenter', params: { personId: this.personId, groupId: -1 }});
             console.log(this.personId);
-            this.getMessageList();
+            this.getPersonInfo();
+            this.getPersonMessageList();
         },
-        getMessageList() {
+        getPersonMessageList() {
             axios({
                 method: 'GET',
                 url: 'api/message/private',
@@ -134,7 +140,7 @@ export default {
             });
 
         },
-        getPersonItemList(){
+        getPersonItemList() {
             axios({
                 method: 'GET',
                 url: 'api/message/chats',
@@ -153,8 +159,10 @@ export default {
         handleWsError() {
             console.log("ws 爆炸了！");
         },
-        handleWsMessage(data) {
-            console.log(data);
+        handleWsMessage(rawData) {
+            //console.log(rawData.data);
+            var message = JSON.parse(rawData.data);
+            this.messageList.push(message);
         },
         sendMessage() {
             if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -164,16 +172,28 @@ export default {
                     sender_id: this.selfId,
                     content: this.textinput,
                     receiver_id: this.personId,
-                    group_id:this.groupId,
+                    group_id: this.groupId,
                 };
                 let jsonData = JSON.stringify(messageToSend);
                 this.ws.send(jsonData);
-                console.log(jsonData);
+                this.messageList.push(messageToSend);
+                //console.log(jsonData);
                 // 清空消息输入框
                 this.textinput = '';
             } else {
                 console.error('WebSocket连接未打开或已关闭');
             }
+        },
+        getPersonInfo() {
+            axios({
+                method: "GET",
+                url: "api/user/social/simple",
+                params: {
+                    id: this.personId,
+                }
+            }).then((result) => {
+                this.personName = result.data.name;
+            })
         },
     },
     components: {
@@ -195,7 +215,8 @@ export default {
         if (this.groupId == -1) {
             this.chatKindChose = 1;
             this.getPersonItemList();
-            this.getMessageList();
+            this.getPersonMessageList();
+            this.getPersonInfo();
         } else if (this.personId == -1) {
             this.chatKindChose = 2;
         }

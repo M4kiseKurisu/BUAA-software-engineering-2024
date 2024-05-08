@@ -330,6 +330,13 @@ public interface PostMapper {
     @Select("SELECT resource_id from comment_resource where comment_id = #{id} ORDER BY cr_id ASC")
     List<Integer> getResourceIdByComment(Integer id);
     
+    //获取某评论的所有资源的url
+    @Select("SELECT r.url from resource r " +
+            "join comment_resource cr on cr.resource_id = r.resource_id " +
+            "where cr.comment_id = #{id} " +
+            "ORDER BY cr.cr_id ASC")
+    List<String> getResourceUrlByComment(Integer id);
+    
     //评论-点赞
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO comment_like (comment_id, user_id, status, time) " +

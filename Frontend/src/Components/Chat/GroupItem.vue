@@ -1,5 +1,5 @@
 <template>
-    <div class="groupItemContainer">
+    <div class="groupItemContainer" @click = "giveGroupId">
         <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;">
             <el-avatar :size="70" :src="groupHead" shape="square" />
         </div>

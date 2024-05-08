@@ -4,7 +4,7 @@
             <el-avatar :size="55" :src="headImg" />
         </div>
         <div style="width: 100%;">
-            <div style="font-size: medium;font-weight: bold;color:darkgray;">{{ senderName }}</div>
+            <div style="font-size: medium;font-weight: bold;color:dimgray;">{{ senderName }}</div>
             <div class="message-bubble-o">
                 <div class="message-content-o">
                     {{ content }}
@@ -14,10 +14,10 @@
     </div>
     <div v-if="senderId == meId" class="container-m">
         <div class="" style="padding-left: 5px;padding-top: 5px;">
-            <el-avatar :size="55" src="./src/Images/私信.png" />
+            <el-avatar :size="55" :src="headImg" />
         </div>
         <div style="width: 100%;display: flex;flex-direction: column;align-items: end;">
-            <div style="font-size: medium;font-weight: bold;color:darkgray;">{{ meName }}</div>
+            <div style="font-size: medium;font-weight: bold;color:dimgray;">{{ meName }}</div>
             <div class="message-bubble-m">
                 <div class="message-content-m">{{ content }}</div>
             </div>
@@ -50,9 +50,9 @@ export default {
     },
     methods: {
         getMessageInfomation() {
-            this.senderId = this.messageInfomation.message_sender_id;
-            this.content = this.messageInfomation.message_content;
-            this.time = this.messageInfomation.message_time;
+            this.senderId = this.messageInfomation.sender_id;
+            this.content = this.messageInfomation.content;
+            //this.time = this.messageInfomation.time;
             this.meId = JSON.parse(sessionStorage.getItem("id"));
             if (this.meId == this.senderId) {
                 axios({

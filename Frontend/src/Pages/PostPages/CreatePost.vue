@@ -176,8 +176,10 @@ export default {
 
             //注册账号信息打包
 
-            this.dynamicTags.push(this.school_choice);
-            this.dynamicTags.push(this.graduate_choice);
+            if (this.sectionId === 0) {
+                this.dynamicTags.push(this.school_choice);
+                this.dynamicTags.push(this.graduate_choice);
+            }
             let content = {
                 section_id: this.sectionId,
                 author_id: JSON.parse(sessionStorage.getItem("id")),

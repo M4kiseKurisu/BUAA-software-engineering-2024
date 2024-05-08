@@ -48,18 +48,16 @@ public class RecommendService {
     //更新用户偏好
     public void updateUserPreference(Integer userId, Map<String, Double> keywordTfIdf) {
         
-        //总浏览数
-        Integer totalView = recommendMapper.getViewedPostIdByUserId(userId).size();
+        List<String> existKeywords = recommendMapper.getUserPreferenceBYUserId(userId);
         
         // 添加或更新关键词
         for (String keyword : keywordTfIdf.keySet()) {
             Double tfIdf = keywordTfIdf.get(keyword);
-            UserPreference userPreference = recommendMapper.getUserPreferenceBYUserIdKeyword(userId, keyword);
-            if (userPreference == null) {
+            if (!existKeywords.contains(keyword)) {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                recommendMapper.insertUserPreference(userId, keyword, tfIdf / (totalView + 1), timestamp);
+                recommendMapper.insertUserPreference(userId, keyword, tfIdf, timestamp);
             } else {
-                recommendMapper.updateUserPreference(userPreference.getUser_preference_id(), tfIdf, totalView);
+                recommendMapper.updateUserPreference(userId, keyword, tfIdf);
             }
         }
     
@@ -186,9 +184,17 @@ public class RecommendService {
         
         // 提取关键词并合并
         Set<String> keywords = new HashSet<>();
-        keywords.addAll(extractKeywords(title));
-        keywords.addAll(extractKeywords(intro));
-        keywords.addAll(extractKeywords(content));
+        
+        List<String> titleKeywords = extractKeywords(title);
+        List<String> introKeywords = extractKeywords(intro);
+        List<String> contentKeywords = extractKeywords(content);
+        
+        
+        keywords.addAll(titleKeywords);
+        if (introKeywords != null) {
+            keywords.addAll(introKeywords);
+        }
+        keywords.addAll(contentKeywords);
         
         /*
         for (String tag : tags) {
@@ -199,9 +205,9 @@ public class RecommendService {
         
         // 计算每个关键词的 TF-IDF
         for (String keyword : keywords) {
-            double tf = calculateTF(title, keyword) * TITLE_WEIGHT +
-                    calculateTF(intro, keyword) * INTRO_WEIGHT +
-                    calculateTF(content, keyword) * CONTENT_WEIGHT;
+            double tf = calculateTF(titleKeywords, keyword) * TITLE_WEIGHT +
+                    calculateTF(introKeywords, keyword) * INTRO_WEIGHT +
+                    calculateTF(contentKeywords, keyword) * CONTENT_WEIGHT;
             
             /*
             for (String tag : tags) {
@@ -261,15 +267,16 @@ public class RecommendService {
         }
         
         List<Term> terms = HanLP.segment(content);
-    
         // 定义需要保留的词性
         List<String> importantPosTags = Arrays.asList("n", "v"); // 名词和动词
         int minWordLength = 2; // 最小词语长度阈值
-    
+        
         // 过滤结果
         List<String> importantWords = new ArrayList<>();
         for (Term term : terms) {
-            if (importantPosTags.contains(term.nature.firstChar()) && term.word.length() >= minWordLength) {
+            
+            if (importantPosTags.contains(String.valueOf(term.nature.firstChar()))
+                    && term.word.length() >= minWordLength) {
                 importantWords.add(term.word.toLowerCase());
             }
         }
@@ -278,11 +285,10 @@ public class RecommendService {
     }
     
     // 计算 TF（词频）
-    private double calculateTF(String text, String keyword) {
-        if (text.isEmpty()) {
+    private double calculateTF(List<String> words, String keyword) {
+        if (words.isEmpty()) {
             return 0;
         }
-        List<String> words = new ArrayList<>(extractKeywords(text));
         int keywordFrequency = Collections.frequency(words, keyword);
        
         return (double) keywordFrequency / words.size();
@@ -307,7 +313,7 @@ public class RecommendService {
             }
              */
             
-            if (extractKeywords(allText).contains(keyword)) {
+            if (allText.contains(keyword)) {
                 count++;
             }
         }
