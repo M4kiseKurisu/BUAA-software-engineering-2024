@@ -125,7 +125,7 @@ public class ProgressionService {
             
             String imageUrl = null;
             List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if ((imageIds != null) && !imageIds.isEmpty()) {
+            if (!imageIds.isEmpty()) {
                 imageUrl = imageMapper.getImage(imageIds.get(0));
             }
             
