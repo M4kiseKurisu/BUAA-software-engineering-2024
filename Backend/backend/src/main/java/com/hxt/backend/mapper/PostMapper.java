@@ -71,12 +71,12 @@ public interface PostMapper {
     int getPostNumRange(Timestamp start, Timestamp end);
     
     //更新帖子浏览数
-    @Update("UPDATE post SET view_count = #{viewCount} WHERE post_id = #{id}")
-    int updateViewCount(Integer id, Integer viewCount);
+    @Update("UPDATE post SET view_count = view_count + #{op} WHERE post_id = #{id}")
+    int updateViewCount(Integer id, Integer op);
     
     //更新帖子评论数（含回复）
-    @Update("UPDATE post SET comment_count = #{commentCount} WHERE post_id = #{id}")
-    int updateCommentCount(Integer id, Integer commentCount);
+    @Update("UPDATE post SET comment_count = comment_count + #{op} WHERE post_id = #{id}")
+    int updateCommentCount(Integer id, Integer op);
     
     //更新帖子点赞数
     @Update("UPDATE post SET like_count = like_count + #{op} WHERE post_id = #{id}")
@@ -352,8 +352,8 @@ public interface PostMapper {
     int updateCommentLikeStatus(Integer id, Integer status);
     
     //更新评论回复数
-    @Update("UPDATE comment SET reply_count = #{replyCount} WHERE comment_id = #{id}")
-    int updateReplyCount(Integer id, Integer replyCount);
+    @Update("UPDATE comment SET reply_count = reply_count + #{op} WHERE comment_id = #{id}")
+    int updateReplyCount(Integer id, Integer op);
     
     //更新评论点赞数
     @Update("UPDATE comment SET like_count = like_count + #{op} WHERE comment_id = #{id}")

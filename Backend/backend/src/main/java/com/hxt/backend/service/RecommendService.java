@@ -133,8 +133,8 @@ public class RecommendService {
             }
     
             postIntroResponse.setAuthor_name(authorName);
-            postIntroResponse.setTags(tags);
-            postIntroResponse.setPost_image(imageUrl);
+            postIntroResponse.setTag_list(tags);
+            postIntroResponse.setPost_photo(imageUrl);
             
         
             postIntroResponses.add(postIntroResponse);
@@ -191,7 +191,7 @@ public class RecommendService {
         
         
         keywords.addAll(titleKeywords);
-        if (introKeywords != null) {
+        if (!introKeywords.isEmpty()) {
             keywords.addAll(introKeywords);
         }
         keywords.addAll(contentKeywords);
@@ -263,7 +263,7 @@ public class RecommendService {
     //从文本中提取关键词
     private List<String> extractKeywords(String content) {
         if (content == null) {
-            return null;
+            return new ArrayList<>();
         }
         
         List<Term> terms = HanLP.segment(content);
@@ -286,7 +286,7 @@ public class RecommendService {
     
     // 计算 TF（词频）
     private double calculateTF(List<String> words, String keyword) {
-        if (words.isEmpty()) {
+        if (words == null || words.isEmpty()) {
             return 0;
         }
         int keywordFrequency = Collections.frequency(words, keyword);

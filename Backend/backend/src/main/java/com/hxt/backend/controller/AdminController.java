@@ -43,7 +43,7 @@ public class AdminController {
         }
         int id = adminService.checkPassword(name, password);
         if (id > 0) {
-            adminService.setUserCookie("user_id", String.valueOf(id), response);
+            adminService.setUserCookie("admin_id", String.valueOf(id), response);
             adminService.setUserCookie("type", "admin", response);
             return new LoginResponse(true, id, "", "");
         } else if (id >= -3) {
@@ -58,7 +58,7 @@ public class AdminController {
 
     @RequestMapping("/admin/password/update")
     public BasicInfoResponse setPassword(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @CookieValue(name = "admin_id", defaultValue = "") String user_id,
             @RequestParam(name = "old_password", required = false) String op,
             @RequestParam(name = "new_password", required = false) String np
     ) {

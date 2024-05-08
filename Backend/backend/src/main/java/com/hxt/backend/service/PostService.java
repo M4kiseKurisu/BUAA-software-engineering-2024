@@ -186,8 +186,9 @@ public class PostService {
         List<Integer> tagIds = postMapper.getTagIdByPost(postId);
         List<String> tagNames = new ArrayList<>();
         for (Integer tagId : tagIds) {
-            if (tagMapper.getTag(tagId) != null) {
-                tagNames.add(tagMapper.getTag(tagId).getName());
+            Tag tag = tagMapper.getTag(tagId);
+            if (tag != null) {
+                tagNames.add(tag.getName());
             }
         }
         return tagNames;
@@ -215,8 +216,9 @@ public class PostService {
             
             //获取评论者的名称和头像
             Integer authorId = comment.getAuthor_id();
-            String authorName = userMapper.selectUserById(authorId).getName();
-            String authorHead = imageMapper.getImage(userMapper.selectUserById(authorId).getHeadId());
+            User author = userMapper.selectUserById(authorId);
+            String authorName = author.getName();
+            String authorHead = imageMapper.getImage(author.getHeadId());
             commentResponse.setComment_author_name(authorName);
             commentResponse.setComment_author_head(authorHead);
             
@@ -344,15 +346,12 @@ public class PostService {
     
     //更新帖子收藏数
     public Integer updatePostFavoriteCount(Integer postId, Integer op) {
-        postMapper.updatePostFavoriteCount(postId, op);
-        Post post = postMapper.getPost(postId);
-        return post.getCollect_count();
+        return postMapper.updatePostFavoriteCount(postId, op);
     }
     
     //搜索帖子
     public List<PostIntroResponse> searchPost(Integer section_id, String keyword, Integer sort, String tag, Integer type) {
         List<Post> posts;
-        List<PostIntroResponse> postIntroResponses = new ArrayList<>();
         
         /*
         if (section_id == 0) {
@@ -427,18 +426,15 @@ public class PostService {
     }
     
     public void updateViewCount(Integer post_id) {
-        Integer newViewCount = postMapper.getPost(post_id).getView_count() + 1;
-        postMapper.updateViewCount(post_id, newViewCount);
+        postMapper.updateViewCount(post_id, 1);
     }
     
     public void updatePostCommentCount(Integer post_id, Integer op) {
-        Integer newCommentCount = postMapper.getPost(post_id).getComment_count() + op;
-        postMapper.updateCommentCount(post_id, newCommentCount);
+        postMapper.updateCommentCount(post_id, op);
     }
     
     public void updateCommentReplyCount(Integer comment_id, Integer op) {
-        Integer newCommentCount = postMapper.getCommentById(comment_id).getReply_count() + op;
-        postMapper.updateViewCount(comment_id, newCommentCount);
+        postMapper.updateReplyCount(comment_id, op);
     }
     
     public Integer getCommentIdByReplyId(Integer replyId) {
@@ -471,9 +467,8 @@ public class PostService {
     
     //更新评论点赞数
     public Integer updateCommentLikeCount(Integer commentId, Integer op) {
-        postMapper.updateCommentLikeCount(commentId, op);
-        Comment comment = postMapper.getCommentById(commentId);
-        return comment.getLike_count();
+        return postMapper.updateCommentLikeCount(commentId, op);
+        
     }
     
     // 创建回复
@@ -526,18 +521,28 @@ public class PostService {
     
     //更新回复点赞数
     public Integer updateReplyLikeCount(Integer replyId, Integer op) {
-        postMapper.updateReplyLikeCount(replyId, op);
-        Reply reply = postMapper.getReplyById(replyId);
-        return reply.getLike_count();
+        return postMapper.updateReplyLikeCount(replyId, op);
+        
     }
     
-    
-    
+    public PostIntroResponse getPostIntroByPostId(Integer postId) {
+        Post post = postMapper.getPost(postId);
+        List<Post> posts = new ArrayList<>();
+        
+        if (post != null) {
+            posts.add(post);
+            List<PostIntroResponse> postIntroResponses = getPostIntroResponseByPost(posts);
+            return postIntroResponses.get(0);
+        }
+        return new PostIntroResponse(null);
+    }
     
     //根据post获得postIntroResponse
     public List<PostIntroResponse> getPostIntroResponseByPost(List<Post> posts) {
         List<PostIntroResponse> postIntroResponses = new ArrayList<>();
-        
+        if (posts.isEmpty()) {
+            return postIntroResponses;
+        }
         for (Post post : posts) {
             PostIntroResponse postIntroResponse = new PostIntroResponse(post);
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
@@ -550,8 +555,8 @@ public class PostService {
             }
             
             postIntroResponse.setAuthor_name(authorName);
-            postIntroResponse.setTags(tags);
-            postIntroResponse.setPost_image(imageUrl);
+            postIntroResponse.setTag_list(tags);
+            postIntroResponse.setPost_photo(imageUrl);
             
             
             postIntroResponses.add(postIntroResponse);
