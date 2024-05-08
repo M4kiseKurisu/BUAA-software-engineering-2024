@@ -79,7 +79,7 @@ export default {
                 this.title = result.data.title;
                 this.authorId = result.data.author_id;
                 this.authorName = result.data.author_name;
-                this.introduction = result.data.content;
+                this.introduction = result.data.intro;
                 this.time = result.data.create_time;
                 this.tags = result.data.tags;
                 this.likeNum = result.data.likeCount;

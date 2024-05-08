@@ -57,17 +57,14 @@
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 2">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total2"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange2" />
-            <span>{{ currentPage2 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 3">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total3"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange3" />
-            <span>{{ currentPage3 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 4">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total4"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange4" />
-            <span>{{ currentPage4 }}</span>
         </div>
     </el-dialog>
 </template>
