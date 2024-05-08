@@ -102,7 +102,7 @@
             </div>
 
             <div class="post-main-end-line" style="margin-top: 6px">
-                <button class="post-grey-button-below" @click="openComments">展开共{{ this.comments.length }}条评论</button>
+                <button class="post-grey-button-below" @click="openComments">展开共{{ this.all_comment_num }}条评论</button>
                 <button class="post-grey-button-below" @click="openCommentEditor">去评论</button>
                 <div class="post-time-show-font">发帖时间：{{ this.create_time }}</div>
             </div>
@@ -142,7 +142,7 @@
 
                 <!-- 回复栏位开头左侧 -->
                 <div class="post-reply-content-first-line-left">
-                    <div class="reply-title-font">{{ this.comments.length }}条评论</div>
+                    <div class="reply-title-font">{{ this.all_comment_num }}条评论</div>
 
                     <div class="right-selector">
                         <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
@@ -278,8 +278,8 @@
 
                             <div class="replyer-username">{{ item2.replied_author_name }}</div>
                             <div class="replys-reply-delete-button" v-if="item2.reply_author_id === this.userId">
-                                <button class="post-main-delete-button">
-                                    <el-icon :size="16" color="#86909C"><Delete /></el-icon>
+                                <button class="post-main-delete-button" >
+                                    <el-icon :size="16" color="#86909C" @click="deleteReply(item2.reply_id)"><Delete /></el-icon>
                                 </button>
                             </div>
 
@@ -426,6 +426,8 @@ export default {
             author_a: 3,
             comment_a: [3, 3, 3],
             reply_a: [[3, 3, 3], [3, 3, 3]],
+
+            all_comment_num: 0,
         }
     },
     computed: {
@@ -519,9 +521,11 @@ export default {
             this.comments = result.data.comments;
             this.like_count = result.data.likeCount;
             this.collect_count = result.data.collectCount;
-            this.comment_count = result.data.comment_count;
+            this.comment_count = result.data.commentCount;
             this.view_count = result.data.view_count;
             this.section_id = result.data.section_id;
+            this.all_comment_num = result.data.commentCount;
+            console.log(result.data.comment_count);
 
             const count = (result.data.comments.length % 3 === 0) ? 
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
@@ -809,6 +813,7 @@ export default {
             let content = {
                 comment_id: comment_id,
             }
+            console.log(content);
             axios({
                 method: "POST",
                 url: "/api/posts/comment/delete",
@@ -821,7 +826,31 @@ export default {
                         message: '评论删除成功！',
                         type: 'success',
                     });
-                    changesort();
+                    // changesort();
+                    location.reload();
+                }
+            })
+        },
+        deleteReply(reply_id) {
+            // 作者删除评论
+            let content = {
+                reply_id: reply_id,
+            }
+            console.log(content);
+            axios({
+                method: "POST",
+                url: "/api/posts/reply/delete",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '回复删除成功！',
+                        type: 'success',
+                    });
+                    // changesort();
+                    location.reload();
                 }
             })
         },
