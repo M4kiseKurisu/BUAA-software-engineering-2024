@@ -64,7 +64,7 @@ public interface AdminMapper {
             "VALUES (#{user}, #{type}, #{target}, #{detail}, #{resource}, 1)")
     int insertReport(Integer user, Integer type, Integer target, String detail, String resource);
 
-    @Select("SELECT report_id, user_id, target, detail, resource FROM report WHERE type = #{type} and active = 1")
+    @Select("SELECT report_id, user_id, type, target, detail, resource FROM report WHERE type = #{type} and active = 1")
     @Results({
             @Result(column = "report_id", property = "reportId"),
             @Result(column = "user_id", property = "userId")
