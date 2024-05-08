@@ -1,16 +1,37 @@
 <template>
   <div class="img-container">
     <div class="img-container-it">
-      <img class="img-of-creator" src="../../Images/testAvatar.jpg" alt="name">
+      <img class="img-of-creator" :src="user_avatar" alt="name">
     </div>
     <div class="name-container">
-      <span>姓名</span>
+      <span><a :href="user_http" class="link">{{name}}</a></span>
     </div>
   </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
-  //props: ["img","name"],
+  props: ["id"],
+  data(){
+    return{
+      name:"",
+      user_avatar:"",
+      user_http:""
+    }
+  },
+  mounted() {
+    axios({
+      method: "GET",
+      url: "api/user/social/simple",
+      params: { id: this.id },
+    }).then((result) => {
+      console.log(result);
+      this.name=result.data.name;
+      this.user_avatar=result.data.user_avatar
+      this.user_http="http://122.9.45.57/#/MainPage/Course_Center/ShowPersonalInformation/"+this.id
+    })
+  }
 }
 </script>
 <style>
@@ -37,4 +58,13 @@ export default {
   display: flex;
   justify-content: center;
   font-size: 16px;
-}</style>
+}
+.link {
+  text-decoration: none; /* 移除下划线 */
+  color: blue; /* 设置链接颜色 */
+}
+
+.link:hover {
+  text-decoration: underline; /* 鼠标悬停时显示下划线 */
+}
+</style>

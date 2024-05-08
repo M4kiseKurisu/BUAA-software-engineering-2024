@@ -5,32 +5,37 @@
         <span style="font-size: 20px">暂未完成</span>
       </div>
     </el-dialog>
-    <div class="creator-container">
+    <!--<div class="creator-container">
       <div style="width: 15%;font-size: larger;">
         创建者:
       </div>
       <div style="width: 85%; display: grid; grid-template-columns: repeat(5, 1fr);">
         <ManagerPage></ManagerPage>
       </div>
-    </div>
+    </div>-->
     <div style="display: flex;margin-left: 2%;margin-top: 20px;">
     <div style="width: 15%;font-size: larger;">
       相关教师:
     </div>
-    <div style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
-      <ManagerPage></ManagerPage>
+      <div v-if="teachers.length === 0">
+        <span  style="font-size: 16px;">暂无教师信息</span>
+      </div>
+    <div v-else style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
+      <ManagerPage v-for="(teacher, index) in teachers" :key="index" :teacher="teacher" />
     </div>
   </div>
     <div style="display: flex;margin-left: 2%;margin-top: 20px;">
       <div style="width: 15%;font-size: larger;">
         相关助教:
       </div>
-      <div style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
-        <ManagerPage></ManagerPage>
-        <ManagerPage></ManagerPage>
+      <div v-if="teachers.length === 0">
+        <span  style="font-size: 16px;">暂无助教信息</span>
+      </div>
+      <div v-else style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
+        <ManagerPage v-for="(teacher, index) in assistants" :key="index" :teacher="teacher" />
       </div>
     </div>
-    <div style="display: flex;margin-left: 2%;margin-top: 20px;">
+    <!---<div style="display: flex;margin-left: 2%;margin-top: 20px;">
       <div style="width: 15%;font-size: larger;">
         热门作者:
       </div>
@@ -42,9 +47,13 @@
         <ManagerPage></ManagerPage>
         <ManagerPage></ManagerPage>
       </div>
-    </div>
+    </div>-->
+
     <div class="button-of-it-container">
-      <button class="apply-for-assistant" @click="show_dialog=true">申请成为助教</button>
+      <div class="apply-for-assistant">
+        <apply-button></apply-button>
+      </div>
+
     </div>
   </div>
 
@@ -55,15 +64,43 @@
 import ManagerItem from "@/Pages/PostCenter/ManagerItem.vue";
 import MainPostPage from "@/Pages/PostPages/MainPostPage.vue";
 import ManagerPage from "@/Pages/PostCenter/ManagerPage.vue";
+import axios from "axios";
+import applyButton from "@/Components/Tool/ApplyButton.vue";
 export default {
-  components:{ManagerPage, MainPostPage, ManagerItem},
+  props:['section_id'],
+  components:{ManagerPage, MainPostPage, ManagerItem,applyButton},
   data(){
     return{
-      show_dialog:false
+      show_dialog:false,
+      section_data:{},
+      teachers:[],
+      assistants:[]
     }
   },
   methods:{
-
+    do_it(){
+      axios({
+        method: "GET",
+        url: "api/section/info",
+        params: { section_id: this.section_id },
+      }).then((result) => {
+        console.log(result);
+        console.log(this.section_id)
+      })
+    }
+  },
+  mounted() {
+    axios({
+      method: "GET",
+      url: "api/section/authority",
+      params: {id: this.section_id },
+    }).then((result) => {
+      this.section_data=result.data;
+      this.teachers=result.data.teacher;
+      this.assistants=result.data.assistant;
+      console.log(this.section_id)
+      console.log(result);
+    })
   }
 }
 </script>
@@ -80,18 +117,8 @@ export default {
   justify-content: center;
 }
 .apply-for-assistant {
-  background-color: #007bff; /* 蓝色背景 */
-  color: #ffffff; /* 白色文字 */
-  border: none; /* 移除边框 */
-  border-radius: 5px; /* 圆角 */
-  padding: 8px 16px; /* 添加内边距 */
-  font-size: 16px; /* 字体大小 */
-  cursor: pointer; /* 光标样式为指针 */
-  height: 60%;
-  margin-top: 7.5%;
+
+  margin-top: 4.5%;
 }
 
-.apply-for-assistant:hover {
-  background-color: #0056b3; /* 鼠标悬停时变暗一点 */
-}
 </style>
