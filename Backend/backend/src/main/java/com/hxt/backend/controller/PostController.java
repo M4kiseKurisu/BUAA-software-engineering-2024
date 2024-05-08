@@ -580,7 +580,7 @@ public class PostController {
         return new IsLikeResponse(false);
     }
 
-    @RequestMapping("/post/report")
+    @RequestMapping("/posts/report")
     public BasicInfoResponse reportPost(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "id", required = false) Integer id,

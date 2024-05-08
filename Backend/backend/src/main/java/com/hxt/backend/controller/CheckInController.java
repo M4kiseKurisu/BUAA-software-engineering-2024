@@ -3,15 +3,18 @@ package com.hxt.backend.controller;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.checkInResponse.*;
 import com.hxt.backend.service.CheckInService;
+import com.hxt.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class CheckInController {
     private final CheckInService checkInService;
+    private final ReviewService reviewService;
     
     //获取用户所有打卡简略信息
     @GetMapping (value = "/pyq/userInfo")
@@ -109,6 +112,67 @@ public class CheckInController {
             return new IsSuccessResponse(false);
         }
         
+        return new IsSuccessResponse(true);
+    }
+    
+    
+    //用户评论打卡
+    @PostMapping (value = "/pyq/comment")
+    public IsSuccessResponse checkInComment(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id,
+            @RequestParam(name = "content", required = false) String content
+    ) throws IOException {
+        if (user_id.equals("")) {
+            return new IsSuccessResponse(false);
+        }
+        
+        //审核评论
+        if (!reviewService.textReview(content)) {
+            return new IsSuccessResponse(false);
+        }
+        //新增评论
+        Integer res = checkInService.checkInComment(post_id, Integer.parseInt(user_id), content);
+        
+        if (res == 0) {
+            return new IsSuccessResponse(false);
+        }
+        return new IsSuccessResponse(true);
+    }
+    
+    //删除评论
+    @DeleteMapping (value = "/pyq/comment/delete")
+    public IsSuccessResponse deleteComment(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+    ) {
+        if (user_id.equals("")) {
+            return new IsSuccessResponse(false);
+        }
+        
+        //删除评论
+        Integer res = checkInService.deleteComment(post_id, Integer.parseInt(user_id));
+        if (res == 0) {
+            return new IsSuccessResponse(false);
+        }
+        return new IsSuccessResponse(true);
+    }
+    
+    //删除打卡
+    @DeleteMapping (value = "/pyq/delete")
+    public IsSuccessResponse deleteCheckIn(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+    ) {
+        if (user_id.equals("")) {
+            return new IsSuccessResponse(false);
+        }
+        
+        //删除打卡
+        Integer res = checkInService.deleteCheckIn(post_id, Integer.parseInt(user_id));
+        if (res == 0) {
+            return new IsSuccessResponse(false);
+        }
         return new IsSuccessResponse(true);
     }
     

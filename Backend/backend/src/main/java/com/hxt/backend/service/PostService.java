@@ -69,7 +69,8 @@ public class PostService {
         }
         //  检查权限
         if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
-                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         List<Comment> comments = postMapper.getCommentSortByTimeAsc(postId);
@@ -406,7 +407,8 @@ public class PostService {
             return -1;
         }
         if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
-                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
@@ -490,7 +492,8 @@ public class PostService {
         }
         Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
         if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
-                && adminMapper.checkAuthority(userId, p.getSection_id()) == null || userMapper.isBlocked(userId) > 0)) {
+                && adminMapper.checkAuthority(userId, p.getSection_id()) == null
+                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
         }
         postMapper.deleteReplyLike(replyId);
