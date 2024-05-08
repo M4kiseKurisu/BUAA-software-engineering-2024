@@ -60,6 +60,10 @@ public interface AdminMapper {
     int deleteGlobalAuthority(Integer id);
 
     //  举报管理
+    @Insert("INSERT INTO report (user_id, type, target, detail, resource, active) " +
+            "VALUES (#{user}, #{type}, #{target}, #{detail}, #{resource}, 1)")
+    int insertReport(Integer user, Integer type, Integer target, String detail, String resource);
+
     @Select("SELECT report_id, user_id, target, detail, resource FROM report WHERE type = #{type} and active = 1")
     @Results({
             @Result(column = "report_id", property = "reportId"),
@@ -67,6 +71,29 @@ public interface AdminMapper {
     })
     List<Report> getUnhandledReports(Integer type);
 
-    @Update("UPDATE report SET active = 0 WHERE report_id = #{id}")
-    int handleReport(Integer id);
+    @Select("SELECT report_id FROM report WHERE type = #{type} and target = #{target} and active = 1")
+    List<Integer> getSameTargetReports(Integer type, Integer target);
+
+    @Select("SELECT COUNT(*) FROM report WHERE type = #{type} and target = #{target} and user_id = #{id} and active = 1")
+    Integer checkSameReport(Integer type, Integer target, Integer id);
+
+    @Select("SELECT report_id, user_id, target, detail, resource FROM report WHERE report_id = #{id} and active = 1")
+    @Results({
+            @Result(column = "report_id", property = "reportId"),
+            @Result(column = "user_id", property = "userId")
+    })
+    Report getSingleReport(Integer id);
+
+    @Update("UPDATE report SET active = #{result} WHERE report_id = #{id}")
+    int handleReport(Integer id, Integer result);
+
+    //  用户操作频率监测
+    @Insert("INSERT INTO log (user_id, type, time) VALUES (#{id}, #{type}, NOW())")
+    int addLog(Integer id, Integer type);
+
+    @Select("SELECT COUNT(*) FROM log WHERE user_id = #{id} AND time > #{time}")
+    int checkRecentLogNum(Integer id, Timestamp time);
+
+    @Delete("DELETE FROM log WHERE time < #{time}")
+    int deleteOldLogs(Timestamp time);
 }
