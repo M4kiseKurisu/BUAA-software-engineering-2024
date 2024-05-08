@@ -489,7 +489,7 @@ export default {
     },
     created() {
         this.post_id = this.$route.params.postId;
-        this.authority = this.$route.params.authority;
+        //this.authority = this.$route.params.authority;
     },
     mounted() {
         axios({
@@ -934,8 +934,9 @@ export default {
             this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + id});
         },
         authorityCheck() {
-            this.authority_num = this.authority === "teacher" ? 0 :
-                                 this.authority === "assistant" ? 1 : 3;
+            // this.authority_num = this.authority === "teacher" ? 0 :
+            //                      this.authority === "assistant" ? 1 : 3;
+            this.authority_num = 3;
         }
     }
 }
