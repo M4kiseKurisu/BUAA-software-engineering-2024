@@ -13,6 +13,7 @@ import java.util.Map;
 @Setter
 public class PostResponse {
     private boolean success;
+    private Integer section_id;
     private String title;
     private String intro;
     private Integer author_id;
@@ -30,6 +31,7 @@ public class PostResponse {
     private Integer viewCount;
     
     public PostResponse (Post post){
+        this.section_id = post.getSection_id();
         this.title = post.getTitle();
         this.intro = post.getIntro();
         this.author_id = post.getAuthor_id();

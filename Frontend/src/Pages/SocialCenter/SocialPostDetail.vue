@@ -89,9 +89,9 @@
             <!-- 展示点赞者头像 -->
             <div class="flex-column-layout" style="width: 92%; margin-left: 3%;">
                 <div v-for="item in favorGroup" style="width: 100%; margin-top: 3px; margin-bottom: 6px;" class="flex-layout">
-                    <div v-for="item2 in item1" style="width: 6%; aspect-ratio: 1/1; margin-right: 2%;">
-                        <button style="width: 100%; height: 100%; border: none; background-color: white;" @click="this.toInformationShow(item2.favor_id)">
-                            <el-avatar style="width: 100%; height: 100%" :src="item2.favor_id" />
+                    <div v-for="item2 in item" style="width: 6%; aspect-ratio: 1/1; margin-right: 2%;">
+                        <button style="width: 100%; height: 100%; border: none; background-color: #f7f8fa;" @click="this.toInformationShow(item2.favor_id)">
+                            <el-avatar style="width: 100%; height: 100%" :src="item2.favor_avatar" />
                         </button>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ export default {
             this.content = result.data.poster_content;
             this.favor_list = result.data.favors_list;
             this.comment_list = result.data.comments_list;
-
+            console.log(this.favor_list);
             this.getFavorInformation(this.social_post_id, this.poster_id);
         })
     },
@@ -185,6 +185,7 @@ export default {
             for (let i = 0; i < this.favor_list.length; i += 12) {
                 output.push(this.favor_list.slice(i, i + 12));
             }
+            console.log(output);
             return output;
         }
     },
@@ -243,7 +244,8 @@ export default {
                     user_id: user_id,
                 }
             }).then((result) => {
-                this.is_favor = result.data.is_like;
+                console.log(result);
+                this.is_favor = result.data._like;
             })
         },
         favorOperation() {
@@ -262,6 +264,15 @@ export default {
                 if(result.data.success) {
                     this.is_favor = !this.is_favor;
                 }
+                axios({
+                    method: "GET",
+                    url: "/api/pyq/detail",
+                    params: {
+                        post_id: this.social_post_id
+                    }
+                }).then((result) => {
+                    this.favor_list = result.data.favors_list;
+                })
             })
         },
         uploadComment() {

@@ -239,12 +239,24 @@ public class UserController {
 
     @RequestMapping("/user/favorites")
     public PostListResponse getUserFavorite(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
     ) {
         if (user_id.isEmpty()) {
             return new PostListResponse(-1, new ArrayList<>());
         }
-        return userService.getFavorite(Integer.parseInt(user_id));
+        return userService.getFavorite(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
+    }
+
+    @RequestMapping("/user/posts")
+    public PostListResponse getUserPost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (user_id.isEmpty()) {
+            return new PostListResponse(-1, new ArrayList<>());
+        }
+        return userService.getPost(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
     }
 
     @RequestMapping("/user/password/update")
@@ -290,7 +302,9 @@ public class UserController {
             @RequestParam(name = "major", required = false) String major,
             @RequestParam(name = "enrollment_year", required = false) Integer year,
             @RequestParam(name = "sign", required = false) String sign,
-            @RequestParam(name = "phone", required = false) String phone
+            @RequestParam(name = "phone", required = false) String phone,
+            @RequestParam(name = "show_post", required = false) Boolean showPost,
+            @RequestParam(name = "show_favorite", required = false) Boolean showFavorite
     ) {
         if (user_id.isEmpty()) {
             return new BasicInfoResponse(false, hasEmptyResponse);
@@ -311,7 +325,8 @@ public class UserController {
                 return new BasicInfoResponse(false, "手机号格式不正确！");
             }
         }
-        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year, sign, phone);
+        String info = userService.setUserInfo(Integer.parseInt(user_id), name, major, year,
+                sign, phone, showPost, showFavorite);
         frequencyLogService.setLog(Integer.parseInt(user_id), 9);
         return new BasicInfoResponse(info.isEmpty(), info);
     }

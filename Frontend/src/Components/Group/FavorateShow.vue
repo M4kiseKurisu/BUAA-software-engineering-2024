@@ -2,9 +2,11 @@
   <!-- 个人信息中的收藏帖子单元 -->
   <el-card class="card-container-page" >
     <div class="card-content">
+      <!--
       <div class="image-container">
-        <img :src="image" alt="图片" sizes="100vw"> <!-- 修改 sizes 属性 -->
+        <img :src="image" alt="图片" sizes="100vw">
       </div>
+    -->
 
       <div class="content-details">
         <div class="first-line-container">
@@ -17,7 +19,7 @@
             </div>
 
 
-            <div class="star">
+            <div class="star" @click="disFavorate">
               <el-icon :size="24" color="#fedf00"><StarFilled/></el-icon>
             </div>
           </div>
@@ -36,7 +38,7 @@
           </div>
 
           <!-- 点击跳转至收藏帖子 -->
-          <div class="content-link">>点击进入</div>
+          <div class="content-link" @click="jump">>点击进入</div>
         </div>
       </div>
     </div>
@@ -45,12 +47,60 @@
 
 <script>
 import { StarFilled } from '@element-plus/icons-vue'
+import axios from "axios";
 
 export default {
   components: {
     StarFilled,
   },
-  props: ["title","image", "content", "avatarSrc", "writerName","tags"],
+  data(){
+    return{
+      avatarSrc:'',
+    }
+
+  },
+  props: ["writerId","title","image", "content",  "writerName","tags","post_id"],
+  mounted() {
+    // 获取作者头像信息
+    //console.log(this.writerId);
+    axios({
+      method: "GET",
+      url: "/api/user/head",
+      params: {
+        user_id: this.writerId
+      }
+    }).then((result) => {
+      //console.log(result.data.info);
+      this.avatarSrc = result.data.info;
+    })
+  },
+  methods: {
+    disFavorate() {
+      // 帖子取消收藏
+      let content = {
+        post_id: this.postId,
+        user_id: JSON.parse(sessionStorage.getItem("id")),
+      }
+      axios({
+        method: "POST",
+        url: "/api/posts/unfavorite",
+        data: content,
+      }).then((result) => {
+        //console.log(result);
+        if(result.data.success) {
+          this.$message({
+            showClose: true,
+            message: '帖子取消收藏成功！',
+            type: 'success',
+          });
+          location.reload();
+        }
+      })
+    },
+    jump() {
+      this.$router.push({ path: "/MainPage/Course_Center/PostPage/" + this.post_id});
+    }
+  }
 }
 </script>
 

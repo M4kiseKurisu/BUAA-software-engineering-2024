@@ -20,7 +20,7 @@
                 <div v-if="radio === '1'"><OthersSocialPost @childMethod="showDetail" /></div>
             </div>
             <el-divider v-if="radio === '0'" direction="vertical"/>
-            <div class="container-right">
+            <div class="container-right" :key="this.refreshKey">
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
                 <!-- <div v-if="true"><SocialPostDetail :social_post_id="1"/></div> -->
             </div>
@@ -110,6 +110,7 @@ export default {
             image_list: [],
             preview_urls: [],
             image_urls: [],
+            refreshKey: 0,
         }
     },
     computed: {
@@ -128,7 +129,10 @@ export default {
     },
     methods: {
         showDetail(id) {
-            this.detail_post_id = id;
+            if (this.detail_post_id != id) {
+                this.detail_post_id = id;
+                this.refreshKey++;
+            }
             console.log(this.detail_post_id);
         },
         test(file, fileList) {

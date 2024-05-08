@@ -3,6 +3,8 @@ package com.hxt.backend.service;
 import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.checkIn.CheckIn;
 import com.hxt.backend.entity.checkIn.CheckInComment;
+import com.hxt.backend.entity.checkIn.CheckInLike;
+import com.hxt.backend.entity.post.PostLike;
 import com.hxt.backend.mapper.CheckInMapper;
 import com.hxt.backend.mapper.ImageMapper;
 import com.hxt.backend.mapper.UserMapper;
@@ -33,7 +35,7 @@ public class CheckInService {
         List<CheckIn> checkIns = checkInMapper.getCheckInByAuthorId(userId);
         for (CheckIn checkIn : checkIns) {
             CheckInIntroResponse checkInIntroResponse = new CheckInIntroResponse(checkIn);
-            List<String> imageUrls = checkInMapper.getUrlByCheckInId(checkIn.getCheck_in_id());
+            List<String> imageUrls = checkInMapper.getImageByCheckInId(checkIn.getCheck_in_id());
             checkInIntroResponse.setImage_urls(imageUrls);
             
             checkInIntroResponses.add(checkInIntroResponse);
@@ -122,9 +124,65 @@ public class CheckInService {
             String authorName = author.getName();
             String headUrl = imageMapper.getImage(author.getHeadId());
             List<String> images = checkInMapper.getImageByCheckInId(checkIn.getCheck_in_id());
+            checkInSquareIntroResponse.setAuthor_name(authorName);
+            checkInSquareIntroResponse.setAuthor_avatar(headUrl);
+            if (!images.isEmpty()) {
+                checkInSquareIntroResponse.setImage_url(images.get(0));
+            }
             
+            checkInSquareIntroResponses.add(checkInSquareIntroResponse);
         }
-        return null;
+        return checkInSquareIntroResponses;
     }
+    
+    
+    //获取打卡-点赞状态
+    public Integer checkInLikeStatus(Integer postId, Integer user_id) {
+        CheckInLike checkInLike = checkInMapper.getCheckInLike(postId, user_id);
+        if (checkInLike == null) {
+            return 0;
+        }
+        return 1;
+        
+    }
+    
+    //点赞/取消点赞打卡
+    public Integer thumbCheckIn(Integer postId, Integer user_id) {
+        CheckInLike checkInLike = checkInMapper.getCheckInLike(postId, user_id);
+        if (checkInLike == null) {
+            Timestamp likeTime = new Timestamp(System.currentTimeMillis());
+            return checkInMapper.insertCheckInLike(postId, user_id, likeTime); //点赞
+            
+        } else {
+            Integer res = checkInMapper.deleteCheckInLike(postId, user_id);
+            if (res == 1) {
+                return 2;   //取消点赞
+            }
+            return res;
+        }
+    }
+    
+    //更新打卡点赞数
+    public Integer updateCheckInLikeCount(Integer checkInId, Integer op) {
+        return checkInMapper.updateCheckInLikeCount(checkInId, op);
+    }
+    
+    //评论打卡
+    public Integer checkInComment(Integer checkInId, Integer userId, String content) {
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        return checkInMapper.insertCheckInComment(content, userId, checkInId, time);
+    }
+    
+    //删除评论
+    public Integer deleteComment(Integer commentId, Integer authorId) {
+        return checkInMapper.deleteCheckInComment(commentId, authorId);
+    }
+    
+    //删除打卡
+    public Integer deleteCheckIn(Integer checkInId, Integer authorId) {
+        return checkInMapper.deleteCheckIn(checkInId, authorId);
+    }
+    
+    
     
 }
