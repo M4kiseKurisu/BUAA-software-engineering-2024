@@ -167,5 +167,22 @@ public class CheckInService {
         return checkInMapper.updateCheckInLikeCount(checkInId, op);
     }
     
+    //评论打卡
+    public Integer checkInComment(Integer checkInId, Integer userId, String content) {
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        return checkInMapper.insertCheckInComment(content, userId, checkInId, time);
+    }
+    
+    //删除评论
+    public Integer deleteComment(Integer checkInId, Integer authorId) {
+        return checkInMapper.deleteCheckInComment(checkInId, authorId);
+    }
+    
+    //删除打卡
+    public Integer deleteCheckIn(Integer checkInId, Integer authorId) {
+        return checkInMapper.deleteCheckIn(checkInId, authorId);
+    }
+    
+    
     
 }
