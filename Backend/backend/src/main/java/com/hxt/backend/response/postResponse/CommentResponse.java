@@ -19,7 +19,7 @@ public class CommentResponse {
     private String comment_content;
     private String comment_create_time;
     private List<String> comment_images;
-    private Map<Integer, String> comment_resources;
+    private List<String> comment_resources;
     private Integer comment_like_count;
     private Integer comment_reply_count;
     private boolean comment_isLike;

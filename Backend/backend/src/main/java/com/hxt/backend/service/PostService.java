@@ -227,7 +227,7 @@ public class PostService {
                 commentResponse.setComment_isLike(false);
             }
 
-            //获取评论的图片
+            /*获取评论的图片
             List<Integer> imageIds = postMapper.getImageIdByComment(postId);
             List<String> imageUrls = new ArrayList<>();
             for (Integer imageId : imageIds) {
@@ -237,15 +237,11 @@ public class PostService {
             }
             commentResponse.setComment_images(imageUrls);
             
+             */
+            
             //获取评论的资源
-            List<Integer> resourceIds = postMapper.getResourceIdByComment(postId);
-            Map<Integer, String> resourceMap = new LinkedHashMap<>();
-            for (Integer resourceId : resourceIds) {
-                if (resourceMapper.getResource(resourceId) != null) {
-                    resourceMap.put(resourceId, resourceMapper.getResource(resourceId).getName());
-                }
-            }
-            commentResponse.setComment_resources(resourceMap);
+            List<String> resourceUrls = postMapper.getResourceUrlByComment(postId);
+            commentResponse.setComment_resources(resourceUrls);
             
             //获取评论的回复
             List<Reply> replies = postMapper.getReplyByCommentId(comment.getComment_id());
@@ -255,8 +251,9 @@ public class PostService {
                 
                 //获取回复者的名称和头像
                 Integer replyAuthorId = reply.getAuthor_id();
-                String replyAuthorName = userMapper.selectUserById(replyAuthorId).getName();
-                String replyAuthorHead = imageMapper.getImage(userMapper.selectUserById(replyAuthorId).getHeadId());
+                User replyAuthor = userMapper.selectUserById(replyAuthorId);
+                String replyAuthorName = replyAuthor.getName();
+                String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
                 replyResponse.setReply_author_name(replyAuthorName);
                 replyResponse.setReply_author_head(replyAuthorHead);
                 
