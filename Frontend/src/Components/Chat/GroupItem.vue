@@ -1,5 +1,6 @@
 <template>
-    <div class="groupItemContainer" @click = "giveGroupId">
+    <!-- <div class="groupItemContainer" @click = "giveGroupId"> -->
+    <div style="width: 100%;" @click = "giveGroupId">
         <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;">
             <el-avatar :size="70" :src="groupHead" shape="square" />
         </div>
@@ -88,11 +89,11 @@ export default {
     height: 85px;
     display: flex;
     align-items: center;
-    background-color: rgb(240, 247, 252);
+    /* background-color: rgb(240, 247, 252); */
     margin-bottom: 5px;
     min-width: 300px;
 }
 .groupItemContainer:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); */
 }
 </style>

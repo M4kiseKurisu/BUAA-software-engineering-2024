@@ -102,7 +102,7 @@ export default {
                 if (result.data.success) {
                     authority = result.data.info; 
                 } 
-                this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId + '/' + authority });
+                this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
             });
         }
     },
