@@ -174,8 +174,8 @@ public class CheckInService {
     }
     
     //删除评论
-    public Integer deleteComment(Integer checkInId, Integer authorId) {
-        return checkInMapper.deleteCheckInComment(checkInId, authorId);
+    public Integer deleteComment(Integer commentId, Integer authorId) {
+        return checkInMapper.deleteCheckInComment(commentId, authorId);
     }
     
     //删除打卡
