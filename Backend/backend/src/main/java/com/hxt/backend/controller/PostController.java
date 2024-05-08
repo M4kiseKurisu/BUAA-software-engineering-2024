@@ -110,7 +110,7 @@ public class PostController {
         }
 
         //审核帖子内容
-        if (!reviewService.textReview(title) || !reviewService.textReview(intro) || !reviewService.textReview(content)) {
+        if (!reviewService.textReview(title + " " + intro + " " + content)) {
             return new WritePostResponse(false, "帖子内容违规", null);
         }
     

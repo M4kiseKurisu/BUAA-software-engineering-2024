@@ -37,4 +37,7 @@ public class Group {
 
     @Column(name = "is_examine")
     private boolean is_examine;
+
+    @Column(name = "image")
+    private String image;
 }
