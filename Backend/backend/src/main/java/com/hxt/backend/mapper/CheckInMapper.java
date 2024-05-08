@@ -39,7 +39,7 @@ public interface CheckInMapper {
     
     //根据打卡id获取打卡图片
     @Select("SELECT image_url from checkin_image WHERE check_in_id = #{checkInId} " +
-            "order by time ASC")
+            "order by cii_id ASC")
     List<String> getImageByCheckInId(Integer checkInId);
     
     //获取打卡所有点赞者id

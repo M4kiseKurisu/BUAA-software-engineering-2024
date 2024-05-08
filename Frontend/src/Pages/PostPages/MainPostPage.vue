@@ -201,7 +201,7 @@
                         </div>
 
                         <div style="margin-left: 5px; margin-top: 12px;">
-                            <Report  :type="2" :id="this.post_id"/>
+                            <Report  :type="2" :id="item.comment_id"/>
                         </div>  
                     </div>
 
@@ -284,7 +284,7 @@
                             </div>
 
                             <div style="margin-left: 14px; margin-top: 12px;">
-                                <Report  :type="3" :id="this.post_id"/>
+                                <Report  :type="3" :id="item2.reply_id"/>
                             </div>  
                         </div>
 
