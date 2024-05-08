@@ -286,7 +286,7 @@ public class RecommendService {
     
     // 计算 TF（词频）
     private double calculateTF(List<String> words, String keyword) {
-        if (words.isEmpty()) {
+        if (words == null) {
             return 0;
         }
         int keywordFrequency = Collections.frequency(words, keyword);
