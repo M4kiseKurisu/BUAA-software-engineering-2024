@@ -178,15 +178,16 @@
                     <button class="favorates-header-2" style="border: none; background-color: white;" @click="toSocialPost">查看更多</button>
                 </div>
 
-                <PosterCard :month="this.poster.month" :pictures="this.poster.pictures"/>
-            </div>
+                <PosterCard v-if="this.divided_posts.length != 0" :item="this.divided_posts[0].posts[0]"/>
+            </div> 
 
             <!-- 站内通知信息 -->
             <div class="notices-container">
                 <!-- 站内通知头部信息 -->
                 <div class="notices-header-container">
                     <div class="favorates-header-1">系统通知</div>
-                    <div class="favorates-header-2">查看更多</div>
+                    <!-- <div class="favorates-header-2">查看更多</div> -->
+                    <NoticeCenter :type="2" />
                 </div>
 
                 <div v-for="item in noticeListSort">
@@ -220,6 +221,7 @@ import FollowingCard from "../../Components/Group/FollowingCardInPersonalInforma
 import PosterCard from "../../Components/Group/PosterCardInPersonalInformation.vue"
 //引入站内消息单元
 import NoticeCard from "../../Components/Group/NoticeCardInPersonalInformation.vue"
+import NoticeCenter from '../../Components/Notice/NoticeCenter.vue';
 import Favorate from "@/Pages/PersonalCenter/MoreDetails/Favorate.vue"
 import Following_user from "@/Pages/PersonalCenter/MoreDetails/Following_user.vue";
 import FavorateShow from "@/Components/Group/FavorateShow.vue";
@@ -238,6 +240,7 @@ export default {
         NoticeCard,
         Favorate,
         Following_user,
+        NoticeCenter,
     },
     data() {
         return {
@@ -272,6 +275,8 @@ export default {
 
             //以下是用来测试站内通知板块的数组
             noticeList: [],
+            get_posts: [],
+            divided_posts: [],
         }
     },
     methods: {
@@ -286,6 +291,81 @@ export default {
         },
         toSocialPost() {
             this.$router.push("/MainPage/Social_Center");
+        },
+        dividePosts(posts) {
+            this.divided_posts = [];
+            let now_year = 0;
+            let now_month = 0;
+            let month_posts = [];
+            let date_posts = [];
+
+            for (let i = 0; i < posts.length; i++) {
+                if (posts[i].year != now_year) {
+                    if (month_posts.length != 0) {
+                        let element1 = {
+                            year: posts[i].year,
+                            posts: month_posts,
+                        }
+                        this.divided_posts.push(element1);
+                    }  //切分年份
+                    now_year = posts[i].year;
+                    month_posts = [];
+                }
+
+                if (posts[i].month != now_month) {  //这个判断可能有bug
+                    if (date_posts.length != 0) {
+                        // console.log("month change");
+                        // console.log(posts[i].month);
+                        // console.log(now_month);
+                        let element2 = {
+                            month: posts[i].month,
+                            posts: date_posts,
+                        }
+                        month_posts.push(element2);
+                    }  //切分月份
+                    now_month = posts[i].month;
+                    date_posts = [];
+                }
+
+                for (let j = 0; j < posts[i].image_urls.length; j++) {
+                    let element3 = {
+                        url: posts[i].image_urls[j],
+                        id: posts[i].post_id,
+                    }
+                    date_posts.push(element3);
+                } //将所有图片,id放入对应日期
+                console.log(date_posts);
+
+                if (i === posts.length - 1) {  //切最后一段
+                    let element2 = {
+                        month: posts[i].month,
+                        posts: date_posts,
+                    }
+                    month_posts.push(element2);
+                    let element1 = {
+                        year: posts[i].year,
+                        posts: month_posts,
+                    }
+                    this.divided_posts.push(element1);
+                }
+            }
+
+            console.log(this.divided_posts); // 测评
+        },
+        finalDivide() {
+            // 将每个月的信息以4分组
+            for (let i = 0; i < this.divided_posts.length; i++) {
+                for (let j = 0; j < this.divided_posts[i].posts.length; j++) {
+                    let new_post = [];
+                    for (let k = 0; k < this.divided_posts[i].posts[j].posts.length; k += 4) {
+                        new_post.push(this.divided_posts[i].posts[j].posts.slice(k, k + 4));
+                    }
+                    this.divided_posts[i].posts[j].posts = new_post;
+                }
+            }
+
+            console.log(this.divided_posts); // 测评
+            console.log(this.divided_posts[0].posts[0].posts.length);
         }
     },
     computed: {
@@ -307,7 +387,7 @@ export default {
         },
         noticeListSort() {
             //分离站内通知的前四个内容
-            return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 5);
+            return (this.noticeList.length === 0) ? null : this.noticeList.slice(0, 4);
         },
         favorateListLength() {
             return this.favorateList.length;
@@ -373,6 +453,17 @@ export default {
             url: "/api/group/joined"
         }).then((result) => {
             this.groupList = result.data.group;
+        })
+
+        //获取打卡信息
+        axios({
+            method: "GET",
+            url: "/api/pyq/userInfo"
+        }).then((result) => {
+            console.log(result);
+            this.get_posts = result.data.social_post;
+            this.dividePosts(result.data.social_post);
+            //this.finalDivide();
         })
     }
 }

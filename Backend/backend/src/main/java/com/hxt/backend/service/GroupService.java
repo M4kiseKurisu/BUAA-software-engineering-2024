@@ -2,6 +2,7 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.mapper.GroupMapper;
+import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.GroupElement;
 import com.hxt.backend.response.group.GroupMessageElement;
@@ -17,6 +18,8 @@ import java.util.List;
 public class GroupService {
     private final GroupMapper groupMapper;
     private final TagService tagService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     public BasicInfoResponse createGroup(String name,Integer promoter_id, Integer permitted_num, String content, boolean is_examine, String image, List<String> tags) {
         if (permitted_num < 3) {
@@ -68,41 +71,106 @@ public class GroupService {
 
     public List<GroupElement> searchGroup(String keyword, String tag) {
         List<GroupElement> list = new ArrayList<>();
+        List<Group> groups;
         if (keyword.isEmpty()) {
-
-        }
-        else if (tag.isEmpty()) {
-
+            groups = groupMapper.selectGroup();
         }
         else {
+            groups = groupMapper.selectGroupByKeyword(keyword);
+        }
+        for (Group group: groups) {
+            GroupElement element = new GroupElement();
+            element.setGroup_id(group.getGroup_id());
+            element.setName(group.getName());
+            element.setCreater_id(group.getPromoter_id());
+            element.setMember_count(group.getMember_count());
+            element.setContent(group.getContent());
+            element.setPermitted_num(group.getPermitted_num());
+            element.setIs_examine(group.is_examine());
+            element.setImage(group.getImage());
+            element.setTags(groupMapper.selectGroupTag(group.getGroup_id()));
+            list.add(element);
+        }
 
+        if (!tag.isEmpty()) {
+            list = list.stream().filter(e -> e.getTags().contains(tag)).toList();
         }
         return list;
     }
 
     public BasicInfoResponse applyJoinGroup(Integer userId, Integer groupId, String info) {
-
-        return null;
+        if (groupMapper.getGroupJoinState(groupId,userId) != 0) {
+            return new BasicInfoResponse(false,"您已在该团体中");
+        }
+        if (!groupMapper.selectExamineById(groupId)) {
+            groupMapper.insertGroupMember(groupId,userId);
+            groupMapper.updateGroupMember(groupId,1);
+            return new BasicInfoResponse(true,"已成功加入");
+        }
+        groupMapper.insertGroupJoinApply(groupId, userId,info);
+        return new BasicInfoResponse(true,"等待审核中");
     }
 
     public List<GroupElement> getJoinedGroup(Integer userId) {
-
-        return null;
+        List<Integer> groupIds = groupMapper.selectJoinedGroupsByUserId(userId);
+        List<GroupElement> list = new ArrayList<>();
+        for (Integer groupId: groupIds) {
+            Group group = groupMapper.selectGroupById(groupId);
+            GroupElement element = new GroupElement();
+            element.setGroup_id(groupId);
+            element.setName(group.getName());
+            element.setCreater_id(group.getPromoter_id());
+            element.setMember_count(group.getMember_count());
+            element.setContent(group.getContent());
+            element.setPermitted_num(group.getPermitted_num());
+            element.setIs_examine(group.is_examine());
+            element.setImage(group.getImage());
+            element.setTags(groupMapper.selectGroupTag(groupId));
+            list.add(element);
+        }
+        return list;
     }
 
     public BasicInfoResponse exitGroup(Integer userId, Integer groupId) {
+        if (groupMapper.getGroupJoinState(groupId,userId) == 0) {
+            return new BasicInfoResponse(false,"您不在该团体中");
+        }
 
-        return null;
+        if (groupMapper.selectPromoterIdByGroupId(groupId) == userId) {
+            return new BasicInfoResponse(false,"群主不可退出");
+        }
+
+        groupMapper.deleteGroupMember(groupId, userId);
+        groupMapper.updateGroupMember(groupId,-1);
+        return new BasicInfoResponse(true,"");
     }
 
     public List<MemberElement> getGroupMember(Integer groupId) {
-
-        return null;
+        List<Integer> users = groupMapper.selectMemberByGroupId(groupId);
+        List<MemberElement> list = new ArrayList<>();
+        for (Integer userId: users) {
+            MemberElement element = new MemberElement();
+            element.setUser_id(userId);
+            element.setName(userMapper.getUserNameById(userId));
+            element.setImage(userService.getUserHead(userId));
+            list.add(element);
+        }
+        return list;
     }
 
     public GroupElement getGroupInfo(Integer groupId) {
-
-        return null;
+        Group group = groupMapper.selectGroupById(groupId);
+        GroupElement element = new GroupElement();
+        element.setGroup_id(group.getGroup_id());
+        element.setName(group.getName());
+        element.setCreater_id(group.getPromoter_id());
+        element.setMember_count(group.getMember_count());
+        element.setContent(group.getContent());
+        element.setPermitted_num(group.getPermitted_num());
+        element.setIs_examine(group.is_examine());
+        element.setImage(group.getImage());
+        element.setTags(groupMapper.selectGroupTag(group.getGroup_id()));
+        return element;
     }
 
 
