@@ -42,14 +42,14 @@
                     </span>
                     <div style="margin-left: auto;">
                         <el-input v-model="inputTag" style="width: 180px;margin-right: 5px;" placeholder="输入标签" />
-                        <el-input v-model="inputTitle" style="width: 180px;margin-right: 5px;" placeholder="输入标题" />
-                        <el-button style="margin-right: 5px;" type="primary" plain>搜索</el-button>
+                        <el-input v-model="inputKeyWord" style="width: 180px;margin-right: 5px;" placeholder="输入关键字" />
+                        <el-button style="margin-right: 5px;" type="primary" plain @click = 'searchGroup'>搜索</el-button>
                         <el-button style="margin-right: 10px;" type="primary" @click="goToCreatGroup">创建团体</el-button>
                     </div>
                 </div>
                 <div class="study_group_center_groupcontainer" >
                     <div v-for="item in this.selectGroupList" style="display: grid;place-items: center;">
-                        <GroupCard :groupInfo="item" v-if="selectGroupList != 0"></GroupCard>
+                        <GroupCard :groupInfo="item" v-if="selectGroupList != 0" :key = 'item.group_id'></GroupCard>
                     </div>
                 </div>
                 <div
@@ -88,12 +88,13 @@ export default {
             selfName: 'hhhhhhhhhhhh',
             selfGroupCount: 10,
             inputTag: '',
-            inputTitle: '',
+            inputKeyWord: '',
             groupInfoList: [],
             totalGroup: 20,
             currentPage: 1,
             myGroupList: [],
             selfId: JSON.parse(sessionStorage.getItem("id")),
+            
         }
     },
     computed: {
@@ -154,6 +155,18 @@ export default {
                 console.log(result);
                 this.selfName = result.data.name;
                 this.selfAvatar = result.data.user_avatar;
+            })
+        },
+        searchGroup(){
+            axios({
+                method: 'GET',
+                url: 'api/group/search',
+                params:{
+                    tag: this.inputTag,
+                    keyword: this.inputKeyWord,
+                }
+            }).then((result) =>{
+                this.groupInfoList = result.data.group;
             })
         },
 
