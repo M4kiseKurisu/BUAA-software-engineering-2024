@@ -97,10 +97,11 @@ public class PostService {
     }
     
     public PostResponse getPost(Integer id) {
-        if (postMapper.getPost(id) == null) {
+        Post post = postMapper.getPost(id);
+        if (post == null) {
             return null;
         }
-        return new PostResponse(postMapper.getPost(id));
+        return new PostResponse(post);
     }
     
     public Integer getAuthorId(Integer id) {

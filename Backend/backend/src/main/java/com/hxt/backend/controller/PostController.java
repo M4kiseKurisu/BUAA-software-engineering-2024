@@ -166,11 +166,11 @@ public class PostController {
                 }
                
                  */
-                Integer tagId;
-                if (tagService.getIdByName(tagName) == null) {
+                Integer tagId = tagService.getIdByName(tagName);
+                if (tagId == null) {
                     tagService.addTag(tagName);
+                    tagId = tagService.getIdByName(tagName);
                 }
-                tagId = tagService.getIdByName(tagName);
                 postService.postInsertTag(post_id, tagId);
             }
         }
