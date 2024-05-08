@@ -37,7 +37,7 @@ public class PostController {
         if (user_id.equals("")) {
             return new PostResponse(false, null, null, null, null,
                     null, null, null, null, null, null,
-                    null, null, null, null, null);
+                    null, null, null, null, null, null);
         }
         
         if (post_id == null) {

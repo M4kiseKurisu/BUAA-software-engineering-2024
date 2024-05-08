@@ -50,11 +50,11 @@
         </div> -->
         <!-- 新尝试卡片 -->
         <div style="height: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-            <img src="../../Images/buaaLogo.png" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
+            <img :src="groupAvatar" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
         </div>
         <div style="flex-grow: 1;">
-            <div style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
-                <span style="font-size: 1.3em;font-weight: bold;">{{ groupName }}</span>
+            <div style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
+                <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
             </div>
             <div
                 style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
@@ -74,7 +74,7 @@
                     <div style="width: 100%;display: flex;">
                         <div
                             style="height: 120px;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-                            <img src="../../Images/buaaLogo.png" alt=""
+                            <img :src="groupAvatar" alt=""
                                 style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
                         </div>
                         <div style="width: 280px;height: 100%;">
@@ -82,8 +82,7 @@
                                 style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
                             </div>
-                            <div
-                                style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
+                            <div style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
                                 <el-tag v-for="item in tags" type="primary"
                                     style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">{{ item
                                     }}</el-tag>
