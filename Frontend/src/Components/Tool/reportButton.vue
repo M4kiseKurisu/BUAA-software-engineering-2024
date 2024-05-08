@@ -43,7 +43,7 @@ export default {
                     if(result.data.success) {
                         this.$message({
                             showClose: true,
-                            message: '帖子举报信息上传成功！',
+                            message: '用户举报信息上传成功！',
                             type: 'success',
                         });
                     }

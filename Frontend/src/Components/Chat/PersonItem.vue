@@ -15,8 +15,7 @@
             <div style="width: 100%; display: flex;">
                 <div style="font-size: 15px; margin-left: 12px; margin-top: 4px; color:#86909c;
                             white-space: nowrap;overflow: hidden;text-overflow: ellipsis;width: 85%;">
-                    <!-- {{ this.lastMessageContent }} -->
-                    123123
+                    {{ this.lastMessageContent }}
                 </div>
             </div>
         </div>
