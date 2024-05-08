@@ -1,9 +1,7 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
-import com.hxt.backend.response.checkInResponse.CheckInDetailResponse;
-import com.hxt.backend.response.checkInResponse.CheckInIntroListResponse;
-import com.hxt.backend.response.messageResponse.ChatListResponse;
+import com.hxt.backend.response.checkInResponse.*;
 import com.hxt.backend.service.CheckInService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +57,59 @@ public class CheckInController {
         }
         
         return checkInService.getCheckInDetail(post_id);
+    }
+    
+    @GetMapping (value = "/pyq/square")
+    public CheckInSquareResponse getCheckInSquare() {
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare();
+        return new CheckInSquareResponse(checkIn);
+    }
+    
+    //用户是否点赞打卡
+    @GetMapping (value = "/pyq/isLike")
+    public IsLikeResponse isLikeCheckIn(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+    
+    ) {
+        if (user_id.equals("")) {
+            return new IsLikeResponse(false);
+        }
+        //获取点赞状态
+        Integer status = checkInService.checkInLikeStatus(post_id, Integer.parseInt(user_id));
+        
+        if (status == 1) {
+            return new IsLikeResponse(true);
+        }
+        
+        return new IsLikeResponse(false);
+    }
+    
+    //用户点赞打卡
+    @RequestMapping (value="/pyq/like")
+    public IsSuccessResponse likePost(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "post_id", required = false) Integer post_id
+    
+    ) {
+        if (user_id.equals("")) {
+            return new IsSuccessResponse(false);
+        }
+        
+        //点赞/取消点赞
+        Integer status = checkInService.thumbCheckIn(post_id, Integer.parseInt(user_id));
+        
+        if (status == 1) {
+            //帖子点赞数 +1
+            checkInService.updateCheckInLikeCount(post_id, 1);
+        } else if (status == 2) {
+            //帖子点赞数 -1
+            checkInService.updateCheckInLikeCount(post_id, -1);
+        } else {
+            return new IsSuccessResponse(false);
+        }
+        
+        return new IsSuccessResponse(true);
     }
     
 }

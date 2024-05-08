@@ -306,9 +306,7 @@ public class PostService {
     
     //更新帖子点赞数
     public Integer updatePostLikeCount(Integer postId, Integer op) {
-        postMapper.updatePostLikeCount(postId, op);
-        Post post = postMapper.getPost(postId);
-        return post.getLike_count();
+        return postMapper.updatePostLikeCount(postId, op);
     }
     
     // 收藏帖子

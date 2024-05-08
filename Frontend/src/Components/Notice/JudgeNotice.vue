@@ -18,7 +18,7 @@
     </div>
     <div v-else style=" width: 100%;height: 100px;">
         <div style="width: 100%;height: 40px;display: flex;align-items: center;">
-
+            <span></span>
         </div>
         <div>
 
