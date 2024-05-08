@@ -199,6 +199,20 @@ public class PostController {
         return new BasicInfoResponse(true, "删帖成功");
     }
     
+    
+    //获取单个帖子简介
+    @RequestMapping (value = "/posts/specify")
+    public PostIntroResponse getSpecifyPost(
+        @RequestParam(name = "post_id", required = false) Integer post_id,
+        @CookieValue(name = "user_id", defaultValue = "") String userId
+    ) {
+        if (userId.equals("")) {
+            return new PostIntroResponse(null);
+        }
+        
+        return postService.getPostIntroByPostId(post_id);
+    }
+    
     @RequestMapping(value = "/posts/search")
     public SearchResponse searchPost(
             @CookieValue(name = "user_id", defaultValue = "") String userId,
@@ -214,7 +228,7 @@ public class PostController {
     
         List<PostIntroResponse> list = postService.searchPost(section_id, keyword, sort, tag, type);
         
-        if (list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             return new SearchResponse(true,"未检索到响应结果",list);
         } else {
             return new SearchResponse(true,"检索成功",  list);
@@ -349,7 +363,7 @@ public class PostController {
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "images", required = false) List<String> images,
             @RequestParam(name = "resources", required = false) List<String> resources
-    ) {
+    ) throws IOException {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止评论！");
@@ -363,6 +377,11 @@ public class PostController {
             if (postCategory == 0) {
                 return new BasicInfoResponse(false, "不允许上传资源");
             }
+        }
+        
+        //审核评论是否合规
+        if (!reviewService.textReview(content)) {
+            return new BasicInfoResponse(false, "评论违规");
         }
         
         Integer comment_id = postService.createComment(content, post_id, author_id);
@@ -480,12 +499,17 @@ public class PostController {
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "content", required = false) String content
             
-    ) {
+    ) throws IOException {
         //检查用户是否被封禁
         if (userService.checkBlocked(author_id)) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         } else if (frequencyLogService.checkFrequency(author_id)) {
             return new BasicInfoResponse(false, frequencyResponse);
+        }
+        
+        //审核回复是否违规
+        if (!reviewService.textReview(content)) {
+            return new BasicInfoResponse(false, "回复内容违规");
         }
 
         //向数据库插入 reply

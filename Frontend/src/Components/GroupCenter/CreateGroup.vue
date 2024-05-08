@@ -81,7 +81,6 @@
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { result } from "lodash";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     data() {
@@ -118,6 +117,7 @@ export default {
         },
         handleInputConfirm() {
             //console.log(this.inputDynamicTags);
+            console.log(this.inputValue);
             if (this.inputValue) {
                 this.inputDynamicTags.push(this.inputValue);
             }
@@ -159,17 +159,28 @@ export default {
                 return;
             }
             var url = this.getImageUrl(this.coverList[0].raw);
+            let packet = {
+                name: this.inputTitle,
+                permitted_num: this.inputPersonNum,
+                content: this.inputContent,
+                is_examine: this.inputIsExamine,
+                tags: this.inputDynamicTags,
+                image: url,
+            }
+            console.log(packet);
             axios({
                 method: "POST",
                 url: "/api/group/create",
-                data: {
-                    name: this.inputTitle,
-                    permitted_num: this.inputPersonNum,
-                    content: this.inputContent,
-                    is_examine: this.inputIsExamine,
-                    tags: this.inputDynamicTags,
-                    image: url,
-                }
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/create',
+                data: packet
+                // {
+                //     name: this.inputTitle,
+                //     permitted_num: this.inputPersonNum,
+                //     content: this.inputContent,
+                //     is_examine: this.inputIsExamine,
+                //     tags: this.inputDynamicTags,
+                //     image: url,
+                // }
             }).then((result) => {
                 console.log(result);
                 ElMessage({

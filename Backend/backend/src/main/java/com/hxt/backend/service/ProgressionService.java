@@ -130,8 +130,8 @@ public class ProgressionService {
             }
             
             postIntroResponse.setAuthor_name(authorName);
-            postIntroResponse.setTags(tags);
-            postIntroResponse.setPost_image(imageUrl);
+            postIntroResponse.setTag_list(tags);
+            postIntroResponse.setPost_photo(imageUrl);
             
             
             postIntroResponses.add(postIntroResponse);

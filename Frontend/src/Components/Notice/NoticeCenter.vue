@@ -4,11 +4,12 @@
         </el-button> -->
 
     <!-- 上边栏右侧第一个图标负责搜索（未实现） -->
-    <div class="notice-circle-bound" @click="centerDialogVisible = true; this.haveNotice = 0;">
+    <div v-if="this.type === 1" class="notice-circle-bound" @click="centerDialogVisible = true; this.haveNotice = 0;">
         <!-- <img src="../../Images/无通知.png" alt="" v-if="haveNotice == 0">
         <img src="../../Images/有通知.png" alt="" v-if="haveNotice == 1"> -->
         <svg t="1715050698908" style="width: 80%; height: 80%; margin-left: 3%; margin-top: -2%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2381" width="200" height="200"><path d="M891.851 813.716L814 701.561V411.873c0-61.969-24.132-120.229-67.951-164.048-43.82-43.82-102.079-67.952-164.049-67.952h-38V153c0-17.673-14.327-32-32-32s-32 14.327-32 32v26.873h-38c-61.97 0-120.23 24.132-164.049 67.952C234.132 291.644 210 349.904 210 411.873v289.688l-77.85 112.155a31.999 31.999 0 0 0 26.288 50.247h245.508C416.92 911.461 460.444 946.48 512 946.48s95.08-35.019 108.054-82.518h245.508a32 32 0 0 0 26.289-50.246zM512 882.48c-15.359 0-29.045-7.259-37.837-18.518h75.675c-8.792 11.259-22.479 18.518-37.838 18.518z m-292.396-82.517l48.684-70.138A32.002 32.002 0 0 0 274 711.578V411.873c0-92.636 75.364-168 168-168h140c92.636 0 168 75.364 168 168v299.705a32.002 32.002 0 0 0 5.712 18.247l48.686 70.138H219.604z" fill="#86909c" p-id="2382"></path></svg>
     </div>
+    <div v-if="this.type === 2"  @click="centerDialogVisible = true; this.haveNotice = 0;" class="favorates-header-2">查看更多</div>
 
     <el-dialog v-model="this.centerDialogVisible" width="800px" height="1000px" center>
         <div class="bar">
@@ -57,17 +58,14 @@
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 2">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total2"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange2" />
-            <span>{{ currentPage2 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 3">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total3"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange3" />
-            <span>{{ currentPage3 }}</span>
         </div>
         <div style="width: 100%; position: relative; height: 20px;" v-if="noticeChoice == 4">
             <el-pagination background layout="prev, pager, next" :page-size="6" :total="total4"
                 style="position: absolute; right: 0;" @current-change="handleCurrentChange4" />
-            <span>{{ currentPage4 }}</span>
         </div>
     </el-dialog>
 </template>
@@ -100,6 +98,7 @@ export default {
             allSystemMessage: [],
         };
     },
+    props: ["type"],
     computed: {
         selectDirectMessage() {
             var begin, end;
@@ -277,5 +276,13 @@ export default {
 .noticeList {
     width: 100%;
     height: 600px;
+}
+
+.favorates-header-2 {
+    font-size: 14px;
+    color: #165dff;
+    height: 20px;
+    margin-top: 41px;
+    border: none;
 }
 </style>

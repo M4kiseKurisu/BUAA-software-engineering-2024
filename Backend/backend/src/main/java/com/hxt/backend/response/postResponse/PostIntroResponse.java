@@ -19,9 +19,9 @@ public class PostIntroResponse {
     private String author_name;
     private Integer post_favorites;
     private Integer post_likes;
-    private List<String> tags;
+    private List<String> tag_list;
     private String post_time;
-    private String post_image;
+    private String post_photo;
     
     
     public PostIntroResponse(Post post) {
