@@ -125,6 +125,7 @@ public class GroupService {
             element.setPermitted_num(group.getPermitted_num());
             element.setIs_examine(group.is_examine());
             element.setImage(group.getImage());
+            groupMapper.selectGroupTag(groupId);
             element.setTags(groupMapper.selectGroupTag(groupId));
             list.add(element);
         }

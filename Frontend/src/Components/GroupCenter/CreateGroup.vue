@@ -180,7 +180,7 @@ export default {
                         tags: this.inputDynamicTags,
                         image: url,
                     }
-                    //console.log(packet);
+                    console.log(packet);
                     axios({
                         method: "POST",
                         url: "/api/group/create",

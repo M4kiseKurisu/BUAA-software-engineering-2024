@@ -1,5 +1,6 @@
 package com.hxt.backend;
 
+import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.service.MessageService;
@@ -19,9 +20,10 @@ public class WebSocketConfig {
     }
 
     @Autowired
-    public void setService(UserService userService, UserMapper userMapper, MessageService messageService) {
+    public void setService(UserService userService, UserMapper userMapper, MessageService messageService, GroupMapper groupMapper) {
         WebSocketServer.messageService = messageService;
         WebSocketServer.userService = userService;
         WebSocketServer.userMapper = userMapper;
+        WebSocketServer.groupMapper = groupMapper;
     }
 }
