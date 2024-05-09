@@ -70,14 +70,14 @@
                     <div class="post-writer-information">
                         <div class="flex-layout">
                             <div class="post-writer-username">{{ this.author_name }}</div>
-                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 3px;" v-if="this.authority_num === 0 && this.author_id === this.userId">
+                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 3px;" v-if="this.author_a === 0">
                                 <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#165dff" p-id="3179"></path></svg>
                             </div>
-                            <div class="authority-0" style="margin-left: 4px; margin-top: 4px;" v-if="this.authority_num === 0 && this.author_id === this.userId">教师认证</div>
-                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 3px;" v-if="this.authority_num === 1 && this.author_id === this.userId">
+                            <div class="authority-0" style="margin-left: 4px; margin-top: 4px; " v-if="this.author_a === 0">教师认证</div>
+                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 3px;" v-if="this.author_a === 1">
                                 <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#FACA08" p-id="3179"></path></svg>
                             </div>
-                            <div class="authority-1" style="margin-left: 4px; margin-top: 4px;" v-if="this.authority_num === 1 && this.author_id === this.userId">助教认证</div>
+                            <div class="authority-1" style="margin-left: 4px; margin-top: 4px;" v-if="this.author_a === 1">助教认证</div>
                         </div>
                         <div class="post-writer-signature">{{ this.author_sign }}</div>
                     </div>
@@ -102,7 +102,7 @@
             </div>
 
             <div class="post-main-end-line" style="margin-top: 6px">
-                <button class="post-grey-button-below" @click="openComments">展开共{{ this.comments.length }}条评论</button>
+                <button class="post-grey-button-below" @click="openComments">展开共{{ this.all_comment_num }}条评论</button>
                 <button class="post-grey-button-below" @click="openCommentEditor">去评论</button>
                 <div class="post-time-show-font">发帖时间：{{ this.create_time }}</div>
             </div>
@@ -142,7 +142,7 @@
 
                 <!-- 回复栏位开头左侧 -->
                 <div class="post-reply-content-first-line-left">
-                    <div class="reply-title-font">{{ this.comments.length }}条评论</div>
+                    <div class="reply-title-font">{{ this.all_comment_num }}条评论</div>
 
                     <div class="right-selector">
                         <el-select v-model="sortValue" placeholder="排序方式" style="width: 85px" size="small">
@@ -184,12 +184,12 @@
                         
                         <div class="replyer-username">{{ item.comment_author_name }}</div>
 
-                        <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="this.authority_num === 0 && item.comment_author_id === this.userId">
+                        <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="auth_final_check(item.comment_author_id) === 0">
                             <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#165dff" p-id="3179"></path></svg>
                         </div>
-                        <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="this.authority_num === 1 && item.comment_author_id === this.userId">
+                        <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="auth_final_check(item.comment_author_id) === 1">
                             <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#FACA08" p-id="3179"></path></svg>
-                        </div>
+                        </div> -->
 
                         <div class="replyer-tag">
                             <div v-if="this.author_id === item.comment_author_id" class="post-page-tag-css-for-replyer">作者</div>
@@ -263,12 +263,12 @@
                             
                             <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
-                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="this.authority_num === 0 && item2.reply_author_id === this.userId">
+                            <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="authorityCheck(item2.reply_author_id) === 0">
                                 <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#165dff" p-id="3179"></path></svg>
                             </div>
-                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="this.authority_num === 1 && item2.reply_author_id === this.userId">
+                            <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="authorityCheck(item2.reply_author_id) === 1">
                                 <svg t="1715133570053" style="width: 100%; height: 100%;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="3178"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#FACA08" p-id="3179"></path></svg>
-                            </div>
+                            </div> -->
 
                             <div class="replyer-tag" v-if="this.author_id === item2.reply_author_id">
                                 <div class="post-page-tag-css-for-replyer">作者</div>
@@ -278,8 +278,8 @@
 
                             <div class="replyer-username">{{ item2.replied_author_name }}</div>
                             <div class="replys-reply-delete-button" v-if="item2.reply_author_id === this.userId">
-                                <button class="post-main-delete-button">
-                                    <el-icon :size="16" color="#86909C"><Delete /></el-icon>
+                                <button class="post-main-delete-button" >
+                                    <el-icon :size="16" color="#86909C" @click="deleteReply(item2.reply_id)"><Delete /></el-icon>
                                 </button>
                             </div>
 
@@ -422,6 +422,12 @@ export default {
             authority: "",
             authority_num: 3,
             section_id: 0,
+
+            author_a: 3,
+            comment_a: [3, 3, 3],
+            reply_a: [[3, 3, 3], [3, 3, 3]],
+
+            all_comment_num: 0,
         }
     },
     computed: {
@@ -515,9 +521,11 @@ export default {
             this.comments = result.data.comments;
             this.like_count = result.data.likeCount;
             this.collect_count = result.data.collectCount;
-            this.comment_count = result.data.comment_count;
+            this.comment_count = result.data.commentCount;
             this.view_count = result.data.view_count;
             this.section_id = result.data.section_id;
+            this.all_comment_num = result.data.commentCount;
+            console.log(result.data.comment_count);
 
             const count = (result.data.comments.length % 3 === 0) ? 
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
@@ -545,12 +553,13 @@ export default {
             console.log(this.resources);
             //console.log(this.isReplyLiked2);
             this.createInformation();
+            this.set_auth();
         })
     },
     methods: {
         createInformation() {
             //查看权限
-            this.authorityCheck();
+            //this.authorityCheck();
 
             //获得用户是否点赞、收藏信息
             axios({
@@ -804,6 +813,7 @@ export default {
             let content = {
                 comment_id: comment_id,
             }
+            console.log(content);
             axios({
                 method: "POST",
                 url: "/api/posts/comment/delete",
@@ -816,7 +826,31 @@ export default {
                         message: '评论删除成功！',
                         type: 'success',
                     });
-                    changesort();
+                    // changesort();
+                    location.reload();
+                }
+            })
+        },
+        deleteReply(reply_id) {
+            // 作者删除评论
+            let content = {
+                reply_id: reply_id,
+            }
+            console.log(content);
+            axios({
+                method: "POST",
+                url: "/api/posts/reply/delete",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '回复删除成功！',
+                        type: 'success',
+                    });
+                    // changesort();
+                    location.reload();
                 }
             })
         },
@@ -935,26 +969,58 @@ export default {
         toInformationShow(id) {
             this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + id});
         },
-        authorityCheck() {
-            // this.authority_num = this.authority === "teacher" ? 0 :
-            //                      this.authority === "assistant" ? 1 : 3;
-            this.authority_num = 3;
-            axios({
-                method: "GET",
-                url: "/api/user/authority",
-                params: { section: this.section_id, },
-            }).then((result) => {
-                //console.log(result);
+        async authorityCheck(uid) {
+            try {
+                let a = 3;
+                const result = await axios({
+                    method: "GET",
+                    url: "/api/user/authority",
+                    params: {
+                        section: this.section_id,
+                        id: uid,
+                    },
+                });
+
                 console.log(result);
                 if (result.data.success) {
-                    let authority_get = result.data.info; 
-                    this.authority_num = authority_get === "teacher" ? 0 :
-                                         authority_get === "assistant" ? 1 : 3;
-                    console.log(this.authority_num);
-                } 
-            });
-            
-        }
+                    console.log(result.data.info);
+                    let authority_get = result.data.info;
+                    a = authority_get == "teacher" ? 0 : authority_get == "assistant" ? 1 : 3;
+                }
+                console.log(a);
+                return a;
+            } catch (error) {
+                //console.error(error);
+                // 处理错误情况
+                return 3; // 返回默认值
+            }
+        },
+        async set_auth() {
+            try {
+                console.log(this.author_id);
+                this.author_a = await this.authorityCheck(this.author_id);
+                console.log(this.author_a);
+            } catch (error) {
+                //console.error(error);
+                // 处理错误情况
+                this.author_a = 3; // 返回默认值
+            }
+        },
+        // auth_final_check(uid) {
+        //     console.log(this.authorityCheck(uid));
+        //     return this.authorityCheck(uid);
+        // }
+        // async auth_final_check(uid) {
+        //     try {
+        //         const result = await this.authorityCheck(uid);
+        //         console.log(result);
+        //         return result;
+        //     } catch (error) {
+        //         console.error(error);
+        //         // 处理错误情况
+        //         return 3; // 返回默认值
+        //     }
+        // }
     }
 }
 </script>

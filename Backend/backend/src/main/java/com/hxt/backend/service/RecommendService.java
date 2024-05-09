@@ -202,7 +202,7 @@ public class RecommendService {
         }
         */
         
-        
+        System.out.println(keywords);
         // 计算每个关键词的 TF-IDF
         for (String keyword : keywords) {
             double tf = calculateTF(titleKeywords, keyword) * TITLE_WEIGHT +
@@ -280,7 +280,6 @@ public class RecommendService {
                 importantWords.add(term.word.toLowerCase());
             }
         }
-        
         return importantWords;
     }
     

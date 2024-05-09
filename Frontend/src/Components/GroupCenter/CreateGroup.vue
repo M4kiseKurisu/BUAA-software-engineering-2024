@@ -81,6 +81,8 @@
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
+import { result } from "lodash";
+import { data } from "dom7";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     data() {
@@ -158,36 +160,49 @@ export default {
                 })
                 return;
             }
+            var newflie = this.coverList[0].raw;
+            var formData = new FormData();
             var url = this.getImageUrl(this.coverList[0].raw);
-            let packet = {
-                name: this.inputTitle,
-                permitted_num: this.inputPersonNum,
-                content: this.inputContent,
-                is_examine: this.inputIsExamine,
-                tags: this.inputDynamicTags,
-                image: url,
-            }
-            console.log(packet);
+            formData.append("file", newflie);
             axios({
                 method: "POST",
-                url: "/api/group/create",
-                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/create',
-                data: packet
-                // {
-                //     name: this.inputTitle,
-                //     permitted_num: this.inputPersonNum,
-                //     content: this.inputContent,
-                //     is_examine: this.inputIsExamine,
-                //     tags: this.inputDynamicTags,
-                //     image: url,
-                // }
+                url: 'api/posts/write/uploadImage',
+                data: formData,
             }).then((result) => {
                 console.log(result);
-                ElMessage({
-                    message: '团体发布成功',
-                    type: 'success',
-                    plain: true,
-                })
+                if (result.data.success) {
+                    url = result.data.url;
+                    let packet = {
+                        name: this.inputTitle,
+                        permitted_num: this.inputPersonNum,
+                        content: this.inputContent,
+                        is_examine: this.inputIsExamine,
+                        tags: this.inputDynamicTags,
+                        image: url,
+                    }
+                    console.log(packet);
+                    axios({
+                        method: "POST",
+                        url: "/api/group/create",
+                        //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/create',
+                        data: packet
+                    }).then((result) => {
+                        //console.log(result);
+                        this.$router.go(-1);
+                        ElMessage({
+                            message: '团体发布成功',
+                            type: 'success',
+                            plain: true,
+                        })
+                    })
+                } else {
+                    ElMessage({
+                        message: '图片上传失败',
+                        type: 'warning',
+                        plain: true,
+                    })
+                    return;
+                }
             })
         }
     },

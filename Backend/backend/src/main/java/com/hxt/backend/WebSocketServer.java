@@ -1,7 +1,9 @@
 package com.hxt.backend;
 
+import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.service.GroupService;
 import com.hxt.backend.service.MessageService;
 import com.hxt.backend.service.UserService;
 import jakarta.websocket.*;
@@ -30,6 +32,8 @@ public class WebSocketServer {
     public static UserService userService;
 
     public static UserMapper userMapper;
+
+    public static GroupMapper groupMapper;
 
     private static ApplicationContext applicationContext;
 
@@ -127,17 +131,21 @@ public class WebSocketServer {
         send.put("sender_name",userMapper.getUserNameById(senderId));
         send.put("time",time);
         String message = send.toString();
-        List<Integer> groupMember = new ArrayList<>();
+        messageService.sendGroupMessage(senderId,groupId,receive.get("content").toString(),time);
+        List<Integer> groupMember = groupMapper.selectMemberByGroupId(groupId);
         for (Integer userId: groupMember) {
+            if (userId == senderId) {
+                continue;
+            }
             WebSocketServer webSocketServer = webSocketMap.get(String.valueOf(userId));
             if (webSocketServer != null) {
                 try {
                     webSocketServer.session.getBasicRemote().sendText(message);
+                    log.info("【websocket消息】推送消息, message={}", message);
                 } catch (Exception e) {
                     log.error("[连接ID:{}] 发送消息失败, 消息:{}", this.userId, message, e);
                 }
             }
-            messageService.sendGroupMessage(senderId,groupId,receive.get("content").toString(),time);
         }
 
     }

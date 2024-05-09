@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="study_group_center_list">
-                    <el-scrollbar >
+                    <el-scrollbar v-if = "myGroupList.length != 0">
                         <GroupItem v-for = "item in this.myGroupList" :groupInfo = "item"></GroupItem>
                     </el-scrollbar>
                 </div>
