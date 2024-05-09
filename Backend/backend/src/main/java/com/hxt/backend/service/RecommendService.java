@@ -129,6 +129,12 @@ public class RecommendService {
         // 根据相似度排序帖子，推荐前20篇帖子
         List<Post> recommendedPosts = new ArrayList<>(postScores.keySet());
         recommendedPosts.sort((post1, post2) -> Double.compare(postScores.get(post2), postScores.get(post1)));
+        if (recommendedPosts.isEmpty()) {
+            for (int i = 0; i < viewedPosts.size() && i < 10; i++) {
+                Post post = postMapper.getPost(viewedPosts.get(i));
+                recommendedPosts.add(post);
+            }
+        }
         recommendedPosts.subList(0, Math.min(20, recommendedPosts.size()));
         
         // 返回推荐帖子

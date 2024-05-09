@@ -125,6 +125,7 @@ public interface PostMapper {
             "join tag t on t.tag_id = pt.tag_id " +
             "where t.name = #{name} " +
             "and p.section_id = 0")
+    @Result(column = "time", property = "postTime")
     List<Post> getPostByTagName(String name);
     
     //帖子-点赞
@@ -203,7 +204,7 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name = #{tag} " +
+            "and t.name like concat('%', #{tag}, '%') " +
             "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag);
@@ -217,7 +218,7 @@ public interface PostMapper {
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
             "and p.category = #{type} " +
-            "and t.name = #{tag} " +
+            "and t.name like concat('%', #{tag}, '%') " +
             "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTypeTimeDesc(Integer sectionId, String keyword, String tag, Integer type);
@@ -230,7 +231,7 @@ public interface PostMapper {
             "or p.intro like concat('%', #{keyword}, '%') " +
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
-            "and t.name = #{tag} " +
+            "and t.name like concat('%', #{tag}, '%') " +
             "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag);
@@ -245,7 +246,7 @@ public interface PostMapper {
             "or p.content like concat('%', #{keyword}, '%')) " +
             "and p.section_id = #{sectionId} " +
             "and p.category = #{type} " +
-            "and t.name = #{tag} " +
+            "and t.name like concat('%', #{tag}, '%') " +
             "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTypeHotDesc(Integer sectionId, String keyword, String tag, Integer type);
