@@ -134,18 +134,19 @@ export default {
             axios({
                 method: "GET",
                 url: "api/group/info",
-                data: {
+                params: {
                     group_id: this.groupId,
                 }
             }).then((result) => {
-                this.groupName = result.data.name;
-                this.groupCreaterId = result.data.creater_id;
-                this.groupMemberNum = result.data.member_count;
-                this.groupBriefIntor = result.data.content;
-                this.groupCapacity = result.data.permitted_num
-                this.isExamine = result.data.is_examine;
-                this.tags = result.data.tags;
-                this.groupAvatar = result.data.img;
+                console.log(result);
+                this.groupName = result.data.group[0].name;
+                this.groupCreaterId = result.data.group[0].creater_id;
+                this.groupMemberNum = result.data.group[0].member_count;
+                this.groupBriefIntor = result.data.group[0].content;
+                this.groupCapacity = result.data.group[0].permitted_num
+                this.isExamine = result.data.group[0].is_examine;
+                this.tags = result.data.group[0].tags;
+                this.groupAvatar = result.data.group[0].image;
             })
         },
         getCreaterInfo() {
@@ -162,8 +163,8 @@ export default {
         getGroupMemberItem() {
             axios({
                 method: "GET",
-                //url: 'api/group/memberList',
-                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
+                url: 'api/group/memberList',
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
                 params: {
                     group_id: this.groupId,
                 }
@@ -173,9 +174,9 @@ export default {
         },
     },
     created(){
-        // this.getGroupInfo();
-        // this.getCreaterInfo();
-        // this.getGroupMemberItem();
+        this.getGroupInfo();
+        this.getGroupMemberItem();
+        this.getCreaterInfo();
     }
 }
 </script>

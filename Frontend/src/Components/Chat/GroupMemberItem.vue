@@ -1,7 +1,7 @@
 <template>
     <div style="width: 55px;height: 60px;margin-bottom: 5px;margin-right: 5px;" @click = "goToShowPersonInfomation">
         <div style="width: 50px;height: 50px;display: flex;align-items: center;justify-content: center;">
-            <img src="../../Images/testAvatar.jpg" alt=""
+            <img :src="memberAvatar" alt=""
                     style="height: 45px;aspect-ratio: 1/1 ;border-radius: 50%;">
         </div>
         <div style="width: 50px;height: 10px;display: flex;align-items: center;justify-content: center;font-size: small;">

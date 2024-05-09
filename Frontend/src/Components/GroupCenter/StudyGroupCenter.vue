@@ -22,13 +22,14 @@
                             <span style="font-size: 1.5em;font-weight: bold;">{{ selfName }}</span>
                         </div>
                         <div style="height: 40%;width: 100%;display: flex;">
-                            <span style="font-size: 1em;color:dimgray;margin-bottom: 10px;">已加入团体数:{{ selfGroupCount }}</span>
+                            <span style="font-size: 1em;color:dimgray;margin-bottom: 10px;">已加入团体数:{{ selfGroupCount
+                            }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="study_group_center_list">
-                    <el-scrollbar v-if = "myGroupList.length != 0">
-                        <GroupItem v-for = "item in this.myGroupList" :groupInfo = "item"></GroupItem>
+                    <el-scrollbar v-if="myGroupList != []">
+                        <GroupItem v-for="item in this.myGroupList" :groupInfo="item"></GroupItem>
                     </el-scrollbar>
                 </div>
             </div>
@@ -43,13 +44,14 @@
                     <div style="margin-left: auto;">
                         <el-input v-model="inputTag" style="width: 180px;margin-right: 5px;" placeholder="输入标签" />
                         <el-input v-model="inputKeyWord" style="width: 180px;margin-right: 5px;" placeholder="输入关键字" />
-                        <el-button style="margin-right: 5px;" type="primary" plain @click = 'searchGroup'>搜索</el-button>
+                        <el-button style="margin-right: 5px;" type="primary" plain @click='searchGroup'>搜索</el-button>
                         <el-button style="margin-right: 10px;" type="primary" @click="goToCreatGroup">创建团体</el-button>
                     </div>
                 </div>
-                <div class="study_group_center_groupcontainer" >
-                    <div v-for="item in this.selectGroupList" style="display: grid;place-items: center;">
-                        <GroupCard :groupInfo="item" v-if="selectGroupList != 0" :key = 'item.group_id'></GroupCard>
+
+                <div class="study_group_center_groupcontainer" v-if="groupInfoList.length != 0">
+                    <div v-for="item in selectGroupList" style="display: grid;place-items: center;">
+                        <GroupCard :groupInfo="item" :key='item.group_id'></GroupCard>
                     </div>
                 </div>
                 <div
@@ -67,7 +69,6 @@
 </template>
 
 <script>
-import { createDOMCompilerError } from "@vue/compiler-dom";
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue";
 import GroupItem from "../Chat/GroupItem.vue";
 import GroupCard from "./GroupCard.vue";
@@ -98,17 +99,13 @@ export default {
     },
     computed: {
         selectGroupList() {
-            if (this.groupInfoList.length == 0) {
-                return [];
-            } else {
-                var begin, end;
-                begin = this.currentPage * 6 - 6;
-                end = this.currentPage * 6;
-                if (end > this.total) {
-                    end = this.total;
-                }
-                return this.groupInfoList.slice(begin, end);
+            var begin, end;
+            begin = this.currentPage * 6 - 6;
+            end = this.currentPage * 6;
+            if (end > this.total) {
+                end = this.total;
             }
+            return this.groupInfoList.slice(begin, end);
         }
     },
     methods: {
@@ -128,11 +125,13 @@ export default {
                 // }
             }).then((result) => {
                 console.log(result);
+                this.groupCount = result.data.group_count;
                 this.totalGroup = result.data.group_count;
                 this.groupInfoList = result.data.group;
+                //console.log(this.groupInfoList);
             })
         },
-        getMyGroupList(){
+        getMyGroupList() {
             axios({
                 method: "GET",
                 url: 'api/group/joined',
@@ -142,33 +141,32 @@ export default {
                 this.selfGroupCount = result.data.group_count;
             })
         },
-        getSelfInfo(){
+        getSelfInfo() {
             axios({
                 method: "GET",
                 url: 'api/user/social/simple',
-                params:{
-                    id : this.selfId,
+                params: {
+                    id: this.selfId,
                 }
-            }).then((result) =>{
-                console.log(this.selfId)
+            }).then((result) => {
+                //console.log(this.selfId)
                 console.log(result);
                 this.selfName = result.data.name;
                 this.selfAvatar = result.data.user_avatar;
             })
         },
-        searchGroup(){
+        searchGroup() {
             axios({
                 method: 'GET',
                 url: 'api/group/search',
-                params:{
+                params: {
                     tag: this.inputTag,
                     keyword: this.inputKeyWord,
                 }
-            }).then((result) =>{
+            }).then((result) => {
                 this.groupInfoList = result.data.group;
             })
         },
-
     },
     created() {
         this.getGroupList();
@@ -234,7 +232,7 @@ export default {
 .study_group_center_grouplist {
     width: 77%;
     height: 100%;
-    background-color: antiquewhite;
+    background-color: white;
     min-width: 900px;
 }
 

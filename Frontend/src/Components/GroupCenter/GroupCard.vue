@@ -68,7 +68,7 @@
             </div>
         </div>
         <!-- 新尝试卡片 -->
-        <el-dialog v-model="showSubmitForm" title="团体申请" width="900">
+        <el-dialog v-model="showSubmitForm" title="团体申请" width="900" v-if = "showSubmitForm">
             <div style="width: 100%;display: flex;">
                 <div style="width: 420px;border-right: 1px solid darkgray;">
                     <div style="width: 100%;display: flex;">
@@ -203,18 +203,20 @@ export default {
                     id: this.groupCreaterId,
                 }
             }).then((result) => {
+                //console.log(result);
                 this.groupCreaterName = result.data.name;
             })
         },
         getGroupMemberItem() {
             axios({
                 method: "GET",
-                //url: 'api/group/memberList',
-                url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
+                url: 'api/group/memberList',
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/group/memberList',
                 params: {
                     group_id: this.groupId,
                 }
             }).then((result) => {
+                console.log(result);
                 this.groupMemberList = result.data.member;
             })
         },

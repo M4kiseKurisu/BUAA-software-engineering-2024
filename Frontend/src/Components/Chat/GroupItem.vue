@@ -36,8 +36,8 @@
                 </div>
             </div>
         </el-dialog> -->
-        <el-dialog v-model="showGroupInfo" title="团体信息" width="650">
-                <GroupInfo v-if="this.showGroupInfo" :groupId = "this.groupId"></GroupInfo>
+        <el-dialog v-model="showGroupInfo" title="团体信息" width="650" v-if="this.showGroupInfo">
+                <GroupInfo :groupId = "this.groupId"></GroupInfo>
         </el-dialog>
         <!-- <div style="margin-left: auto;">
             <el-button text @click="giveGroupId" style="font-size: 1em;"> 去聊天</el-button>
