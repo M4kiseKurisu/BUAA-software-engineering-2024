@@ -20,19 +20,19 @@
       <div v-if="teachers.length === 0">
         <span  style="font-size: 16px;">暂无教师信息</span>
       </div>
-    <div v-else style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
-      <ManagerPage v-for="(teacher, index) in teachers" :key="index" :teacher="teacher" />
+    <div v-else style="width:85%; display: grid; grid-template-columns: repeat(4, 1fr);">
+      <ManagerPage v-for="(teacher, index) in teachers" :key="index" :id="teacher" />
     </div>
   </div>
     <div style="display: flex;margin-left: 2%;margin-top: 20px;">
       <div style="width: 15%;font-size: larger;">
         相关助教:
       </div>
-      <div v-if="teachers.length === 0">
+      <div v-if="assistants.length === 0">
         <span  style="font-size: 16px;">暂无助教信息</span>
       </div>
-      <div v-else style="width:85%; display: grid; grid-template-columns: repeat(5, 1fr);">
-        <ManagerPage v-for="(teacher, index) in assistants" :key="index" :teacher="teacher" />
+      <div v-else style="width:85%; display: grid; grid-template-columns: repeat(4, 1fr);">
+        <ManagerPage v-for="(teacher, index) in assistants" :key="index" :id="teacher" />
       </div>
     </div>
     <!---<div style="display: flex;margin-left: 2%;margin-top: 20px;">
@@ -51,7 +51,7 @@
 
     <div class="button-of-it-container">
       <div class="apply-for-assistant">
-        <apply-button></apply-button>
+        <apply-button :section_id="section_id"></apply-button>
       </div>
 
     </div>
