@@ -18,7 +18,7 @@ public interface ProgressionMapper {
     
     
     //获取热门作者id(根据板块下发帖数、点赞数、评论数，取前20）
-    @Select("SELECT author_id, (post_count + like_count + comment_count) AS activity_score\n" +
+    @Select("SELECT post_counts.author_id, (post_count + like_count + comment_count) AS activity_score\n" +
             "FROM (\n" +
             "    SELECT p.author_id, COUNT(*) AS post_count\n" +
             "    FROM post p\n" +
@@ -26,7 +26,7 @@ public interface ProgressionMapper {
             "    GROUP BY p.author_id\n" +
             ") AS post_counts\n" +
             "LEFT JOIN (\n" +
-            "    SELECT p.author_id, COUNT(l.like_id) AS like_count\n" +
+            "    SELECT p.author_id, COUNT(l.pl_id) AS like_count\n" +
             "    FROM post p\n" +
             "    LEFT JOIN post_like l ON p.post_id = l.post_id\n" +
             "    WHERE p.section_id = #{sectionId}\n" +
