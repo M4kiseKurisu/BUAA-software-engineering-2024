@@ -35,7 +35,7 @@ public class UserService {
     private SectionMapper sectionMapper;
     @Resource
     private AdminMapper adminMapper;
-    private final String defaultHeadUrl = "";
+    private final String defaultHeadUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
 
     public Integer register(String name, String email, String phone,
                             String major, Integer year, String password) {
