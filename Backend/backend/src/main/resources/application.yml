@@ -6,5 +6,9 @@ spring:
     username: hxt
     password: ruangong-0602-g1
     driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 4096MB
 mybatis:
   type-aliases-package: com.hxt.backend.entity

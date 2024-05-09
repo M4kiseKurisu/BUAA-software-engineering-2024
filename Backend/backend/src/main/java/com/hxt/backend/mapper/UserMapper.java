@@ -153,6 +153,6 @@ public interface UserMapper {
     int getFocusCount(Integer sectionId);
 
     //  用户帖子列表
-    @Select("SELECT post_id FROM post WHERE author_id = #{userId}")
+    @Select("SELECT post_id FROM post WHERE author_id = #{userId} ORDER BY post_id DESC")
     List<Integer> getPosts(Integer userId);
 }

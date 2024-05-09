@@ -244,7 +244,8 @@ public class UserController {
         if (user_id.isEmpty()) {
             return new PostListResponse(-1, new ArrayList<>());
         }
-        return userService.getFavorite(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
+        return userService.getFavorite(id == null? Integer.parseInt(user_id) : id,
+                (id != null && Integer.parseInt(user_id) != id));
     }
 
     @RequestMapping("/user/posts")
@@ -255,7 +256,8 @@ public class UserController {
         if (user_id.isEmpty()) {
             return new PostListResponse(-1, new ArrayList<>());
         }
-        return userService.getPost(Integer.parseInt(user_id), (id != null && Integer.parseInt(user_id) != id));
+        return userService.getPost(id == null? Integer.parseInt(user_id) : id,
+                (id != null && Integer.parseInt(user_id) != id));
     }
 
     @RequestMapping("/user/password/update")
