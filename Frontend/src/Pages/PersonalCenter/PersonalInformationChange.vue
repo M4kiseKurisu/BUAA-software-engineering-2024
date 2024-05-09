@@ -28,7 +28,7 @@
                     <div class="grey-card-information">入学时间：</div>
                     <div class="grey-card-information2">{{ this.signTime }}</div>
                 </div>
-                
+
             </div>
 
             <!-- 第二列信息 -->
@@ -131,12 +131,12 @@
                     </div>
 
                 </div>
-                
+
 
             </div>
 
         </div>
-        
+
 
     </div>
 </template>
@@ -188,9 +188,9 @@ export default {
             this.loginNumber = result.data.account;
             this.signTime = (result.data.enrollment_year != "") ? result.data.enrollment_year : "未设定";
             this.email = result.data.email;
-            this.phoneNumber = (result.data.phone_number != "") ? result.data.phone_number : "未设定";   
-            this.majority = (result.data.major != "") ? result.data.major : "未设定";      
-            this.signature = (result.data.sign != "") ? result.data.sign : "未设定"; 
+            this.phoneNumber = (result.data.phone_number != "") ? result.data.phone_number : "未设定";
+            this.majority = (result.data.major != "") ? result.data.major : "未设定";
+            this.signature = (result.data.sign != "") ? result.data.sign : "未设定";
         })
 
         // 获取头像信息
@@ -303,8 +303,8 @@ export default {
 
             let content = {
                 id: JSON.parse(sessionStorage.getItem("id")),
-                old_password: this.inputOldPassword,
-                new_password: this.inputNewPassword,
+                old_password: md5(this.inputOldPassword),
+                new_password: md5(this.inputNewPassword),
             }
             console.log(content);
 
@@ -443,15 +443,15 @@ export default {
 }
 
 .input-type-1:focus {
-    outline: none; 
-    border: none; 
+    outline: none;
+    border: none;
 }
 
 input::placeholder {
     font-size: 14px;
     margin-left: 4px;
 	color:#888888;
-} 
+}
 
 .input-type-2 {
     width: 356px;
@@ -465,15 +465,15 @@ input::placeholder {
 }
 
 .input-type-2:focus {
-    outline: none; 
-    border: none; 
+    outline: none;
+    border: none;
 }
 
 textarea::placeholder {
     font-size: 14px;
     margin-left: 4px;
 	color:#888888;
-} 
+}
 
 .button-container {
     display: flex;

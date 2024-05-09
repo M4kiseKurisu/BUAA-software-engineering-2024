@@ -66,8 +66,6 @@ public class AdminController {
             return new BasicInfoResponse(false, hasEmptyResponse);
         } else if (!adminService.checkPassword(Integer.parseInt(user_id), op)) {
             return new BasicInfoResponse(false, "旧密码错误！");
-        } else if (!adminService.lengthCheck(np, 6, 18)) {
-            return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
             adminService.resetPassword(Integer.parseInt(user_id), np);
             return new BasicInfoResponse(true, "");

@@ -138,7 +138,7 @@ export default {
         Login() {
             let content = {
                 name: this.loginName,
-                password: this.loginPassword,
+                password: md5(this.loginPassword),
             }
 
             console.log(content);
@@ -185,7 +185,7 @@ export default {
                 phone: this.registerPhone,
                 major: "",
                 year: "",
-                password: this.registerPassword,
+                password: md5(this.registerPassword),
             }
 
             console.log(content);
@@ -229,7 +229,7 @@ export default {
             let content = {
                 account: this.changeAccount,
                 email: this.changeEmail,
-                password: this.changePassword,
+                password: md5(this.changePassword),
             }
             console.log(content);
 
@@ -411,7 +411,7 @@ export default {
     margin-right: 20px;
     margin-top: 6px;
     align-self: flex-end;
-    width: 65px; 
+    width: 65px;
 }
 
 .button-left-3 {

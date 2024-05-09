@@ -64,7 +64,6 @@ public class UserController {
                 || !userService.lengthCheck(email, 1, 96)
                 || !userService.lengthCheck(p, 0, 11)
                 || !userService.lengthCheck(m, 0, 64)
-                || !userService.lengthCheck(password, 6, 18)
                 || !(y >= 2000 && y <= 2040)) {
             return new BasicInfoResponse(false, "注册信息输入不合法！");
         }
@@ -272,8 +271,6 @@ public class UserController {
             return new BasicInfoResponse(false, frequencyResponse);
         } else if (!userService.checkPassword(Integer.parseInt(user_id), op)) {
             return new BasicInfoResponse(false, "旧密码错误！");
-        } else if (!userService.lengthCheck(np, 6, 18)) {
-            return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
             userService.resetPassword(Integer.parseInt(user_id), np);
             frequencyLogService.setLog(Integer.parseInt(user_id), 8);
@@ -289,8 +286,6 @@ public class UserController {
     ) {
         if (account == null || email == null || np == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
-        } else if (!userService.lengthCheck(np, 6, 18)) {
-            return new BasicInfoResponse(false, "密码过长或过短！");
         } else {
             return userService.resetForgottenPassword(account, email, np);
         }

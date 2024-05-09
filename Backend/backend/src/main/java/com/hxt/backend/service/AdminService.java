@@ -52,8 +52,8 @@ public class AdminService {
                 return -4;
             }
         }
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        Integer id = adminMapper.tryLogin(name, md5);
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        Integer id = adminMapper.tryLogin(name, password);
         if (id != null) {
             adminMapper.setFail(name, 0);
             return id;
@@ -118,13 +118,13 @@ public class AdminService {
     }
 
     public boolean checkPassword(Integer id, String password) {
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        return adminMapper.checkPassword(id, md5) > 0;
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        return adminMapper.checkPassword(id, password) > 0;
     }
 
     public void resetPassword(Integer id, String password) {
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        adminMapper.resetPassword(id, md5);
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        adminMapper.resetPassword(id, password);
     }
 
     public boolean addCourse(String name, String intro, String type,

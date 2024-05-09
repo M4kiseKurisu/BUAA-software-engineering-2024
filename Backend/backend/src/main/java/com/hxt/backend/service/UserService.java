@@ -42,23 +42,23 @@ public class UserService {
         if (userMapper.selectUserByAccount(name) != null || userMapper.selectUserByName(name) != null) {
             return -1;
         }
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        return userMapper.insertUser(name, email, phone, major, year, md5);
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        return userMapper.insertUser(name, email, phone, major, year, password);
     }
 
     public Integer checkPassword(String name, String password) {
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userMapper.selectUserByAccount(name);
-        if (user != null && md5.equals(user.getPassword())) {
+        if (user != null && password.equals(user.getPassword())) {
             return user.getUserId();
         }
         return -1;
     }
 
     public boolean checkPassword(Integer id, String password) {
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        //  String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userMapper.selectUserById(id);
-        return md5.equals(user.getPassword());
+        return password.equals(user.getPassword());
     }
 
     public UserInfoResponse getUserInfo(Integer id) {
@@ -209,8 +209,8 @@ public class UserService {
     }
 
     public void resetPassword(Integer id, String password) {
-        String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        userMapper.resetPassword(id, md5);
+        //String md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
+        userMapper.resetPassword(id, password);
     }
 
     public BasicInfoResponse resetForgottenPassword
