@@ -52,6 +52,7 @@
     <div class="button-of-it-container">
       <div class="apply-for-assistant">
         <apply-button :section_id="section_id"></apply-button>
+
       </div>
 
     </div>
