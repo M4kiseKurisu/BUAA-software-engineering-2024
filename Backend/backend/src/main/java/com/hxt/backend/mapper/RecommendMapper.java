@@ -74,4 +74,15 @@ public interface RecommendMapper {
     @Update("UPDATE view_history SET time = #{time} " +
             "WHERE view_history_id = #{viewHistoryId}")
     int updateViewHistory(Integer viewHistoryId, Timestamp time);
+    
+    
+    //插入帖子关键词
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO post_keyword (post_id, title_keyword, intro_keyword, content_keyword) " +
+            "VALUES (#{postId}, #{titleKeyword}, #{introKeyword}, #{contentKeyword})")
+    int insertPostKeyword(Integer postId, String titleKeyword, String introKeyword, String contentKeyword);
+    
+    //根据id 获取帖子关键词
+    @Select("SELECT * from post_keyword where post_id = #{postId}")
+    PostKeyword getKeywordByPostId(Integer postId);
 }

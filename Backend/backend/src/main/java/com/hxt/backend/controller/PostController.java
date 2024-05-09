@@ -33,7 +33,7 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
-    ) {
+    ) throws IOException {
         if (user_id.equals("")) {
             return new PostResponse(false, null, null, null, null,
                     null, null, null, null, null, null,
@@ -174,6 +174,10 @@ public class PostController {
                 postService.postInsertTag(post_id, tagId);
             }
         }
+        
+        //向post_keyword中插入关键词
+        recommendService.extractPostKeywords(post_id);
+        
         frequencyLogService.setLog(author_id, 5);
         return new WritePostResponse(true, "发帖成功", post_id);
     }
