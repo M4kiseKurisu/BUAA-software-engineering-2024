@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class RecommendController {
     @RequestMapping(value = "/posts/recommend")
     public SearchResponse recommendPost(
             @CookieValue(name = "user_id", defaultValue = "") String userId
-    ) {
+    ) throws IOException {
         
         if (userId.isEmpty()) {
             return new SearchResponse(false,"用户未登录",null);

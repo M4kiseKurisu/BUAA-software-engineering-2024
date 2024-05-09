@@ -6,6 +6,7 @@ import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class ProgressionController {
             @RequestParam(name = "sort", required = false) Integer sort,
             @RequestParam(name = "recommend", required = false) boolean recommend,
             @CookieValue(name = "user_id", defaultValue = "") String userId
-    ) {
+    ) throws IOException {
     
         if (userId == "") {
             return new PostListResponse(false,null);
