@@ -59,7 +59,7 @@ public class ProgressionController {
             @CookieValue(name = "user_id", defaultValue = "") String userId
     ) {
     
-        if (userId.isEmpty()) {
+        if (userId == "") {
             return new PostListResponse(false,null);
         }
         
