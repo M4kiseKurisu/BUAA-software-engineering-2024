@@ -51,8 +51,8 @@
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                        <span style="padding-right: 3% ;"><el-input v-model="tagKind" style="width: 120px"
-                                placeholder="输入标签" /></span>
+                        <!-- <span style="padding-right: 3% ;"><el-input v-model="tagKind" style="width: 120px"
+                                placeholder="输入标签" /></span> -->
                         <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
                         <span style="padding-right: 3%;"><el-button type="primary" plain
@@ -242,7 +242,8 @@ export default {
             axios({
                 method: "GET",
                 url: 'api/progression/filter',
-                params: packet
+                //url: 'http://127.0.0.1:4523/m1/4272722-0-default/progression/filter',
+                params: packet,
             }).then((result) => {
                 console.log(result);
                 this.postList = result.data.posts;
@@ -260,6 +261,7 @@ export default {
     },
     created() {
         this.getPostList();
+        //this.getSortPostList();
         this.getPopAuthor();
     }
 }

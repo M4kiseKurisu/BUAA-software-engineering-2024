@@ -170,7 +170,7 @@ export default {
                 //url: "http://127.0.0.1:4523/m1/4272722-0-default/message/reply",
                 //data: {receiver_id:this.meId,},
             }).then((result) => {
-                //console.log(result);
+                console.log(result);
                 this.total2 = result.data.reply_count;
                 this.allReplyMessage = result.data.reply_list;
                 this.noticeChoice = 2;

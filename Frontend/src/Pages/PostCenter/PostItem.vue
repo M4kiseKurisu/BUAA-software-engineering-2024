@@ -1,10 +1,11 @@
 <template>
-    <div style="width: 100%;min-width: 780px;max-width: 100%;;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
+    <div
+        style="width: 100%;min-width: 780px;max-width: 100%;;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
         <div v-if="this.cover != ''"
             style="display: flex;height: 100%;width: 145px; justify-content: center;align-items: center; background-color: white;">
             <el-avatar :size='140' :src="cover" shape="square" fit="cover" />
         </div>
-        <div class="widthSelect" :class = "{active : this.cover != ''}">
+        <div class="widthSelect" :class="{ active: this.cover != '' }">
             <div style="width: 100%;height: 40%;display: flex;align-items: center;justify-content: space-between;">
                 <span style="font-size:1.6em;font-weight: bold; margin-left: 20px;">{{ title }}</span>
                 <div style="display: flex;">
@@ -12,7 +13,8 @@
                             style="font-size: 1em; font-weight: bold;">{{ item }}</el-tag></span>
                 </div>
             </div>
-            <div style="width: 60%;height: 30%;margin-left: 20px;max-width: 60%;color: darkgrey;word-wrap: break-word;overflow: hidden;">
+            <div
+                style="width: 60%;height: 30%;margin-left: 20px;max-width: 60%;color: darkgrey;word-wrap: break-word;overflow: hidden;">
                 <span>{{ introduction }}</span>
             </div>
             <div
@@ -27,7 +29,7 @@
                             alt="">&ensp;{{ likeNum }}</span>
                 </div>
                 <div style="display: flex;align-items: center; flex-grow: 1;justify-content: end;">
-                    <span style="margin-right: 30px;"><el-button type="primary" @click = "goToPost()">查看详情</el-button></span>
+                    <span style="margin-right: 30px;"><el-button type="primary" @click="goToPost()">查看详情</el-button></span>
                 </div>
             </div>
         </div>
@@ -72,24 +74,26 @@ export default {
             //console.log(starNum);
             axios({
                 method: "GET",
-                url: "/api/posts/post",
+                url: "/api/posts/specify",
                 params: { post_id: this.postId, },
             }).then((result) => {
-                //console.log(result);
-                this.title = result.data.title;
+                console.log(result);
+                this.postId =result.data.post_id;
+                this.title = result.data.post_title;
                 this.authorId = result.data.author_id;
                 this.authorName = result.data.author_name;
-                this.introduction = result.data.intro;
-                this.time = result.data.create_time;
-                this.tags = result.data.tags;
-                this.likeNum = result.data.likeCount;
-                this.starNum = result.data.collectCount;
-                if(result.data.images.length != 0){
-                    this.cover = result.data.images[0];
+                this.introduction = result.data.post_intro;
+                this.time = result.data.post_time;
+                this.tags = result.data.tag_list;
+                this.likeNum = result.data.post_likes;
+                this.starNum = result.data.post_favorites;
+                if (result.data.post_photo != null) {
+                    this.cover = result.data.post_photo;
                 }
+                this.sectionId = this.getSectionId;
             });
         },
-        goToPost(){
+        goToPost() {
             let authority = "none";
             //console.log(this.sectionId);
             axios({
@@ -99,16 +103,16 @@ export default {
             }).then((result) => {
                 //console.log(result);
                 if (result.data.success) {
-                    authority = result.data.info; 
-                } 
-                this.$router.push({ path: '/MainPage/Course_Center/PostPage/'+ this.postId });
+                    authority = result.data.info;
+                }
+                this.$router.push({ path: '/MainPage/Course_Center/PostPage/' + this.postId });
             });
         }
     },
     created() {
         //console.log(this.postInfo);
         if (this.postInfo != null) {
-            console.log(this.postInfo);
+            //console.log(this.postInfo);
             this.postId = this.postInfo.post_id;
             this.title = this.postInfo.post_title;
             this.authorId = this.postInfo.author_id;
@@ -118,7 +122,7 @@ export default {
             this.tags = this.postInfo.tag_list;
             this.likeNum = this.postInfo.post_likes;
             this.starNum = this.postInfo.post_favorites;
-            if(this.postInfo.post_photo != null){
+            if (this.postInfo.post_photo != null) {
                 this.cover = this.postInfo.post_photo;
             }
             this.sectionId = this.getSectionId;
@@ -131,10 +135,14 @@ export default {
 }
 </script>
 <style>
-.widthSelect.active{
-    width: calc(100% - 145px);background-color:white;height: 100%;
+.widthSelect.active {
+    width: calc(100% - 145px);
+    background-color: white;
+    height: 100%;
 }
-.widthSelect{
-    width: 100%;background-color:white;height: 100%;
-}
-</style>
+
+.widthSelect {
+    width: 100%;
+    background-color: white;
+    height: 100%;
+}</style>
