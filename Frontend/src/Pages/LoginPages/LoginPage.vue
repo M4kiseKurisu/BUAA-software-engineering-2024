@@ -273,6 +273,8 @@ export default {
 .LoginPageContainer {
     width: 60%;
     height: 60%;
+    min-width: 703px;
+    min-height: 442px;
     background-color: white;
     border-radius: 20px;
     display: flex;
@@ -307,7 +309,7 @@ export default {
     font-size: 32px;
     color: #165DFF;
     font-weight: bold;
-    margin-top: 65px;
+    margin-top: 15%;
     align-self: center;
     margin-bottom: 24px;
 }
