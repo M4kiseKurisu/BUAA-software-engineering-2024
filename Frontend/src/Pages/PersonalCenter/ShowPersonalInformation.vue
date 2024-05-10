@@ -15,7 +15,7 @@
                         <span style="font-size: 2em;font-weight: bold;">{{ userName }}</span>
                         <!-- <span style="margin-left: 20px;font-size: large;color: darkgrey;">入学年份：{{ jieshu }}</span>
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span> -->
-                        <el-tag  v-if = "isBlock" type="danger" effect="dark" style="margin-left: 20px;" size="large">
+                        <el-tag v-if="isBlock" type="danger" effect="dark" style="margin-left: 20px;" size="large">
                             <span style="font-size: large;font-weight: bold;">账号封禁中</span>
                         </el-tag>
                     </div>
@@ -64,12 +64,13 @@
             <div style="width: 30%;height: 100%;display: flex;align-items: center;justify-content: center;margin-left: 2%;">
                 <div style="width: 80%;height: 95%; background-color: white;box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);">
                     <div style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 20px;">
-                        <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
+                        <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;"
+                                @click="getPersonalPostList">ta
                                 的 帖
                                 子</span></el-button>
                     </div>
                     <div style="width: 100%;display: flex;justify-content: center;align-items: center;margin-top: 20px;">
-                        <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;">ta
+                        <el-button plain size="large" style="width: 90%;" type="primary"><span style="font-size: large;" @click = "getPersonFavoritesPost">ta
                                 的 收
                                 藏</span></el-button>
                     </div>
@@ -78,8 +79,9 @@
             <div style="width: 65%;height: 100%;background-color: white;">
                 <div style="width: 100%;height: 100%;">
                     <el-scrollbar style="height: 100%;width: 100%;">
-                        <div v-if = "this.postItemList.length != 0" style="width: 97.8%;height: 100%;">
-                            <PostItem v-for = "item in this.postItemList" :getPostId = "item.post_id" :key = "item.post_id"></PostItem>
+                        <div v-if="this.postItemList.length != 0" style="width: 97.8%;height: 100%;">
+                            <PostItem v-for="item in this.postItemList" :getPostId="item.post_id" :key="item.post_id">
+                            </PostItem>
                         </div>
 
                     </el-scrollbar>
@@ -134,7 +136,7 @@ export default {
                 url: "/api/user/social/others",
                 params: { id: this.userId }
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.userName = result.data.name;
                 this.userAvatar = result.data.user_avatar;
                 this.followCount = result.data.following_count;
@@ -185,14 +187,27 @@ export default {
                 })
             }
         },
-        getPersonalPostList(){
+        getPersonalPostList() {
             axios({
                 method: "GET",
                 url: "api/user/posts",
-                params:{
-                    id : this.userId,
+                params: {
+                    id: this.userId,
                 }
             }).then((result) => {
+                this.showNum = result.data.count;
+                this.postItemList = result.data.posts;
+            })
+        },
+        getPersonFavoritesPost() {
+            axios({
+                method: "GET",
+                url: "api/user/favorites",
+                params: {
+                    id: this.userId,
+                }
+            }).then((result) => {
+                console.log(result);
                 this.showNum = result.data.count;
                 this.postItemList = result.data.posts;
             })

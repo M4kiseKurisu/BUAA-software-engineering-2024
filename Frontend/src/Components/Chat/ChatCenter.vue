@@ -267,7 +267,7 @@ export default {
                     receiver_id: this.personId,
                 }
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.messageCount = result.data.message_count;
                 this.messageList = result.data.message_list;
             });
@@ -323,7 +323,7 @@ export default {
                 let jsonData = JSON.stringify(messageToSend);
                 this.ws.send(jsonData);
                 this.messageList.push(messageToSend);
-                console.log(messageToSend);
+                //console.log(messageToSend);
                 // 清空消息输入框
                 this.textinput = '';
             } else {
@@ -345,11 +345,12 @@ export default {
             axios({
                 method: "GET",
                 url: "api/group/info",
-                data: {
+                params: {
                     group_id: this.groupId,
                 }
             }).then((result) => {
-                this.groupName = result.data.name;
+                console.log(result);
+                this.groupName = result.data.group[0].name;
             })
         }
     },

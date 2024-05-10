@@ -87,7 +87,7 @@
                     <div style="width: 25%;font-size: larger;">
                         相关教师:
                     </div>
-                    <div v-if = "this.techerIdList == ''" style="font-size: larger;">无</div>
+                    <div v-if = "this.techerIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.techerIdList" :personId = "item"></ManagerItem>
                     </div>
@@ -96,7 +96,7 @@
                     <div style="width: 25%;font-size: larger;">
                         相关助教:
                     </div>
-                    <div v-if = "this.assitantIdList == ''" style="font-size: larger;">无</div>
+                    <div v-if = "this.assitantIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
                     </div>
@@ -105,7 +105,7 @@
                     <div style="width: 25%;font-size: larger;">
                         热门作者:
                     </div>
-                    <div v-if = "this.popAuthorIdList == ''" style="font-size: larger;">无</div>
+                    <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
                     </div>
@@ -128,6 +128,7 @@ import PostItem from "./PostItem.vue";
 import ManagerItem from "./ManagerItem.vue";
 import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
 import axios from 'axios';
+import { result } from "lodash";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     components: {
@@ -259,7 +260,7 @@ export default {
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
-                this.assitantIdList = result.data.assistants;
+                //this.assitantIdList = result.data.assistants;
             })
         },
         getPopAuthor(){
@@ -292,12 +293,25 @@ export default {
                 url: "/api/section/unfocus",
                 data: { section_id: this.sectionId },
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 if (result.data.success) {
                     this.isFollow = false;
                 }
             })
         },
+        getAuthority(){
+            axios({
+                method: "GET",
+                url: 'api/section/authority',
+                params: {
+                    id: this.sectionId,
+                }
+            }).then((result) => {
+                console.log(result);
+                this.techerIdList = result.data.teacher;
+                this.assitantIdList = result.data.assistant;
+            })
+        }
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
@@ -306,6 +320,7 @@ export default {
         this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
         this.getSectionInfomation();
         this.getPopAuthor();
+        this.getAuthority();
     }
 }
 </script>
