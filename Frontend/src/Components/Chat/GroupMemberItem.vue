@@ -19,7 +19,8 @@ export default{
         memberInfo:{
             type: Object,
             default: null,
-        }
+        },
+
     },
     data(){
         return {
@@ -47,6 +48,7 @@ export default{
     },
     created(){
         if(this.memberInfo != null){
+            this.memberId = this.memberInfo.user_id;
             this.memberAvatar = this.memberInfo.image;
             this.memberName = this.memberInfo.name;
         }

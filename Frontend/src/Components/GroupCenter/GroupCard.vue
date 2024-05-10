@@ -112,7 +112,7 @@
                             <span style="font-size: 1.3em;font-weight: bold;">团体成员 {{ groupMemberNum }}/{{ groupCapacity
                             }}</span>
                         </div>
-                        <div v-if="this.groupMemberList.length != 0"
+                        <div v-if="this.groupMemberList != []"
                             style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
                             <GroupMemberItem v-for="item in groupMemberList" :memberInfo="item"></GroupMemberItem>
                             <!-- <img src="../../Images/testAvatar.jpg" alt=""
@@ -194,6 +194,7 @@ export default {
             }).then((result) => {
                 console.log(result);
             })
+            this.$router.go(0);
         },
         getCreaterInfo() {
             axios({

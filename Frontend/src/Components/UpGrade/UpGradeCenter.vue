@@ -55,8 +55,10 @@
                                 placeholder="输入标签" /></span>
                         <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 3%;"><el-button type="primary" plain @click = "this.getSortPostList();">板块内搜索</el-button></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "postRecommend">智能推荐</el-button></span>
+                        <span style="padding-right: 3%;"><el-button type="primary" plain
+                                @click="this.getSortPostList();">板块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain
+                                @click="postRecommend">智能推荐</el-button></span>
                     </div>
                 </div>
             </div>
@@ -163,7 +165,7 @@ export default {
     watch: {
         sortKindStr(newValue, oldValue) {
             console.log(newValue);
-            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind);
+            this.getPostList();
         }
     },
     methods: {
@@ -229,28 +231,31 @@ export default {
             })
         },
         getSortPostList() {
+            var packet = {
+                target: this.target,
+                type: this.kindSelect,
+                keyword: this.searchWord,
+                sort: this.sortIndex,
+                recommend: this.recommend,
+            }
+            console.log(packet);
             axios({
                 method: "GET",
                 url: 'api/progression/filter',
-                params:{
-                    target: this.target,
-                    type: this.kindSelect,
-                    keyword: this.searchWord,
-                    sort: this.sortIndex,
-                    recommend: this.recommend,
-                },
+                params: packet
             }).then((result) => {
+                console.log(result);
                 this.postList = result.data.posts;
                 this.total = this.postList.length;
             })
         },
-        postRecommend(){
+        postRecommend() {
             this.recommend = true;
             this.getSortPostList();
             this.recommend = false;
         },
         toPost() {
-            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + 0});
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + 0 });
         },
     },
     created() {
