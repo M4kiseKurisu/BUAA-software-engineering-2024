@@ -38,11 +38,13 @@ export default {
             time: "2002020",
             isRead: true,
             receiverId: 2,
+            selfId : JSON.parse(sessionStorage.getItem("id")),
+            personId: 1,
         }
     },
     methods: {
         GetSenderInfomation() {
-            this.senderId = this.messageInfomation.sender_id,
+                this.senderId = this.messageInfomation.sender_id,
                 //this.senderName = this.messageInfomation.,
                 this.content = this.messageInfomation.last_message_content,
                 this.time = this.messageInfomation.last_message_time,
@@ -50,8 +52,8 @@ export default {
                 this.receiverId = this.messageInfomation.receiver_id,
                 axios({
                     method: "GET",
-                    url: "api/user/social/others",
-                    params: { id: this.senderId, },
+                    url: "api/user/social/simple",
+                    params: { id: this.personId, },
                 }).then((result) => {
                     this.senderName = result.data.name;
                     this.headImg = result.data.user_avatar;
@@ -68,6 +70,11 @@ export default {
     },
     created() {
         if (this.messageInfomation != null) {
+            if (this.selfId != this.messageInfomation.sender_id) {
+                this.personId = this.messageInfomation.sender_id
+            } else {
+                this.personId = this.messageInfomation.receiver_id;
+            }
             this.GetSenderInfomation();
         }
     }

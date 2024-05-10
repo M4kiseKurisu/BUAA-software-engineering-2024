@@ -91,14 +91,13 @@ export default {
         },
         goToPost(){
             let authority = "none";
-            console.log(this.sectionId);
+            //console.log(this.sectionId);
             axios({
                 method: "GET",
                 url: "/api/user/authority",
                 params: { section: this.sectionId, },
             }).then((result) => {
                 //console.log(result);
-                console.log(result);
                 if (result.data.success) {
                     authority = result.data.info; 
                 } 
@@ -109,6 +108,7 @@ export default {
     created() {
         //console.log(this.postInfo);
         if (this.postInfo != null) {
+            console.log(this.postInfo);
             this.postId = this.postInfo.post_id;
             this.title = this.postInfo.post_title;
             this.authorId = this.postInfo.author_id;
@@ -118,7 +118,9 @@ export default {
             this.tags = this.postInfo.tag_list;
             this.likeNum = this.postInfo.post_likes;
             this.starNum = this.postInfo.post_favorites;
-            this.cover = this.postInfo.post_photo;
+            if(this.postInfo.post_photo != null){
+                this.cover = this.postInfo.post_photo;
+            }
             this.sectionId = this.getSectionId;
         } else {
             this.postId = this.getPostId;

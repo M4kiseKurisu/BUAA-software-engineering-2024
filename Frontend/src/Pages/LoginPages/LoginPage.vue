@@ -28,7 +28,7 @@
                     <button class="to-assign-font" style="margin-left: 16px" @click="toFindPassword">找回密码</button>
                 </div>
 
-                <el-image class="logoPicture" :src="logoPic" :fit="fit" />
+                <!--<el-image class="logoPicture" :src="logoPic" :fit="fit" />  -->
 
             </div>
 

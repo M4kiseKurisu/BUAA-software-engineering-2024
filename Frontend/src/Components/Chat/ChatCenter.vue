@@ -88,7 +88,8 @@
             <div style="width: 100%; background-color: #efefef; padding-top: 10px; padding-bottom: 10px;">
                 <el-scrollbar v-if="this.chatKindChose == 2" style="height: 95%;">
                     <div style="width: 90%; margin-left: 5%;">
-                        <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem>
+                        <!-- <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem> -->
+                        <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" ></GroupItem>
                     </div>
                 </el-scrollbar>
                 <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">

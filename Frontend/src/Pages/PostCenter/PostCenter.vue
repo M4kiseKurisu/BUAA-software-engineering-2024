@@ -24,7 +24,7 @@
                             @click="followSection">关注板块</el-button></span>
                     <span style="padding-left: 3%;" v-if="this.isFollow"><el-button type="primary" plain
                             @click="unFollowSection">取消关注</el-button></span>
-                    <span style="padding-left: 3%;"> <Apply :section_id="this.sectionId"/> </span>
+                    <!-- <span style="padding-left: 3%;"> <Apply :section_id="this.sectionId"/> </span> -->
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
@@ -80,9 +80,9 @@
                 </div>
             </div>
             <div style="width: 25%; min-width: 360px;">
-                <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
+                <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
-                </div>
+                </div> -->
                 <div style="display: flex;margin-left: 5%;margin-top: 20px;">
                     <div style="width: 25%;font-size: larger;">
                         相关教师:

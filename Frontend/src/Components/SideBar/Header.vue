@@ -133,6 +133,13 @@ export default {
             })
         },
         searchPerson() {
+            if (this.name_input.length == 0) {
+                this.$message({
+                    showClose: true,
+                    message: '请输入信息！',
+                    type: 'error',
+                });
+            }
             axios({
                 method: "GET",
                 url: "/api/user/search",
@@ -142,7 +149,7 @@ export default {
                 }
             }).then((result) => {
                 console.log(result);
-                this.user_list = result.data.user;
+                this.user_list = result.data.user.slice(0, 6);
             })
         },
         toProfile(id) {

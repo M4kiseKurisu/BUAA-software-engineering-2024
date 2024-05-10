@@ -6,6 +6,7 @@ import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class ProgressionController {
             @RequestParam(name = "sort", required = false) Integer sort,
             @RequestParam(name = "recommend", required = false) boolean recommend,
             @CookieValue(name = "user_id", defaultValue = "") String userId
-    ) {
+    ) throws IOException {
     
         if (userId == "") {
             return new PostListResponse(false,null);
@@ -71,9 +72,8 @@ public class ProgressionController {
             }
             return new PostListResponse(true, list);
         }
-        
         //筛选帖子
-        List<PostIntroResponse> list = progressionService.filterPost(target, type, keyword, sort);
+        List<PostIntroResponse> list = progressionService.filterPost(target + "升学", type, keyword, sort);
         
         if (list.isEmpty()) {
             return new PostListResponse(false, list);
