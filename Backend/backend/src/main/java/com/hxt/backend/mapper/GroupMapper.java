@@ -68,6 +68,11 @@ public interface GroupMapper {
     int getGroupJoinState(Integer groupId, Integer userId);
 
     @Options(useGeneratedKeys = true)
-    @Select("insert into apply_group (user_id, group_id, content) VALUES (#{userId},#{groupId},#{content});")
+    @Select("insert into apply_group (user_id, group_id, content, pushed) VALUES (#{userId},#{groupId},#{content}, false);")
     int insertGroupJoinApply(Integer groupId, Integer userId, String content);
+
+    @Update("update apply_group " +
+            "set pushed = true " +
+            "where ag_id = #{ag_id};")
+    int updateApplyPushState(Integer ag_id);
 }

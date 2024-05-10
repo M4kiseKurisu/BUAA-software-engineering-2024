@@ -1,6 +1,7 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.message.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -93,4 +94,27 @@ public interface MessageMapper {
     //获取群聊消息
     @Select("select * from group_message where group_id = #{group_id};")
     List<GroupMessage> selectGroupMessageByGroupId(Integer group_id);
+
+    // 申请加入学习团体通知表部分
+
+    // 获取加入申请
+    @Select("select * from apply_notice where promoter_id = #{userId}")
+    List<ApplyNotice> selectUnprocessedApplyNoticeByUserId(Integer userId);
+
+    // 获取申请反馈
+    @Select("select * from apply_notice where user_id = 1;")
+    List<ApplyNotice> selectApplyGroupFeedbackByUserId(Integer userId);
+
+    // 修改申请结果
+    @Update(" update apply_notice" +
+            " set processed = true," +
+            "    result = #{result}" +
+            " where an_id = #{an_id};")
+    int updateFeedBack(Integer an_id, Boolean result);
+
+    // 插入新的申请
+    @Options(useGeneratedKeys = true)
+    @Insert("insert into apply_notice (group_id, user_id, content, promoter_id, processed, result) " +
+            "values (#{group_id},#{user_id},#{content},#{promoter_id},false,false})")
+    int insertApplyNotice(Integer groupId, Integer user_id, String content, Integer promoter_id);
 }

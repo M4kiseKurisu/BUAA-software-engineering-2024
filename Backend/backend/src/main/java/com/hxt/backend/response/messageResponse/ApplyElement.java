@@ -17,5 +17,8 @@ public class ApplyElement {
     private String apply_title;
     private String apply_content;
     private Boolean is_apply_feedback;
-    private String apply_feedback_info;
+    private Boolean apply_feedback_info;
+    private String group_name;
+    private String user_name;
+    private String user_avatar;
 }
