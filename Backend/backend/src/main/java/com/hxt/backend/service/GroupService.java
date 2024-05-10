@@ -50,10 +50,14 @@ public class GroupService {
         return new BasicInfoResponse(true,"");
     }
 
-    public List<GroupElement> getGroupList() {
+    public List<GroupElement> getGroupList(Integer userId) {
         List<Group> groups = groupMapper.selectGroup();
         List<GroupElement> list = new ArrayList<>();
+        List<Integer> joined = groupMapper.selectJoinedGroupsByUserId(userId);
         for (Group group: groups) {
+            if (joined.contains(group.getGroup_id())) {
+                continue;
+            }
             GroupElement element = new GroupElement();
             element.setGroup_id(group.getGroup_id());
             element.setName(group.getName());
@@ -69,7 +73,7 @@ public class GroupService {
         return list;
     }
 
-    public List<GroupElement> searchGroup(String keyword, String tag) {
+    public List<GroupElement> searchGroup(String keyword, String tag, Integer userId) {
         List<GroupElement> list = new ArrayList<>();
         List<Group> groups;
         if (keyword.isEmpty()) {
@@ -78,7 +82,11 @@ public class GroupService {
         else {
             groups = groupMapper.selectGroupByKeyword(keyword);
         }
+        List<Integer> joined = groupMapper.selectJoinedGroupsByUserId(userId);
         for (Group group: groups) {
+            if (joined.contains(group.getGroup_id())) {
+                continue;
+            }
             GroupElement element = new GroupElement();
             element.setGroup_id(group.getGroup_id());
             element.setName(group.getName());
