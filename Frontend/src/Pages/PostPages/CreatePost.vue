@@ -208,6 +208,12 @@ export default {
                     });
                     //location.reload();
                     this.$router.push({ path: "/MainPage/Course_Center/PostCenter/" + this.sectionId});
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.info,
+                        type: 'error',
+                    });
                 }
             })
         },
