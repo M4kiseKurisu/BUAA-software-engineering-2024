@@ -52,10 +52,11 @@ public class GroupController {
 
     @GetMapping("/group/search")
     public GroupSearchResponse searchAvailableGroup(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "tag", defaultValue = "") String tag,
             @RequestParam(name = "keyword", defaultValue = "") String keyword
     ) {
-        List<GroupElement> list = groupService.searchGroup(keyword,tag);
+        List<GroupElement> list = groupService.searchGroup(keyword,tag,Integer.parseInt(user_id));
         GroupSearchResponse response = new GroupSearchResponse();
         response.setSuccess(true);
         if (list.isEmpty()) {
@@ -70,8 +71,10 @@ public class GroupController {
     }
 
     @GetMapping("/group/list")
-    public GroupSearchResponse getAvailableGroupList() {
-        List<GroupElement> list = groupService.getGroupList();
+    public GroupSearchResponse getAvailableGroupList(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        List<GroupElement> list = groupService.getGroupList(Integer.parseInt(user_id));
         GroupSearchResponse response = new GroupSearchResponse();
         response.setSuccess(true);
         if (list.isEmpty()) {
