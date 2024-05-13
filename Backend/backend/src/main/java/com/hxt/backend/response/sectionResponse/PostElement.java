@@ -23,5 +23,5 @@ public class PostElement {
     private Integer post_likes;
     private List<String> tag_list;
     private String post_photo;
-    private Timestamp post_time;
+    private String post_time;
 }
