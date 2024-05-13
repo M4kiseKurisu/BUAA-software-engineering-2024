@@ -123,16 +123,8 @@ public class ProgressionService {
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
             
-            String imageUrl = null;
-            List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if (!imageIds.isEmpty()) {
-                imageUrl = imageMapper.getImage(imageIds.get(0));
-            }
-            
             postIntroResponse.setAuthor_name(authorName);
             postIntroResponse.setTag_list(tags);
-            postIntroResponse.setPost_photo(imageUrl);
-            
             
             postIntroResponses.add(postIntroResponse);
         }

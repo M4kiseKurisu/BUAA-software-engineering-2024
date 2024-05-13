@@ -135,14 +135,18 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
-            element.setPost_time(post.getPostTime());
+            
+            String[] time = post.getPostTime().toString().split(":");
+            String postTime = time[0] + ":" + time[1];
+            element.setPost_time(postTime);
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());
             List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
             element.setTag_list(tags);
-            element.setPost_photo("");
-
+            element.setPost_photo(post.getCover());
+            
+            /*
             List<Integer> imageId = postMapper.getImageIdByPost(element.getPost_id());
             for (Integer id: imageId) {
                 if (imageMapper.getImage(id) != null) {
@@ -150,6 +154,8 @@ public class SectionService {
                     break;
                 }
             }
+            
+             */
 
             list.add(element);
         }
