@@ -1,0 +1,137 @@
+.flex-layout {
+    display: flex;
+}
+
+.column-center {
+    flex-direction: column;
+    justify-content: center;
+}
+
+.center-container {
+    align-items: center;
+    justify-content: center;
+}
+
+/* 卡片样式 */
+.card-size {
+    height: 442px;
+    width: 703px;
+    border-radius: 10px;
+    background-color: white;
+    overflow: hidden;
+}
+
+.card-size-small {
+    height: 442px;
+    width: 351px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.3);
+}
+
+.half-content {
+    width: 50%;
+    height: 100%;
+}
+
+/* 卡片内容样式 */
+.full-content {
+    width: 100%;
+    height: 100%;
+}
+
+.title-container {
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+.title-font {
+    font-size: 32px;
+    color: #165DFF;
+    font-weight: bold;
+    align-self: center;
+}
+
+.login-button-container {
+    margin-top: 24px;
+}
+
+.login-button {
+    min-width: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #1f63ff;
+    color: #ffffff;
+    border: none;
+}
+
+.change-page-link-container {
+    margin-top: 16px;
+}
+
+.change-page-link {
+    color: #165DFF;
+    text-decoration: underline;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* 输入框样式 */
+.line-container {
+    width: 100%;
+    height: 32px;
+    margin-bottom: 16px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.input-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4e5969;
+    margin-left: 6%;
+    margin-right: 6%;
+    max-width: 24%;
+    height: 21px;
+    overflow: hidden;
+}
+
+.input-box {
+    background-color: #f7f8fa;
+    border: 0px;
+    border-radius: 2px;
+    height: 100%;
+    width: 58%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 6%;
+    box-sizing: border-box;
+}
+
+.input-box:focus {
+    outline: none;
+    border: none;
+}
+
+.input-box-warning {
+    border: 1px solid red;
+}
+
+.warning-container {
+    margin-top: -14px;
+    margin-bottom: 16px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.input-warning {
+    margin-right: 6%;
+    color: red;
+    font-size: 12px;
+}
