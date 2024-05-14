@@ -50,8 +50,7 @@
                 <div style="width: 90%; margin-left: 5%; margin-top: 16px; display: flex;">
                     <div class="chatKindChose" :class="{ active: chatKindChose === 1 }" @click="chosePersonChat"
                         style="width: 50% ; display: flex; justify-content: center;align-items: center;height: 30px;">
-                        <button 
-                            style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
+                        <button style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
                             <svg t="1715140629455" style="width: 100%; height: 100%" viewBox="0 0 1024 1024" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" p-id="4751" width="200" height="200">
                                 <path
@@ -68,8 +67,7 @@
 
                     <div class="chatKindChose" :class="{ active: chatKindChose === 2 }" @click="choseGroupChat"
                         style="width: 50%; display: flex; justify-content: center;align-items: center;height: 30px;">
-                        <button 
-                            style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
+                        <button style="width: 26px; height: 26px; border: none; background-color: #f7f8fa;">
                             <svg t="1715140591634" style="width: 100%; height: 100%" class="icon" viewBox="0 0 1024 1024"
                                 version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3300" width="200" height="200">
                                 <path
@@ -89,7 +87,7 @@
                 <el-scrollbar v-if="this.chatKindChose == 2" style="height: 95%;">
                     <div style="width: 90%; margin-left: 5%;">
                         <!-- <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem> -->
-                        <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" ></GroupItem>
+                        <GroupItem v-for="item in this.groupItemList" :groupInfo="item"></GroupItem>
                     </div>
                 </el-scrollbar>
                 <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
@@ -148,14 +146,19 @@
             <el-divider />
             <div style="height: 60%; width: 100%;">
                 <!-- 这里装聊天内容 -->
-                <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length != 0">
+                <!-- <el-scrollbar style="height: 100%;width: 100%;" v-if="this.messageList.length != 0">
                     <ChatMessage v-for="item in messageList" :messageInfomation="item" :key="item.id"></ChatMessage>
-                </el-scrollbar>
+                </el-scrollbar> -->
+                <div id="messageContainer" style="height: 100%;width: 100%;overflow-y: auto;overflow-x: hidden;"
+                    v-if="this.messageList.length != 0">
+                    <ChatMessage v-for="item in messageList" :messageInfomation="item" :key="item.id"></ChatMessage>
+                </div>
             </div>
             <el-divider />
             <div style="height: 29%; width: 100%;">
                 <textarea v-model="textinput" placeholder="输入聊天内容" style="width: 95%; margin-left: 2%; margin-top: 20px; height: 64%;
-                                                        border: none;" @keydown.enter="sendMessage"></textarea>
+                                                                        border: none;"
+                    @keydown.enter="sendMessage"></textarea>
                 <div style="width: 94%; display: flex; justify-content: flex-end; margin-top: 8px;">
                     <el-button type="success" plain @click="sendMessage">发送信息</el-button>
                 </div>
@@ -326,6 +329,7 @@ export default {
                 //console.log(messageToSend);
                 // 清空消息输入框
                 this.textinput = '';
+                this.scrollToBottom();
             } else {
                 console.error('WebSocket连接未打开或已关闭');
             }
@@ -341,7 +345,7 @@ export default {
                 this.personName = result.data.name;
             })
         },
-        getGroupInfo(){
+        getGroupInfo() {
             axios({
                 method: "GET",
                 url: "api/group/info",
@@ -349,8 +353,16 @@ export default {
                     group_id: this.groupId,
                 }
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.groupName = result.data.group[0].name;
+            })
+        },
+        scrollToBottom() {
+            this.$nextTick(() => {
+                var messageContainer = document.getElementById('messageContainer');
+                //console.log(messageContainer.scrollTop);
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+                //console.log(messageContainer.scrollTop);
             })
         }
     },
@@ -359,6 +371,19 @@ export default {
         GroupItem,
         PersonItem,
         GroupInfo,
+    },
+    watch: {
+        messageList(newValue, oldValue) {
+            this.scrollToBottom();
+        },
+        // messageList: function scrollToBottom() {
+        //     this.$nextTick(() => {
+        //         var messageContainer = document.getElementById('messageContainer');
+        //         console.log(messageContainer.scrollTop);
+        //         messageContainer.scrollTop = messageContainer.scrollHeight;
+        //         console.log(messageContainer.scrollTop);
+        //     })
+        // }
     },
     created() {
         //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
@@ -382,8 +407,9 @@ export default {
             this.getGroupMessageList();
             this.getGroupInfo();
         }
-        console.log(this.groupId);
-        console.log(this.personId);
+        //console.log(this.groupId);
+        //console.log(this.personId);
+        //this.scrollToBottom();
     }
 }
 </script>
