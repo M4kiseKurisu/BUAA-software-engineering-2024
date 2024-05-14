@@ -48,9 +48,9 @@
                     
 
                     <div class="flex-container" style="margin-top: 15px;">
-                        <div class="title-for-dialog-font">上传打卡图片</div>
-                        <el-upload v-model:file-list="image_list" :show-file-list="false" :auto-upload="false" :on-change="test" style="margin-left: 16px;">
-                            <el-button type="primary" plain size="small">选择图片</el-button>
+                        <div class="title-for-dialog-font">上传打卡图片(最多只能上传9张)</div>
+                        <el-upload v-model:file-list="image_list" :show-file-list="false" :auto-upload="false" :on-change="test" style="margin-left: 16px;" :limit="9">
+                            <el-button v-if="image_list.length <= 9" type="primary" plain size="small">选择图片</el-button>
                         </el-upload>
                     </div>
 

@@ -194,12 +194,22 @@ export default {
 
             console.log(content);
 
+            const loadingMessage = this.$message({
+                showClose: true,
+                message: '正在发送帖子',
+                type: 'info',
+                duration: 0, // 设置持续时间为 0，表示不自动关闭
+            });
+
             axios({
                 method: "POST",
                 url: "/api/posts/write",
                 data: content,
             }).then((result) => {
                 console.log(result);
+                console.log('in1');
+                loadingMessage.close();
+                console.log('in2');
                 if(result.data.success) {
                     this.$message({
                         showClose: true,
@@ -254,6 +264,12 @@ export default {
                     // 没有选择文件，进行处理
                     return;
                 }
+                const loadingMessage = this.$message({
+                    showClose: true,
+                    message: '正在上传资源',
+                    type: 'info',
+                    duration: 0, // 设置持续时间为 0，表示不自动关闭
+                });
 
                 //console.log(this.fileList);
                 for (let i = 0; i < this.fileList.length; i++) {
@@ -272,6 +288,13 @@ export default {
                     console.log(response.data);
                     this.filelistUrl.push(response.data.url);
                 }
+
+                loadingMessage.close();
+                this.$message({
+                    showClose: true,
+                    message: '资源上传成功！',
+                    type: 'success',
+                });
             } catch (error) {
                 console.log("error")
             }

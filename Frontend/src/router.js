@@ -165,7 +165,13 @@ router.beforeEach((to, from, next) => {
             next()  // 如果用户已经登录，就正常进入该路由。
         }
     } else {
-        next()  // 如果不需要登录，则直接放行。
+        // 如果不需要登录，则直接放行。
+        if (JSON.parse(sessionStorage.getItem('id')) != null) {
+          // 如果用户已经登录，并且访问的页面不需要登录，则重定向到指定的首页
+            next('/MainPage/Personal_Center/Personal_Information') // 将 '/home' 替换为你想要重定向的首页路径
+        } else {
+            next() // 否则直接放行
+        }
     }
 })
 
