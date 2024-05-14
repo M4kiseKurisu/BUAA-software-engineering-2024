@@ -64,7 +64,7 @@
             </div>
         </div>
         <div style="width: 100%;height: 785px;background-color: white;display: flex;">
-            <div style="width: 75%;height: 100%;border-right: 1px solid darkgray;">
+            <div style="width: 80%;height: 100%;border-right: 1px solid darkgray;">
                 <div style="width: 100%;height: 735px;">
                     <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id"></PostItem>
                 </div>
@@ -73,21 +73,20 @@
                         style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />
                 </div>
             </div>
-            <div style="width: 25%; min-width: 360px;">
+            <div style="width: 20%; min-width: 200px;">
                 <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
                 </div> -->
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
-                        热门作者:
+                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
+                    <div style="font-size: larger;font-weight: bold;">
+                        热门作者
                     </div>
-                    <div v-if="this.popAuthorIdList == ''" style="font-size: larger;">无</div>
-                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for="item in this.popAuthorIdList" :personId="item"></ManagerItem>
+                    <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
+                    <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-
                     <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary"
                             @click="toggle_Creator()" style="font-size: large;">查看详情</el-button></span>
                 </div>
@@ -269,7 +268,7 @@ export default {
 
 <style scoped>
 .main-postpage-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1280px;
     background-color: rgba(247, 248, 250, 0.7);
 }

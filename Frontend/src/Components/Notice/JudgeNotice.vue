@@ -86,12 +86,16 @@ export default {
     },
     methods:{
         goToPersonCenter(){
-            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.userId}).then(() => {
-                this.$nextTick(() => {
-                    // 强制重新加载当前页面
-                    location.reload();
-                });
+            // this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.userId}).then(() => {
+            //     this.$nextTick(() => {
+            //         // 强制重新加载当前页面
+            //         location.reload();
+            //     });
+            // });
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.userId ,
             });
+            window.open(routeUrl.href, '_blank');
         }
     },
     created(){

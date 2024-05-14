@@ -43,7 +43,11 @@ export default{
     },
     methods:{
         goToShowPersonInfomation(){
-            this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.memberId});
+            //this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.memberId});
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.memberId ,
+            });
+            window.open(routeUrl.href, '_blank');
         }
     },
     created(){

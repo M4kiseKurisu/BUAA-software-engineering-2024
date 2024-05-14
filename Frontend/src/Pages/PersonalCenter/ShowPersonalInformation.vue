@@ -3,7 +3,7 @@
         <BreadcrumbLabel :routeNames="route" />
     </div>
     <div style="width: calc(100vw - 220px); background-color: aliceblue;height: calc(100vh - 115px);min-width: 780px;">
-        <div style="width: 100%;height: 30%;min-height: 252px; display: flex;align-items: center;justify-content: center;">
+        <div style="width: 100%;height: 30%;min-height: 200px; display: flex;align-items: center;justify-content: center;">
             <div style="width: 95%;height: 90%;background-color: white;display: flex;">
                 <div
                     style="height: 100%; aspect-ratio: 1/1 ; background-color: white;display: flex;justify-content: center;align-items: center;">
@@ -12,7 +12,7 @@
                 </div>
                 <div style="flex-grow: 1;height: 100%;background-color:white;">
                     <div style="width: 100%;height: 25%; display: flex;align-items: center;">
-                        <span style="font-size: 2em;font-weight: bold;">{{ userName }}</span>
+                        <span style="font-size: 1.8em;font-weight: bold;">{{ userName }}</span>
                         <!-- <span style="margin-left: 20px;font-size: large;color: darkgrey;">入学年份：{{ jieshu }}</span>
                         <span style="margin-left: 20px;font-size: large;color: darkgrey;">学院：{{ academy }}</span> -->
                         <el-tag v-if="isBlock" type="danger" effect="dark" style="margin-left: 20px;" size="large">

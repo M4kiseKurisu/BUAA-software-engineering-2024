@@ -1,6 +1,6 @@
 <template>
-    <div style="width: (100/3)%;">
-        <img :src="headImg" style="max-width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
+    <div style="width: (100/3)%; margin-top : 5px" @click="goToShowPersonInfomation()">
+        <img :src="headImg" style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
     </div>
 </template>
 
@@ -33,8 +33,15 @@ export default {
                 this.personName = result.data.name;
             });
         },
-
+        goToShowPersonInfomation() {
+            //this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" });
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.personId ,
+            });
+            window.open(routeUrl.href, '_blank');
+        }
     },
+
     created() {
         //console.log(this.personId);
         this.GetInfomation();

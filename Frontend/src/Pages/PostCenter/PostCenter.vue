@@ -70,7 +70,7 @@
             </div>
         </div>
         <div style="width: 100%;height: 785px;background-color: white;display: flex;">
-            <div style="width: 75%;height: 100%;border-right: 1px solid darkgray;">
+            <div style="width: 80%;height: 100%;border-right: 1px solid darkgray;">
                 <div style="width: 100%;height: 735px;">
                     <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id" :getSectionId="this.sectionId"></PostItem>
                 </div>
@@ -79,34 +79,34 @@
                         style="position: absolute; right: 0;margin-right: 10px;" @current-change="handleCurrentChange" />
                 </div>
             </div>
-            <div style="width: 25%; min-width: 360px;">
+            <div style="width: 20%; min-width: 200px;">
                 <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
                 </div> -->
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
-                        相关教师:
+                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.techerIdList.length != 0">
+                    <div style="font-size: larger;font-weight: bold;">
+                        相关教师
                     </div>
                     <div v-if = "this.techerIdList.length === 0" style="font-size: larger;">无</div>
-                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                    <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.techerIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
-                        相关助教:
+                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.assitantIdList.length != 0">
+                    <div style="font-size: larger;font-weight: bold;">
+                        相关助教
                     </div>
                     <div v-if = "this.assitantIdList.length === 0" style="font-size: larger;">无</div>
-                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                    <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
-                <div style="display: flex;margin-left: 5%;margin-top: 20px;">
-                    <div style="width: 25%;font-size: larger;">
-                        热门作者:
+                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
+                    <div style="font-size: larger;font-weight: bold;">
+                        热门作者
                     </div>
                     <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
-                    <div v-else style="width:75%; display: grid; grid-template-columns: repeat(3, 1fr);">
+                    <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
                         <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
                     </div>
                 </div>
@@ -333,7 +333,7 @@ export default {
 }
 
 .main-postpage-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1080px;
     background-color: rgba(247, 248, 250, 0.7);
 }
