@@ -14,17 +14,17 @@
             <!-- 第一列信息 -->
             <div class="first-row-container">
 
-                <div class="line-container">
+                <div class="line-container-1">
                     <div class="grey-card-information">用户昵称：</div>
                     <div class="grey-card-information2">{{ this.username }}</div>
                 </div>
 
-                <div class="line-container">
+                <div class="line-container-1">
                     <div class="grey-card-information">登陆账号：</div>
                     <div class="grey-card-information2">{{ this.loginNumber }}</div>
                 </div>
 
-                <div class="line-container">
+                <div class="line-container-1">
                     <div class="grey-card-information">入学时间：</div>
                     <div class="grey-card-information2">{{ this.signTime }}</div>
                 </div>
@@ -34,19 +34,19 @@
             <!-- 第二列信息 -->
             <div class="second-row-container">
 
-                <div class="line-container">
+                <div class="line-container-1">
                     <div class="grey-card-information">认证邮箱：</div>
                     <div class="grey-card-information2">{{ this.email }}</div>
                     <!-- <div class="grey-card-changee-link">修改</div> -->
                 </div>
 
-                <div class="line-container">
+                <div class="line-container-1">
                     <div class="grey-card-information">手机号码：</div>
                     <div class="grey-card-information2">{{ this.phoneNumber }}</div>
                     <!-- <div class="grey-card-changee-link">修改</div> -->
                 </div>
 
-                <div class="line-container" v-if="this.is_blocked">
+                <div class="line-container-1" v-if="this.is_blocked">
                     <div class="grey-card-information-red-version">该用户已被封禁</div>
                 </div>
 
@@ -85,12 +85,19 @@
                 </div>
 
                 <div class="button-container">
-                    <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+                    <!-- <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
                         <button class="button-changeavatar">选择头像</button>
                     </el-upload>
-                    <button class="button-changeavatar" @click="uploadAvatar">上传头像</button>
+                    <button class="button-changeavatar" @click="uploadAvatar">上传头像</button> -->
+                    <button class="button-changeavatar" @click="dialogVisible = true">更换头像</button>
                     <button class="button-left" @click="ChangeInformation">保存</button>
                     <button class="button-right" @click="emptyInformation">重置</button>
+
+                    <el-dialog v-model="dialogVisible" width="500">
+                        <div class="cut">
+                            <VueCropper ref="cropper" :img="option.img" mode="cover"></VueCropper>
+                        </div>
+                    </el-dialog>
                 </div>
 
             </div>
@@ -147,10 +154,13 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
+import { VueCropper }  from 'vue-cropper' 
+import 'vue-cropper/next/dist/index.css'
 
 export default {
     components: {
         BreadcrumbLabel,
+        VueCropper,
     },
     data() {
         return {
@@ -176,6 +186,26 @@ export default {
             inputNewPassword: "",
             inputNewPassword2: "",
             is_blocked: false,
+
+            dialogVisible: false,
+
+            option: {
+                img: 'https://avatars2.githubusercontent.com/u/15681693?s=460&v=4',
+                size: 1,
+                full: false,
+                outputType: 'png',
+                canMove: true,
+                fixedBox: false,
+                original: false,
+                canMoveBox: true,
+                autoCrop: true,
+                // 只有自动截图开启 宽度高度才生效
+                autoCropWidth: 750,
+                autoCropHeight: 340,
+                centerBox: true,
+                high: true,
+                max: 99999
+            },
         }
     },
     mounted() {
@@ -363,7 +393,7 @@ export default {
     margin-top: 41px;
 }
 
-.line-container {
+.line-container-1 {
     display: flex;
     margin-left: 60px;
     margin-bottom: 8px;
@@ -555,5 +585,9 @@ textarea::placeholder {
     font-size: 14px;
     color: red;
     margin-right: 14px;
+}
+
+.cut {
+    width: 90%;
 }
 </style>

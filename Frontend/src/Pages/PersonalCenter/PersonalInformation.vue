@@ -80,7 +80,26 @@
             <div class="favorates-container">
                 <!-- 收藏板块头部信息 -->
                 <div class="favorates-header-container">
-                    <div class="favorates-header-1">收藏帖子</div>
+                    <div style="display: flex;">
+                        <div class="favorates-header-1">收藏帖子</div>
+                        <el-popover
+                            placement="top"
+                            trigger="click"
+                            width="180"
+                        >
+                            <div style="display: flex; margin-bottom: 6px;">
+                                <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">所有人可见</div>
+                                <div v-if="true">（已选择）</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 6px;">
+                                <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">仅自己可见</div>
+                                <div v-if="false">（已选择）</div>
+                            </div>
+                            <template #reference>
+                                <div style="margin-left: 8px; margin-top: 32px; color: #86909c; font-size: 14px;">设置可见性</div>
+                            </template>
+                        </el-popover>
+                    </div>
                     <el-button @click="toggle_favorate()" class="favorates-header-2">查看更多</el-button>
 
                 </div>
@@ -281,6 +300,9 @@ export default {
         }
     },
     methods: {
+        changeView() {
+
+        },
         toggle_favorate() {
             this.show_favorate = true;
         },

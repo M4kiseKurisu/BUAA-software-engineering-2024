@@ -3,11 +3,12 @@
     <el-menu
         active-text-color="#165dff"
         text-color="#4e5969"
-        router="true"
+        :router="true"
+        unique-opened="true"
     >
 
         <!-- 侧边栏第一个元素是个人中心 -->
-        <el-sub-menu>
+        <el-sub-menu index="1">
             <!-- 设置个人中心子菜单的表头信息 -->
             <template #title>
                 <el-icon><User /></el-icon>
@@ -20,7 +21,7 @@
         </el-sub-menu>
 
         <!-- 侧边栏第二个元素是学业模块 -->
-        <el-sub-menu>
+        <el-sub-menu index="2">
             <!-- 设置学业模块子菜单的表头信息 -->
             <template #title>
                 <el-icon><Reading /></el-icon>
@@ -32,12 +33,14 @@
             <!-- <el-menu-item index="/MainPage/Course_Center/PostPage">论坛内容2</el-menu-item>
             <el-menu-item index="/MainPage/Course_Center/PostCenter">测试</el-menu-item>
             <el-menu-item index="/CourseSection">课程详情测试</el-menu-item> -->
-            <el-menu-item index="/CourseSection/1">课程详情测试</el-menu-item>
+            <!-- <el-menu-item index="/CourseSection/1">课程详情测试</el-menu-item> -->
+            <el-menu-item index="/MainPage/UpGradeCenter">升学论坛</el-menu-item>
+            <el-menu-item index="/MainPage/SchoolInformation/Main">升学学校信息</el-menu-item>
             <!-- <el-menu-item index="/ShowPersonalInformation">个人信息展示测试</el-menu-item> -->
         </el-sub-menu>
 
         <!-- 侧边栏第三个元素是展示模块 -->
-        <el-sub-menu>
+        <el-sub-menu index="3">
             <!-- 设置学业模块子菜单的表头信息 -->
             <template #title>
                 <el-icon><View /></el-icon>
@@ -47,9 +50,9 @@
             <!-- 设置学业模块子菜单内容：学习团体，打卡信息 -->
             <el-menu-item index="/MainPage/Social_Center">打卡信息</el-menu-item>
             <el-menu-item index="/MainPage/StudyGroupCenter">学习团体中心</el-menu-item>
-            <el-menu-item index="/MainPage/SchoolInformation/Main">升学学校信息</el-menu-item>
+            
             <!-- <el-menu-item index="/MainPage/SchoolInformation/Detail">测试2</el-menu-item> -->
-            <el-menu-item index="/MainPage/UpGradeCenter">升学模块</el-menu-item>
+            
             <!-- <el-menu-item index="/MainPage/SchoolInformation/Detail">测试2</el-menu-item> -->
         </el-sub-menu>
 
