@@ -213,6 +213,7 @@ export default {
 <style scoped>
 .page-container {
     width: calc(100vw - 205px);
+    min-width: 1174px;
 }
 
 .flex-container {

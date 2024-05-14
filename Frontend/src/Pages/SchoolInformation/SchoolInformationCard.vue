@@ -5,7 +5,7 @@
         </div>
 
         <div style="margin-left: 5%;">
-            <div class="school-font" style="margin-top: 26%;">{{ this.school_name }}</div>
+            <div class="school-font" style="margin-top: 42px;">{{ this.school_name }}</div>
             <button style="border: none; background-color: white; margin-top: 5%;" class="goto-font" @click="toInformation(this.school_id)">
                 点击查看学校详情
             </button>

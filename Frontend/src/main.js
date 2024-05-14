@@ -11,4 +11,6 @@ const app = createApp(App)
 app.use(ElementPlus)
 app.use(router)
 app.use(store)
-app.mount('#app')
+const vue = app.mount('#app');
+
+export default vue;

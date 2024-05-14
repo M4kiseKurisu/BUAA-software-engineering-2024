@@ -31,5 +31,5 @@ public class Post {
     private Integer view_count;
     @Column(name = "time")
     private Timestamp postTime;
-    
+    private String cover;
 }

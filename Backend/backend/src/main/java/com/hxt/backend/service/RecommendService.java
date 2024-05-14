@@ -145,16 +145,8 @@ public class RecommendService {
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
             
-            //第一张图url
-            String imageUrl = null;
-            List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if (!imageIds.isEmpty()) {
-                imageUrl = imageMapper.getImage(imageIds.get(0));
-            }
-            
             postIntroResponse.setAuthor_name(authorName);
             postIntroResponse.setTag_list(tags);
-            postIntroResponse.setPost_photo(imageUrl);
             
             
             postIntroResponses.add(postIntroResponse);
@@ -225,7 +217,6 @@ public class RecommendService {
         StringBuilder introKeywordSepByCommas = new StringBuilder();
         StringBuilder contentKeywordSepByCommas = new StringBuilder();
         for (String word : titleKeywords) {
-            System.out.println(word);
                 if (word.length() >= 2) {
                     titleKeywordSepByCommas.append(word);
                     titleKeywordSepByCommas.append(",");

@@ -45,13 +45,13 @@ public class PostService {
     
     // 创建帖子
     public Integer createPost(String title, String intro, String content,
-                              Integer category, Integer sectionId, Integer authorId) {
+                              Integer category, Integer sectionId, Integer authorId, String cover) {
         if (title == null || intro == null || sectionId == null || authorId == null || category == null) {
             return -1;
         }
         Timestamp postTime = new Timestamp(System.currentTimeMillis());
         Post post = new Post(0, title, intro, content, category, sectionId, authorId,
-                0, 0, 0, 0, postTime);
+                0, 0, 0, 0, postTime, cover);
         Integer res = postMapper.insertPost(post);
         if (res == 0) {
             return 0;
@@ -549,16 +549,8 @@ public class PostService {
             String authorName = userMapper.getUserNameById(post.getAuthor_id());
             List<String> tags = postMapper.getTagNameByPost(post.getPost_id());
             
-            String imageUrl = null;
-            List<Integer> imageIds = postMapper.getImageIdByPost(post.getPost_id());
-            if (!imageIds.isEmpty()) {
-                imageUrl = imageMapper.getImage(imageIds.get(0));
-            }
-            
             postIntroResponse.setAuthor_name(authorName);
             postIntroResponse.setTag_list(tags);
-            postIntroResponse.setPost_photo(imageUrl);
-            
             
             postIntroResponses.add(postIntroResponse);
         }

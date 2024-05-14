@@ -62,5 +62,6 @@ export default {
 <style scoped>
 .container-css {
     width: calc(100vw - 205px);
+    min-width: 1174px;
 }
 </style>

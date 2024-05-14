@@ -526,6 +526,7 @@ export default {
 /* 设定界面宽度真实值 */
 .page-container {
     width: calc(100vw - 205px);
+    min-width: 1174px;
 }
 
 /* 控制面包屑组件的位置 */

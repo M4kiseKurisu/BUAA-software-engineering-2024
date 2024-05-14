@@ -1037,6 +1037,7 @@ export default {
     background-color: rgba(247, 248, 250, 0.7);
     padding-top: 29px;
     padding-bottom: 81px;
+    min-width: 1174px;
 }
 
 .post-main-content-container {

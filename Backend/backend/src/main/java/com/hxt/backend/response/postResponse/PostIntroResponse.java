@@ -33,6 +33,7 @@ public class PostIntroResponse {
         this.post_time = time[0] + ":" + time[1];
         this.post_favorites = post.getCollect_count();
         this.post_likes = post.getLike_count();
+        this.post_photo = post.getCover();
     }
     
 }

@@ -124,9 +124,20 @@ public class PostController {
         if (!reviewService.textReview(title + " " + intro + " " + content)) {
             return new WritePostResponse(false, "帖子内容违规", null);
         }
+        
+        //获取帖子封面
+        String cover = null;
+        if (images != null) {
+            for (String imageUrl : images) {
+                if (content.contains(imageUrl)) {
+                    cover = imageUrl;
+                    break;
+                }
+            }
+        }
     
         //创建帖子并存入数据库
-        Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id);
+        Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id, cover);
         if(post_id == -1) {
             return new WritePostResponse(false, "帖子内容不全", null);
         } else if (post_id == 0) {
