@@ -23,4 +23,5 @@ public class CheckIn {
     private Integer author_id;
     private Timestamp time;
     private Integer like_count;
+    private Integer authority;
 }

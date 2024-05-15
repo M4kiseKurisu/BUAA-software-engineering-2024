@@ -42,6 +42,7 @@ public class AdminService {
     @Resource
     private PostService postService;
 
+    private final String defaultHeadUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Integer checkPassword(String name, String password) {
@@ -194,7 +195,7 @@ public class AdminService {
             }
             userInfoResponse.getUser().add(new UserSocialInfoResponse(
                     user.getName(), id,
-                    (user.getHeadId() == null) ? "" : imageMapper.getImage(user.getHeadId()),
+                    (user.getHeadId() == null) ? defaultHeadUrl : imageMapper.getImage(user.getHeadId()),
                     null, null, null, null, null, user.getSign(), null, isBlocked, authorityInfo
             ));
         }

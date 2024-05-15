@@ -14,16 +14,15 @@ public interface CheckInMapper {
     //获取用户的所有打卡
     @Select("SELECT * FROM check_in WHERE author_id = #{authorId}")
     List<CheckIn> getCheckInByAuthorId(Integer authorId);
-    
-    
-    
-    
+
+    @Select("SELECT * FROM check_in WHERE author_id = #{authorId} order by time desc")
+    List<CheckIn> getCheckInByAuthorIdDesc(Integer authorId);
 
     //插入打卡
     //插入打卡图片
     @Options(useGeneratedKeys = true, keyProperty = "check_in_id", keyColumn = "check_in_id")
-    @Insert("INSERT INTO check_in (content, author_id, time, like_count)" +
-            " VALUES (#{content}, #{author_id}, #{time}, #{like_count})")
+    @Insert("INSERT INTO check_in (content, author_id, time, like_count, authority)" +
+            " VALUES (#{content}, #{author_id}, #{time}, #{like_count}, #{authority})")
     int insertCheckIn(CheckIn checkIn);
     
     
@@ -51,9 +50,14 @@ public interface CheckInMapper {
     List<CheckInComment> getCommentByCheckInId(Integer checkInId);
     
     //获取所有打卡（时间倒序）
-    @Select("select * from check_in " +
-            "order by time DESC")
-    List<CheckIn> getAllCheckIn();
+    @Select("select * from check_in where authority = 0 or authority is null or " +
+            "(author_id = any (select follow_id from user_follow where user_id = #{user}) and authority = 1) " +
+            "or author_id = #{user} order by time DESC")
+    List<CheckIn> getAllCheckIn(Integer user);
+
+    @Select("select * from check_in where (author_id = any (select follow_id from user_follow where user_id = #{user}) " +
+            ") and authority != 2 or author_id = #{user} order by time desc")
+    List<CheckIn> getFollowedCheckIn(Integer user);
     
     //查询是否点赞打卡
     @Select("select * from checkin_like " +

@@ -28,13 +28,28 @@ public class CheckInController {
         //获取pyq列表
         return new CheckInIntroListResponse(checkInService.getPyqList(Integer.parseInt(user_id)));
     }
+
+    //  获取连续打卡天数
+    @GetMapping (value = "/pyq/days")
+    public CheckInDaysResponse userCheckInDays(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (user_id.equals("")) {
+            //return new CheckInDaysResponse(false, 0);
+        } else if (id == null) {
+            id = Integer.parseInt(user_id);
+        }
+        return new CheckInDaysResponse(true, checkInService.getCheckInDays(id));
+    }
     
     
     @PostMapping (value = "/pyq/send")
     public BasicInfoResponse sendCheckIn(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "image_urls[]", required = false) List<String> image_urls,
-            @RequestParam(name = "content", required = false) String content
+            @RequestParam(name = "content", required = false) String content,
+            @RequestParam(name = "authority", required = false) Integer authority
     ) {
         if (user_id.equals("")) {
             return new BasicInfoResponse(false, "用户未登录");
@@ -43,8 +58,12 @@ public class CheckInController {
         if(image_urls.isEmpty() || content == null) {
             return new BasicInfoResponse(false, "打卡内容不完整");
         }
+
+        if (authority == null) {
+            authority = 0;  //  默认权限为0（所有人均可见）
+        }
         
-        Integer res = checkInService.insertCheckIn(Integer.parseInt(user_id), image_urls, content);
+        Integer res = checkInService.insertCheckIn(Integer.parseInt(user_id), image_urls, content, authority);
         if (res == 0) {
             return new BasicInfoResponse(false, "系统出错");
         }
@@ -63,8 +82,24 @@ public class CheckInController {
     }
     
     @GetMapping (value = "/pyq/square")
-    public CheckInSquareResponse getCheckInSquare() {
-        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare();
+    public CheckInSquareResponse getCheckInSquare(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.equals("")) {
+            return new CheckInSquareResponse(null);
+        }
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare(Integer.parseInt(user_id));
+        return new CheckInSquareResponse(checkIn);
+    }
+
+    @GetMapping (value = "/pyq/follow")
+    public CheckInSquareResponse getFollowedCheckIn(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.equals("")) {
+            return new CheckInSquareResponse(null);
+        }
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getFollowedCheckIn(Integer.parseInt(user_id));
         return new CheckInSquareResponse(checkIn);
     }
     

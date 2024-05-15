@@ -45,9 +45,9 @@ public class CheckInService {
         return checkInIntroResponses;
     }
     
-    public Integer insertCheckIn(Integer userId, List<String> images, String content) {
+    public Integer insertCheckIn(Integer userId, List<String> images, String content, Integer authority) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        CheckIn checkIn = new CheckIn(0, content, userId, timestamp, 0);
+        CheckIn checkIn = new CheckIn(0, content, userId, timestamp, 0, authority);
         Integer res = checkInMapper.insertCheckIn(checkIn);
         if (res == 0) {
             return 0;
@@ -123,10 +123,10 @@ public class CheckInService {
         return checkInDetailResponse;
     }
     
-    public List<CheckInSquareIntroResponse> getCheckInSquare() {
+    public List<CheckInSquareIntroResponse> getCheckInSquare(Integer user) {
         List<CheckInSquareIntroResponse> checkInSquareIntroResponses = new ArrayList<>();
         
-        List<CheckIn> checkIns = checkInMapper.getAllCheckIn();
+        List<CheckIn> checkIns = checkInMapper.getAllCheckIn(user);
         for (CheckIn checkIn : checkIns) {
             CheckInSquareIntroResponse checkInSquareIntroResponse = new CheckInSquareIntroResponse(checkIn);
     
@@ -144,6 +144,43 @@ public class CheckInService {
             checkInSquareIntroResponses.add(checkInSquareIntroResponse);
         }
         return checkInSquareIntroResponses;
+    }
+
+    public List<CheckInSquareIntroResponse> getFollowedCheckIn(Integer user) {
+        List<CheckInSquareIntroResponse> checkInSquareIntroResponses = new ArrayList<>();
+        List<CheckIn> checkIns = checkInMapper.getFollowedCheckIn(user);
+        for (CheckIn checkIn : checkIns) {
+            CheckInSquareIntroResponse checkInSquareIntroResponse = new CheckInSquareIntroResponse(checkIn);
+
+            Integer authorId = checkIn.getAuthor_id();
+            User author = userMapper.selectUserById(authorId);
+            String authorName = author.getName();
+            String headUrl = imageMapper.getImage(author.getHeadId());
+            List<String> images = checkInMapper.getImageByCheckInId(checkIn.getCheck_in_id());
+            checkInSquareIntroResponse.setAuthor_name(authorName);
+            checkInSquareIntroResponse.setAuthor_avatar(headUrl);
+            if (!images.isEmpty()) {
+                checkInSquareIntroResponse.setImage_url(images.get(0));
+            }
+
+            checkInSquareIntroResponses.add(checkInSquareIntroResponse);
+        }
+        return checkInSquareIntroResponses;
+    }
+
+    public Integer getCheckInDays(Integer user) {
+        List<CheckIn> checkIns = checkInMapper.getCheckInByAuthorIdDesc(user);
+        long time = System.currentTimeMillis() / 86400000 * 86400000;
+        int res = 0;
+        for (CheckIn checkIn : checkIns) {
+            long checkInTime = checkIn.getTime().getTime();
+            if (checkInTime > time && checkInTime < time + 86400000) {
+                res++;
+            } else if (checkInTime < time) {
+                break;
+            }
+        }
+        return res;
     }
     
     
