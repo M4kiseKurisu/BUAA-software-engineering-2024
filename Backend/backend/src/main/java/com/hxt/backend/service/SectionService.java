@@ -4,6 +4,7 @@ import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.entity.section.Teacher;
 import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.SectionAuthorityResponse;
 import com.hxt.backend.response.sectionResponse.PostElement;
 import com.hxt.backend.response.sectionResponse.SectionElement;
@@ -205,5 +206,20 @@ public class SectionService {
                 adminMapper.getSectionAssistantAuthority(id),
                 adminMapper.getSectionOthersAuthority(id)
         );
+    }
+
+    public boolean checkCourseName(String name) {
+        return sectionMapper.getSectionIdByName(name) != null;
+    }
+
+    public Integer addCourse(String name, String intro, String type,
+                             String academy, Integer credit, Integer capacity) {
+        sectionMapper.insertCourse(name, intro, type, academy, credit, capacity);
+        return sectionMapper.getSectionIdByName(name);
+    }
+
+    public boolean addCourseRequest(String name, String intro, String type,
+                                     String academy, Integer credit, Integer capacity) {
+        return sectionMapper.insertCourseRequest(name, intro, type, academy, credit, capacity) > 0;
     }
 }

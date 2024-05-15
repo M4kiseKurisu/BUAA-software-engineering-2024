@@ -14,14 +14,20 @@ public interface SectionMapper {
     @Select("SELECT name FROM section WHERE section_id = #{id};")
     String getSectionNameById(int id);
 
+    @Select("SELECT section_id FROM section WHERE name = #{name};")
+    Integer getSectionIdByName(String name);
+
     @Select("select * from section where section_id = #{id};")
     Section selectSectionById(int id);
 
     @Select("select * from section where name like '%${name}%';")
     ArrayList<Section> selectSectionByName(String name);
 
-    @Select("SELECT * FROM section;")
+    @Select("SELECT * FROM section where available = 1;")
     ArrayList<Section> selectAllSection();
+
+    @Select("SELECT * FROM section where available = 0;")
+    ArrayList<Section> selectAllSectionRequest();
 
     @Select("select * from course_teacher where section_id = #{id};")
     ArrayList<Teacher> selectTeacherBySectionId(Integer id);
@@ -59,14 +65,20 @@ public interface SectionMapper {
     int getSchoolNum();
 
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO section (name, intro, flag, type, academy, credit, capacity) VALUES (#{name}, #{intro}, 0, " +
-            "#{type}, #{academy}, #{credit}, #{capacity})")
+    @Insert("INSERT INTO section (name, intro, flag, type, academy, credit, capacity, available) " +
+            "VALUES (#{name}, #{intro}, 0, #{type}, #{academy}, #{credit}, #{capacity}, 1)")
     int insertCourse(String name, String intro, String type,
                       String academy, Integer credit, Integer capacity);
 
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO section (name, intro, flag, school_category, web) VALUES (#{name}, #{intro}, 1, " +
-            "#{category}, #{web})")
+    @Insert("INSERT INTO section (name, intro, flag, type, academy, credit, capacity, available) " +
+            "VALUES (#{name}, #{intro}, 0, #{type}, #{academy}, #{credit}, #{capacity}, 0)")
+    int insertCourseRequest(String name, String intro, String type,
+                     String academy, Integer credit, Integer capacity);
+
+    @Options(useGeneratedKeys = true)
+    @Insert("INSERT INTO section (name, intro, flag, school_category, web, available) VALUES (#{name}, #{intro}, 1, " +
+            "#{category}, #{web}, 1)")
     int insertSchool(String name, String intro, String category, String web);
 
     @Delete("DELETE FROM section WHERE section_id = #{id}")

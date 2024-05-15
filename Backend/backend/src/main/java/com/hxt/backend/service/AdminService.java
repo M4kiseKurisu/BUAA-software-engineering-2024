@@ -5,10 +5,12 @@ import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
+import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.singleInfo.*;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
@@ -264,6 +266,23 @@ public class AdminService {
         return response;
     }
 
+    public ArrayList<SectionElement> getCourseApply() {
+        ArrayList<Section> sections = sectionMapper.selectAllSectionRequest();
+        ArrayList<SectionElement> list = new ArrayList<>();
+        for (Section section: sections) {
+            SectionElement element = new SectionElement();
+            element.setSection_id(section.getSection_id());
+            element.setSection_name(section.getName());
+            element.setSection_introduction(section.getIntro());
+            element.setSection_academy(section.getAcademy());
+            element.setSection_type(section.getType());
+            element.setSection_follower_count(0);
+            element.setSection_is_following(false);
+            list.add(element);
+        }
+        return list;
+    }
+
     public boolean handleReport(Integer reportId, boolean choice, Integer days) {
         Report report = adminMapper.getSingleReport(reportId);
         if (report == null) {
@@ -291,6 +310,9 @@ public class AdminService {
                     Integer user = report.getUserId();
                     Integer sectionId = report.getTarget() / 3;
                     Integer typeNum = report.getTarget() % 3;
+                    if (sectionId == 0 && typeNum == 0) {
+                        setGlobalAuthority(user);
+                    }
                     String authorityType = (typeNum == 0)? "teacher" :
                             (typeNum == 1)? "assistant" : "";
                     setAuthority(user, sectionId, authorityType);
@@ -306,6 +328,14 @@ public class AdminService {
             adminMapper.handleReport(reportId, (choice? 2 : 0));
         }
         return true;
+    }
+
+    public boolean handleCourseRequest(Integer id, Boolean choice) {
+        if (choice) {
+            return adminMapper.handleSection(id) > 0;
+        } else {
+            return sectionMapper.removeSection(id) > 0;
+        }
     }
 
     public boolean setAuthority(Integer id, Integer section, String type) {
@@ -337,7 +367,7 @@ public class AdminService {
     public boolean setGlobalAuthority(Integer id) {
         Date date = new Date();
         messageMapper.sendSystemNoticeToUser("授权通知",
-                String.format("您于 %s 被授予全局管理员权限，希望您为板块建设贡献自己的一份力量。",
+                String.format("您于 %s 被授予全局教师权限，希望您为航学通平台建设贡献自己的一份力量。",
                         df.format(date)), id);
         return adminMapper.setGlobalAuthority(id) > 0;
     }

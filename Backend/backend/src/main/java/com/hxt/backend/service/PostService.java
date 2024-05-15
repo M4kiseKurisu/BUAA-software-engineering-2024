@@ -68,7 +68,7 @@ public class PostService {
             return -1;
         }
         //  检查权限
-        if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+        if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
                 || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
@@ -406,7 +406,7 @@ public class PostService {
         if (c == null) {
             return -1;
         }
-        if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+        if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
                 || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;
@@ -487,7 +487,7 @@ public class PostService {
             return -1;
         }
         Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
-        if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == null
+        if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
                 || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
             return -2;

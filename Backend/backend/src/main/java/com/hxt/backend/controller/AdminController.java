@@ -5,6 +5,8 @@ import com.hxt.backend.response.LoginResponse;
 import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
+import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.service.AdminService;
 import jakarta.annotation.Resource;
@@ -181,6 +183,15 @@ public class AdminController {
         return adminService.getUnhandledReports(4);
     }
 
+    @RequestMapping("/admin/list/apply/course")
+    private SearchSectionResponse getCourseApplyList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        ArrayList<SectionElement> list = adminService.getCourseApply();
+        return new SearchSectionResponse(true,"", list.size(), list);
+    }
+
     @RequestMapping("/admin/handle")
     public BasicInfoResponse handleReport(
             @CookieValue(name = "type", defaultValue = "") String type,
@@ -194,6 +205,22 @@ public class AdminController {
             return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.handleReport(id, choice, days);
+        String info = res? "" : "处理发生异常！";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/handle/course")
+    public BasicInfoResponse handleCourseRequest(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "choice", required = false) Boolean choice
+    ) {
+        if (id == null || choice == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.handleCourseRequest(id, choice);
         String info = res? "" : "处理发生异常！";
         return new BasicInfoResponse(res, info);
     }

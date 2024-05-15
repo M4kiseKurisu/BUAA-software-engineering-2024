@@ -1,10 +1,12 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.Report;
+import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
@@ -96,6 +98,10 @@ public interface AdminMapper {
 
     @Update("UPDATE report SET active = #{result} WHERE report_id = #{id}")
     int handleReport(Integer id, Integer result);
+
+    //  课程板块创建申请
+    @Update("UPDATE section SET available = 1 WHERE section_id = #{id}")
+    int handleSection(Integer id);
 
     //  用户操作频率监测
     @Insert("INSERT INTO log (user_id, type, time) VALUES (#{id}, #{type}, NOW())")

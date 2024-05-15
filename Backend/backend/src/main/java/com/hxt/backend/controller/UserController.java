@@ -429,4 +429,25 @@ public class UserController {
         }
         return new BasicInfoResponse(res, info);
     }
+
+    @RequestMapping("/user/apply/global")
+    public BasicInfoResponse ApplyForGlobalAuthority(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "detail", required = false) String detail,
+            @RequestParam(name = "file", required = false) String file
+    ) {
+        if (user_id.isEmpty() || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (file == null) {
+            file = "";
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = userService.applyForAuthority(Integer.parseInt(user_id), 0, 0, detail, file);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 4);
+        }
+        return new BasicInfoResponse(res, info);
+    }
 }

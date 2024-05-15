@@ -3,6 +3,7 @@ package com.hxt.backend.controller;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.SectionAuthorityResponse;
 import com.hxt.backend.response.sectionResponse.*;
+import com.hxt.backend.service.AdminService;
 import com.hxt.backend.service.ReviewService;
 import com.hxt.backend.service.SectionService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class SectionController {
     private final SectionService sectionService;
+    private final AdminService adminService;
+    private String hasEmptyResponse = "信息填写不完整！";
 
     @GetMapping("/section/search")
     public SearchSectionResponse searchSection(
@@ -127,5 +130,32 @@ public class SectionController {
             return new SectionAuthorityResponse(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
         return sectionService.getSectionAuthority(sectionId);
+    }
+
+    @RequestMapping("section/add/course")
+    public BasicInfoResponse tryAddCourse(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "intro", required = false) String intro,
+            @RequestParam(name = "type", required = false) String course_type,
+            @RequestParam(name = "academy", required = false) String academy,
+            @RequestParam(name = "credit", required = false) Integer credit,
+            @RequestParam(name = "capacity", required = false) Integer capacity
+    ) {
+        if (name == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (sectionService.checkCourseName(name)) {
+            return new BasicInfoResponse(false, "板块重名！");
+        }
+        boolean res;
+        if (adminService.checkGlobalAuthority(Integer.parseInt(user_id))) {
+            Integer id = sectionService.addCourse(name, intro, course_type, academy, credit, capacity);
+            res = (id != null);
+            adminService.setAuthority(Integer.parseInt(user_id), id, "teacher");
+        } else {
+            res = sectionService.addCourseRequest(name, intro, course_type, academy, credit, capacity);
+        }
+        String info = res? "" : "服务器错误，未能添加";
+        return new BasicInfoResponse(res, info);
     }
 }
