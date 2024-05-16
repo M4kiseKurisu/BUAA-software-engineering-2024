@@ -119,6 +119,15 @@ public class GroupService {
         return new BasicInfoResponse(true,"等待审核中");
     }
 
+    public boolean joinGroup(Integer userId, Integer groupId) {
+        if (groupMapper.getGroupJoinState(groupId,userId) != 0) {
+            return false;
+        }
+        groupMapper.insertGroupMember(groupId,userId);
+        groupMapper.updateGroupMember(groupId,1);
+        return true;
+    }
+
     public List<GroupElement> getJoinedGroup(Integer userId) {
         List<Integer> groupIds = groupMapper.selectJoinedGroupsByUserId(userId);
         List<GroupElement> list = new ArrayList<>();

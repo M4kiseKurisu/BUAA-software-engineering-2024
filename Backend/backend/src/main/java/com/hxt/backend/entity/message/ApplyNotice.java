@@ -22,13 +22,13 @@ public class ApplyNotice {
     private Integer an_id;
 
     @Column(name = "group_id")
-    private Integer apply_group_id;
+    private Integer group_id;
 
     @Column(name = "user_id")
     private Integer user_id;
 
     @Column(name = "content")
-    private Integer content;
+    private String content;
 
     @Column(name = "promoter_id")
     private Integer promoter_id;
