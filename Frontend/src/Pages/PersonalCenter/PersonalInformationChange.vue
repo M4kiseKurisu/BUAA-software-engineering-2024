@@ -61,27 +61,56 @@
 
                 <div class="information-change-left-row">
                     <div class="information-sign">用户昵称</div>
-                    <input type="text" class="input-type-1" v-model="inputUsername" :placeholder=this.username>
+                    <input type="text"
+                        :class="{'input-type-1': true, 'red-border': username_warning.length > 0}" 
+                        v-model="inputUsername" :placeholder=this.username>
                 </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <div v-if="username_warning.length > 0" class="warning-css" 
+                    style="margin-top: -18px; margin-bottom: 18px;">{{ username_warning }}</div>
+                </div>
+
+                
 
                 <div class="information-change-left-row">
                     <div class="information-sign">手机号码</div>
-                    <input type="text" class="input-type-1" v-model="inputPhone" :placeholder=this.phoneNumber>
+                    <input type="text"
+                        :class="{'input-type-1': true, 'red-border': phone_warning.length > 0}" 
+                        v-model="inputPhone" :placeholder=this.phoneNumber>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <div v-if="phone_warning.length > 0" class="warning-css" 
+                    style="margin-top: -18px; margin-bottom: 18px;">{{ phone_warning }}</div>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">专业</div>
-                    <input type="text" class="input-type-1" v-model="inputMajority" :placeholder=this.majority>
+                    <input type="text" :class="{'input-type-1': true, 'red-border': major_warning.length > 0}" 
+                        v-model="inputMajority" :placeholder=this.majority>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <div v-if="major_warning.length > 0" class="warning-css" 
+                    style="margin-top: -18px; margin-bottom: 18px;">{{ major_warning }}</div>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">入学时间</div>
-                    <input type="text" class="input-type-1" v-model="inputEntryTime" :placeholder=this.signTime>
+                    <input type="text" :class="{'input-type-1': true, 'red-border': enroll_warning.length > 0}" 
+                        v-model="inputEntryTime" :placeholder=this.signTime>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <div v-if="enroll_warning.length > 0" class="warning-css" 
+                    style="margin-top: -18px; margin-bottom: 18px;">{{ enroll_warning }}</div>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">个人签名</div>
-                    <textarea type="text" class="input-type-2" v-model="inputSignature" :placeholder=this.signature />
+                    <textarea type="text" :class="{'input-type-2': true, 'red-border': sign_warning.length > 0}"
+                        v-model="inputSignature" :placeholder=this.signature />
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <div v-if="sign_warning.length > 0" class="warning-css" 
+                    style="margin-top: -18px; margin-bottom: 18px;">{{ sign_warning }}</div>
                 </div>
 
                 <div class="button-container">
@@ -126,8 +155,14 @@
                     </div>
 
                     <div class="information-change-left-row">
-                        <div class="information-sign">再次输入新密码</div>
-                        <input type="password" class="input-type-1" v-model="this.inputNewPassword2">
+                        <div class="information-sign">再次输入密码</div>
+                        <input type="password" 
+                            :class="{'input-type-1': true, 'red-border': pwd_diff_warning.length > 0}" 
+                            v-model="this.inputNewPassword2">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <div v-if="pwd_diff_warning.length > 0" class="warning-css" 
+                        style="margin-top: -18px; margin-bottom: 18px;">{{ pwd_diff_warning }}</div>
                     </div>
 
                     <div class="button-container">
@@ -170,6 +205,13 @@ export default {
             phoneNumber: "", //测试的手机信息
             majority: "", //测试的学员信息
             signature: "", //测试的个人签名
+
+            username_warning: "",  //更改用户名报错
+            phone_warning: "",  //更改电话报错
+            major_warning: "", //专业信息报错
+            enroll_warning: "",  //入学年份报错
+            sign_warning: "",  //更改签名报错
+            pwd_diff_warning: "",
 
             fileList: [],  //上传图片位置
 
@@ -254,6 +296,28 @@ export default {
         })
     },
     methods: {
+        // checkname() {
+        //     if (!this.inputUsername || this.inputUsername.length == 0) {
+        //         this.username_warning = "用户名不能为空！"
+        //     } else if (this.inputUsername.length > 8) {
+        //         this.username_warning = "用户名过长！"
+        //     } else {
+        //         this.username_warning = ""
+        //     }
+        //     console.log(this.inputUsername.length);
+        // },
+        // checktel() {
+        //     if (!this.phoneNumber || this.phoneNumber.length == 0) {
+        //         this.phone_warning = "输入手机号不能为空！"
+        //         return;
+        //     }
+        //     var tel_reg = /^1[3-9][0-9]{9}$/;
+        //     if (!tel_reg.test(content)) {
+        //         this.phone_warning = "输入的手机号不合法！";
+        //         return;
+        //     }
+        //     this.phone_warning = "";
+        // },
         showAvatarUpload() {
             this.dialogVisible = true;
         },
@@ -269,13 +333,37 @@ export default {
         },
 
         ChangeInformation() {
-            if (isNaN(this.inputEntryTime)) {
-                this.$message({
-                    showClose: true,
-                    message: "入学年份必须是数字！",
-                    type: 'error',
-                });
+            if (this.inputUsername.length > 8) {
+                this.username_warning = "用户名过长！";
                 return;
+            } else {
+                this.username_warning = "";
+            }
+
+            if (this.inputPhone.length > 0) {
+                var tel_reg = /^1[3-9][0-9]{9}$/;
+                if (!tel_reg.test(this.inputPhone)) {
+                    this.phone_warning = "输入的手机号不合法！";
+                    return;
+                } else {
+                    this.phone_warning = "";
+                }
+            } else {
+                this.phone_warning = "";
+            }
+
+            if (isNaN(this.inputEntryTime)) {
+                this.enroll_warning = "入学年份必须是数字！";
+                return;
+            } else {
+                this.enroll_warning = "";
+            }
+
+            if (this.inputSignature.length > 30) {
+                this.sign_warning = "个人签名过长！";
+                return
+            } else {
+                this.sign_warning = "";
             }
 
             const content = {};
@@ -309,6 +397,7 @@ export default {
                         message: '基础信息更改成功！',
                         type: 'success',
                     });
+                    location.reload();
                 } else {
                     this.$message({
                         showClose: true,
@@ -338,11 +427,10 @@ export default {
                 return;
             }
             if (this.inputNewPassword != this.inputNewPassword2) {
-                this.$message({
-                    showClose: true,
-                    message: "两次输入的新密码不一致！",
-                    type: 'error',
-                });
+                this.pwd_diff_warning = "两次输入的新密码不一致！"
+                return;
+            } else {
+                this.pwd_diff_warning = "";
             }
 
             let content = {
@@ -603,5 +691,14 @@ textarea::placeholder {
 
 .cut {
     width: 90%;
+}
+
+.red-border {
+    border: 1px solid red;
+}
+
+.warning-css {
+    color: red;
+    font-size: 12px;
 }
 </style>
