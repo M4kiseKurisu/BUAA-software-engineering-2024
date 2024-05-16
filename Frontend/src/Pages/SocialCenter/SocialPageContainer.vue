@@ -77,7 +77,18 @@
 
             </div>
 
-            <el-button type="primary" style="margin-left: 4%; margin-top: 16px;" @click="uploadPost">上传打卡</el-button>
+            <div style="margin-left: 4%; margin-top: 16px; display: flex">
+                <div style="font-size: 16px; margin-top: 4px; margin-right: 10px;">选择可见性</div>
+                <el-select v-model="view_value" placeholder="选择打卡可见性" style="width: 150px; margin-right: 16px;">
+                    <el-option
+                        v-for="item in view_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+                <el-button type="primary"  @click="uploadPost">上传打卡</el-button>
+            </div>
         </el-dialog>
 
     </div>
@@ -111,6 +122,21 @@ export default {
             preview_urls: [],
             image_urls: [],
             refreshKey: 0,
+            view_options: [
+                {
+                    value: 0,
+                    label: '所有人可见',
+                },
+                {
+                    value: 1,
+                    label: '关注我的人可见',
+                },
+                {
+                    value: 2,
+                    label: '所有人不可见',
+                },
+            ],
+            view_value: 0,
         }
     },
     computed: {
@@ -188,6 +214,7 @@ export default {
                 user_id: JSON.parse(sessionStorage.getItem("id")),
                 image_urls: this.image_urls,
                 content: this.social_post_text,
+                authority: this.view_value,
             }
             console.log(content);
             axios({

@@ -319,7 +319,7 @@
 
                     <div class="write-replys-reply" v-if="this.isReplysOpen2[index][index2]">
                         <div class="reply-editor-container">
-                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.replied_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item2.replied_author_id"/>
+                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.reply_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item2.replied_author_id"/>
                         </div>
                     </div>
                 </div>
