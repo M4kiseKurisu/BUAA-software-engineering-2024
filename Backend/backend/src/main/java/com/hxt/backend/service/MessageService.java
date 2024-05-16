@@ -1,9 +1,12 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
+import com.hxt.backend.entity.group.GroupApply;
 import com.hxt.backend.entity.message.*;
+import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
+import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.GroupMessageElement;
 import com.hxt.backend.response.messageResponse.*;
 import jakarta.annotation.Resource;
@@ -31,7 +34,13 @@ public class MessageService {
     @Resource
     UserService userService;
 
-    public ArrayList<ChatElement> getChatList(Integer id) {
+    @Resource
+    GroupMapper groupMapper;
+
+    @Resource
+    GroupService groupService;
+
+    public ArrayList<ChatElement> getChatList(Integer id, boolean all) {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
         elements.sort(Comparator.comparing(PrivateChat::getLast_message_time).reversed());
@@ -47,7 +56,9 @@ public class MessageService {
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
-
+        if (!all) {
+            return list;
+        }
         List<Integer> follows = userMapper.getFollow(id);
         for (Integer follow: follows) {
             PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);
@@ -108,11 +119,72 @@ public class MessageService {
         return list;
     }
 
+    public BasicInfoResponse updateApply(Integer applyId, boolean result) {
+        if (result) {
+            ApplyNotice apply = messageMapper.selectApplyNoticeById(applyId);
+            if (!groupService.joinGroup(apply.getUser_id(),apply.getGroup_id())) {
+                return new BasicInfoResponse(false,"用户已在群体中");
+            }
+        }
+        messageMapper.updateFeedBack(applyId,result);
+        return new BasicInfoResponse(true,"");
+    }
 
-    // todo
     public ArrayList<ApplyElement> getApplyMessage(Integer userId) {
         ArrayList<ApplyElement> list = new ArrayList<>();
+        // 获取申请反馈
+        List<ApplyNotice> notices = messageMapper.selectApplyGroupFeedbackByUserId(userId);
+        for (ApplyNotice notice: notices) {
+            ApplyElement element = new ApplyElement();
+
+            element.setApply_id(notice.getAn_id());
+            element.setUser_id(notice.getUser_id());
+            element.setGroup_id(notice.getGroup_id());
+            element.setGroup_leader_id(notice.getPromoter_id());
+            element.setApply_title("申请反馈");
+            element.setApply_content(notice.getContent());
+            element.setIs_apply_feedback(true);
+            element.setApply_feedback_info(notice.getResult());
+            element.setGroup_name(groupMapper.selectGroupById(notice.getGroup_id()).getName());
+            element.setUser_name(userMapper.getUserNameById(notice.getUser_id()));
+            element.setUser_avatar(userService.getUserHead(notice.getUser_id()));
+
+            list.add(element);
+        }
+        // 待处理申请
+        notices = messageMapper.selectUnprocessedApplyNoticeByUserId(userId);
+        for (ApplyNotice notice: notices) {
+            ApplyElement element = new ApplyElement();
+
+            element.setApply_id(notice.getAn_id());
+            element.setUser_id(notice.getUser_id());
+            element.setGroup_id(notice.getGroup_id());
+            element.setGroup_leader_id(notice.getPromoter_id());
+            element.setApply_title("加入群体申请");
+            element.setApply_content(notice.getContent());
+            element.setIs_apply_feedback(false);
+            element.setApply_feedback_info(false);
+            element.setGroup_name(groupMapper.selectGroupById(notice.getGroup_id()).getName());
+            element.setUser_name(userMapper.getUserNameById(notice.getUser_id()));
+            element.setUser_avatar(userService.getUserHead(notice.getUser_id()));
+
+            list.add(element);
+        }
+
         return list;
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    public void updateGroupApply() {
+        List<GroupApply> applies = groupMapper.selectUnpushedApply();
+        for (GroupApply apply: applies) {
+            Integer groupId = apply.getGroup_id();
+            Integer userId = apply.getUser_id();
+            String content = apply.getContent();
+            Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
+            messageMapper.insertApplyNotice(groupId, userId, content, promoterId);
+            groupMapper.updateApplyPushState(apply.getAg_id());
+        }
     }
 
     // todo

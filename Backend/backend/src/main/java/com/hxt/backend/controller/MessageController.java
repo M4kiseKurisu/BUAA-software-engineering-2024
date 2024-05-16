@@ -23,7 +23,7 @@ public class MessageController {
             return new ChatListResponse(false,"用户未登录",0,null);
         }
         Integer id = Integer.parseInt(user_id);
-        ArrayList<ChatElement> list = messageService.getChatList(id);
+        ArrayList<ChatElement> list = messageService.getChatList(id, true);
         if (list.isEmpty()) {
             return new ChatListResponse(true,"暂无聊天记录",0,list);
         }

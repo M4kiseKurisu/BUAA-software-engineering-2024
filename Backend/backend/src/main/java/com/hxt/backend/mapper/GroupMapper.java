@@ -1,6 +1,7 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.group.Group;
+import com.hxt.backend.entity.group.GroupApply;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -75,4 +76,7 @@ public interface GroupMapper {
             "set pushed = true " +
             "where ag_id = #{ag_id};")
     int updateApplyPushState(Integer ag_id);
+
+    @Select("select * from apply_group where pushed = false;")
+    List<GroupApply>selectUnpushedApply();
 }

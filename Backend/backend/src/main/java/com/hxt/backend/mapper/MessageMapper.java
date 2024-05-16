@@ -97,12 +97,15 @@ public interface MessageMapper {
 
     // 申请加入学习团体通知表部分
 
+    @Select("SELECT * FROM apply_notice WHERE an_id = #{id};")
+    ApplyNotice selectApplyNoticeById(Integer id);
+
     // 获取加入申请
-    @Select("select * from apply_notice where promoter_id = #{userId}")
+    @Select("select * from apply_notice where processed = false and promoter_id = #{userId}")
     List<ApplyNotice> selectUnprocessedApplyNoticeByUserId(Integer userId);
 
     // 获取申请反馈
-    @Select("select * from apply_notice where user_id = 1;")
+    @Select("select * from apply_notice where processed = true user_id = #{userId};")
     List<ApplyNotice> selectApplyGroupFeedbackByUserId(Integer userId);
 
     // 修改申请结果
