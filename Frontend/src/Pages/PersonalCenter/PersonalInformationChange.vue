@@ -89,14 +89,12 @@
                         <button class="button-changeavatar">选择头像</button>
                     </el-upload>
                     <button class="button-changeavatar" @click="uploadAvatar">上传头像</button> -->
-                    <button class="button-changeavatar" @click="dialogVisible = true">更换头像</button>
+                    <button class="button-changeavatar" @click="showAvatarUpload">更换头像</button>
                     <button class="button-left" @click="ChangeInformation">保存</button>
                     <button class="button-right" @click="emptyInformation">重置</button>
 
-                    <el-dialog v-model="dialogVisible" width="500">
-                        <div class="cut">
-                            <VueCropper ref="cropper" :img="option.img" mode="cover"></VueCropper>
-                        </div>
+                    <el-dialog v-model="dialogVisible" title="头像裁剪" width="60%">
+                        <ImageCropper :Name="cropperName" ref="child"></ImageCropper>
                     </el-dialog>
                 </div>
 
@@ -154,13 +152,12 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 // 引入面包屑组件
 import BreadcrumbLabel from "../../Components/Tool/BreadcrumbLabel.vue"
-import { VueCropper }  from 'vue-cropper' 
-import 'vue-cropper/next/dist/index.css'
+import ImageCropper from '../../Components/Tool/ImageCropper.vue';
 
 export default {
     components: {
         BreadcrumbLabel,
-        VueCropper,
+        ImageCropper
     },
     data() {
         return {
@@ -206,6 +203,19 @@ export default {
                 high: true,
                 max: 99999
             },
+            formValidate: {
+                mainImage: '',
+            },
+            ruleValidate: {
+                mainImage: [
+                {required: true, message: '请上传封面', trigger: 'blur'}
+                ],
+            },
+            //裁切图片参数
+            cropperModel:false,
+            cropperName:'',
+            imgName: '',
+            imgVisible: false
         }
     },
     mounted() {
@@ -244,6 +254,10 @@ export default {
         })
     },
     methods: {
+        showAvatarUpload() {
+            this.dialogVisible = true;
+        },
+
         uploadAvatar() {
             const file = this.fileList[0].raw;
             const data = new FormData();
