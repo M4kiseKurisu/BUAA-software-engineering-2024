@@ -132,7 +132,7 @@ public class SectionController {
         return sectionService.getSectionAuthority(sectionId);
     }
 
-    @RequestMapping("section/add/course")
+    @RequestMapping("/section/add/course")
     public BasicInfoResponse tryAddCourse(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "name", required = false) String name,
