@@ -1,10 +1,10 @@
 <template>
     <div style="width: 100%;min-width: 720px;max-width: 100%;;height: 145px;background-color:white;display: flex;border-bottom: 1px solid darkgray;">
-        <div v-if="this.cover != ''"
+        <div v-if="this.cover != '' && noCover == 0"
             style="display: flex;height: 100%;width: 145px; justify-content: center;align-items: center; background-color: white;">
             <el-avatar :size='140' :src="cover" shape="square" fit="cover" />
         </div>
-        <div class="widthSelect" :class="{ active: this.cover != '' }">
+        <div class="widthSelect" :class="{ active: this.cover != '' && noCover == 0}">
             <div style="width: 100%;height: 40%;display: flex;align-items: center;justify-content: space-between;">
                 <span style="font-size:1.6em;font-weight: bold; margin-left: 20px;">{{ title }}</span>
                 <div style="display: flex;">
@@ -74,6 +74,10 @@ export default {
         getSectionId: {
             type: Number,
             default: 1,
+        },
+        noCover:{
+            type: Number,
+            default: 0,
         }
     },
     data() {

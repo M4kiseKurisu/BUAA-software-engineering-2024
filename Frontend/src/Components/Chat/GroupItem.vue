@@ -1,26 +1,26 @@
 <template>
     <!-- <div class="groupItemContainer" @click = "giveGroupId"> -->
     <div class = "groupItemContainer" style="width: 100%;" @click = "giveGroupId">
-        <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;">
+        <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;" @click = "showGroupInfo = true">
             <el-avatar :size="70" :src="groupHead" shape="square" />
         </div>
 
-        <div style="height: 100%;width: calc(100% - 80px);">
+        <div style="height: 100%;width: calc(100% - 80px);" @click = "goToChatCenter">
             <div style="width: 100%;height: 50%;display: flex;align-items: center;">
                 <div style="font-size: 1.3em;padding-left: 5px;">
                     {{ groupName }}
                 </div>
-                <div style="margin-left: auto;">
-                    <el-button text @click = "showGroupInfo = true">查看详情</el-button>
-                </div>
+                <!-- <div style="margin-left: auto;">
+                    <el-button text >查看详情</el-button>
+                </div> -->
             </div>
             <div style="width: 100%;height: 50%;display: flex;align-items: center;">
                 <div style="font-size: 1em;padding-left: 5px;color:dimgray;">
                     团体人数:{{ groupPersonNum }}/{{ groupCapacity }}
                 </div>
-                <div style="margin-left: auto;">
-                    <el-button  type = "primary" plain style="margin-right: 5px;" @click = "goToChatCenter" text>去聊天</el-button>
-                </div>
+                <!-- <div style="margin-left: auto;">
+                    <el-button  type = "primary" plain style="margin-right: 5px;" text>去聊天</el-button>
+                </div> -->
             </div>
         </div>
         <!-- <el-dialog v-model="showQuit" title="退出提醒" width="600">
