@@ -17,9 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -122,7 +120,7 @@ public class UserService {
                 postLike + commentLike + replyLike,
                 user.getSign(),
                 userMapper.isFollow(searcher, id) > 0,
-                checkBlocked(id),
+                checkGlobalBlocked(id),
                 authorityInfo
         );
     }
@@ -256,7 +254,8 @@ public class UserService {
 
     public boolean reportUser(Integer userId, Integer reportId, String detail) {
         if (adminMapper.checkSameReport(3, reportId, userId) > 0
-            ||  (userMapper.isBlocked(reportId) != null && userMapper.isBlocked(reportId) > 0)) {
+            ||  (userMapper.isGlobalBlocked(reportId) != null && userMapper.isGlobalBlocked(reportId) > 0)) {
+            //  同一人已经发起举报或该用户已被全局封禁，则不提交举报
             return true;
         }
         return adminMapper.insertReport(userId, 3, reportId, detail, null) > 0;
@@ -289,8 +288,13 @@ public class UserService {
         return -2;
     }
 
-    public boolean checkBlocked(Integer id) {
-        Integer tmp = userMapper.isBlocked(id);
+    public boolean checkGlobalBlocked(Integer id) {
+        Integer tmp = userMapper.isGlobalBlocked(id);
+        return  (tmp != null && tmp != 0);
+    }
+
+    public boolean checkSectionBlocked(Integer user, Integer section) {
+        Integer tmp = userMapper.isSectionBlocked(user, section);
         return  (tmp != null && tmp != 0);
     }
 

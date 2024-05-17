@@ -10,6 +10,7 @@ import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.list.UserSectionBlockListResponse;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.singleInfo.*;
 import jakarta.annotation.Resource;
@@ -17,9 +18,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -174,18 +173,22 @@ public class AdminService {
         messageMapper.sendSystemNoticeToUser("封禁通知",
                 String.format("您因违反有关规定，被管理员于 %s 被封禁 %d 天（自本通知中的时间点起计算）。",
                         df.format(date), realtime), id);
-        return userMapper.blockUser(id, realtime) > 0;
+        return userMapper.globalBlockUser(id, realtime) > 0;
     }
 
     public boolean unblockUser(Integer id) {
-        return userMapper.unblockUser(id) > 0;
+        return userMapper.globalUnblockUser(id) > 0;
+    }
+
+    public boolean sectionUnblockUser(Integer id, Integer section) {
+        return userMapper.sectionUnblockUser(id, section) > 0;
     }
 
     public UserListResponse getUserList() {
         List<Integer> ids = userMapper.selectAllUserId();
         UserListResponse userInfoResponse = new UserListResponse(ids.size(), new ArrayList<>());
         for (Integer id : ids) {
-            Integer tmp = userMapper.isBlocked(id);
+            Integer tmp = userMapper.isGlobalBlocked(id);
             boolean isBlocked = (tmp != null && tmp != 0);
             User user = userMapper.selectUserById(id);
             List<UserAuthorityInfo> authorityInfo = new ArrayList<>();
@@ -219,6 +222,23 @@ public class AdminService {
             list.add(element);
         }
         return list;
+    }
+
+    public UserSectionBlockListResponse getSectionBlockList(Integer order) {
+        List<UserSectionBlockResponse> response = new ArrayList<>();
+        if (order == 0) {
+            response = userMapper.getSectionBlockListOrderByTime();
+        } else if (order == 1) {
+            response = userMapper.getSectionBlockListOrderByUser();
+        } else if (order == 2) {
+            response = userMapper.getSectionBlockListOrderBySection();
+        }
+        for (UserSectionBlockResponse u : response) {
+            u.setSection_name(sectionMapper.getSectionNameById(u.getSection_id()));
+            u.setUser_name(userMapper.getUserNameById(u.getUser_id()));
+            u.setBlock_time(df.format(u.getBlock_timestamp()));
+        }
+        return new UserSectionBlockListResponse(response.size(), response);
     }
 
     public ReportListResponse getUnhandledReports(Integer type) {

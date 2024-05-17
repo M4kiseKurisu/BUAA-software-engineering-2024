@@ -151,11 +151,60 @@ public class SectionController {
         if (adminService.checkGlobalAuthority(Integer.parseInt(user_id))) {
             Integer id = sectionService.addCourse(name, intro, course_type, academy, credit, capacity);
             res = (id != null);
-            adminService.setAuthority(Integer.parseInt(user_id), id, "teacher");
+            adminService.setAuthority(Integer.parseInt(user_id), id, "teacher");    //  自动获得版块教师身份
         } else {
             res = sectionService.addCourseRequest(name, intro, course_type, academy, credit, capacity);
         }
         String info = res? "" : "服务器错误，未能添加";
         return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/section/add/assistant")
+    public BasicInfoResponse tryAddAssistant(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "assistant", required = false) Integer assistant
+    ) {
+        if (user_id.isEmpty() || section == null || assistant == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return sectionService.tryAddAssistant(Integer.parseInt(user_id), section, assistant);
+    }
+
+    @RequestMapping("/section/delete/assistant")
+    public BasicInfoResponse tryDeleteAssistant(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "assistant", required = false) Integer assistant
+    ) {
+        if (user_id.isEmpty() || section == null || assistant == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return sectionService.tryDeleteAssistant(Integer.parseInt(user_id), section, assistant);
+    }
+
+    @RequestMapping("/section/block")
+    public BasicInfoResponse tryBlockUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "id", required = false) Integer user,
+            @RequestParam(name = "days", required = false) Integer days
+    ) {
+        if (user_id.isEmpty() || section == null || user == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return sectionService.tryBlockUser(Integer.parseInt(user_id), section, user, days);
+    }
+
+    @RequestMapping("/section/unblock")
+    public BasicInfoResponse tryUnblockUser(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "id", required = false) Integer user
+    ) {
+        if (user_id.isEmpty() || section == null || user == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        }
+        return sectionService.tryUnblockUser(Integer.parseInt(user_id), section, user);
     }
 }

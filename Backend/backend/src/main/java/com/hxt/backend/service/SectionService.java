@@ -15,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,9 @@ public class SectionService {
 
     @Resource
     private AdminMapper adminMapper;
+
+    @Resource
+    private MessageMapper messageMapper;
 
     public ArrayList<SectionElement> getHotSections(Integer userId) {
         ArrayList<Section> sections = sectionMapper.selectAllSection();
@@ -221,5 +226,58 @@ public class SectionService {
     public boolean addCourseRequest(String name, String intro, String type,
                                      String academy, Integer credit, Integer capacity) {
         return sectionMapper.insertCourseRequest(name, intro, type, academy, credit, capacity) > 0;
+    }
+
+    public BasicInfoResponse tryAddAssistant(Integer user, Integer section, Integer assistant) {
+        String type = adminMapper.checkAuthorityType(user, section);
+        if (type == null || !type.equals("teacher")) {
+            return new BasicInfoResponse(false, "您没有该板块的教师身份！");
+        }
+        adminMapper.setAuthority(assistant, section, "assistant");
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("授权通知",
+                String.format("您于 %s 被授予 %s 版块的 %s 权限，希望您为板块建设贡献自己的一份力量。",
+                        df.format(date), sectionMapper.getSectionNameById(section), type), assistant);
+        return new BasicInfoResponse(true, "");
+    }
+
+    public BasicInfoResponse tryDeleteAssistant(Integer user, Integer section, Integer assistant) {
+        String type = adminMapper.checkAuthorityType(user, section);
+        if (type == null || !type.equals("teacher")) {
+            return new BasicInfoResponse(false, "您没有该板块的教师身份！");
+        }
+        adminMapper.deleteAuthority(assistant, section);
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("收回权限通知",
+                String.format("您在 %s 版块的权限于 %s 被收回。",
+                        sectionMapper.getSectionNameById(section), df.format(date)), assistant);
+        return new BasicInfoResponse(true, "");
+    }
+
+    public BasicInfoResponse tryBlockUser(Integer user, Integer section, Integer id, Integer days) {
+        if (adminMapper.checkAuthorityType(user, section) == null) {
+            return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
+        }
+        if (days == null) {
+            days = Integer.MAX_VALUE;
+        }
+        String type = adminMapper.checkAuthorityType(user, section);
+        if (type == null || !type.equals("teacher")) {
+            return new BasicInfoResponse(false, "您没有该板块的教师身份！");
+        }
+        if (userMapper.updateSectionBlock(id, section, days) == 0) {
+            userMapper.sectionBlockUser(id, section, days);
+        }
+        return new BasicInfoResponse(true, "");
+    }
+
+    public BasicInfoResponse tryUnblockUser(Integer user, Integer section, Integer id) {
+        if (adminMapper.checkAuthorityType(user, section) == null) {
+            return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
+        }
+        userMapper.sectionUnblockUser(id, section);
+        return new BasicInfoResponse(true, "");
     }
 }

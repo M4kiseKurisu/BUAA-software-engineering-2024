@@ -1,9 +1,9 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.User;
+import com.hxt.backend.response.singleInfo.UserSectionBlockResponse;
 import org.apache.ibatis.annotations.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -98,15 +98,49 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) FROM user_info WHERE token_time > #{time}")
     int getLoginNumRecent(Integer time);
 
+    //  封禁操作
     @Update("UPDATE user_info SET block_point = NOW(), block_days = #{day} WHERE user_id = #{id}")
-    int blockUser(Integer id, Integer day);
+    int globalBlockUser(Integer id, Integer day);
 
     @Select("select timestampdiff(day, block_point, now()) < block_days from user_info where user_id = #{id}")
-    Integer isBlocked(Integer id);
+    Integer isGlobalBlocked(Integer id);
 
     @Update("UPDATE user_info SET block_days = 0 WHERE user_id = #{id}")
-    int unblockUser(Integer id);
-  
+    int globalUnblockUser(Integer id);
+
+    @Update("UPDATE section_block SET block_time = NOW(), block_days = #{days} " +
+            "WHERE user_id = #{user} AND section_id = #{section}")
+    int updateSectionBlock(Integer user, Integer section, Integer days);
+
+    @Insert("INSERT INTO section_block (user_id, section_id, block_time, block_days) " +
+            "VALUES (#{user}, #{section}, NOW(), #{days})")
+    int sectionBlockUser(Integer user, Integer section, Integer days);
+
+    @Select("select timestampdiff(day, block_time, now()) < block_days from section_block " +
+            "where user_id = #{user} and section_id = #{section}")
+    Integer isSectionBlocked(Integer user, Integer section);
+
+    @Delete("DELETE FROM section_block WHERE user_id = #{user} and section_id = #{section}")
+    int sectionUnblockUser(Integer user, Integer section);
+
+    @Select("SELECT * from section_block order by user_id")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderByUser();
+
+    @Select("SELECT * from section_block order by section_id")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderBySection();
+
+    @Select("SELECT * from section_block order by block_time desc")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderByTime();
+
     //  用户关注表
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO user_follow (user_id, follow_id, time) VALUES (#{userId}, #{followId}, NOW())")

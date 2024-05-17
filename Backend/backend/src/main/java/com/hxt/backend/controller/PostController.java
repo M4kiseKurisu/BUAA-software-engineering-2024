@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -144,7 +143,7 @@ public class PostController {
             @RequestParam(name = "resources[]", required = false) String[] resources
     ) throws IOException {
         //检查用户是否被封禁、检查用户操作频率
-        if (userService.checkBlocked(author_id)) {
+        if (userService.checkGlobalBlocked(author_id) || userService.checkSectionBlocked(author_id, section_id)) {
             return new WritePostResponse(false, "您已被封禁，禁止发帖！", null);
         } else if (frequencyLogService.checkFrequency(author_id)) {
             return new WritePostResponse(false, frequencyResponse, null);
@@ -428,7 +427,8 @@ public class PostController {
             @RequestParam(name = "resources", required = false) List<String> resources
     ) throws IOException {
         //检查用户是否被封禁
-        if (userService.checkBlocked(author_id)) {
+        if (userService.checkGlobalBlocked(author_id)
+                || userService.checkSectionBlocked(author_id, postService.getPostSection(post_id))) {
             return new BasicInfoResponse(false, "您已被封禁，禁止评论！");
         } else if (frequencyLogService.checkFrequency(author_id)) {
             return new BasicInfoResponse(false, frequencyResponse);
@@ -564,7 +564,8 @@ public class PostController {
             
     ) throws IOException {
         //检查用户是否被封禁
-        if (userService.checkBlocked(author_id)) {
+        if (userService.checkGlobalBlocked(author_id)
+                || userService.checkSectionBlocked(author_id, postService.getPostSection(post_id))) {
             return new BasicInfoResponse(false, "您已被封禁，禁止回复！");
         } else if (frequencyLogService.checkFrequency(author_id)) {
             return new BasicInfoResponse(false, frequencyResponse);

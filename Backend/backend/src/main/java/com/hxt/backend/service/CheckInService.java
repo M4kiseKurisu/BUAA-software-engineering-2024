@@ -176,6 +176,7 @@ public class CheckInService {
             long checkInTime = checkIn.getTime().getTime();
             if (checkInTime > time && checkInTime < time + 86400000) {
                 res++;
+                time = time - 86400000;
             } else if (checkInTime < time) {
                 break;
             }

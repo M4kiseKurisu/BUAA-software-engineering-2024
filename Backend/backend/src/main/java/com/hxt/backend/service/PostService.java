@@ -68,9 +68,11 @@ public class PostService {
             return -1;
         }
         //  检查权限
+        Integer globalBlock = userMapper.isGlobalBlocked(userId);
+        Integer sectionBlock = userMapper.isSectionBlocked(userId, p.getSection_id());
         if (!flagAdmin && !p.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
-                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
+                || (globalBlock != null && globalBlock > 0) || (sectionBlock != null && sectionBlock > 0))) {
             return -2;
         }
         List<Comment> comments = postMapper.getCommentSortByTimeAsc(postId);
@@ -410,9 +412,11 @@ public class PostService {
         if (c == null) {
             return -1;
         }
+        Integer globalBlock = userMapper.isGlobalBlocked(userId);
+        Integer sectionBlock = userMapper.isSectionBlocked(userId, p.getSection_id());
         if (!flag && !c.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
-                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
+                || (globalBlock != null && globalBlock > 0) || (sectionBlock != null && sectionBlock > 0))) {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
@@ -491,9 +495,11 @@ public class PostService {
             return -1;
         }
         Post p = postMapper.getPost(postMapper.getPostIdByCommentId(postMapper.getCommentIdByReplyId(replyId)));
+        Integer globalBlock = userMapper.isGlobalBlocked(userId);
+        Integer sectionBlock = userMapper.isSectionBlocked(userId, p.getSection_id());
         if (!flag && !r.getAuthor_id().equals(userId) && (adminMapper.checkGlobalAuthority(userId) == 0
                 && adminMapper.checkAuthority(userId, p.getSection_id()) == null
-                || (userMapper.isBlocked(userId) != null && userMapper.isBlocked(userId) > 0))) {
+                || (globalBlock != null && globalBlock > 0) || (sectionBlock != null && sectionBlock > 0))) {
             return -2;
         }
         postMapper.deleteReplyLike(replyId);
@@ -580,5 +586,9 @@ public class PostService {
             return true;
         }
         return adminMapper.insertReport(userId, 2, replyId, detail, null) > 0;
+    }
+
+    public Integer getPostSection(Integer id) {
+        return postMapper.getPost(id).getSection_id();
     }
 }

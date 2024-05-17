@@ -105,7 +105,7 @@ public interface MessageMapper {
     List<ApplyNotice> selectUnprocessedApplyNoticeByUserId(Integer userId);
 
     // 获取申请反馈
-    @Select("select * from apply_notice where processed = true user_id = #{userId};")
+    @Select("select * from apply_notice where processed = true and user_id = #{userId};")
     List<ApplyNotice> selectApplyGroupFeedbackByUserId(Integer userId);
 
     // 修改申请结果

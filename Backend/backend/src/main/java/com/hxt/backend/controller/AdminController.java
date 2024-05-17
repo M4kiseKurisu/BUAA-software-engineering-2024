@@ -5,6 +5,7 @@ import com.hxt.backend.response.LoginResponse;
 import com.hxt.backend.response.list.PostTimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.list.UserSectionBlockListResponse;
 import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
@@ -151,6 +152,16 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/admin/list/section/block")
+    public UserSectionBlockListResponse getSectionBlockList(
+            @RequestParam(name = "order", required = false) Integer order
+    ) {
+        if (order == null || order < 0 || order > 2) {
+            order = 0;
+        }
+        return adminService.getSectionBlockList(order);
+    }
+
     @RequestMapping("/admin/list/report/post")
     private ReportListResponse getPostReportList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
@@ -261,6 +272,22 @@ public class AdminController {
             return new BasicInfoResponse(false, authorityResponse);
         }
         boolean res = adminService.unblockUser(id);
+        String info = (res)? "" : "服务器错误，操作失败";
+        return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("admin/unblock/section")
+    public BasicInfoResponse sectionUnblockUser(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "section", required = false) Integer section,
+            @RequestParam(name = "id", required = false) Integer user
+    ) {
+        if (user == null || section == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.sectionUnblockUser(user, section);
         String info = (res)? "" : "服务器错误，操作失败";
         return new BasicInfoResponse(res, info);
     }
