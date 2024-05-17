@@ -120,4 +120,7 @@ public interface MessageMapper {
     @Insert("insert into apply_notice (group_id, user_id, content, promoter_id, processed, result) " +
             "values (#{groupId},#{user_id},#{content},#{promoter_id},false,false)")
     int insertApplyNotice(Integer groupId, Integer user_id, String content, Integer promoter_id);
+
+    @Select("SELECT COUNT(*) FROM apply_notice WHERE group_id = #{groupId} AND user_id = #{userId};")
+    int selectApplyCount(Integer groupId, Integer userId);
 }

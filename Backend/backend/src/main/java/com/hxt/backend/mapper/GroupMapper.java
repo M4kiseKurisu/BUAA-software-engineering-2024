@@ -78,5 +78,5 @@ public interface GroupMapper {
     int updateApplyPushState(Integer ag_id);
 
     @Select("select * from apply_group where pushed = false;")
-    List<GroupApply>selectUnpushedApply();
+    List<GroupApply> selectUnpushedApply();
 }
