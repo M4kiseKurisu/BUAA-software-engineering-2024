@@ -201,4 +201,15 @@ public class GroupController {
         }
         return response;
     }
+
+    @PostMapping("/group/accept")
+    public BasicInfoResponse acceptApply(
+            @RequestParam(name = "id", defaultValue = "") String id,
+            @RequestParam(name = "accept", defaultValue = "") String accept
+    ) {
+        if (id.isEmpty() || accept.isEmpty()) {
+            return new BasicInfoResponse(false, "信息缺失");
+        }
+        return messageService.updateApply(Integer.parseInt(id), accept.equals("1"));
+    }
 }

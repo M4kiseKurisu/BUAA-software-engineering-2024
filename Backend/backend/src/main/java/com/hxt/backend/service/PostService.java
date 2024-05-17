@@ -247,41 +247,45 @@ public class PostService {
             List<String> resourceUrls = postMapper.getResourceUrlByComment(postId);
             commentResponse.setComment_resources(resourceUrls);
             
-            //获取评论的回复
-            List<Reply> replies = postMapper.getReplyByCommentId(comment.getComment_id());
-            List<ReplyResponse> replyResponses = new ArrayList<>();
-            for (Reply reply : replies) {
-                ReplyResponse replyResponse = new ReplyResponse(reply);
-                
-                //获取回复者的名称和头像
-                Integer replyAuthorId = reply.getAuthor_id();
-                User replyAuthor = userMapper.selectUserById(replyAuthorId);
-                String replyAuthorName = replyAuthor.getName();
-                String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
-                replyResponse.setReply_author_name(replyAuthorName);
-                replyResponse.setReply_author_head(replyAuthorHead);
-                
-                //获取用户是否点赞回复
-                Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
-                if (replyStatus == 1) {
-                    replyResponse.setReply_isLike(true);
-                } else {
-                    replyResponse.setReply_isLike(false);
-                }
-                
-                //获取被评论用户名字
-                Integer repliedAuthorId = reply.getReplied_author_id();
-                String name = userMapper.getUserNameById(repliedAuthorId);
-                replyResponse.setReplied_author_name(name);
-                
-                replyResponses.add(replyResponse);
-            }
-            commentResponse.setReplies(replyResponses);
             
             commentResponses.add(commentResponse);
         }
         
         return commentResponses;
+    }
+    
+    
+    //获取评论回复
+    public List<ReplyResponse> getCommentReplies(Integer commentId, Integer userId) {
+        List<Reply> replies = postMapper.getReplyByCommentId(commentId);
+        List<ReplyResponse> replyResponses = new ArrayList<>();
+        for (Reply reply : replies) {
+            ReplyResponse replyResponse = new ReplyResponse(reply);
+        
+            //获取回复者的名称和头像
+            Integer replyAuthorId = reply.getAuthor_id();
+            User replyAuthor = userMapper.selectUserById(replyAuthorId);
+            String replyAuthorName = replyAuthor.getName();
+            String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
+            replyResponse.setReply_author_name(replyAuthorName);
+            replyResponse.setReply_author_head(replyAuthorHead);
+        
+            //获取用户是否点赞回复
+            Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
+            if (replyStatus == 1) {
+                replyResponse.setReply_isLike(true);
+            } else {
+                replyResponse.setReply_isLike(false);
+            }
+        
+            //获取被评论用户名字
+            Integer repliedAuthorId = reply.getReplied_author_id();
+            String name = userMapper.getUserNameById(repliedAuthorId);
+            replyResponse.setReplied_author_name(name);
+        
+            replyResponses.add(replyResponse);
+        }
+        return replyResponses;
     }
     
     //点赞帖子

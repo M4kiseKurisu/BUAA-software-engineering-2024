@@ -99,7 +99,6 @@ public class GroupService {
             element.setTags(groupMapper.selectGroupTag(group.getGroup_id()));
             list.add(element);
         }
-
         if (!tag.isEmpty()) {
             list = list.stream().filter(e -> e.getTags().contains(tag)).toList();
         }
