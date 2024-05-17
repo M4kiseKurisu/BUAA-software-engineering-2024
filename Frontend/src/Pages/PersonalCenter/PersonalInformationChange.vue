@@ -335,7 +335,6 @@ export default {
         ChangeInformation() {
             if (this.inputUsername.length > 8) {
                 this.username_warning = "用户名过长！";
-                return;
             } else {
                 this.username_warning = "";
             }
@@ -344,7 +343,6 @@ export default {
                 var tel_reg = /^1[3-9][0-9]{9}$/;
                 if (!tel_reg.test(this.inputPhone)) {
                     this.phone_warning = "输入的手机号不合法！";
-                    return;
                 } else {
                     this.phone_warning = "";
                 }
@@ -354,16 +352,19 @@ export default {
 
             if (isNaN(this.inputEntryTime)) {
                 this.enroll_warning = "入学年份必须是数字！";
-                return;
             } else {
                 this.enroll_warning = "";
             }
 
             if (this.inputSignature.length > 30) {
                 this.sign_warning = "个人签名过长！";
-                return
             } else {
                 this.sign_warning = "";
+            }
+
+            if (this.username_warning.length > 0 || this.phone_warning.length > 0 
+                || this.enroll_warning.length > 0 || this.sign_warning.length > 0) {
+                return;
             }
 
             const content = {};
