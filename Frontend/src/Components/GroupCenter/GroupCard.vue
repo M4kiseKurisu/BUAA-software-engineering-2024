@@ -68,21 +68,21 @@
             </div>
         </div>
         <!-- 新尝试卡片 -->
-        <el-dialog v-model="showSubmitForm" title="团体申请" width="900" v-if = "showSubmitForm">
+        <el-dialog v-model="showSubmitForm" title="团体申请" width="900" v-if="showSubmitForm">
             <div style="width: 100%;display: flex;">
                 <div style="width: 420px;border-right: 1px solid darkgray;">
                     <div style="width: 100%;display: flex;">
                         <div
                             style="height: 120px;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-                            <img :src="groupAvatar" alt=""
-                                style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
+                            <img :src="groupAvatar" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
                         </div>
                         <div style="width: 280px;height: 100%;">
                             <div
                                 style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
                             </div>
-                            <div style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
+                            <div
+                                style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
                                 <el-tag v-for="item in tags" type="primary"
                                     style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">{{ item
                                     }}</el-tag>
@@ -142,7 +142,8 @@
 import { result } from 'lodash';
 import GroupMemberItem from '../Chat/GroupMemberItem.vue';
 import axios from 'axios';
-
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { ElMessage } from 'element-plus';
 export default {
     props: {
         groupInfo: {
@@ -193,8 +194,27 @@ export default {
                 }
             }).then((result) => {
                 console.log(result);
+                if (result.data.success) {
+                    console.log("进来了")
+                    if (this.isExamine) {
+                        ElMessage({
+                            message: '申请发送成功',
+                            type: 'success',
+                            plain: true,
+                        })
+                    } else {
+                        ElMessage({
+                            message: '加入团体成功',
+                            type: 'success',
+                            plain: true,
+                        })
+                    }
+                } else {
+
+                }
+                this.$router.go(0);
             })
-            this.$router.go(0);
+            //this.$router.go(0);
         },
         getCreaterInfo() {
             axios({
@@ -282,4 +302,5 @@ export default {
 
 .custom-input:focus {
     border-color: #5e9cd3;
-}</style>
+}
+</style>
