@@ -5,6 +5,9 @@ import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.*;
 import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -153,6 +156,16 @@ public class PostController {
                 return new WritePostResponse(false, "请选择帖子类型为资源贴！", null);
             }
         }
+    
+    
+        //后端检测内容字数
+        Document doc = Jsoup.parse(content);
+        Elements imgs = doc.select("img");
+        imgs.remove();
+        String text = doc.text();
+        if (text.length() > 2000) {
+            return new WritePostResponse(false, "内容上限为2000字！", null);
+        }
 
         //审核帖子内容
         if (!reviewService.textReview(title + " " + intro + " " + content)) {
@@ -169,6 +182,7 @@ public class PostController {
                 }
             }
         }
+        
     
         //创建帖子并存入数据库
         Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id, cover);
