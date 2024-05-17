@@ -255,6 +255,8 @@ public class AdminController {
             return new BasicInfoResponse(false, hasEmptyResponse);
         } else if (!type.equals("admin")) {
             return new BasicInfoResponse(false, authorityResponse);
+        } else if (days != null && days <= 0) {
+            return new BasicInfoResponse(false, "填写的天数非法！");
         }
         boolean res = adminService.blockUser(id, days);
         String info = (res)? "" : "服务器错误，操作失败";

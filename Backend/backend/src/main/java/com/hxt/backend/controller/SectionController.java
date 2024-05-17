@@ -192,6 +192,8 @@ public class SectionController {
     ) {
         if (user_id.isEmpty() || section == null || user == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (days != null && days <= 0) {
+            return new BasicInfoResponse(false, "填写的天数非法！");
         }
         return sectionService.tryBlockUser(Integer.parseInt(user_id), section, user, days);
     }

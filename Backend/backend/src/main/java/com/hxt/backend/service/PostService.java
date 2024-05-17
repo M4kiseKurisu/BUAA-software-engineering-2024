@@ -88,6 +88,10 @@ public class PostService {
         postMapper.deletePostLike(postId);
         postMapper.deletePostFavorite(postId);
         postMapper.deletePostResource(postId);
+        List<Integer> reports = adminMapper.getSameTargetReports(0, postId);
+        for (Integer reportId : reports) {
+            adminMapper.handleReport(reportId, 2);
+        }
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -430,6 +434,10 @@ public class PostService {
         postMapper.deleteCommentLike(commentId);
         postMapper.deleteCommentImage(commentId);
         postMapper.deleteCommentResource(commentId);
+        List<Integer> reports = adminMapper.getSameTargetReports(1, commentId);
+        for (Integer reportId : reports) {
+            adminMapper.handleReport(reportId, 2);
+        }
         return postMapper.deleteComment(commentId) + replies.size();
     }
     
@@ -508,6 +516,10 @@ public class PostService {
             return -2;
         }
         postMapper.deleteReplyLike(replyId);
+        List<Integer> reports = adminMapper.getSameTargetReports(2, replyId);
+        for (Integer reportId : reports) {
+            adminMapper.handleReport(reportId, 2);
+        }
         return postMapper.deleteReply(replyId);
     }
     
