@@ -53,17 +53,19 @@
             <img :src="groupAvatar" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
         </div>
         <div style="flex-grow: 1;">
-            <div style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
+            <div
+                style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
             </div>
             <div
                 style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
                 <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">团体人数：{{ this.groupMemberNum }}/{{
-                    this.groupCapacity }}</span>
+        this.groupCapacity }}</span>
             </div>
             <div
                 style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
-                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if="this.isExamine">是</span>
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span
+                        v-if="this.isExamine">是</span>
                     <span v-else>否</span></span>
             </div>
         </div>
@@ -91,10 +93,11 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupCreaterName
-                        }}</span>
+                            }}</span>
                     </div>
                     <div style="margin-top: 10px;">
-                        <span v-if="isExamine" style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
+                        <span v-if="isExamine"
+                            style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
                         <span v-if="!isExamine"
                             style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：否</span>
                     </div>
@@ -104,13 +107,13 @@
                         </div>
                         <div style="width: calc(100% - 10px);height: 80%;margin-left: 10px;margin-top: 10px;">
                             <div style="max-width: 100%;max-height: 100%;color: dimgray;font-size: 1.1em;">{{
-                                groupBriefIntor }}</div>
+        groupBriefIntor }}</div>
                         </div>
                     </div>
                     <div style="width:100%;margin-top: 10px;">
                         <div style="width: 100%;margin-left: 10px;">
                             <span style="font-size: 1.3em;font-weight: bold;">团体成员 {{ groupMemberNum }}/{{ groupCapacity
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="this.groupMemberList != []"
                             style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
@@ -209,10 +212,15 @@ export default {
                             plain: true,
                         })
                     }
+                    this.$router.go(0);
                 } else {
-
+                    ElMessage({
+                        message: '请勿重复申请',
+                        type: 'warning',
+                        plain: true,
+                    })
                 }
-                this.$router.go(0);
+                
             })
             //this.$router.go(0);
         },
