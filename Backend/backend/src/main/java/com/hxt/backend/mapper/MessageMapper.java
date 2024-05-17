@@ -123,4 +123,17 @@ public interface MessageMapper {
 
     @Select("SELECT COUNT(*) FROM apply_notice WHERE group_id = #{groupId} AND user_id = #{userId};")
     int selectApplyCount(Integer groupId, Integer userId);
+
+
+    // 回复通知表
+
+    @Options(useGeneratedKeys = true)
+    @Insert("insert into reply_notice (user_id, author_id, content, reply_time, reply_to_post, post_id, comment_id) " +
+            "VALUES (#{userId},#{authorId},#{content},#{replyTime},#{replyToPost},#{postId},#{commentId});")
+    int insertReplyNotice(Integer userId, Integer authorId, String content, Timestamp replyTime, Boolean replyToPost, Integer postId, Integer commentId);
+
+
+    @Select("select * from reply_notice where user_id = #{userId};")
+    List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
+
 }

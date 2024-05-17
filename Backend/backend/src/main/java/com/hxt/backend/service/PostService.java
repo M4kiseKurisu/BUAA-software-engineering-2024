@@ -42,6 +42,9 @@ public class PostService {
 
     @Resource
     private MessageMapper messageMapper;
+
+    @Resource
+    private MessageService messageService;
     
     // 创建帖子
     public Integer createPost(String title, String intro, String content,
@@ -390,6 +393,7 @@ public class PostService {
         if (res == 0) {
             return 0;
         }
+        messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(),authorId,content,commentTime,true,postId,null);
         return comment.getComment_id();
     }
     
@@ -482,6 +486,7 @@ public class PostService {
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
+        messageService.createReplyNotice(repliedAuthorId, authorId,content,replyTime,false,getPostIdByCommentId(commentId),commentId);
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
     }
     
