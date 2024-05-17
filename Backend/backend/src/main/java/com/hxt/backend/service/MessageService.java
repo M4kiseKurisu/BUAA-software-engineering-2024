@@ -174,18 +174,18 @@ public class MessageService {
         return list;
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    public void updateGroupApply() {
-        List<GroupApply> applies = groupMapper.selectUnpushedApply();
-        for (GroupApply apply: applies) {
-            Integer groupId = apply.getGroup_id();
-            Integer userId = apply.getUser_id();
-            String content = apply.getContent();
-            Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
-            messageMapper.insertApplyNotice(groupId, userId, content, promoterId);
-            groupMapper.updateApplyPushState(apply.getAg_id());
-        }
-    }
+//    @Scheduled(cron = "0 * * * * *")
+//    public void updateGroupApply() {
+//        List<GroupApply> applies = groupMapper.selectUnpushedApply();
+//        for (GroupApply apply: applies) {
+//            Integer groupId = apply.getGroup_id();
+//            Integer userId = apply.getUser_id();
+//            String content = apply.getContent();
+//            Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
+//            messageMapper.insertApplyNotice(groupId, userId, content, promoterId);
+//            groupMapper.updateApplyPushState(apply.getAg_id());
+//        }
+//    }
 
     // todo
     public ArrayList<ReplyElement> getReplyMessage(Integer userId) {
