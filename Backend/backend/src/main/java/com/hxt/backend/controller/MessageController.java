@@ -17,13 +17,14 @@ public class MessageController {
 
     @GetMapping("/message/chats")
     public ChatListResponse getChats(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "type", defaultValue = "0") String type
     ) {
         if (user_id.equals("")) {
             return new ChatListResponse(false,"用户未登录",0,null);
         }
         Integer id = Integer.parseInt(user_id);
-        ArrayList<ChatElement> list = messageService.getChatList(id, true);
+        ArrayList<ChatElement> list = messageService.getChatList(id, type.equals("1"));
         if (list.isEmpty()) {
             return new ChatListResponse(true,"暂无聊天记录",0,list);
         }
