@@ -53,36 +53,38 @@
             <img :src="groupAvatar" alt="" style="width: 90%;aspect-ratio: 1/1 ;">
         </div>
         <div style="flex-grow: 1;">
-            <div style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
+            <div
+                style="max-width: 90%;height: 30%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
             </div>
             <div
                 style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
                 <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">团体人数：{{ this.groupMemberNum }}/{{
-                    this.groupCapacity }}</span>
+        this.groupCapacity }}</span>
             </div>
             <div
                 style="max-width: calc(100% - 5px);height: 25%;display: flex;flex-wrap: wrap;margin-left: 10px;margin-top: 1px;align-items: center;">
-                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span v-if="this.isExamine">是</span>
+                <span style="font-size: 1.2em;font-weight: bold;color: dimgray;">是否需要审核：<span
+                        v-if="this.isExamine">是</span>
                     <span v-else>否</span></span>
             </div>
         </div>
         <!-- 新尝试卡片 -->
-        <el-dialog v-model="showSubmitForm" title="团体申请" width="900" v-if = "showSubmitForm">
+        <el-dialog v-model="showSubmitForm" title="团体申请" width="900" v-if="showSubmitForm">
             <div style="width: 100%;display: flex;">
                 <div style="width: 420px;border-right: 1px solid darkgray;">
                     <div style="width: 100%;display: flex;">
                         <div
                             style="height: 120px;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;">
-                            <img :src="groupAvatar" alt=""
-                                style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
+                            <img :src="groupAvatar" alt="" style="height: 90%;aspect-ratio: 1/1 ;border-radius: 5%;">
                         </div>
                         <div style="width: 280px;height: 100%;">
                             <div
                                 style="max-width: 90%;height: 25%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;">
                                 <span style="font-size: 1.5em;font-weight: bold;">{{ groupName }}</span>
                             </div>
-                            <div style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
+                            <div
+                                style="max-width: calc(100% - 5px);height: 50%;display: flex;flex-wrap: wrap;margin-left: 5px;margin-top: 1px;">
                                 <el-tag v-for="item in tags" type="primary"
                                     style="margin-right: 8px;margin-top: 5px;font-weight: bold;font-size: 1em;">{{ item
                                     }}</el-tag>
@@ -91,10 +93,11 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <span style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">创建人：{{ groupCreaterName
-                        }}</span>
+                            }}</span>
                     </div>
                     <div style="margin-top: 10px;">
-                        <span v-if="isExamine" style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
+                        <span v-if="isExamine"
+                            style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：是</span>
                         <span v-if="!isExamine"
                             style="margin-left: 10px;font-size: 1.3em;font-weight: bold;">是否需要审核：否</span>
                     </div>
@@ -104,13 +107,13 @@
                         </div>
                         <div style="width: calc(100% - 10px);height: 80%;margin-left: 10px;margin-top: 10px;">
                             <div style="max-width: 100%;max-height: 100%;color: dimgray;font-size: 1.1em;">{{
-                                groupBriefIntor }}</div>
+        groupBriefIntor }}</div>
                         </div>
                     </div>
                     <div style="width:100%;margin-top: 10px;">
                         <div style="width: 100%;margin-left: 10px;">
                             <span style="font-size: 1.3em;font-weight: bold;">团体成员 {{ groupMemberNum }}/{{ groupCapacity
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="this.groupMemberList != []"
                             style="width: 100%;display: flex;align-items: center;margin-left: 10px;margin-top: 10px;flex-wrap: wrap;">
@@ -142,7 +145,8 @@
 import { result } from 'lodash';
 import GroupMemberItem from '../Chat/GroupMemberItem.vue';
 import axios from 'axios';
-
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { ElMessage } from 'element-plus';
 export default {
     props: {
         groupInfo: {
@@ -193,8 +197,32 @@ export default {
                 }
             }).then((result) => {
                 console.log(result);
+                if (result.data.success) {
+                    console.log("进来了")
+                    if (this.isExamine) {
+                        ElMessage({
+                            message: '申请发送成功',
+                            type: 'success',
+                            plain: true,
+                        })
+                    } else {
+                        ElMessage({
+                            message: '加入团体成功',
+                            type: 'success',
+                            plain: true,
+                        })
+                    }
+                    this.$router.go(0);
+                } else {
+                    ElMessage({
+                        message: '请勿重复申请',
+                        type: 'warning',
+                        plain: true,
+                    })
+                }
+                
             })
-            this.$router.go(0);
+            //this.$router.go(0);
         },
         getCreaterInfo() {
             axios({
@@ -282,4 +310,5 @@ export default {
 
 .custom-input:focus {
     border-color: #5e9cd3;
-}</style>
+}
+</style>

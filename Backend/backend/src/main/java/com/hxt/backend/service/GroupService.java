@@ -2,6 +2,7 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.mapper.GroupMapper;
+import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.GroupElement;
@@ -20,6 +21,7 @@ public class GroupService {
     private final TagService tagService;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final MessageMapper messageMapper;
 
     public BasicInfoResponse createGroup(String name,Integer promoter_id, Integer permitted_num, String content, boolean is_examine, String image, List<String> tags) {
         if (permitted_num < 3) {
@@ -99,7 +101,6 @@ public class GroupService {
             element.setTags(groupMapper.selectGroupTag(group.getGroup_id()));
             list.add(element);
         }
-
         if (!tag.isEmpty()) {
             list = list.stream().filter(e -> e.getTags().contains(tag)).toList();
         }
@@ -115,7 +116,11 @@ public class GroupService {
             groupMapper.updateGroupMember(groupId,1);
             return new BasicInfoResponse(true,"已成功加入");
         }
-        groupMapper.insertGroupJoinApply(groupId, userId,info);
+        if (messageMapper.selectApplyCount(groupId,userId) != 0) {
+            return new BasicInfoResponse(false, "请勿重复申请");
+        }
+        Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
+        messageMapper.insertApplyNotice(groupId, userId, info, promoterId);
         return new BasicInfoResponse(true,"等待审核中");
     }
 

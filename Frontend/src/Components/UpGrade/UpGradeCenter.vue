@@ -22,7 +22,7 @@
                         </el-button-group>
                     </span>
                     <span style="padding-left:3%;">
-                        <el-button-group class="ml-4">
+                        <!-- <el-button-group class="ml-4">
                             <el-button type="primary" plain v-if="kindSelect2 != 1" @click="selectKindOne">保研</el-button>
                             <el-button type="primary" v-if="kindSelect2 == 1" @click="selectKindOne">保研</el-button>
                             <el-button type="primary" plain v-if="kindSelect2 != 2" @click="selectKindTwo">考研</el-button>
@@ -31,7 +31,10 @@
                             <el-button type="primary" v-if="kindSelect2 == 3" @click="selectKindThree">出国</el-button>
                             <el-button type="primary" plain v-if="kindSelect2 != 4" @click="selectKindFour">其他</el-button>
                             <el-button type="primary" v-if="kindSelect2 == 4" @click="selectKindFour">其他</el-button>
-                        </el-button-group>
+                        </el-button-group> -->
+                        <el-select v-model="target" style="width: 100px" placeholder="帖子类型">
+                            <el-option v-for="item in this.targetKind" :value="item.value" :label="item.label" />
+                        </el-select>
                     </span>
                     <span style="padding-left: 3%;">
                         <el-select v-model="sortKindStr" style="width: 100px" placeholder="排序方式">
@@ -77,13 +80,13 @@
                 <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
                 </div> -->
-                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
+                <div style="margin-left: 5%;margin-top: 20px;" v-if="this.popAuthorIdList.length != 0">
                     <div style="font-size: larger;font-weight: bold;">
                         热门作者
                     </div>
-                    <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
+                    <div v-if="this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for="item in this.popAuthorIdList" :personId="item"></ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
@@ -153,18 +156,41 @@ export default {
                 value: '最新',
                 label: '最新',
             },],
+            targetKind: [{
+                value: '保研',
+                label: '保研',
+            },
+            {
+                value: '考研',
+                label: '考研',
+            },
+            {
+                value: '出国',
+                label: '出国',
+            },
+            {
+                value: '其他',
+                label: '其他',
+            },
+            {
+                value: '全部',
+                label: '全部',
+            },],
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
             popAuthorIdList: [],
-            target: '保研',
+            target: '',
             recommend: false,
         }
     },
     watch: {
         sortKindStr(newValue, oldValue) {
-            console.log(newValue);
-            this.getPostList();
+            //console.log(newValue);
+            this.getSortPostList();
+        },
+        target(newValue, oldValue){
+            this.getSortPostList();
         }
     },
     methods: {
@@ -230,8 +256,14 @@ export default {
             })
         },
         getSortPostList() {
+            var target;
+            if(this.target == ''){
+                target = '全部';
+            } else {
+                target = this.target;
+            }
             var packet = {
-                target: this.target,
+                target: target,
                 type: this.kindSelect,
                 keyword: this.searchWord,
                 sort: this.sortIndex,

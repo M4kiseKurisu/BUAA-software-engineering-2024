@@ -60,7 +60,7 @@ export default {
                 });
         },
         goToChatCenter() {
-            this.$router.push({ name: 'ChatCenter', params: { personId: this.senderId, groupId: -1 } }).then(() => {
+            this.$router.push({ name: 'ChatCenter', params: { personId: this.personId, groupId: -1 } }).then(() => {
                 this.$nextTick(() => {
                     // 强制重新加载当前页面
                     location.reload();

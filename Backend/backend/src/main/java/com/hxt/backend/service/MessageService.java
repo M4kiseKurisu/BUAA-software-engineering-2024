@@ -5,6 +5,7 @@ import com.hxt.backend.entity.group.GroupApply;
 import com.hxt.backend.entity.message.*;
 import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
+import com.hxt.backend.mapper.PostMapper;
 import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.GroupMessageElement;
@@ -16,10 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -39,6 +37,9 @@ public class MessageService {
 
     @Resource
     GroupService groupService;
+
+    @Resource
+    PostMapper postMapper;
 
     public ArrayList<ChatElement> getChatList(Integer id, boolean all) {
         ArrayList<ChatElement> list = new ArrayList<>();
@@ -174,23 +175,43 @@ public class MessageService {
         return list;
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    public void updateGroupApply() {
-        List<GroupApply> applies = groupMapper.selectUnpushedApply();
-        for (GroupApply apply: applies) {
-            Integer groupId = apply.getGroup_id();
-            Integer userId = apply.getUser_id();
-            String content = apply.getContent();
-            Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
-            messageMapper.insertApplyNotice(groupId, userId, content, promoterId);
-            groupMapper.updateApplyPushState(apply.getAg_id());
-        }
-    }
+//    @Scheduled(cron = "0 * * * * *")
+//    public void updateGroupApply() {
+//        List<GroupApply> applies = groupMapper.selectUnpushedApply();
+//        for (GroupApply apply: applies) {
+//            Integer groupId = apply.getGroup_id();
+//            Integer userId = apply.getUser_id();
+//            String content = apply.getContent();
+//            Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
+//            messageMapper.insertApplyNotice(groupId, userId, content, promoterId);
+//            groupMapper.updateApplyPushState(apply.getAg_id());
+//        }
+//    }
 
-    // todo
+
     public ArrayList<ReplyElement> getReplyMessage(Integer userId) {
         ArrayList<ReplyElement> list = new ArrayList<>();
+        List<ReplyNotice> notices = messageMapper.selectReplyNoticeByUserId(userId);
+        Collections.reverse(notices);
+        for (ReplyNotice notice: notices) {
+            ReplyElement element = new ReplyElement();
+            element.setReply_id(notice.getRn_id());
+            element.setReply_user_id(notice.getAuthor_id());
+            element.setReply_user_name(userMapper.getUserNameById(notice.getAuthor_id()));
+            element.setReply_to_post(notice.getReply_to_post());
+            element.setReply_time(notice.getReply_time().toString());
+            element.setReply_content(notice.getContent());
+            element.setPost_id(notice.getPost_id());
+            element.setPost_title(postMapper.getPost(notice.getPost_id()).getTitle());
+            element.setComment_id(notice.getComment_id());
+            element.setComment_content(null);
+            list.add(element);
+        }
         return list;
+    }
+
+    public void createReplyNotice(Integer userId, Integer authorId, String content, Timestamp time, boolean isReplyToPost, Integer postId, Integer commentId) {
+        messageMapper.insertReplyNotice(userId,authorId,content,time,isReplyToPost,postId,commentId);
     }
 
     public ArrayList<NoticeElement> getNoticeMessage(Integer userId) {

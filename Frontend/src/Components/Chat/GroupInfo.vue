@@ -64,7 +64,7 @@
                 <el-button type="primary" @click="showQuit = flase">返回</el-button>
             </div>
             <div style="width: 50%;align-items: center;justify-content: center;display: flex;">
-                <el-button type="primary">确定</el-button>
+                <el-button type="primary" @click = "exitGroup">确定</el-button>
             </div>
         </div>
     </el-dialog>
@@ -88,6 +88,7 @@ import axios from 'axios';
 import GroupMemberItem from './GroupMemberItem.vue';
 import { result } from 'lodash';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { ElMessage } from 'element-plus';
 export default {
     props: {
         groupId: {
@@ -170,6 +171,30 @@ export default {
                 }
             }).then((result) => {
                 this.groupMemberList = result.data.member;
+            })
+        },
+        exitGroup(){
+            axios({
+                method: "POST",
+                url: 'api/group/exit',
+                data:{
+                    group_id: this.groupId,
+                }
+            }).then((result) => {
+                if(result.data.success){
+                    ElMessage({
+                        message: '退出团体成功',
+                        type: 'success',
+                        plain: true,
+                    })
+                } else {
+                    ElMessage({
+                        message: '退出团体失败',
+                        type: 'danger',
+                        plain: true,
+                    })
+                }
+                this.$router.go(0);
             })
         },
     },

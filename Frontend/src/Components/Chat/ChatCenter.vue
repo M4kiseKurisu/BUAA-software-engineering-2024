@@ -157,7 +157,7 @@
             <el-divider />
             <div style="height: 29%; width: 100%;">
                 <textarea v-model="textinput" placeholder="输入聊天内容" style="width: 95%; margin-left: 2%; margin-top: 20px; height: 64%;
-                                                                        border: none;"
+                                                                            border: none;"
                     @keydown.enter="sendMessage"></textarea>
                 <div style="width: 94%; display: flex; justify-content: flex-end; margin-top: 8px;">
                     <el-button type="success" plain @click="sendMessage">发送信息</el-button>
@@ -307,6 +307,8 @@ export default {
             //console.log(rawData.data);
             var message = JSON.parse(rawData.data);
             this.messageList.push(message);
+            this.scrollToBottom();
+
         },
         sendMessage() {
             var textTest = this.textinput;
@@ -384,6 +386,10 @@ export default {
         //         console.log(messageContainer.scrollTop);
         //     })
         // }
+        '$route'() {
+            location.reload();
+            console.log(this.personId + " " + this.groupId);
+        }
     },
     created() {
         //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);

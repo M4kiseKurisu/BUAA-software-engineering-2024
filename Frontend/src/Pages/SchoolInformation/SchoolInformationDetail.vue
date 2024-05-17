@@ -22,11 +22,15 @@
         </div>
 
         <el-divider direction="vertical"/>
+        <div style="height: 735px;flex-grow: 1;overflow-y: auto;overflow-x: hidden;margin-top: 24px;" v-if = "this.school_posts != []" > 
+            <PostItem v-for="item in school_posts" :postInfo="item" :key="item.post_id" :noCover = "1"></PostItem>
+        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import PostItem from '../PostCenter/PostItem.vue';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 export default {
@@ -39,6 +43,11 @@ export default {
             school_information: "",
             school_posts: [],
         }
+    },
+    components:{
+        PostItem,
+    },
+    methods:{
     },
     created() {
         this.school_id = this.$route.params.school_id;
@@ -55,7 +64,9 @@ export default {
             this.school_information = result.data.school_intro;
             this.school_website = result.data.school_web;
             this.school_posts = result.data.posts;
+            console.log(this.school_posts)
         })
+
     }
 }
 </script>

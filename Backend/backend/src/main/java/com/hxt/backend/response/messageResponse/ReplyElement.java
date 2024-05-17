@@ -17,7 +17,7 @@ public class ReplyElement {
     private String reply_content;
     private String reply_time;
     private Integer post_id;
-    private Integer post_title;
+    private String post_title;
     private Integer comment_id;
     private String comment_content;
 }

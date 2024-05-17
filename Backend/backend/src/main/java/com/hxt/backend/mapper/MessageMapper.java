@@ -101,7 +101,7 @@ public interface MessageMapper {
     ApplyNotice selectApplyNoticeById(Integer id);
 
     // 获取加入申请
-    @Select("select * from apply_notice where processed = false and promoter_id = #{userId}")
+    @Select("SELECT * FROM apply_notice WHERE processed = FALSE AND promoter_id = #{userId}")
     List<ApplyNotice> selectUnprocessedApplyNoticeByUserId(Integer userId);
 
     // 获取申请反馈
@@ -118,6 +118,22 @@ public interface MessageMapper {
     // 插入新的申请
     @Options(useGeneratedKeys = true)
     @Insert("insert into apply_notice (group_id, user_id, content, promoter_id, processed, result) " +
-            "values (#{group_id},#{user_id},#{content},#{promoter_id},false,false})")
+            "values (#{groupId},#{user_id},#{content},#{promoter_id},false,false)")
     int insertApplyNotice(Integer groupId, Integer user_id, String content, Integer promoter_id);
+
+    @Select("SELECT COUNT(*) FROM apply_notice WHERE group_id = #{groupId} AND user_id = #{userId};")
+    int selectApplyCount(Integer groupId, Integer userId);
+
+
+    // 回复通知表
+
+    @Options(useGeneratedKeys = true)
+    @Insert("insert into reply_notice (user_id, author_id, content, reply_time, reply_to_post, post_id, comment_id) " +
+            "VALUES (#{userId},#{authorId},#{content},#{replyTime},#{replyToPost},#{postId},#{commentId});")
+    int insertReplyNotice(Integer userId, Integer authorId, String content, Timestamp replyTime, Boolean replyToPost, Integer postId, Integer commentId);
+
+
+    @Select("select * from reply_notice where user_id = #{userId};")
+    List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
+
 }
