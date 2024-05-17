@@ -31,13 +31,12 @@ public class PostController {
     @RequestMapping (value="/posts/post")
     public PostResponse showPost(
             @RequestParam(name = "post_id", required = false) Integer post_id,
-            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) throws IOException {
         if (user_id.equals("")) {
             return new PostResponse(false, null, null, null, null,
                     null, null, null, null, null, null,
-                    null, null, null, null, null, null);
+                    null, null, null, null);
         }
         
         if (post_id == null) {
@@ -47,9 +46,6 @@ public class PostController {
             return postResponse;
         }
         
-        if (comment_sort == null) {
-            comment_sort = 0;  // 默认时间升序
-        }
         // 浏览数加1
         postService.updateViewCount(post_id);
         
@@ -85,13 +81,51 @@ public class PostController {
         List<String> resources = postService.getPostResourceUrl(post_id);
         postResponse.setResources(resources);
         
-        //获取帖子评论
-        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
-        postResponse.setComments(comments);
+        
         
         postResponse.setSuccess(true);
         return postResponse;
     }
+    
+    
+    //获取帖子评论
+    @RequestMapping (value="/posts/post/comments")
+    public CommentListResponse showComment(
+            @RequestParam(name = "post_id", required = false) Integer post_id,
+            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        
+        if (user_id.equals("")) {
+            return new CommentListResponse(false, null);
+        }
+    
+        if (comment_sort == null) {
+            comment_sort = 0;  // 默认时间升序
+        }
+        
+        //获取评论
+        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
+        return new CommentListResponse(true, comments);
+    }
+    
+    //查看评论回复
+    @RequestMapping (value="/posts/post/replies")
+    public ReplyListResponse showReply(
+            @RequestParam(name = "comment_id", required = false) Integer comment_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        
+        if (user_id.equals("")) {
+            return new ReplyListResponse(false, null);
+        }
+        
+        //获取回复
+        List<ReplyResponse> replies = postService.getCommentReplies(comment_id, Integer.parseInt(user_id));
+        return new ReplyListResponse(true, replies);
+    }
+    
+    
     
     // 用户发帖
     @RequestMapping (value="/posts/write")

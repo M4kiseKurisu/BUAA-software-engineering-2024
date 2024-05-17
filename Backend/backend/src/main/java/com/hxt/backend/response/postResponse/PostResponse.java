@@ -22,9 +22,9 @@ public class PostResponse {
     private String content;
     private String create_time;
     private List<String> tags;
-    private List<String> images;
+    //private List<String> images;
     private List<String> resources;
-    private List<CommentResponse> comments;
+   // private List<CommentResponse> comments;
     private Integer likeCount; //点赞数
     private Integer collectCount; //收藏数
     private Integer commentCount;
