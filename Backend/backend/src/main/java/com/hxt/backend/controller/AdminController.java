@@ -13,10 +13,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,6 +138,17 @@ public class AdminController {
     @RequestMapping("/admin/list/user")
     public UserListResponse getUserList() {
         return adminService.getUserList();
+    }
+
+    @GetMapping("/admin/list/section")
+    public SearchSectionResponse getSectionList() {
+        ArrayList<SectionElement> list = adminService.getSectionList();
+        if (list.isEmpty()) {
+            return new SearchSectionResponse(true,"未检索到相关结果",0,list);
+        }
+        else {
+            return new SearchSectionResponse(true,"", list.size(), list);
+        }
     }
 
     @RequestMapping("/admin/list/report/post")

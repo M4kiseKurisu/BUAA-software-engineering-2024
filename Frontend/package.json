@@ -9,12 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",
     "element-plus": "^2.6.3",
+    "sass": "^1.77.1",
     "vue": "^3.4.21",
-    "vue-cropper": "^0.6.4",
+    "vue-cropper": "^1.1.2",
     "vue-router": "^4.3.0",
     "vuex": "^4.1.0"
   },

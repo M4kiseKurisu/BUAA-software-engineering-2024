@@ -109,7 +109,7 @@ public class UserController {
     @RequestMapping("/user/logout")
     public BasicInfoResponse logout(@CookieValue(name = "user_id", defaultValue = "") String user_id) {
         if (user_id.isEmpty()) {
-            return new BasicInfoResponse(false, "用户未登录！");
+            return new BasicInfoResponse(true, "您已不处于登录状态！");
         }
         int id = Integer.parseInt(user_id);
         userService.resetToken(id);

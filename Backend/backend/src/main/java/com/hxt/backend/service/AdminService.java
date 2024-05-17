@@ -204,6 +204,23 @@ public class AdminService {
         return userInfoResponse;
     }
 
+    public ArrayList<SectionElement> getSectionList() {
+        ArrayList<Section> sections = sectionMapper.selectAllSection();
+        ArrayList<SectionElement> list = new ArrayList<>();
+        for (Section section: sections) {
+            SectionElement element = new SectionElement();
+            element.setSection_id(section.getSection_id());
+            element.setSection_name(section.getName());
+            element.setSection_introduction(section.getIntro());
+            element.setSection_academy(section.getAcademy());
+            element.setSection_type(section.getType());
+            element.setSection_follower_count(sectionMapper.getFollowCountBySectionId(element.getSection_id()));
+            element.setSection_is_following(false);
+            list.add(element);
+        }
+        return list;
+    }
+
     public ReportListResponse getUnhandledReports(Integer type) {
         List<Report> reports = adminMapper.getUnhandledReports(type);
         ReportListResponse response = new ReportListResponse(reports.size(), new ArrayList<>());

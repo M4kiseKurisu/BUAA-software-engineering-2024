@@ -63,6 +63,10 @@ public class CheckInController {
             authority = 0;  //  默认权限为0（所有人均可见）
         }
         
+        if (image_urls.size() > 9) {
+            return new BasicInfoResponse(false, "打卡图片最多为9张！");
+        }
+        
         Integer res = checkInService.insertCheckIn(Integer.parseInt(user_id), image_urls, content, authority);
         if (res == 0) {
             return new BasicInfoResponse(false, "系统出错");

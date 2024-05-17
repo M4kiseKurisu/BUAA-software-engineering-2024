@@ -5,6 +5,9 @@ import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.postResponse.*;
 import com.hxt.backend.service.*;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,13 +34,12 @@ public class PostController {
     @RequestMapping (value="/posts/post")
     public PostResponse showPost(
             @RequestParam(name = "post_id", required = false) Integer post_id,
-            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) throws IOException {
         if (user_id.equals("")) {
             return new PostResponse(false, null, null, null, null,
                     null, null, null, null, null, null,
-                    null, null, null, null, null, null);
+                    null, null, null, null);
         }
         
         if (post_id == null) {
@@ -47,9 +49,6 @@ public class PostController {
             return postResponse;
         }
         
-        if (comment_sort == null) {
-            comment_sort = 0;  // 默认时间升序
-        }
         // 浏览数加1
         postService.updateViewCount(post_id);
         
@@ -85,13 +84,51 @@ public class PostController {
         List<String> resources = postService.getPostResourceUrl(post_id);
         postResponse.setResources(resources);
         
-        //获取帖子评论
-        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
-        postResponse.setComments(comments);
+        
         
         postResponse.setSuccess(true);
         return postResponse;
     }
+    
+    
+    //获取帖子评论
+    @RequestMapping (value="/posts/post/comments")
+    public CommentListResponse showComment(
+            @RequestParam(name = "post_id", required = false) Integer post_id,
+            @RequestParam(name = "comment_sort", required = false) Integer comment_sort,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        
+        if (user_id.equals("")) {
+            return new CommentListResponse(false, null);
+        }
+    
+        if (comment_sort == null) {
+            comment_sort = 0;  // 默认时间升序
+        }
+        
+        //获取评论
+        List<CommentResponse> comments = postService.getPostComments(post_id, comment_sort, Integer.parseInt(user_id));
+        return new CommentListResponse(true, comments);
+    }
+    
+    //查看评论回复
+    @RequestMapping (value="/posts/post/replies")
+    public ReplyListResponse showReply(
+            @RequestParam(name = "comment_id", required = false) Integer comment_id,
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        
+        if (user_id.equals("")) {
+            return new ReplyListResponse(false, null);
+        }
+        
+        //获取回复
+        List<ReplyResponse> replies = postService.getCommentReplies(comment_id, Integer.parseInt(user_id));
+        return new ReplyListResponse(true, replies);
+    }
+    
+    
     
     // 用户发帖
     @RequestMapping (value="/posts/write")
@@ -119,6 +156,16 @@ public class PostController {
                 return new WritePostResponse(false, "请选择帖子类型为资源贴！", null);
             }
         }
+    
+    
+        //后端检测内容字数
+        Document doc = Jsoup.parse(content);
+        Elements imgs = doc.select("img");
+        imgs.remove();
+        String text = doc.text();
+        if (text.length() > 2000) {
+            return new WritePostResponse(false, "内容上限为2000字！", null);
+        }
 
         //审核帖子内容
         if (!reviewService.textReview(title + " " + intro + " " + content)) {
@@ -135,6 +182,7 @@ public class PostController {
                 }
             }
         }
+        
     
         //创建帖子并存入数据库
         Integer post_id = postService.createPost(title, intro, content, category, section_id, author_id, cover);

@@ -12,7 +12,8 @@ import java.util.List;
 public interface CheckInMapper {
     
     //获取用户的所有打卡
-    @Select("SELECT * FROM check_in WHERE author_id = #{authorId}")
+    @Select("SELECT * FROM check_in WHERE author_id = #{authorId} " +
+            "order by check_in_id DESC")
     List<CheckIn> getCheckInByAuthorId(Integer authorId);
 
     @Select("SELECT * FROM check_in WHERE author_id = #{authorId} order by time desc")

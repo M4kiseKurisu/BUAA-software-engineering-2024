@@ -6,19 +6,27 @@
         <div class="first-line-1">
             <div class="post-title-font">帖子标题：</div>
             <div>
-                <el-input v-model="this.inputTitle" style="width: 200px" placeholder="输入标题内容" />
+                <el-input :class="{'red-border': title_warning.length > 0}" v-model="this.inputTitle" style="width: 450px" placeholder="输入标题内容" />
+                <div v-if="title_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ title_warning }}</div>
             </div>
         </div>
         
         <div class="first-line-1">
             <div class="post-title-font">帖子类型：</div>
             <div>
-                <el-select v-model="this.PostcategoryValue" placeholder="选择帖子类型" style="width: 200px">
+                <el-select :class="{'red-border': post_category_warning.length > 0}"
+                    v-model="this.PostcategoryValue" placeholder="选择帖子类型" style="width: 200px">
                     <el-option v-for="item in this.Postcategory" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
+                <div v-if="post_category_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ post_category_warning }}</div>
             </div>
         </div>
 
+    </div>
+
+    <div class="first-line">
+
+        <div class="post-title-font">添加标签：</div>
         <div class="tag-in-container">
             <el-input
                 v-if="inputVisible"
@@ -29,7 +37,7 @@
                 @blur="handleInputConfirm"
                 style="width: 100px"
             />
-            <el-button v-else class="button-new-tag" @click="showInput">
+            <el-button v-else :class="{'button-new-tag': true, 'red-border': tag_warning.length > 0}" @click="showInput">
                 添加新标签
             </el-button>
 
@@ -42,17 +50,22 @@
             >
                 {{ tag }}
             </el-tag>
+            <div v-if="tag_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ tag_warning }}</div>
         </div>
 
+        <div style="margin-left: 20px; margin-right: -10px;" class="post-title-font">附加资源：</div>
         <el-upload v-model:file-list="this.fileList" :show-file-list="true" :auto-upload="false" 
             action="/api/posts/write/uploadResource" :data="getUploadData" @change="handleFileChange">
             <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file">选择资源</el-button>
             <el-button v-else disabled class="button-upload-file">选择资源</el-button>
         </el-upload>
 
-        <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file" @click="uploadFile">上传资源</el-button>
-        <el-button v-else disabled class="button-upload-file">上传资源</el-button>
-
+        <div>
+            <el-button v-if="parseInt(this.PostcategoryValue) === 1" 
+                :class="{'button-upload-file': true, 'red-border': upload_warning.length > 0}" @click="uploadFile">上传资源</el-button>
+            <el-button v-else disabled class="button-upload-file">上传资源</el-button>
+            <div v-if="upload_warning.length > 0" class="warning-css" style="margin-top: 2px; margin-left: 20px;">{{ upload_warning }}</div>
+        </div>
     </div>
 
     <div class="first-line">
@@ -89,7 +102,9 @@
         <div class="post-title-font">帖子摘要：</div>
         <div>
             <el-input v-model="this.inputContent" style="width: 600px" 
-                :autosize="{ minRows: 1, maxRows: 2 }" type="textarea" placeholder="输入摘要内容" />
+                :autosize="{ minRows: 1, maxRows: 2 }" type="textarea" placeholder="输入摘要内容" 
+                :class="{'red-border': content_warning.length > 0}"/>
+            <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ content_warning }}</div>
         </div>
     </div>
 
@@ -176,10 +191,67 @@ export default {
 
             //注册账号信息打包
 
-            if (this.sectionId == 0) {
-                this.dynamicTags.push(this.school_choice);
-                this.dynamicTags.push(this.graduate_choice);
+            if (this.inputTitle.length > 30) {
+                this.title_warning = "标题内容不能大于30个字";
+            } else if (!this.inputTitle || this.inputTitle.length == 0){
+                this.title_warning = "标题内容不能为空";
+            } else {
+                this.title_warning = "";
             }
+
+            if (!this.PostcategoryValue || this.PostcategoryValue.length == 0) {
+                this.post_category_warning = "需要选择帖子类型";
+            } else if (this.filelistUrl.length == 0 && this.PostcategoryValue == "1") {
+                this.post_category_warning = "若不上传资源请选择帖子类型为普通帖子";
+            } else {
+                this.post_category_warning = "";
+            }
+
+            if (!this.dynamicTags || this.dynamicTags.length == 0) {
+                this.tag_warning = "需要插入至少一个标签";
+            } else if (this.dynamicTags.length > 3) {
+                this.tag_warning = "最多只能插入三个标签";
+            } else {
+                this.tag_warning = "";
+                for (let i = 0; i < this.dynamicTags.length; i++) {
+                    if (this.dynamicTags[i].length == 0) {
+                        this.tag_warning = "标签内容不能为空";
+                        break;
+                    }
+                }
+            }
+
+            if (!this.inputContent || this.inputContent.length == 0) {
+                this.content_warning = "帖子摘要不能为空";
+            } else if (this.inputContent.length > 100) {
+                this.content_warning = "帖子摘要不能超过100字";
+            }  else {
+                this.content_warning = "";
+            }
+
+            if (this.is_loading) {
+                this.upload_warning = "请等待资源上传完成后再发布帖子"
+            } else {
+                this.upload_warning = "";
+            }
+            
+            if (this.title_warning.length > 0 || this.post_category_warning.length > 0
+                || this.tag_warning.length > 0 || this.content_warning.lnegth > 0
+                || this.upload_warning.length > 0) {
+                return;
+            }
+
+            if (this.sectionId == 0) {
+                if (this.school_choice == this.graduate_choice) {
+                    this.dynamicTags.push(this.school_choice);
+                }
+                else {
+                    this.dynamicTags.push(this.school_choice);
+                    this.dynamicTags.push(this.graduate_choice);
+                }
+            }
+
+
             let content = {
                 section_id: this.sectionId,
                 author_id: JSON.parse(sessionStorage.getItem("id")),
@@ -270,6 +342,7 @@ export default {
                     type: 'info',
                     duration: 0, // 设置持续时间为 0，表示不自动关闭
                 });
+                this.is_loading = true;
 
                 //console.log(this.fileList);
                 for (let i = 0; i < this.fileList.length; i++) {
@@ -290,6 +363,7 @@ export default {
                 }
 
                 loadingMessage.close();
+                this.is_loading = false;
                 this.$message({
                     showClose: true,
                     message: '资源上传成功！',
@@ -325,7 +399,7 @@ export default {
             sectionId: 1,
             inputContent: "",
             filelistUrl: [],
-            school_choice: "",
+            school_choice: "其他",
             school_options: [
                 {
                     value: '0',
@@ -365,10 +439,10 @@ export default {
                 },
                 {
                     value: '9',
-                    label: '其他学校',
+                    label: '其他',
                 }
             ],
-            graduate_choice: "",
+            graduate_choice: "其他",
             graduate_options: [
                 {
                     value: '0',
@@ -384,9 +458,16 @@ export default {
                 },
                 {
                     value: '3',
-                    label: '其他升学',
+                    label: '其他',
                 },
             ],
+
+            title_warning: "",
+            post_category_warning: "",
+            tag_warning: "",
+            content_warning: "",
+            upload_warning: "",
+            is_loading: false,
         }
     },
     setup() {
@@ -526,5 +607,14 @@ export default {
 .button-upload-post {
     margin-left: 20px;
     margin-bottom: 10px;
+}
+
+.red-border {
+    border: 1px solid red;
+}
+
+.warning-css {
+    color: red;
+    font-size: 12px;
 }
 </style>

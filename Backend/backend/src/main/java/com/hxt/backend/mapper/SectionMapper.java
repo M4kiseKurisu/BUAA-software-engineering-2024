@@ -32,7 +32,7 @@ public interface SectionMapper {
     @Select("select * from course_teacher where section_id = #{id};")
     ArrayList<Teacher> selectTeacherBySectionId(Integer id);
 
-    @Select("select user_id from authority where section_id = #{id} and category like \"助教\";")
+    @Select("select user_id from authority where section_id = #{id} and category like 'assistant';")
     ArrayList<Integer> selectAssistantBySectionId(Integer id);
 
     @Select("select count(*) from post where section_id = #{id};")

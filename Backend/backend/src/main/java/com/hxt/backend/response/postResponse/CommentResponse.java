@@ -23,7 +23,7 @@ public class CommentResponse {
     private Integer comment_like_count;
     private Integer comment_reply_count;
     private boolean comment_isLike;
-    private List<ReplyResponse> replies;
+    //private List<ReplyResponse> replies;
     
     public CommentResponse(Comment comment) {
         this.comment_id = comment.getComment_id();

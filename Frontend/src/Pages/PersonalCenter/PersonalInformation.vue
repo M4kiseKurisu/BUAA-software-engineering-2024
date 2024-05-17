@@ -197,6 +197,7 @@
                     <button class="favorates-header-2" style="border: none; background-color: white;" @click="toSocialPost">查看更多</button>
                 </div>
 
+                <div v-if="this.divided_posts.length != 0" class="no-favorate-card-tip" style="margin-bottom: 12px; margin-top: -5px;">您已经连续打卡{{ continue_post }}天！</div>
                 <PosterCard v-if="this.divided_posts.length != 0" :item="this.divided_posts[0].posts[0]"/>
                 <div v-else class="no-favorate-card-tip">您目前还没有打卡信息~</div>
             </div> 
@@ -297,6 +298,8 @@ export default {
             noticeList: [],
             get_posts: [],
             divided_posts: [],
+
+            continue_post: 0,
         }
     },
     methods: {
@@ -491,6 +494,14 @@ export default {
             this.get_posts = result.data.social_post;
             this.dividePosts(result.data.social_post);
             //this.finalDivide();
+        })
+
+        //获取连续打卡信息
+        axios({
+            method: "GET",
+            url: "api/pyq/days"
+        }).then((result) => {
+            this.continue_post = result.data.days;
         })
     }
 }

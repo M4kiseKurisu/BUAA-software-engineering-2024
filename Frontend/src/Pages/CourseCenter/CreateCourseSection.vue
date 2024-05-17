@@ -6,38 +6,38 @@
     <div class="content-container">
       <div class="create-cs-container">
         <div class="write-in-cs-inf">
-          <div class="title-container">
-            <span class="title">新建课程</span>
+          <div class="create-title-container">
+            <span class="create-title">新建课程</span>
           </div>
           <div class="input-container">
             <div class="inf-input">
               <div class="form-group">
                 <span class="prompt-before-input">课程名称:</span>
                 <div class="name-input-container">
-                  <el-input v-model="course.name"></el-input>
+                  <el-input v-model="course.name" placeholder="输入课程名称"></el-input>
                 </div>
               </div>
               <div class="form-group">
                 <span class="prompt-before-input">课程类型:</span>
                 <div class="name-input-container">
-                  <el-input v-model="course.type"></el-input>
+                  <el-input v-model="course.type" placeholder="输入课程类型"></el-input>
                 </div>
               </div>
               <div class="form-group">
                 <span class="prompt-before-input">学分:</span>
                 <div style="max-width: 80px">
-                  <el-input v-model="course.credits"></el-input>
+                  <el-input v-model="course.credits" placeholder="输入学分"></el-input>
                 </div>
               </div>
               <div class="form-group">
                 <span class="prompt-before-input">开课院系:</span>
                 <div class="name-input-container">
-                  <el-input v-model="course.college"></el-input>
+                  <el-input v-model="course.college" placeholder="输入开课院系"></el-input>
                 </div>
               </div>
               <div class="form-group">
                 <span class="prompt-before-input">课程容量:</span>
-                <el-input-number v-model="course.capacity"></el-input-number>
+                <el-input-number v-model="course.capacity" placeholder="输入容量"></el-input-number>
               </div>
 
               <div class="form-group">
@@ -47,7 +47,7 @@
                     :rows="3" :autosize="{ minRows: 3 }" v-model="course.description">
                 </el-input>
               </div>
-              <div class="form-group">
+              <!--<div class="form-group">
                 <span class="prompt-before-input">标签:</span>
                 <div class="tag-in-container">
                   <el-tag
@@ -72,9 +72,9 @@
                     + New Tag
                   </el-button>
                 </div>
-              </div>
+              </div>-->
             </div>
-            <div class="png-input">
+            <!--<div class="png-input">
               <el-upload
                   v-model:file-list="fileList"
                   action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
@@ -88,10 +88,12 @@
               <el-dialog v-model="dialogVisible">
                 <img w-full :src="dialogImageUrl" alt="Preview Image" />
               </el-dialog>
-            </div>
+            </div>-->
+          </div>
+          <div style="display: flex;justify-content: center">
+            <button @click="handleCreateSection" class="create-submit-button">提交</button>
           </div>
 
-          <button @click="submitCourse" class="submit-button">提交</button>
         </div>
       </div>
     </div>
@@ -103,6 +105,7 @@
 import {defineComponent} from "vue";
 import BreadcrumbLabel from "@/Components/Tool/BreadcrumbLabel.vue";
 import { Plus } from '@element-plus/icons-vue'
+import axios from "axios";
 export default defineComponent({
   components: {BreadcrumbLabel,Plus},
 
@@ -157,9 +160,39 @@ export default defineComponent({
       this.dialogImageUrl = uploadFile.url;
       this.dialogVisible = true
     },
-    // submitCourse() {
+    handleCreateSection() {
+      let content = {
+        name:this.course.name,
+        intro:this.course.description,
+        type:this.course.type,
+        academy:this.course.college,
+        credit:this.course.credits,
+        capacity:this.course.capacity
+      }
 
-    // }
+      console.log(content);
+
+      axios({
+        method: "POST",
+        url: "/api/section/add/course",
+        data: content,
+      }).then((result) => {
+        if(result.data.success) {
+          this.$message({
+            showClose: true,
+            message: '申请创建成功！',
+            type: 'success',
+          });
+          this.$router.go(-1);
+        } else {
+          this.$message({
+            showClose: true,
+            message: result.data.info,
+            type: 'error',
+          });
+        }
+      })
+    },
   }
 
 })
@@ -172,14 +205,23 @@ export default defineComponent({
 }
 .content-container{
   display: flex;
-  flex-direction: column; /* 将子元素垂直排列 */
-  align-items: center; /* 水平居中对齐 */
+  justify-content: center;
+  //flex-direction: column; /* 将子元素垂直排列 */
+  //align-items: center; /* 水平居中对齐 */
   //margin-left: -200px;
+  width: calc(100vw - 205px);
+  background: #dcdcdc;
 }
 .create-cs-container{
   display: flex;
   justify-content: center;
-  width: calc(100vw - 205px);
+  //width: calc(100vw - 205px);
+  width: 85%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
 }
 .write-in-cs-inf{
   display: flex;
@@ -188,15 +230,18 @@ export default defineComponent({
   width: 800px;
 }
 
-.title-container{
+.create-title-container{
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  //font-size: 42px;
+  margin-bottom: 30px;
+  margin-top: 30px;
 }
 
-.title{
+.create-title{
   font-size: 32px;
 }
+
 
 .inf-input{
   width: 1700px;
@@ -258,15 +303,8 @@ export default defineComponent({
   text-align: center;
 }
 
+.create-submit-button {
 
-
-
-
-
-
-
-.submit-button {
-  display: block;
   padding: 10px;
   background-color: #007bff;
   color: #fff;
@@ -275,9 +313,10 @@ export default defineComponent({
   cursor: pointer;
   transition: background-color 0.3s;
   width: 100px;
+  margin-bottom: 30px;
 }
 
-.submit-button:hover {
+.create-submit-button:hover {
   background-color: #0056b3;
 }
 
