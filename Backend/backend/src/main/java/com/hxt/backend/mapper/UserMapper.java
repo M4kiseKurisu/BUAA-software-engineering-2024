@@ -71,7 +71,7 @@ public interface UserMapper {
     @Update("UPDATE user_info SET show_post = #{showPost} WHERE user_id = #{id}")
     int updateShowPost(Integer id, Integer showPost);
 
-    @Update("UPDATE user_info SET head_id = #{showFavorite} WHERE user_id = #{id}")
+    @Update("UPDATE user_info SET show_favorite = #{showFavorite} WHERE user_id = #{id}")
     int updateShowFavorite(Integer id, Integer showFavorite);
 
     @Select("SELECT show_post FROM user_info WHERE user_id = #{id}")
