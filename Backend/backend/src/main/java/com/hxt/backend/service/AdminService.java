@@ -2,11 +2,14 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.Report;
 import com.hxt.backend.entity.User;
+import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.group.GroupElement;
 import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;

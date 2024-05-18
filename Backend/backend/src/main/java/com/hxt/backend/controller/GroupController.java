@@ -47,7 +47,7 @@ public class GroupController {
             return new BasicInfoResponse(false,"请选择学习团体");
         }
 
-        return groupService.deleteGroup(Integer.parseInt(user_id),Integer.parseInt(group_id));
+        return groupService.deleteGroup(Integer.parseInt(user_id),Integer.parseInt(group_id), false);
     }
 
     @GetMapping("/group/search")

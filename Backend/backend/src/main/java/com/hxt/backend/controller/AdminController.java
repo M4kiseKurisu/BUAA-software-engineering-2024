@@ -2,6 +2,9 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
+import com.hxt.backend.response.group.GroupElement;
+import com.hxt.backend.response.group.GroupMessageElement;
+import com.hxt.backend.response.group.GroupSearchResponse;
 import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
@@ -10,13 +13,22 @@ import com.hxt.backend.response.sectionResponse.SearchSectionResponse;
 import com.hxt.backend.response.sectionResponse.SectionElement;
 import com.hxt.backend.response.singleInfo.TotalInfoResponse;
 import com.hxt.backend.service.AdminService;
+import com.hxt.backend.service.FileGenerateService;
+import com.hxt.backend.service.GroupService;
+import com.hxt.backend.service.MessageService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +36,12 @@ import java.util.ArrayList;
 public class AdminController {
     @Resource
     private AdminService adminService;
+    @Resource
+    private GroupService groupService;
+    @Resource
+    private MessageService messageService;
+    @Resource
+    private FileGenerateService fileGenerateService;
     private String hasEmptyResponse = "信息填写不完整！";
     private String authorityResponse = "该账号不具有相应权限！";
 
@@ -135,6 +153,19 @@ public class AdminController {
         return new BasicInfoResponse(res, info);
     }
 
+    @RequestMapping("/admin/group/delete")
+    public BasicInfoResponse deleteGroup(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id
+    ) {
+        if (id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        return groupService.deleteGroup(0, id, true);
+    }
+
     @RequestMapping("/admin/list/user")
     public UserListResponse getUserList() {
         return adminService.getUserList();
@@ -159,6 +190,38 @@ public class AdminController {
             order = 0;
         }
         return adminService.getSectionBlockList(order);
+    }
+
+    @GetMapping("/admin/list/group")
+    public GroupSearchResponse getGroupList() {
+        List<GroupElement> list = groupService.getGroupList(0);
+        GroupSearchResponse response = new GroupSearchResponse();
+        response.setSuccess(true);
+        response.setGroup_count(list.size());
+        response.setGroup(list);
+        return response;
+    }
+
+    @GetMapping("/admin/history/group")
+    public BasicInfoResponse downloadGroupMessageList(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            HttpServletResponse response
+    ) {
+        if (id == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        List<GroupMessageElement> list = messageService.getGroupMessage(id);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (GroupMessageElement element: list) {
+            stringBuilder.append(element.getSender_name()).append(" ").append(element.getTime()).append("\n");
+            stringBuilder.append(element.getContent()).append("\n\n");
+        }
+        String fileName = String.format("%s(id:%d)聊天记录.txt",groupService.getGroupInfo(id).getName(), id);
+        fileGenerateService.StringToTxt(fileName, stringBuilder.toString(), response);
+        return new BasicInfoResponse(true, "");
     }
 
     @RequestMapping("/admin/list/report/post")

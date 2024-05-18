@@ -43,9 +43,9 @@ public class GroupService {
         return new BasicInfoResponse(true,"");
     }
 
-    public BasicInfoResponse deleteGroup(Integer userId, Integer groupId) {
+    public BasicInfoResponse deleteGroup(Integer userId, Integer groupId, boolean isAdmin) {
         int promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
-        if (promoterId != userId) {
+        if (!isAdmin && promoterId != userId) {
             return new BasicInfoResponse(false,"无操作权限");
         }
         groupMapper.deleteGroupById(groupId);
