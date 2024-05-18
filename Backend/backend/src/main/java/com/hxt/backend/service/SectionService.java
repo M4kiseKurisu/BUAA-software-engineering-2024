@@ -6,10 +6,7 @@ import com.hxt.backend.entity.section.Teacher;
 import com.hxt.backend.mapper.*;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.SectionAuthorityResponse;
-import com.hxt.backend.response.sectionResponse.PostElement;
-import com.hxt.backend.response.sectionResponse.SectionElement;
-import com.hxt.backend.response.sectionResponse.SectionInfoResponse;
-import com.hxt.backend.response.sectionResponse.TeacherElement;
+import com.hxt.backend.response.sectionResponse.*;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -228,6 +225,19 @@ public class SectionService {
         return sectionMapper.insertCourseRequest(name, intro, type, academy, credit, capacity) > 0;
     }
 
+    public BasicInfoResponse setSectionInfo(Integer id, String name, String intro, String type,
+                                               String academy, Integer credit, Integer capacity) {
+        boolean nameSuccess = (name == null) || sectionMapper.setCourseName(id, name) > 0;
+        boolean introSuccess = (intro == null) || sectionMapper.setCourseIntro(id, intro) > 0;
+        boolean typeSuccess = (type == null) || sectionMapper.setCourseType(id, type) > 0;
+        boolean academySuccess = (academy == null) || sectionMapper.setCourseAcademy(id, academy) > 0;
+        boolean creditSuccess = (credit == null) || sectionMapper.setCourseCredit(id, credit) > 0;
+        boolean capacitySuccess = (capacity == null) || sectionMapper.setCourseCapacity(id, capacity) > 0;
+        boolean res = nameSuccess && introSuccess && typeSuccess && academySuccess && creditSuccess && capacitySuccess;
+        String info = res? "" : "操作失败，可能是服务器错误！";
+        return new BasicInfoResponse(res, info);
+    }
+
     public BasicInfoResponse tryAddAssistant(Integer user, Integer section, Integer assistant) {
         String type = adminMapper.checkAuthorityType(user, section);
         if (type == null || !type.equals("teacher")) {
@@ -279,5 +289,9 @@ public class SectionService {
         }
         userMapper.sectionUnblockUser(id, section);
         return new BasicInfoResponse(true, "");
+    }
+
+    public SectionAcademyResponse getAcademyList() {
+        return new SectionAcademyResponse(sectionMapper.getAllAcademy());
     }
 }

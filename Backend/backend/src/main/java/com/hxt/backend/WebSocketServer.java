@@ -14,8 +14,10 @@ import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +43,11 @@ public class WebSocketServer {
         applicationContext = context;
     }
 
+    //  私信、群聊内容加密用，勿动
+    private final String headString = "$%^%^>:{!@#@))%^}";
+    private final int[] move1 = {1, 2, 3};
+    private final int[] move2 = {1, -2, 3, -4, 5};
+    private final int[] move3 = {-1, 2, -3, 4};
 
     private Session session;
     private String userId;
@@ -99,6 +106,9 @@ public class WebSocketServer {
         WebSocketServer webSocketServer = webSocketMap.get(String.valueOf(userId));
         Timestamp time = new Timestamp(System.currentTimeMillis());
         JSONObject receive = new JSONObject(raw);
+
+        String encodeResult = encodeMessage((String) receive.get("content"));
+
         if (webSocketServer != null){
             JSONObject send = new JSONObject();
             send.put("sender_id",receive.get("sender_id"));
@@ -113,16 +123,19 @@ public class WebSocketServer {
             } catch (Exception e) {
                 log.error("[连接ID:{}] 发送消息失败, 消息:{}", this.userId, send, e);
             }
-            messageService.sendPrivateMessage(senderId,userId,receive.get("content").toString(),true,time);
+            messageService.sendPrivateMessage(senderId,userId,encodeResult,true,time);
         }
         else {
-            messageService.sendPrivateMessage(senderId,userId,receive.get("content").toString(),false,time);
+            messageService.sendPrivateMessage(senderId,userId,encodeResult,false,time);
         }
     }
 
     public void sendGroupMessage(String raw, Integer groupId, Integer senderId) {
         Timestamp time = new Timestamp(System.currentTimeMillis());
         JSONObject receive = new JSONObject(raw);
+
+        String encodeResult = encodeMessage((String) receive.get("content"));
+
         JSONObject send = new JSONObject();
         send.put("sender_id",receive.get("sender_id"));
         send.put("content",receive.get("content"));
@@ -131,7 +144,7 @@ public class WebSocketServer {
         send.put("sender_name",userMapper.getUserNameById(senderId));
         send.put("time",time);
         String message = send.toString();
-        messageService.sendGroupMessage(senderId,groupId,receive.get("content").toString(),time);
+        messageService.sendGroupMessage(senderId,groupId,encodeResult,time);
         List<Integer> groupMember = groupMapper.selectMemberByGroupId(groupId);
         for (Integer userId: groupMember) {
             if (userId == senderId) {
@@ -148,5 +161,15 @@ public class WebSocketServer {
             }
         }
 
+    }
+
+    public String encodeMessage(String input) {
+        Base64.Encoder encoder = Base64.getEncoder();
+        StringBuilder sb = new StringBuilder();
+        sb.append(headString);
+        for (int i = 0; i < input.length(); i++) {
+            sb.append((char)(((int)input.charAt(i)) + (move1[i % 3] * move2[i % 5] + move3[i % 4])));
+        }
+        return encoder.encodeToString(sb.toString().getBytes(StandardCharsets.UTF_8));
     }
 }

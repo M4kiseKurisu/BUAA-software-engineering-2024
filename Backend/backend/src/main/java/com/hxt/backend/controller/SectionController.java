@@ -159,6 +159,28 @@ public class SectionController {
         return new BasicInfoResponse(res, info);
     }
 
+    @RequestMapping("/section/set")
+    public BasicInfoResponse trySetSectionInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer section,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "intro", required = false) String intro,
+            @RequestParam(name = "type", required = false) String course_type,
+            @RequestParam(name = "academy", required = false) String academy,
+            @RequestParam(name = "credit", required = false) Integer credit,
+            @RequestParam(name = "capacity", required = false) Integer capacity
+    ) {
+        if (adminService.checkAuthority(Integer.parseInt(user_id), section)) {
+            if (sectionService.checkCourseName(name)) {
+                return new BasicInfoResponse(false, "板块重名！");
+            }
+            return sectionService.setSectionInfo(section, name, intro, course_type, academy, credit, capacity);
+        } else {
+            //  暂时不允许修改
+            return new BasicInfoResponse(false, "没有相应权限！");
+        }
+    }
+
     @RequestMapping("/section/add/assistant")
     public BasicInfoResponse tryAddAssistant(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
@@ -208,5 +230,10 @@ public class SectionController {
             return new BasicInfoResponse(false, hasEmptyResponse);
         }
         return sectionService.tryUnblockUser(Integer.parseInt(user_id), section, user);
+    }
+
+    @RequestMapping("/section/academy")
+    public SectionAcademyResponse getAcademyList() {
+        return sectionService.getAcademyList();
     }
 }

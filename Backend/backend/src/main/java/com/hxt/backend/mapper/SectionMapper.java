@@ -76,6 +76,27 @@ public interface SectionMapper {
     int insertCourseRequest(String name, String intro, String type,
                      String academy, Integer credit, Integer capacity);
 
+    @Update("UPDATE section SET name = #{name} WHERE section_id = #{id}")
+    int setCourseName(Integer id, String name);
+
+    @Update("UPDATE section SET intro = #{intro} WHERE section_id = #{id}")
+    int setCourseIntro(Integer id, String intro);
+
+    @Update("UPDATE section SET type = #{type} WHERE section_id = #{id}")
+    int setCourseType(Integer id, String type);
+
+    @Update("UPDATE section SET academy = #{academy} WHERE section_id = #{id}")
+    int setCourseAcademy(Integer id, String academy);
+
+    @Update("UPDATE section SET credit = #{credit} WHERE section_id = #{id}")
+    int setCourseCredit(Integer id, Integer credit);
+
+    @Update("UPDATE section SET capacity = #{capacity} WHERE section_id = #{id}")
+    int setCourseCapacity(Integer id, Integer capacity);
+
+    @Select("SELECT academy FROM section WHERE academy IS NOT NULL GROUP BY academy ORDER BY COUNT(*) DESC")
+    ArrayList<String> getAllAcademy();
+
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO section (name, intro, flag, school_category, web, available) VALUES (#{name}, #{intro}, 1, " +
             "#{category}, #{web}, 1)")

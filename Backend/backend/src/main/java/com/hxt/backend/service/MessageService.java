@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -41,6 +42,12 @@ public class MessageService {
     @Resource
     PostMapper postMapper;
 
+    //  私信、群聊内容解密用。勿动
+    private final String headString = "$%^%^>:{!@#@))%^}";
+    private final int[] move1 = {1, 2, 3};
+    private final int[] move2 = {1, -2, 3, -4, 5};
+    private final int[] move3 = {-1, 2, -3, 4};
+
     public ArrayList<ChatElement> getChatList(Integer id, boolean all) {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
@@ -48,12 +55,12 @@ public class MessageService {
         for (PrivateChat element: elements) {
             if (element.getSender_id().equals(id)) {
                 list.add(new ChatElement(element.getSender_id(),element.getReceiver_id(),
-                        element.getLast_message_content(),
+                        decodeMessage(element.getLast_message_content()),
                         element.getLast_message_time().toString(), false));
             }
             else {
                 list.add(new ChatElement(element.getSender_id(),element.getPrivate_chat_id(),
-                        element.getLast_message_content(),
+                        decodeMessage(element.getLast_message_content()),
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
@@ -81,7 +88,7 @@ public class MessageService {
             element.setId(message.getPrivate_message_id());
             element.setSender_id(message.getSender_id());
             element.setReceiver_id(message.getReceiver_id());
-            element.setContent(message.getContent());
+            element.setContent(decodeMessage(message.getContent()));
             element.setTime(message.getSend_time().toString());
             element.setIs_read(message.getIs_read());
             list.add(element);
@@ -113,7 +120,7 @@ public class MessageService {
             element.setSender_id(sender);
             element.setSender_name(userMapper.getUserNameById(sender));
             element.setSender_avatar(userService.getUserHead(sender));
-            element.setContent(message.getContent());
+            element.setContent(decodeMessage(message.getContent()));
             element.setTime(message.getTime().toString());
             list.add(element);
         }
@@ -258,4 +265,23 @@ public class MessageService {
         }
     }
 
+    public String decodeMessage(String input) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        String decode;
+        try {
+            decode = new String(decoder.decode(input), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return input;
+        }
+        if (decode.startsWith(headString)) {
+            decode = decode.substring(headString.length());
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < decode.length(); i++) {
+                sb.append((char)(((int)decode.charAt(i)) - (move1[i % 3] * move2[i % 5] + move3[i % 4])));
+            }
+            return sb.toString();
+        } else {
+            return input;
+        }
+    }
 }
