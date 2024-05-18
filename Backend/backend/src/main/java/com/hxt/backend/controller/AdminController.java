@@ -2,7 +2,7 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.LoginResponse;
-import com.hxt.backend.response.list.PostTimeInfoResponse;
+import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.list.UserSectionBlockListResponse;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,8 +77,8 @@ public class AdminController {
     }
 
     @RequestMapping("/admin/data/post")
-    public PostTimeInfoResponse getPostTimeInfo() {
-        return adminService.getPostTimeInfo();
+    public TimeInfoResponse getPostTimeInfo() {
+        return adminService.getTimeInfo();
     }
 
     @RequestMapping("/admin/section/add/course")

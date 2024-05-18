@@ -16,4 +16,6 @@ public class TotalInfoResponse {
     Integer school_all;
     Integer post_all;
     Integer content_all;
+    Integer group_all;
+    Integer checkin_all;
 }

@@ -7,7 +7,7 @@ import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
-import com.hxt.backend.response.list.PostTimeInfoResponse;
+import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
 import com.hxt.backend.response.list.UserSectionBlockListResponse;
@@ -40,6 +40,11 @@ public class AdminService {
     private ImageMapper imageMapper;
     @Resource
     private MessageMapper messageMapper;
+    @Resource
+    private GroupMapper groupMapper;
+    @Resource
+    private CheckInMapper checkInMapper;
+
     @Resource
     private PostService postService;
 
@@ -87,14 +92,17 @@ public class AdminService {
                 sectionMapper.getCourseNum(),
                 sectionMapper.getSchoolNum(),
                 postAll,
-                postAll + postMapper.getCommentNum() + postMapper.getReplyNum()
+                postAll + postMapper.getCommentNum() + postMapper.getReplyNum(),
+                groupMapper.getGroupCount(),
+                checkInMapper.getCheckInCount()
         );
     }
 
-    public PostTimeInfoResponse getPostTimeInfo() {
+    public TimeInfoResponse getTimeInfo() {
         long now = System.currentTimeMillis();
-        PostTimeInfoResponse res = new PostTimeInfoResponse(
-                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+        TimeInfoResponse res = new TimeInfoResponse(
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
         );
         long hourStart = now / 3600000 * 3600000;
         for (int i = 0; i < 24; i++) {
@@ -103,8 +111,10 @@ public class AdminService {
             int postNum = postMapper.getPostNumRange(start, end);
             int commentNum = postNum + postMapper.getCommentNumRange(start, end)
                     + postMapper.getReplyNumRange(start, end);
+            int checkinNum = checkInMapper.getCheckInNumRange(start, end);
             res.getPost_24h().add(0, new TimeValueResponse(df.format(start), postNum));
             res.getComment_24h().add(0, new TimeValueResponse(df.format(start), commentNum));
+            res.getCheckin_24h().add(0, new TimeValueResponse(df.format(start), checkinNum));
         }
         long dayStart = now / 86400000 * 86400000;
         for (int i = 0; i < 30; i++) {
@@ -113,8 +123,10 @@ public class AdminService {
             int postNum = postMapper.getPostNumRange(start, end);
             int commentNum = postNum + postMapper.getCommentNumRange(start, end)
                     + postMapper.getReplyNumRange(start, end);
+            int checkinNum = checkInMapper.getCheckInNumRange(start, end);
             res.getPost_30d().add(0, new TimeValueResponse(df.format(start), postNum));
             res.getComment_30d().add(0, new TimeValueResponse(df.format(start), commentNum));
+            res.getCheckin_30d().add(0, new TimeValueResponse(df.format(start), checkinNum));
         }
         return res;
     }

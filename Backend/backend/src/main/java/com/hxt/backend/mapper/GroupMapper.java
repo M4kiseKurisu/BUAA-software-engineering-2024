@@ -79,4 +79,8 @@ public interface GroupMapper {
 
     @Select("select * from apply_group where pushed = false;")
     List<GroupApply> selectUnpushedApply();
+
+    //  数据可视化用
+    @Select("SELECT COUNT(*) FROM study_group")
+    Integer getGroupCount();
 }

@@ -92,4 +92,11 @@ public interface CheckInMapper {
     //删除打卡
     @Delete("DELETE FROM check_in WHERE check_in_id = #{checkInId} and author_id = #{userId}")
     int deleteCheckIn(Integer checkInId, Integer userId);
+
+    //  数据可视化
+    @Select("SELECT COUNT(*) FROM check_in")
+    Integer getCheckInCount();
+
+    @Select("SELECT COUNT(*) FROM check_in WHERE time > #{start} AND time < #{end}")
+    int getCheckInNumRange(Timestamp start, Timestamp end);
 }
