@@ -88,6 +88,7 @@
                     />
                 </el-select>
                 <el-button type="primary"  @click="uploadPost">上传打卡</el-button>
+                <div style="font-size: 14px; color: red; margin-top: 4px; margin-left: 12px;" v-if="warning.length != 0">{{ warning }}</div>
             </div>
         </el-dialog>
 
@@ -133,10 +134,11 @@ export default {
                 },
                 {
                     value: 2,
-                    label: '所有人不可见',
+                    label: '仅自己可见',
                 },
             ],
             view_value: 0,
+            warning: "",
         }
     },
     computed: {
@@ -209,6 +211,16 @@ export default {
         },
         uploadPost() {
             console.log(this.image_urls);
+
+            if (this.social_post_text.length == 0) {
+                this.warning = "打卡文字内容不能为空！";
+                return;
+            } else if (this.image_urls.length == 0) {
+                this.warning = "打卡必须上传图片！";
+                return;
+            } else {
+                this.warning = "";
+            }
 
             let content = {
                 user_id: JSON.parse(sessionStorage.getItem("id")),

@@ -31,7 +31,8 @@
 
         <el-divider direction="vertical"/>
 
-        <div style=" margin-left: 3%; margin-right: 6%; width: 41%; line-height: 1.5;" class="content-font-style">
+        <div style=" margin-left: 3%; margin-right: 6%; width: 41%; line-height: 1.5;" class="content-font-style"
+            :style="{ 'white-space': 'pre-wrap' }">
             {{ this.content }}
         </div>
     </div>

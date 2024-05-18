@@ -1,8 +1,9 @@
 <template>
-    <button class="card-css" style="width: 100%; aspect-ratio: 4/7; border: none; background-color: white;" @click="toDetail">
+    <div class="card-css" style="width: 100%; aspect-ratio: 4/7; border: none; background-color: white;" @click="toDetail">
         <el-image style="width: 100%; aspect-ratio: 1/1;" :src="this.post_pic" fit="fit"/>
 
-        <div style="width: 88%; margin-left: 6%; margin-top: 10px; height: 30%; display: flex; justify-content: flex-start; " class="content-font">
+        <div style="width: 87%; margin-left: 6%; margin-top: 10px; height: 30%; display: flex; justify-content: flex-start; " class="content-font"
+            :style="{ 'white-space': 'pre-wrap' }">
             {{ this.content }}    
         </div>
         <div class="flex-container" style="margin-left: 6%; margin-top: 5px;">
@@ -15,7 +16,7 @@
             </div>
             <div class="user-name-font" style="margin-left: 2%; margin-top: 5px; height: 16px;">{{ this.likes }}</div>
         </div>
-    </button>
+    </div>
 </template>
 
 <script>

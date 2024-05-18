@@ -98,7 +98,7 @@
 
             <div class="post-main-end-line" v-for="(item, index) in this.resources">
                 <div class="post-time-show-font">附加资源{{ index + 1 }}：</div>
-                <button class="url-show-blue" @click="download(item)">{{ item }}</button>
+                <div class="url-show-blue" @click="download(item)">附加资源链接{{ index + 1 }}</div>
             </div>
 
             <div class="post-main-end-line" style="margin-top: 6px">
@@ -1210,6 +1210,7 @@ export default {
     font-size: 16px;
     color: #165DFF;
     margin-top: 8px;
+    margin-left: 8px;
     width: 80%;
     overflow: hidden;
     background-color: white;

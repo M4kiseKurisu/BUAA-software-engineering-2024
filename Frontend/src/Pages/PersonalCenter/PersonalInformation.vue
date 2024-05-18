@@ -85,16 +85,35 @@
                         <el-popover
                             placement="top"
                             trigger="click"
-                            width="180"
+                            width="300"
                         >
-                            <div style="display: flex; margin-bottom: 6px;">
+                            <div style="color: #101010; font-size: 16px; margin-bottom: 8px; font-weight: bold;">我的收藏</div>
+                            <!-- <div style="display: flex; margin-bottom: 6px;">
+                                <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">所有人可见</div>
+                                <div v-if="true">（已选择）</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 8px;">
+                                <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">仅自己可见</div>
+                                <div v-if="false">（已选择）</div>
+                            </div> -->
+                            <el-radio-group v-model="view_radio1" style="display: flex; margin-bottom: 8px;">
+                                <el-radio :value=0 border>所有人可见</el-radio>
+                                <el-radio :value=1 border>仅自己可见</el-radio>
+                            </el-radio-group>
+                            <div style="color: #101010; font-size: 16px; margin-bottom: 8px; font-weight: bold;">我的发布</div>
+                            <!-- <div style="display: flex; margin-bottom: 6px;">
                                 <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">所有人可见</div>
                                 <div v-if="true">（已选择）</div>
                             </div>
                             <div style="display: flex; margin-bottom: 6px;">
                                 <div @click="changeView" style="margin-right: 8px; text-decoration: underline;">仅自己可见</div>
                                 <div v-if="false">（已选择）</div>
-                            </div>
+                            </div> -->
+                            <el-radio-group v-model="view_radio2" style="display: flex; margin-bottom: 8px;">
+                                <el-radio :value=0 border>所有人可见</el-radio>
+                                <el-radio :value=1 border>仅自己可见</el-radio>
+                            </el-radio-group>
+                            <el-button style="margin-top: 8px;" type="primary" @click="changeView">确认选择</el-button>
                             <template #reference>
                                 <div style="margin-left: 8px; margin-top: 32px; color: #86909c; font-size: 14px;">设置可见性</div>
                             </template>
@@ -300,11 +319,39 @@ export default {
             divided_posts: [],
 
             continue_post: 0,
+
+            view_radio1: 0,
+            view_radio2: 0,
         }
     },
     methods: {
         changeView() {
+            const content = {};
+            content.show_post = (this.view_radio2 == 0) ? true : false;
+            content.show_favorite = (this.view_radio2 == 0) ? true : false;
+            console.log(content);
 
+            axios({
+                method: "POST",
+                url: "/api/user/update",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '帖子可见性更改成功！',
+                        type: 'success',
+                    });
+                    location.reload();
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: "帖子可见性更改失败！",
+                        type: 'error',
+                    });
+                }
+            })
         },
         toggle_favorate() {
             this.show_favorate = true;
@@ -392,6 +439,9 @@ export default {
 
             console.log(this.divided_posts); // 测评
             console.log(this.divided_posts[0].posts[0].posts.length);
+        },
+        choose_visible() {
+
         }
     },
     computed: {
