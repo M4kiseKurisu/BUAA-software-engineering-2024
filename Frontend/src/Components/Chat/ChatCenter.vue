@@ -80,21 +80,23 @@
                         </button>
                     </div>
                 </div>
-
             </div>
 
-            <div style="width: 100%; background-color: #efefef; padding-top: 10px; padding-bottom: 10px;">
-                <el-scrollbar v-if="this.chatKindChose == 2" style="height: 95%;">
-                    <div style="width: 90%; margin-left: 5%;">
+            <div
+                style="width: 100%; background-color: #efefef; padding-top: 10px; padding-bottom: 10px;height: calc(100% - 128px)">
+                <el-scrollbar v-if="this.chatKindChose == 2" style="height: 100%;">
+                    <div style="width: 100%; " v-for="item in this.groupItemList" class="hover-div">
                         <!-- <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem> -->
-                        <GroupItem v-for="item in this.groupItemList" :groupInfo="item"></GroupItem>
+                        <div style="width: 90%; margin-left: 5%; padding-top: 11px; padding-bottom: 11px;">
+                            <GroupItem :groupInfo="item"></GroupItem>
+                        </div>
                     </div>
                 </el-scrollbar>
-                <el-scrollbar v-if="this.chatKindChose == 1" style="height: 95%;">
+                <el-scrollbar v-if="this.chatKindChose == 1" style="height: 100%;">
                     <!-- <没加key> -->
                     <div style="width: 100%;">
                         <div v-for="item in personItemList" style="width: 100%" class="hover-div">
-                            <div style="width: 90%; margin-left: 8%; padding-top: 11px; padding-bottom: 11px;">
+                            <div style="width: 90%; margin-left: 5%; padding-top: 11px; padding-bottom: 11px;">
                                 <PersonItem @getPersonId="getPersonId" :chatItemInfo="item"></PersonItem>
                             </div>
                             <!-- <el-divider /> -->
@@ -136,11 +138,11 @@
             <div style="height: 10%; width: 100%; display: flex; align-items: center;justify-content: center;">
                 <div v-if="this.chatKindChose == 1"
                     style="font-size: 25px; display: flex;align-items: center;justify-content: center;">
-                    <span>{{ personName }}</span>
+                    <span>{{ titleName }}</span>
                 </div>
                 <div v-if="this.chatKindChose == 2"
                     style="font-size: 25px; display: flex;align-items: center;justify-content: center;">
-                    <span>{{ groupName }}</span>
+                    <span>{{ titleName }}</span>
                 </div>
             </div>
             <el-divider />
@@ -150,14 +152,14 @@
                     <ChatMessage v-for="item in messageList" :messageInfomation="item" :key="item.id"></ChatMessage>
                 </el-scrollbar> -->
                 <div id="messageContainer" style="height: 100%;width: 100%;overflow-y: auto;overflow-x: hidden;"
-                    v-if="this.messageList.length != 0">
+                    v-if="this.messageList != []">
                     <ChatMessage v-for="item in messageList" :messageInfomation="item" :key="item.id"></ChatMessage>
                 </div>
             </div>
             <el-divider />
             <div style="height: 29%; width: 100%;">
                 <textarea v-model="textinput" placeholder="输入聊天内容" style="width: 95%; margin-left: 2%; margin-top: 20px; height: 64%;
-                                                                            border: none;"
+                                                                                            border: none;"
                     @keydown.enter="sendMessage"></textarea>
                 <div style="width: 94%; display: flex; justify-content: flex-end; margin-top: 8px;">
                     <el-button type="success" plain @click="sendMessage">发送信息</el-button>
@@ -192,6 +194,7 @@ export default {
             showGroupInfo: false,
             personItemList: [],
             groupItemList: [],
+            titleName: '',
             ws: null,
         }
     },
@@ -280,6 +283,9 @@ export default {
             axios({
                 method: 'GET',
                 url: 'api/message/chats',
+                params: {
+                    type: 1,
+                }
             }).then((result) => {
                 console.log(result);
                 this.personItemList = result.data.chat_list;
@@ -327,6 +333,11 @@ export default {
                 };
                 let jsonData = JSON.stringify(messageToSend);
                 this.ws.send(jsonData);
+                console.log(this.messageList);
+                if (!this.messageList) {
+                    this.messageList = [];
+                }
+                console.log(this.messageList);
                 this.messageList.push(messageToSend);
                 //console.log(messageToSend);
                 // 清空消息输入框
@@ -344,7 +355,7 @@ export default {
                     id: this.personId,
                 }
             }).then((result) => {
-                this.personName = result.data.name;
+                this.titleName = result.data.name;
             })
         },
         getGroupInfo() {
@@ -355,8 +366,8 @@ export default {
                     group_id: this.groupId,
                 }
             }).then((result) => {
-                //console.log(result);
-                this.groupName = result.data.group[0].name;
+                console.log(result);
+                this.titleName = result.data.group[0].name;
             })
         },
         scrollToBottom() {

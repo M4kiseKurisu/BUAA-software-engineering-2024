@@ -1,8 +1,8 @@
 <template>
-    <div class="directMessageContainer" @click="goToChatCenter">
-        <div class="headContainer"><el-avatar :size="60" :src="this.headImg" />
+    <div class="directMessageContainer" >
+        <div class="headContainer"><el-avatar :size="60" :src="this.headImg" @click="goToShowPersonInfomation"/>
         </div>
-        <div style="margin-left: 10px;width: 70%;">
+        <div style="margin-left: 10px;width: 70%;" @click="goToChatCenter">
             <div class="senderContainer">
                 <span style="font-size: large;font-weight: bolder;color: black;">{{ senderName }}</span>
                 <span style="margin-left: 5px;">给你发送了私信</span>
@@ -59,6 +59,13 @@ export default {
                     this.headImg = result.data.user_avatar;
                 });
         },
+        goToShowPersonInfomation(){
+            //this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.memberId});
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.personId ,
+            });
+            window.open(routeUrl.href, '_blank');
+        },
         goToChatCenter() {
             this.$router.push({ name: 'ChatCenter', params: { personId: this.personId, groupId: -1 } }).then(() => {
                 this.$nextTick(() => {
@@ -106,7 +113,7 @@ export default {
     width: 100%;
     /* align-items: center; */
     height: 50%;
-    font-size: x-large;
+    font-size: 1.3em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

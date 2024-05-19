@@ -135,9 +135,38 @@ export default {
                 })
                 return;
             }
+            if(this.inputTitle.length > 10){
+                ElMessage({
+                    message: '标题过长，应在10字以内',
+                    type: 'warning',
+                    plain: true,
+                })
+                return;
+            }
             if (this.inputContent == '') {
                 ElMessage({
                     message: '信息不完善，请填写简介',
+                    type: 'warning',
+                    plain: true,
+                })
+                return;
+            }
+            var tagCount = this.inputDynamicTags.length;
+            var maxLength = 0;
+            if(tagCount > 5){
+                ElMessage({
+                    message: '标签数量过多，应在5个以内',
+                    type: 'warning',
+                    plain: true,
+                })
+                return;
+            }
+            for(var i = 0;i < tagCount;i++){
+                maxLength = this.inputDynamicTags[i].length > maxLength ? this.inputDynamicTags[i].length : maxLength;
+            }
+            if(maxLength > 8){
+                ElMessage({
+                    message: '标签过长，应在8字以内',
                     type: 'warning',
                     plain: true,
                 })
@@ -152,6 +181,7 @@ export default {
                 })
                 return;
             }
+
             if (this.coverList.length == 0) {
                 ElMessage({
                     message: '信息不完善，请选择团体封面',

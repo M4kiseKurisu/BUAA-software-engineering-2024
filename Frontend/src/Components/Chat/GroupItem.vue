@@ -1,11 +1,12 @@
 <template>
     <!-- <div class="groupItemContainer" @click = "giveGroupId"> -->
-    <div class = "groupItemContainer" style="width: 100%;" @click = "giveGroupId">
-        <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;" @click = "showGroupInfo = true">
-            <el-avatar :size="70" :src="groupHead" shape="square" />
+    <div class="groupItemContainer" style="width: 100%;" @click="giveGroupId">
+        <div style="height: 100%;align-items: center;justify-content: center;display: flex;width: 80px;" 
+            @click="showGroupInfo = true">
+            <el-avatar :size="70" :src="groupHead" shape="square" class="clickCover"/>
         </div>
 
-        <div style="height: 100%;width: calc(100% - 80px);" @click = "goToChatCenter">
+        <div style="height: 100%;width: calc(100% - 80px);" @click="goToChatCenter">
             <div style="width: 100%;height: 50%;display: flex;align-items: center;">
                 <div style="font-size: 1.3em;padding-left: 5px;">
                     {{ groupName }}
@@ -37,7 +38,7 @@
             </div>
         </el-dialog> -->
         <el-dialog v-model="showGroupInfo" title="团体信息" width="650" v-if="this.showGroupInfo">
-                <GroupInfo :groupId = "this.groupId"></GroupInfo>
+            <GroupInfo :groupId="this.groupId"></GroupInfo>
         </el-dialog>
         <!-- <div style="margin-left: auto;">
             <el-button text @click="giveGroupId" style="font-size: 1em;"> 去聊天</el-button>
@@ -50,13 +51,13 @@ import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 import GroupInfo from './GroupInfo.vue';
 export default {
-    props:{
-        groupInfo:{
+    props: {
+        groupInfo: {
             type: Object,
-            default:null
+            default: null
         },
     },
-    components:{
+    components: {
         GroupInfo,
     },
     data() {
@@ -64,8 +65,8 @@ export default {
             groupId: 1,
             groupHead: './src/Images/testAvatar.jpg',
             groupName: 'fyb',
-            groupPersonNum : 50,
-            groupCapacity : 200,
+            groupPersonNum: 50,
+            groupCapacity: 200,
             showQuit: false,
             showGroupInfo: false,
         }
@@ -75,8 +76,8 @@ export default {
             console.log(this.groupId);
             this.$emit('getGroupId', this.groupId);
         },
-        goToChatCenter(){
-            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId }}).then(() => {
+        goToChatCenter() {
+            this.$router.push({ name: 'ChatCenter', params: { personId: -1, groupId: this.groupId } }).then(() => {
                 this.$nextTick(() => {
                     // 强制重新加载当前页面
                     location.reload();
@@ -84,8 +85,8 @@ export default {
             });;
         }
     },
-    created(){
-        if(this.groupInfo != null){
+    created() {
+        if (this.groupInfo != null) {
             this.groupId = this.groupInfo.group_id;
             this.groupHead = this.groupInfo.image;
             this.groupName = this.groupInfo.name;
@@ -106,7 +107,11 @@ export default {
     margin-bottom: 5px;
     min-width: 300px;
 }
-.groupItemContainer:hover {
+
+/* .groupItemContainer:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+} */
+.clickCover:hover {
+    box-shadow: 0 0 5px rgba(49, 40, 40, 0.5);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="replyNoticeContainer">
-        <div class="headContainer"><el-avatar :size="60" :src="replyUserHead" />
+        <div class="headContainer" @click="goToShowPersonInfomation"><el-avatar :size="60" :src="replyUserHead" />
         </div>
         <div style="margin-left: 10px;width: 90%;">
             <div class="senderContainer">
@@ -16,7 +16,7 @@
             <div class="contentContainer">
                 <div style="height: 100%;width: 80%;max-width: 80%;;font-size: 1.2em;">
                     <div v-if="!replyToPost" style="border-left: 3px solid darkgray;background-color: rgb(230, 225, 223);margin-bottom: 5px;max-width: 100%;
-                                            white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                                white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                         <span style="margin-left: 5px;"> {{ meName }}: {{ commentContent }}</span>
                     </div>
                     <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">回复：{{ replyContent }}</div>
@@ -56,6 +56,13 @@ export default {
         }
     },
     methods: {
+        goToShowPersonInfomation() {
+            //this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.memberId});
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.replyUserId,
+            });
+            window.open(routeUrl.href, '_blank');
+        },
         getReplyInfomation() {
             this.replyId = this.replyInformation.reply_id;
             this.replyUserId = this.replyInformation.reply_user_id;

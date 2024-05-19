@@ -1,6 +1,6 @@
 <template>
     <div class="judgeNoticeContainer" v-if="!isFeedBack">
-        <div class="headContainer"><el-avatar :size="60" :src="userAvatar" /></div>
+        <div class="headContainer" @click = "goToPersonCenter"><el-avatar :size="60" :src="userAvatar" /></div>
         <div style="margin-left: 10px;width: 90%;">
             <div class="senderContainer">
                 <span style="font-size: large;font-weight: bolder;color: black;">{{ userName }}</span>
@@ -8,8 +8,11 @@
                 <span style="margin-left: 5px;font-size: large;font-weight: bolder;color: black;">{{ groupName }}</span>
             </div>
             <div class="contentContainer">
-                <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis; width: 80%;font-size: large;">{{
-                    applyContent }}</div>
+                <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis; width: 80%;font-size: large;"
+                    v-if="applyContent != ''">申请信息：{{
+                        applyContent }}</div>
+                <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis; width: 80%;font-size: large;"
+                    v-else>申请信息：无</div>
                 <div style="height: 100%;display: flex;width: 20%;justify-content: end;">
                     <el-button type="primary" plain @click="showDetail = true">查看详情</el-button>
                 </div>
@@ -18,25 +21,28 @@
         <el-dialog v-model="showDetail" title="申请详情" width="650">
             <div style="width: 100%;display: flex;margin-top: 10px;align-items: center;">
                 <span class="create_group_itemtext">申请人：</span>
-                <el-link  class="create_group_itemtext" @click = "goToPersonCenter">{{ userName }}</el-link>
+                <el-link class="create_group_itemtext" @click="goToPersonCenter">{{ userName }}</el-link>
             </div>
             <div style="width: 100%;display: flex;margin-top: 10px;align-items: center;">
                 <span class="create_group_itemtext">申请团体：{{ groupName }}</span>
                 <!-- <el-link  class="create_group_itemtext" >{{  }}</el-link> -->
             </div>
             <div style="width: 100%;display: flex;margin-top: 10px;">
-                <div class="create_group_itemtext" style="width: 35%;">申请信息：</div>
-                <div  style="flex-grow: 1;font-size: 1.3em;">
+                <div class="create_group_itemtext">申请信息：</div>
+                <div style="flex-grow: 1;font-size: 1.3em;" v-if="applyContent != ''">
                     {{ applyContent }}
+                </div>
+                <div style="flex-grow: 1;font-size: 1.3em;" v-else>
+                    无
                 </div>
                 <!-- <el-link  class="create_group_itemtext" >{{  }}</el-link> -->
             </div>
             <div style="width: 100%;display: flex;margin-top: 20px;">
                 <div style="width: 50%;display: flex;align-items: center;justify-content: center;">
-                    <el-button type = "primary" plain>通过</el-button>
+                    <el-button type="primary" plain @click="acceptApply">通过</el-button>
                 </div>
                 <div style="width: 50%;display: flex;align-items: center;justify-content: center;">
-                    <el-button type = "primary" plain>不通过</el-button>
+                    <el-button type="primary" plain @click="refuseApply">不通过</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -44,15 +50,17 @@
     <div v-else style=" width: 100%;height: 100px;">
         <div style="width: 100%;height: 40px;display: flex;">
             <span style="margin-left: 20px;font-size: 1.2em;font-weight: bold;margin-top: 25px;">申请反馈</span>
-            <el-tag effect="dark" type= 'success' style="margin-top: 25px;margin-left: 10px;font-size: 1em;" v-if = "applyFeedBack">通过</el-tag>
-            <el-tag effect="dark" type= 'danger' style="margin-top: 25px;margin-left: 10px;font-size: 1em;" v-if = "!applyFeedBack">未通过</el-tag>
+            <el-tag effect="dark" type='success' style="margin-top: 25px;margin-left: 10px;font-size: 1em;"
+                v-if="applyFeedBack">通过</el-tag>
+            <el-tag effect="dark" type='danger' style="margin-top: 25px;margin-left: 10px;font-size: 1em;"
+                v-if="!applyFeedBack">未通过</el-tag>
         </div>
         <div style="width: 100%;height: 60px;display: flex;align-items: center;">
-            <span style="margin-left: 20px;font-size: 1.5em;" v-if = "applyFeedBack">
-                您加入学习团体<span style="font-weight: bold;">{{groupName}}</span>的申请已通过
+            <span style="margin-left: 20px;font-size: 1.5em;" v-if="applyFeedBack">
+                您加入学习团体<span style="font-weight: bold;">{{ groupName }}</span>的申请已通过
             </span>
-            <span style="margin-left: 20px;font-size: 1.5em;" v-if = "!applyFeedBack">
-                您加入学习团体<span style="font-weight: bold;">{{groupName}}</span>的申请未通过
+            <span style="margin-left: 20px;font-size: 1.5em;" v-if="!applyFeedBack">
+                您加入学习团体<span style="font-weight: bold;">{{ groupName }}</span>的申请未通过
             </span>
         </div>
     </div>
@@ -60,11 +68,13 @@
 
 <script>
 import axios from "axios";
+import { result } from "lodash";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import { ElMessage } from 'element-plus';
 export default {
-    props:{
-        noticeInfo:{
-            type:Object,
+    props: {
+        noticeInfo: {
+            type: Object,
             default: null,
         }
     },
@@ -84,8 +94,8 @@ export default {
             showDetail: false,
         }
     },
-    methods:{
-        goToPersonCenter(){
+    methods: {
+        goToPersonCenter() {
             // this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.userId}).then(() => {
             //     this.$nextTick(() => {
             //         // 强制重新加载当前页面
@@ -93,13 +103,51 @@ export default {
             //     });
             // });
             let routeUrl = this.$router.resolve({
-                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.userId ,
+                path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.userId,
             });
             window.open(routeUrl.href, '_blank');
+        },
+        acceptApply() {
+            axios({
+                method: "POST",
+                url: 'api/group/accept',
+                data: {
+                    id: this.applyId,
+                    accept: 1,
+                }
+            }).then((result) => {
+                if (result.data.success) {
+                    ElMessage({
+                        message: '入群审核完成！',
+                        type: 'success',
+                        plain: true,
+                    })
+                }
+                this.showDetail = false;
+            })
+        },
+        refuseApply() {
+            axios({
+                method: "POST",
+                url: 'api/group/accept',
+                data: {
+                    id: this.applyId,
+                    accept: 0,
+                }
+            }).then((result) => {
+                if (result.data.success) {
+                    ElMessage({
+                        message: '入群审核完成！',
+                        type: 'success',
+                        plain: true,
+                    })
+                    this.showDetail = false;
+                }
+            })
         }
     },
-    created(){
-        if(this.noticeInfo !=  null){
+    created() {
+        if (this.noticeInfo != null) {
             this.applyId = this.noticeInfo.apply_id;
             this.userId = this.noticeInfo.user_id;
             this.groupId = this.noticeInfo.group_id;
@@ -107,7 +155,7 @@ export default {
             this.applyTitle = this.noticeInfo.apply_title;
             this.applyFeedBack = this.noticeInfo.apply_feedback_info;
             this.isFeedBack = this.noticeInfo.is_apply_feedback;
-            this.groupName = this.noticeInfo.group_name ;
+            this.groupName = this.noticeInfo.group_name;
             this.userName = this.noticeInfo.user_name;
             this.userAvatar = this.noticeInfo.user_avatar;
             this.applyContent = this.noticeInfo.apply_content;

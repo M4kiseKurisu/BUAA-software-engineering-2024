@@ -29,7 +29,7 @@
                 </div>
                 <div class="study_group_center_list">
                     <el-scrollbar v-if="myGroupList != []">
-                        <GroupItem v-for="item in this.myGroupList" :groupInfo="item"></GroupItem>
+                        <GroupItem v-for="item in this.myGroupList" :groupInfo="item" class="hover-div"></GroupItem>
                     </el-scrollbar>
                 </div>
             </div>
@@ -243,5 +243,9 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(calc(50% - 10px), 1fr));
     gap: 20px;
+}
+
+.hover-div:hover {
+    background-color: #f4f5f7;
 }
 </style>
