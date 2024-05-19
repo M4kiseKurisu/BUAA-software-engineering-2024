@@ -2,8 +2,10 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.*;
+import com.hxt.backend.service.FrequencyLogService;
 import com.hxt.backend.service.GroupService;
 import com.hxt.backend.service.MessageService;
+import com.hxt.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,9 @@ import java.util.List;
 public class GroupController {
     private final GroupService groupService;
     private final MessageService messageService;
+    private final FrequencyLogService frequencyLogService;
+    private final String hasEmptyResponse = "信息填写不完整！";
+    private final String frequencyResponse = "操作太频繁了，休息一下再来吧！";
 
     @PostMapping("/group/create")
     public BasicInfoResponse createGroup(
@@ -211,5 +216,24 @@ public class GroupController {
             return new BasicInfoResponse(false, "信息缺失");
         }
         return messageService.updateApply(Integer.parseInt(id), accept.equals("1"));
+    }
+
+    @RequestMapping("/group/report")
+    public BasicInfoResponse reportGroup(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "detail", required = false) String detail
+    ) {
+        if (user_id.isEmpty() || id == null || detail == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
+            return new BasicInfoResponse(false, frequencyResponse);
+        }
+        boolean res = groupService.reportGroup(Integer.parseInt(user_id), id, detail);
+        String info = res? "" : "服务器错误！";
+        if (res) {
+            frequencyLogService.setLog(Integer.parseInt(user_id), 10);
+        }
+        return new BasicInfoResponse(res, info);
     }
 }

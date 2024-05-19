@@ -18,9 +18,15 @@ public class ScheduleTaskConfig {
     @Resource
     private AdminMapper adminMapper;
 
-    @Scheduled(fixedDelay = 12 * 60 * 60 * 1000)   //  定时时长(ms)
+    @Scheduled(cron = "0 0 0,8,16 * * *")   //  每天0/8/16时
     private void clearLog() {
-        log.info("清理12小时前的用户操作记录...");
-        adminMapper.deleteOldLogs(new Timestamp(System.currentTimeMillis() - 12 * 60 * 60 * 1000));
+        log.info("清理8小时前的用户操作记录...");
+        adminMapper.deleteOldLogs(new Timestamp(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")   //  每天0时
+    private void clearHandled() {
+        log.info("清理已处理完毕的举报...");
+        adminMapper.deleteHandledReport();
     }
 }

@@ -1,17 +1,19 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.group.Group;
+import com.hxt.backend.mapper.AdminMapper;
 import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
 import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.group.GroupElement;
-import com.hxt.backend.response.group.GroupMessageElement;
 import com.hxt.backend.response.group.MemberElement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +24,7 @@ public class GroupService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final MessageMapper messageMapper;
+    private final AdminMapper adminMapper;
 
     public BasicInfoResponse createGroup(String name,Integer promoter_id, Integer permitted_num, String content, boolean is_examine, String image, List<String> tags) {
         if (permitted_num < 3) {
@@ -48,6 +51,22 @@ public class GroupService {
         if (!isAdmin && promoterId != userId) {
             return new BasicInfoResponse(false,"无操作权限");
         }
+
+        List<Integer> members = groupMapper.selectMemberByGroupId(groupId);
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (Integer member: members) {
+            messageMapper.sendSystemNoticeToUser("学习小组解散通知",
+                    String.format("您加入的学习小组 %s 已于 %s 被解散。",
+                            groupMapper.selectGroupById(groupId).getName(), df.format(date)), member);
+        }
+
+        groupMapper.deleteGroupApply(groupId);
+        groupMapper.deleteGroupTag(groupId);
+        groupMapper.deleteGroupApplyNotice(groupId);
+        groupMapper.deleteGroupMemberAll(groupId);
+        groupMapper.deleteGroupMessage(groupId);
+
         groupMapper.deleteGroupById(groupId);
         return new BasicInfoResponse(true,"");
     }
@@ -196,5 +215,11 @@ public class GroupService {
         return element;
     }
 
-
+    public boolean reportGroup(Integer userId, Integer reportId, String detail) {
+        if (adminMapper.checkSameReport(5, reportId, userId) > 0) {
+            //  同一人已经发起举报，则不提交举报
+            return true;
+        }
+        return adminMapper.insertReport(userId, 5, reportId, detail, null) > 0;
+    }
 }

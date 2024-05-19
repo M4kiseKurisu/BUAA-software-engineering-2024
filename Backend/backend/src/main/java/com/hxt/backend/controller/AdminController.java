@@ -264,6 +264,14 @@ public class AdminController {
         return adminService.getUnhandledReports(4);
     }
 
+    @RequestMapping("/admin/list/report/group")
+    private ReportListResponse getGroupReportList(@CookieValue(name = "type", defaultValue = "") String type) {
+        if (!type.equals("admin")) {
+            return null;
+        }
+        return adminService.getUnhandledReports(5);
+    }
+
     @RequestMapping("/admin/list/apply/course")
     private SearchSectionResponse getCourseApplyList(@CookieValue(name = "type", defaultValue = "") String type) {
         if (!type.equals("admin")) {
@@ -419,5 +427,36 @@ public class AdminController {
         boolean res = adminService.deleteGlobalAuthority(id);
         String info = res? "" : "服务器错误！";
         return new BasicInfoResponse(res, info);
+    }
+
+    @RequestMapping("/admin/message/broadcast")
+    public BasicInfoResponse systemBroadcast(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "info", required = false) String info
+    ) {
+        if (info == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.systemBroadcast(info);
+        String i = res? "" : "服务器错误！";
+        return new BasicInfoResponse(res, i);
+    }
+
+    @RequestMapping("/admin/message/send")
+    public BasicInfoResponse systemBroadcast(
+            @CookieValue(name = "type", defaultValue = "") String type,
+            @RequestParam(name = "id", required = false) Integer id,
+            @RequestParam(name = "info", required = false) String info
+    ) {
+        if (id == null || info == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else if (!type.equals("admin")) {
+            return new BasicInfoResponse(false, authorityResponse);
+        }
+        boolean res = adminService.systemMessage(id, info);
+        String i = res? "" : "服务器错误！";
+        return new BasicInfoResponse(res, i);
     }
 }
