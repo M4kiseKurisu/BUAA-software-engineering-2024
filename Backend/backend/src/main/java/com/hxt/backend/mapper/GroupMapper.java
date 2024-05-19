@@ -80,6 +80,22 @@ public interface GroupMapper {
     @Select("select * from apply_group where pushed = false;")
     List<GroupApply> selectUnpushedApply();
 
+    //  删除小组的附加信息（若直接删除组不会导致外键异常，则以下方法不需要）
+    @Delete("DELETE FROM apply_group WHERE group_id = #{id}")
+    int deleteGroupApply(Integer id);
+
+    @Delete("DELETE FROM group_member WHERE group_id = #{id}")
+    int deleteGroupMemberAll(Integer id);
+
+    @Delete("DELETE FROM group_tag WHERE group_id = #{id}")
+    int deleteGroupTag(Integer id);
+
+    @Delete("DELETE FROM group_message WHERE group_id = #{id}")
+    int deleteGroupMessage(Integer id);
+
+    @Delete("DELETE FROM apply_notice WHERE group_id = #{id}")
+    int deleteGroupApplyNotice(Integer id);
+
     //  数据可视化用
     @Select("SELECT COUNT(*) FROM study_group")
     Integer getGroupCount();

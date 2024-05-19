@@ -99,6 +99,9 @@ public interface AdminMapper {
     @Update("UPDATE report SET active = #{result} WHERE report_id = #{id}")
     int handleReport(Integer id, Integer result);
 
+    @Delete("DELETE FROM report WHERE active != 1")
+    int deleteHandledReport();
+
     //  课程板块创建申请
     @Update("UPDATE section SET available = 1 WHERE section_id = #{id}")
     int handleSection(Integer id);

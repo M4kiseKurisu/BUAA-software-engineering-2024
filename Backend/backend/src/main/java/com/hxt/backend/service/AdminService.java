@@ -2,11 +2,14 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.Report;
 import com.hxt.backend.entity.User;
+import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
+import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.group.GroupElement;
 import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
@@ -47,6 +50,8 @@ public class AdminService {
 
     @Resource
     private PostService postService;
+    @Resource
+    private GroupService groupService;
 
     private final String defaultHeadUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -294,7 +299,7 @@ public class AdminService {
                 for (Report report : reports) {
                     Integer userId = report.getTarget();
                     response.getReport().add(new ReportResponse(
-                            report.getReportId(), userId, null, null, null,
+                            report.getReportId(), userId, userMapper.getUserNameById(userId), null, null,
                             report.getUserId(), report.getDetail(), report.getResource()
                     ));
                 }
@@ -307,6 +312,15 @@ public class AdminService {
                             (typeNum == 1)? "assistant" : "";
                     response.getReport().add(new ReportResponse(
                             report.getReportId(), sectionId, authorityType, null, null,
+                            report.getUserId(), report.getDetail(), report.getResource()
+                    ));
+                }
+                break;
+            case 5:
+                for (Report report : reports) {
+                    Integer groupId = report.getTarget();
+                    response.getReport().add(new ReportResponse(
+                            report.getReportId(), groupId, groupMapper.selectGroupById(groupId).getName(), null, null,
                             report.getUserId(), report.getDetail(), report.getResource()
                     ));
                 }
@@ -365,6 +379,10 @@ public class AdminService {
                     String authorityType = (typeNum == 0)? "teacher" :
                             (typeNum == 1)? "assistant" : "";
                     setAuthority(user, sectionId, authorityType);
+                    break;
+                case 5:
+                    Integer groupId = report.getTarget();
+                    groupService.deleteGroup(0, groupId, true);
                     break;
             }
         }
@@ -430,6 +448,14 @@ public class AdminService {
 
     public boolean checkGlobalAuthority(Integer id) {
         return adminMapper.checkGlobalAuthority(id) > 0;
+    }
+
+    public boolean systemBroadcast(String info) {
+        return messageMapper.sendSystemNoticeToAll("管理员广播", info) > 0;
+    }
+
+    public boolean systemMessage(Integer target, String info) {
+        return messageMapper.sendSystemNoticeToUser("管理员消息", info, target) > 0;
     }
 
     public void setUserCookie(String type, String value, HttpServletResponse response) {
