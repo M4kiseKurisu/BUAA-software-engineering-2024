@@ -140,6 +140,7 @@ public class GroupService {
         }
         Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);
         messageMapper.insertApplyNotice(groupId, userId, info, promoterId);
+        messageMapper.insertNewNotice(promoterId);
         return new BasicInfoResponse(true,"等待审核中");
     }
 
