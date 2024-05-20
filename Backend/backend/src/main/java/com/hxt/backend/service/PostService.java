@@ -132,6 +132,9 @@ public class PostService {
         User author = userMapper.selectUserById(authorId);
         ans.add(author.getName());
         String headUrl = imageMapper.getImage(author.getHeadId());
+        if (headUrl == null) {
+            headUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
+        }
         ans.add(headUrl);
         return ans;
     }

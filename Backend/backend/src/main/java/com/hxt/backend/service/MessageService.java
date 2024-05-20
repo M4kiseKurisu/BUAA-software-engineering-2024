@@ -239,7 +239,7 @@ public class MessageService {
         messageMapper.updateUserSystemNoticeIsRead(userId);
 
         // 按照推送时间排序
-        notices.sort(Comparator.comparing(UserNotice::getPull_time));
+        //notices.sort(Comparator.comparing(UserNotice::getPull_time));
 
         for (UserNotice notice: notices) {
             ManagerNotice managerNotice = messageMapper.selectManagerSystemNoticeById(notice.getSystem_notice_id());
