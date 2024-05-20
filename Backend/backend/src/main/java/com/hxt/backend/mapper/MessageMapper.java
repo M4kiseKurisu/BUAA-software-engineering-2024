@@ -136,4 +136,18 @@ public interface MessageMapper {
     @Select("select * from reply_notice where user_id = #{userId};")
     List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
 
+
+    // 新的通知表
+
+    // 查看用户当前是否有新的通知
+    @Select("select count(*) from new_notice where user_id = #{userId};")
+    int selectNewNotice(Integer userId);
+
+    // 清空用户通知
+    @Delete("delete from new_notice where user_id = #{userId};")
+    int deleteNewNotice(Integer userId);
+
+    // 插入新的通知
+    @Insert("insert into new_notice (user_id) values (#{userId});")
+    int insertNewNotice(Integer userId);
 }
