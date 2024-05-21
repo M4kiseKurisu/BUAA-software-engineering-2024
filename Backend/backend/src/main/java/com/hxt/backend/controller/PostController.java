@@ -174,10 +174,17 @@ public class PostController {
         //获取帖子封面
         String cover = null;
         if (images != null) {
+            boolean flag = true;
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
-                    cover = imageUrl;
-                    break;
+                    if (flag) {
+                        cover = imageUrl;
+                        flag = false;
+                    }
+                    //审核图片是否合规
+                    if (!reviewService.imageReview(imageUrl)) {
+                        return new WritePostResponse(false, "图片不合规", null);
+                    }
                 }
             }
         }
@@ -195,11 +202,6 @@ public class PostController {
         if (images != null) {
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
-                    
-                    //审核图片是否合规
-                    if (!reviewService.imageReview(imageUrl)) {
-                        return new WritePostResponse(false, "图片不合规", null);
-                    }
                     Integer image_id = imageService.getImageIdByUrl(imageUrl);
                     postService.postInsertImage(post_id, image_id);
                 }
