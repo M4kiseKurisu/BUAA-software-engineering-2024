@@ -11,9 +11,9 @@ public interface ResourceMapper {
     
     //插入资源
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO resource (name, publisher_id, url, type, time)" +
-            " VALUES (#{name}, #{publisherId}, #{url}, #{type}, #{uploadTime})")
-    int insertResource(String name, Integer publisherId, String url, String type, Timestamp uploadTime);
+    @Insert("INSERT INTO resource (name, publisher_id, url, type, time, md5)" +
+            " VALUES (#{name}, #{publisherId}, #{url}, #{type}, #{uploadTime}, #{md5})")
+    int insertResource(String name, Integer publisherId, String url, String type, Timestamp uploadTime, String md5);
     
     
     //获取某用户发布的所有资源
@@ -39,4 +39,7 @@ public interface ResourceMapper {
     //删除资源
     @Delete("DELETE FROM resource WHERE resource_id = #{id}")
     int deleteResource(Integer id);
+
+    @Select("SELECT url FROM resource WHERE md5 = #{md5}")
+    String getSameMd5ResourceUrl(String md5);
 }

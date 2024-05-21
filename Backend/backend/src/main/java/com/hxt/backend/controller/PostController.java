@@ -425,8 +425,8 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "content", required = false) String content,
-            @RequestParam(name = "images", required = false) List<String> images,
-            @RequestParam(name = "resources", required = false) List<String> resources
+            @RequestParam(name = "images[]", required = false) String[] images,
+            @RequestParam(name = "resources[]", required = false) String[] resources
     ) throws IOException {
         //检查用户是否被封禁
         if (userService.checkGlobalBlocked(author_id)

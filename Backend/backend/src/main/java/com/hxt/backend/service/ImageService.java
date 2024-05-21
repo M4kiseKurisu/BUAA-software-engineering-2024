@@ -13,11 +13,11 @@ public class ImageService {
     private ImageMapper imageMapper;
     
     
-    public Integer uploadImage(String url) {
+    public Integer uploadImage(String url, String md5) {
         if (url == null) {
             return -1;
         }
-        return imageMapper.insertImage(url);
+        return imageMapper.insertImage(url, md5);
     }
     
     public Integer deleteImage(Integer id) {

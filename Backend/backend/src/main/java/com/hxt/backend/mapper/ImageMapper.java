@@ -9,8 +9,8 @@ import org.apache.ibatis.annotations.Options;
 public interface ImageMapper {
     
     @Options(useGeneratedKeys = true)
-    @Insert("INSERT INTO image (url)" + " VALUES (#{url})")
-    int insertImage(String url);
+    @Insert("INSERT INTO image (url, md5)" + " VALUES (#{url}, #{md5})")
+    int insertImage(String url, String md5);
     
     @Select("SELECT image_id from image where url = #{url}")
     Integer getImageIdByUrl(String url);
@@ -24,4 +24,7 @@ public interface ImageMapper {
     
     @Delete("DELETE FROM image WHERE image_id = #{id}")
     int deleteImage(Integer id);
+
+    @Select("SELECT url FROM image WHERE md5 = #{md5}")
+    String getSameMd5ImageUrl(String md5);
 }

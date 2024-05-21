@@ -1,10 +1,14 @@
 package com.hxt.backend.service;
 
+import com.hxt.backend.mapper.ImageMapper;
+import com.hxt.backend.mapper.ResourceMapper;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.PutObjectResult;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,10 +23,24 @@ public class ObsService {
     private String endpoint = "https://obs.cn-north-4.myhuaweicloud.com";
     private ObsClient obsClient;
 
-   
+   @Resource
+   private ImageMapper imageMapper;
+
+   @Resource
+   private ResourceMapper resourceMapper;
     
-    public String uploadFile(MultipartFile file) {
+    public String[] uploadFile(MultipartFile file) {
         try {
+            //  md5检查，是否有内容一致的文件
+            String md5 = DigestUtils.md5DigestAsHex(file.getBytes());
+            String image = imageMapper.getSameMd5ImageUrl(md5);
+            String resource = resourceMapper.getSameMd5ResourceUrl(md5);
+            if (image != null) {
+                return new String[]{image, ""};
+            } else if (resource != null) {
+                return new String[]{resource, ""};
+            }
+
             //创建唯一新文件名
             String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
             InputStream inputStream = file.getInputStream();
@@ -32,7 +50,7 @@ public class ObsService {
             PutObjectResult result = obsClient.putObject(bucketName, fileName, inputStream);
             obsClient.close();
             if (result != null) {
-                return result.getObjectUrl(); // 返回 url
+                return new String[]{result.getObjectUrl(), md5}; // 返回 url
             }
             
         } catch (IOException e) {
