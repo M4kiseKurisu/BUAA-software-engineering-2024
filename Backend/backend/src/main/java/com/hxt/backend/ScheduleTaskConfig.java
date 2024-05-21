@@ -22,7 +22,7 @@ public class ScheduleTaskConfig {
     @Resource
     private MessageMapper messageMapper;
 
-    @Scheduled(cron = "0 0 0,8,16 * * *")   //  每天0/8/16时
+    @Scheduled(cron = "0 0 0/8 * * *")   //  每天0/8/16时
     private void clearLog() {
         log.info("清理8小时前的用户操作记录...");
         adminMapper.deleteOldLogs(new Timestamp(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
@@ -39,5 +39,10 @@ public class ScheduleTaskConfig {
         log.info("清理15天前的已推送已读系统通知...");
         messageMapper.deleteOldReadMessage();
         messageMapper.deleteNoRefSystemNotice();
+    }
+
+    @Scheduled(cron = "0 0 4 * * *")   //  每天4时
+    private void setPostReplyTime() {
+        log.info("同步帖子发帖时间...");
     }
 }

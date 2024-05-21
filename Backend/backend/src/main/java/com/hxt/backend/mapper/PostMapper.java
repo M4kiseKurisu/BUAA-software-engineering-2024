@@ -91,7 +91,12 @@ public interface PostMapper {
     @Select("SELECT image_id from post_image where post_id = #{id} ORDER BY pi_id ASC")
     List<Integer> getImageIdByPost(Integer id);
     
-    
+    @Update("UPDATE post SET reply_time = NOW() WHERE post_id = #{id}")
+    int updateReplyTime(Integer id);
+
+    @Update("UPDATE post SET reply_time = #{timestamp} WHERE post_id = #{id}")
+    int resetReplyTime(Integer id, Timestamp timestamp);
+
     //帖子-资源
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_resource (post_id, resource_id) VALUES (#{postId}, #{resourceId})")
@@ -264,6 +269,10 @@ public interface PostMapper {
 
     @Delete("DELETE FROM favorite WHERE post_id = #{id}")
     int deletePostFavorite(Integer id);
+
+    @Delete("DELETE FROM reply_notice WHERE post_id = #{id}")
+    int deletePostNotice(Integer id);
+
     //评论
     
     //添加评论
@@ -370,6 +379,9 @@ public interface PostMapper {
 
     @Delete("DELETE FROM comment_resource WHERE comment_id = #{id}")
     int deleteCommentResource(Integer id);
+
+    @Delete("DELETE FROM reply_notice WHERE comment_id = #{id}")
+    int deleteCommentNotice(Integer id);
     
     //回复
     
@@ -440,4 +452,57 @@ public interface PostMapper {
     //  以下供管理员使用
     @Update("UPDATE post SET section_id = #{section} WHERE post_id = #{post}")
     int movePostSection(Integer post, Integer section);
+
+    //  分页查询用
+    @Select("select * from post where section_id = #{section} order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetBySendTime(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetBySendTime(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByReplyTime(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByReplyTime(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByLike(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByLike(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByFavorite(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByFavorite(Integer section, Integer category, Integer offset);
 }

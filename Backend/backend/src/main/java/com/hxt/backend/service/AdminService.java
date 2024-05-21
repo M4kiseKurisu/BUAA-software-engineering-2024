@@ -429,13 +429,13 @@ public class AdminService {
             case 1:
                 Integer commentId = report.getTarget();
                 if (choice) {
-                    postService.deleteComment(true, 0, commentId);
+                    postService.deleteComment(true, -1, commentId);
                 }
                 break;
             case 2:
                 Integer replyId = report.getTarget();
                 if (choice) {
-                    postService.deleteReply(true, 0, replyId);
+                    postService.deleteReply(true, -1, replyId);
                 }
                 break;
             case 3:

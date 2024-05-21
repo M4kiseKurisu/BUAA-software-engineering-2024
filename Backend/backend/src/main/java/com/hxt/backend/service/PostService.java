@@ -83,11 +83,14 @@ public class PostService {
         for (Comment comment : comments) {
             deleteComment(true, 0, comment.getComment_id());
         }
+        //  删除附加信息以防止外键异常
         postMapper.deletePostImage(postId);
         postMapper.deletePostTag(postId);
         postMapper.deletePostLike(postId);
         postMapper.deletePostFavorite(postId);
         postMapper.deletePostResource(postId);
+        postMapper.deletePostNotice(postId);
+
         List<Integer> reports = adminMapper.getSameTargetReports(0, postId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
@@ -399,10 +402,13 @@ public class PostService {
         Timestamp commentTime = new Timestamp(System.currentTimeMillis());
         Comment comment = new Comment(0, postId, authorId, content, commentTime, 0, 0);
         Integer res = postMapper.insertComment(comment);
+        postMapper.updateReplyTime(postId);
         if (res == 0) {
             return 0;
         }
-        messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(),authorId,content,commentTime,true,postId,null);
+        if (postMapper.getPost(postId).getAuthor_id() != authorId) {
+            messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, content, commentTime, true, postId, null);
+        }
         return comment.getComment_id();
     }
     
@@ -431,17 +437,37 @@ public class PostService {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
+        Integer postId = postMapper.getPostIdByCommentId(commentId);
         for (Reply reply : replies) {
             deleteReply(true, 0, reply.getReply_id());
         }
+        //  删除附加消息以消除外键异常
         postMapper.deleteCommentLike(commentId);
         postMapper.deleteCommentImage(commentId);
         postMapper.deleteCommentResource(commentId);
+        postMapper.deleteCommentNotice(commentId);
+
         List<Integer> reports = adminMapper.getSameTargetReports(1, commentId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteComment(commentId) + replies.size();
+        Integer i = postMapper.deleteComment(commentId) + replies.size();
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(postId);
+            if (t1 != null) {
+                Timestamp t2 = postMapper.getLastReplyTime(postId);
+                Timestamp t;
+                if (t2 != null) {
+                    t = t1.after(t2) ? t1 : t2;
+                } else {
+                    t = t1;
+                }
+                postMapper.resetReplyTime(postId, t);
+            } else {
+                postMapper.resetReplyTime(postId, postMapper.getPost(postId).getPostTime());
+            }
+        }
+        return i;
     }
     
     //通过评论id获取帖子id
@@ -501,7 +527,10 @@ public class PostService {
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
-        messageService.createReplyNotice(repliedAuthorId, authorId,content,replyTime,false,getPostIdByCommentId(commentId),commentId);
+        if (repliedAuthorId != authorId) {
+            messageService.createReplyNotice(repliedAuthorId, authorId, content, replyTime, false, getPostIdByCommentId(commentId), commentId);
+        }
+        postMapper.updateReplyTime(postMapper.getPostIdByCommentId(commentId));
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
     }
     
@@ -523,7 +552,19 @@ public class PostService {
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteReply(replyId);
+        Integer i = postMapper.deleteReply(replyId);
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(p.getPost_id());
+            Timestamp t2 = postMapper.getLastReplyTime(p.getPost_id());
+            Timestamp t;
+            if (t2 != null) {
+                t = t1.after(t2) ? t1 : t2;
+            } else {
+                t = t1;
+            }
+            postMapper.resetReplyTime(p.getPost_id(), t);
+        }
+        return i;
     }
     
     //点赞评论
