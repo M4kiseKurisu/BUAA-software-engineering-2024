@@ -448,6 +448,17 @@ public class PostController {
         if (!reviewService.textReview(content)) {
             return new BasicInfoResponse(false, "评论违规");
         }
+
+        if (images != null) {
+            for (String imageUrl : images) {
+                if (content.contains(imageUrl)) {
+                    //审核图片是否合规
+                    if (!reviewService.imageReview(imageUrl)) {
+                        return new BasicInfoResponse(false, "图片不合规");
+                    }
+                }
+            }
+        }
         
         Integer comment_id = postService.createComment(content, post_id, author_id);
         if(comment_id == -1) {
