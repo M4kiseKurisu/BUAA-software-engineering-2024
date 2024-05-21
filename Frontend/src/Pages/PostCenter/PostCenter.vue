@@ -30,12 +30,12 @@
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
                     <span style="padding-left: 3%;">
                         <el-button-group class="ml-4">
+                            <el-button type="primary" plain v-if="kindSelect != 3" @click="selectThree">查看全部</el-button>
+                            <el-button type="primary" v-if="kindSelect == 3" @click="selectThree">查看全部</el-button>
                             <el-button type="primary" plain v-if="kindSelect != 1" @click="selectOne">讨论帖</el-button>
                             <el-button type="primary" v-if="kindSelect == 1" @click="selectOne">讨论帖</el-button>
                             <el-button type="primary" plain v-if="kindSelect != 2" @click="selectTwo">资源帖</el-button>
                             <el-button type="primary" v-if="kindSelect == 2" @click="selectTwo">资源帖</el-button>
-                            <el-button type="primary" plain v-if="kindSelect != 3" @click="selectThree">查看全部</el-button>
-                            <el-button type="primary" v-if="kindSelect == 3" @click="selectThree">查看全部</el-button>
                         </el-button-group>
                     </span>
                     <span style="padding-left: 3%;">
@@ -150,11 +150,13 @@ export default {
         },
         sortIndex(){
             var sort = 0;
-            if(this.sortKindStr == '' ||this.sortKind == '最新' ){
+            if(this.sortKindStr == '' ||this.sortKindStr == '最新回复'){
+                sort = 3;
+            } else if (this.sortKindStr == '最新发布'){
                 sort = 0;
-            } else if(this.sortKindStr == '点赞数') {
+            } else if(this.sortKindStr == '点赞最多') {
                 sort = 1;
-            } else if(this.sortKindStr == '收藏数') {
+            } else if(this.sortKindStr == '收藏最多') {
                 sort = 2;
             }
             return sort;
@@ -169,24 +171,29 @@ export default {
             postNum: '',
             subscripNum: 30,
             courseType: '',
-            kindSelect: 1,
+            kindSelect: 3,
             searchWord: "",
             total: 20,
             currentPage: 1,
             updateTime: "2077.7.7.77",
             sectionId: 1,
             postList: "",
-            sortKind: [{
-                value: '点赞数',
-                label: '点赞数',
+            sortKind: [
+            {
+                value: '',
+                label: '最新回复'
             },
             {
-                value: '最新',
-                label: '最新',
+                value: '最新发布',
+                label: '最新发布',
             },
             {
-                value: '收藏数',
-                label: '收藏数',
+                value: '点赞最多',
+                label: '点赞最多',
+            },
+            {
+                value: '收藏最多',
+                label: '收藏最多',
             }],
             sortKindStr: '',
             tagKind: '',

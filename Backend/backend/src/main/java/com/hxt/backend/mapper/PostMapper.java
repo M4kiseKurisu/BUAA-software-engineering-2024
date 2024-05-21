@@ -92,8 +92,6 @@ public interface PostMapper {
     List<Integer> getImageIdByPost(Integer id);
     
     
-    
-    
     //帖子-资源
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_resource (post_id, resource_id) VALUES (#{postId}, #{resourceId})")
@@ -282,6 +280,9 @@ public interface PostMapper {
     @Select("SELECT * from comment where comment_id = #{id}")
     @Result(column = "time", property = "commentTime")
     Comment getCommentById(Integer id);
+
+    @Select("SELECT time FROM comment WHERE post_id = #{id} ORDER BY time DESC LIMIT 1")
+    Timestamp getLastCommentTime(Integer id);
     
     //根据评论id获取帖子id
     @Select("SELECT post_id from comment where comment_id = #{id}")
@@ -393,6 +394,10 @@ public interface PostMapper {
     @Select("SELECT * from reply where reply_id = #{id}")
     @Result(column = "time", property = "replyTime")
     Reply getReplyById(Integer id);
+
+    @Select("SELECT time FROM reply WHERE comment_id in (SELECT comment_id FROM comment WHERE post_id = #{id}) " +
+            "ORDER BY time DESC LIMIT 1")
+    Timestamp getLastReplyTime(Integer id);
     
     //根据回复id获取评论id
     @Select("SELECT comment_id from reply where reply_id = #{id}")

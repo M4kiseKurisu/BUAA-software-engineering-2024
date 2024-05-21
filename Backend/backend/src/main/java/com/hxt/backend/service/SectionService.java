@@ -140,10 +140,29 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
-            
-            String[] time = post.getPostTime().toString().split(":");
-            String postTime = time[0] + ":" + time[1];
-            element.setPost_time(postTime);
+
+            if (sort.equals("3")) {
+                Timestamp t1 = postMapper.getLastCommentTime(post.getPost_id());
+                if (t1 != null) {
+                    Timestamp t2 = postMapper.getLastReplyTime(post.getPost_id());
+                    Timestamp t;
+                    if (t2 != null) {
+                        t = t1.after(t2)? t1 : t2;
+                    } else {
+                        t = t1;
+                    }
+                    element.setPost_reply_time(t);
+                } else {
+                    element.setPost_reply_time(post.getPostTime());
+                }
+                String[] time = element.getPost_reply_time().toString().split(":");
+                String postTime = time[0] + ":" + time[1];
+                element.setPost_time(postTime);
+            } else {
+                String[] time = post.getPostTime().toString().split(":");
+                String postTime = time[0] + ":" + time[1];
+                element.setPost_time(postTime);
+            }
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());
@@ -173,6 +192,7 @@ public class SectionService {
             case "0" -> Collections.reverse(list);
             case "1" -> list.sort((o1, o2) -> o2.getPost_likes().compareTo(o1.getPost_likes()));
             case "2" -> list.sort((o1, o2) -> o2.getPost_favorites().compareTo(o1.getPost_favorites()));
+            case "3" -> list.sort((o1, o2) -> o2.getPost_reply_time().compareTo(o1.getPost_reply_time()));
         }
 
         return list;
