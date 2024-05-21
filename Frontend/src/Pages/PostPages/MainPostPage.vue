@@ -243,13 +243,17 @@
                         placeholder="请输入您的评论"
                     /> -->
 
-                    <div class="reply-editor-container">
+                    <div class="reply-editor-container" style="margin-bottom: 16px;">
                         <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item.comment_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item.comment_author_id"/>
                     </div>
                 </div>
 
+                <div style="display: flex; justify-content: flex-end; margin-right: 60px;">
+                    <button class="post-grey-button-below" @click="openReplies(index, item.comment_id)">展开共{{ item.comment_reply_count }}条回复</button>
+                </div>
+
                 <!-- 评论评论的全部内容 -->
-                <div v-for="(item2, index2) in repliesArray(item.replies, index)"  class="replys-reply-container">
+                <div v-if="this.isRepliesOpen[index]" v-for="(item2, index2) in repliesArray(repliesContainter[index], index)"  class="replys-reply-container">
                     <div class="replys-reply-first-line-container">
 
                         <!-- 左侧信息：头像，昵称，tag，删除 -->
@@ -299,15 +303,15 @@
                             </button>
 
 
-                            <button v-if="this.isReplyLiked2[index][index2]" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
+                            <button v-if="item2.reply_isLike" @click="likeReply(item2.reply_id, index, index2)" class="icon-and-content-2">
                                 <!-- 喜欢图标 -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#d81e06"></path></svg>
-                                <div class="like-icon-after-contents">{{ this.replyLikes[index][index2] }}人点赞</div>
+                                <div class="like-icon-after-contents">{{ item2.reply_like_count }}人点赞</div>
                             </button>
                             <button v-else class="icon-and-content-2" @click="likeReply(item2.reply_id, index, index2)">
                                 <!-- 喜欢图标(未点击) -->
                                 <svg t="1713272002795" class="like-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8419" width="200" height="200"><path d="M923 283.6c-13.4-31.1-32.6-58.9-56.9-82.8-24.3-23.8-52.5-42.4-84-55.5-32.5-13.5-66.9-20.3-102.4-20.3-49.3 0-97.4 13.5-139.2 39-10 6.1-19.5 12.8-28.5 20.1-9-7.3-18.5-14-28.5-20.1-41.8-25.5-89.9-39-139.2-39-35.5 0-69.9 6.8-102.4 20.3-31.4 13-59.7 31.7-84 55.5-24.4 23.9-43.5 51.7-56.9 82.8-13.9 32.3-21 66.6-21 101.9 0 33.3 6.8 68 20.3 103.3 11.3 29.5 27.5 60.1 48.2 91 32.8 48.9 77.9 99.9 133.9 151.6 92.8 85.7 184.7 144.9 188.6 147.3l23.7 15.2c10.5 6.7 24 6.7 34.5 0l23.7-15.2c3.9-2.5 95.7-61.6 188.6-147.3 56-51.7 101.1-102.7 133.9-151.6 20.7-30.9 37-61.5 48.2-91 13.5-35.3 20.3-70 20.3-103.3 0.1-35.3-7-69.6-20.9-101.9z" p-id="8420" fill="#86909c"></path></svg>
-                                <div class="like-icon-after-contents-2">{{ this.replyLikes[index][index2] }}人点赞</div>
+                                <div class="like-icon-after-contents-2">{{ item2.reply_like_count }}人点赞</div>
                             </button>
                         </div>
 
@@ -319,12 +323,12 @@
 
                     <div class="write-replys-reply" v-if="this.isReplysOpen2[index][index2]">
                         <div class="reply-editor-container">
-                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.reply_author_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item2.replied_author_id"/>
+                            <WangEditor2 :isComment="false" :comment_id="item.comment_id" :replied_id="item2.reply_id" :author_id="this.userId" :post_id="this.post_id" :replied_author_id="item2.reply_author_id"/>
                         </div>
                     </div>
                 </div>
 
-                <div class="check-more-replys-reply-line">
+                <div v-if="this.isRepliesOpen[index]" class="check-more-replys-reply-line">
                     <div class="check-more-reply-font">查看更多评论：</div>
                     <div class="check-replys-reply-pagination">
                         <el-pagination :pager-count="6" layout="prev, pager, next" :total="this.repliesTotalPages[index] * 10" v-model:current-page="this.repliesCurrentPage[index]" />
@@ -428,6 +432,9 @@ export default {
             reply_a: [[3, 3, 3], [3, 3, 3]],
 
             all_comment_num: 0,
+            isRepliesOpen: [false, false, false],
+
+            repliesContainter: [{}, {}, {}],
         }
     },
     computed: {
@@ -444,23 +451,28 @@ export default {
             //console.log(showComments);
 
             // 更改楼中楼信息
+            
             for (let j = 0; j < showComments.length; j++) {
+                /*
                 const count = (showComments[j].replies.length % 3 === 0) ? 
                     showComments[j].replies.length / 3 : Math.ceil(showComments[j].replies.length / 3);
                 this.repliesTotalPages[j] = count;
+                */
                 this.repliesCurrentPage[j] = 1;
 
                 //点赞状态信息
                 this.isReplyLiked[j] = showComments[j].comment_isLike;
                 this.replyLikesCount[j] = showComments[j].comment_like_count;
 
+                /*
                 for (let k = 0; k < (showComments[j].replies.length >= 3 ? 3 : showComments[j].replies.length); k++) {
                     this.isReplyLiked2[j][k] = showComments[j].replies[k].reply_isLike;
                     this.replyLikes[j][k] = showComments[j].replies[k].reply_like_count;
                 }
                 console.log(this.isReplyLiked2);
+                */
             }
-
+            
             return showComments;
         },
         repliesArray() {
@@ -485,6 +497,7 @@ export default {
                 // }
 
                 let i = this.repliesCurrentPage[commentIndex];
+                console.log(replies);
                 showReplies = replies.slice((i - 1) * 3, i * 3);
                 for (let j = 0; j < showReplies.length; j++) {
                     this.isReplyLiked2[commentIndex][j] = showReplies[j].reply_isLike;
@@ -518,7 +531,7 @@ export default {
             this.tags = result.data.tags;
             this.images = result.data.images;
             this.resources = result.data.resources;
-            this.comments = result.data.comments;
+            //this.comments = result.data.comments;
             this.like_count = result.data.likeCount;
             this.collect_count = result.data.collectCount;
             this.comment_count = result.data.commentCount;
@@ -527,6 +540,7 @@ export default {
             this.all_comment_num = result.data.commentCount;
             console.log(result.data.comment_count);
 
+            /*
             const count = (result.data.comments.length % 3 === 0) ? 
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
             this.commentTotalPages = count;
@@ -547,6 +561,7 @@ export default {
                     this.replyLikes[j][k] = this.comments[j].replies[k].reply_like_count;
                 }
             }
+            */
             //console.log(this.repliesTotalPages);
             //console.log(this.commentTotalPages);
             //console.log(this.replyLikesCount);
@@ -780,6 +795,44 @@ export default {
         openComments() {
             //开关评论
             this.isCommentsOpen = !this.isCommentsOpen
+
+            //渲染评论
+            axios({
+                method: "GET",
+                url: "/api/posts/post/comments",
+                params: {
+                    post_id: this.post_id,
+                    comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                }
+            }).then((result) => {
+                console.log(result)
+                this.comments = result.data.comments;
+
+                const count = (result.data.comments.length % 3 === 0) ? 
+                    result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
+                this.commentTotalPages = count;
+            })
+        },
+        openReplies(i, cid) {
+            this.isRepliesOpen[i] = !this.isRepliesOpen[i];
+
+            //渲染回复
+            axios({
+                method: "GET",
+                url: "/api/posts/post/replies",
+                params: {
+                    comment_id: cid,
+                }
+            }).then((result) => {
+                console.log(result)
+                this.repliesContainter[i] = result.data.replies;
+
+                const count = (this.repliesContainter[i].length % 3 === 0) ? 
+                    this.repliesContainter[i].length / 3 : Math.ceil(this.repliesContainter[i].length / 3);
+                console.log(count);
+                this.repliesTotalPages[i] = count;
+                this.repliesCurrentPage[i] = 1;
+            })
         },
         openCommentEditor() {
             //开关评论编辑器
@@ -1373,7 +1426,7 @@ export default {
 .replys-reply-first-line-container {
     display: flex;
     justify-content: space-between;
-    margin-left: 130px;
+    margin-left: 100px;
     margin-right: 61px;
     margin-bottom: 15px;
 }
