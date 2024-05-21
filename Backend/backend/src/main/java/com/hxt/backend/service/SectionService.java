@@ -75,13 +75,15 @@ public class SectionService {
                 continue;
             }
             if (type != 0) {
-                if (section.getType() == null) {
-                    continue;
-                }
-                if (type == 1 && !section.getType().equals("一般专业课")) {
-                    continue;
-                }
-                if (type == 2 && !section.getType().equals("核心专业课")) {
+                if (section.getType() == null
+                        || (type == 1 && !section.getType().equals("一般专业课"))
+                        || (type == 2 && !section.getType().equals("核心专业课"))
+                        || (type == 3 && !section.getType().equals("一般通识课"))
+                        || (type == 4 && !section.getType().equals("核心通识课"))
+                        || (type == 5 && !section.getType().equals("基础类课程"))
+                        || (type == 6 && !section.getType().equals("体育课"))
+                        || (type == 7 && !section.getType().equals("其它课程"))
+                        || (type == 8 && !section.getType().equals("板块通知"))) {
                     continue;
                 }
             }

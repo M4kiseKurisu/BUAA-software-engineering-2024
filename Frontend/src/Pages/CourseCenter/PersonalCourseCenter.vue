@@ -22,7 +22,7 @@
                     <div class="avatar-container-120">
                         <el-avatar shape="square" :size="120" :src="this.avatarPicture" />
                     </div>
-                    
+
 
                     <div class="left-first-row-right-container">
                         <div class="personal-course-username">{{ this.username }}</div>
@@ -157,7 +157,7 @@ export default {
             ],
             sortOptions2: [
                 {
-                    value: '0',
+                    value: '',
                     label: '所有课程',
                 },
                 {
@@ -167,7 +167,31 @@ export default {
                 {
                     value: '2',
                     label: '核心专业课',
-                }
+                },
+                {
+                    value: '3',
+                    label: '一般通识课',
+                },
+                {
+                    value: '4',
+                    label: '核心通识课',
+                },
+                {
+                    value: '5',
+                    label: '基础类课程',
+                },
+                {
+                    value: '6',
+                    label: '体育课',
+                },
+                {
+                    value: '7',
+                    label: '其它课程',
+                },
+                {
+                    value: '8',
+                    label: '版块通知',
+                },
             ],
             sortOptions3: [
                 {
@@ -240,6 +264,25 @@ export default {
     },
     created() {
         this.currentPage = 1;
+
+        // 获取所有学院用于选择
+        axios({
+            method: "GET",
+            url: "/api/section/academy",
+        }).then((result) => {
+            console.log(result.data)
+            var list = new Array();
+            list[0] = {value: "", label: "全部院系"}
+            var count = 1;
+            for (var i = 0; i < result.data.academy.length; i++) {
+                var string = result.data.academy[i];
+                if (string != "") {
+                    list[count++] = {value: result.data.academy[i], label: result.data.academy[i]};
+                }
+            }
+            console.log(list)
+            this.sortOptions3 = list;
+        })
 
         // 默认获取热门板块
         axios({
