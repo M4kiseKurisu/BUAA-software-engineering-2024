@@ -369,19 +369,19 @@ export default {
             ReplyTextarea: "",  //回复内容监听
             sortOptions: [  //评论排序方式
                 {
-                    value: '0',
+                    value: 0,
                     label: '时间正序',
                 },
                 {
-                    value: '1',
+                    value: 1,
                     label: '热度排序',
                 },
                 {
-                    value: '2',
+                    value: 2,
                     label: '时间倒序',
                 }
             ],
-            sortValue: "",
+            sortValue: 1,
             ReplysReplyTextarea: "",  //回复回复内容监听
             post_id: 0,
             title: "",
@@ -844,7 +844,7 @@ export default {
             console.log(this.sortValue);
             axios({
                 method: "GET",
-                url: "/api/posts/post",
+                url: "/api/posts/post/comments",
                 params: {
                     post_id: this.post_id,
                     comment_sort: this.sortValue,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）

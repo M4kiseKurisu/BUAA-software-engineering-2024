@@ -164,6 +164,25 @@ export default {
             console.log(this.detail_post_id);
         },
         test(file, fileList) {
+            //先检测是不是图片
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExtensions.includes(fileExtension)) {
+                this.$message.error('请上传 JPG、JPEG、PNG、GIF 或 BMP 格式的图片文件');
+
+                // 从 fileList 中移除非图片文件
+                this.image_list = fileList.filter(item => {
+                    const itemExtension = item.name.split('.').pop().toLowerCase();
+                    return allowedExtensions.includes(itemExtension);
+                });
+
+                return false;
+            }
+
+            // 将图片文件添加到 image_list
+            this.image_list.push(file);
+
             //console.log(file.raw instanceof Blob);
             console.log(file.raw);
             const newfile = file.raw;
