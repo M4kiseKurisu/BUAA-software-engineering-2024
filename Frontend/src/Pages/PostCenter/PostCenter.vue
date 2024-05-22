@@ -141,8 +141,13 @@ export default {
     computed: {
         selectPostList() {
             var begin, end;
-            begin = this.currentPage * 5 - 5;
-            end = this.currentPage * 5;
+            if (this.searchWordNow == "") {
+                begin = 0;
+                end = 5;
+            } else {
+                begin = this.currentPage * 5 - 5;
+                end = this.currentPage * 5;
+            }
             if (end > this.total) {
                 end = this.total;
             }
@@ -173,8 +178,10 @@ export default {
             courseType: '',
             kindSelect: 3,
             searchWord: "",
+            searchWordNow: "",
             total: 20,
             currentPage: 1,
+            beforePage: 1,
             updateTime: "2077.7.7.77",
             sectionId: 1,
             postList: "",
@@ -206,7 +213,9 @@ export default {
     watch:{
         sortKindStr(newValue,oldValue){
             console.log(newValue);
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         }
     },
     methods: {
@@ -215,18 +224,27 @@ export default {
         },
         selectOne() {
             this.kindSelect = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         selectTwo() {
             this.kindSelect = 2;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         selectThree() {
             this.kindSelect = 3;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
+            if (this.searchWordNow == "") {
+                this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
+            }
         },
         toPost() {
             this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId});
@@ -241,20 +259,34 @@ export default {
             })
         },
         searchPost(){
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.searchWordNow = this.searchWord
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
         },
-        getPostList(sort,post_type,tag_name,keyword) {
+        getPostList(sort,post_type,tag_name,page,keyword) {
             //console.log(keyword);
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name,keyword:keyword},
+                params: { section_id: this.sectionId, sort: sort, post_type:post_type, tag_name:tag_name,page:page, keyword:keyword},
             }).then((result) => {
-                //console.log(result);
+                console.log(result);
                 this.postList = result.data.posts;
-                this.total = result.data.posts.length;
+                if (this.searchWord != "") {
+                    this.total = result.data.posts.length;
+                }
                 //console.log(this.postList[0].post_id);
             })
+            if (this.searchWord == "") {
+                axios({
+                    method: "GET",
+                    url: "api/section/pages",
+                    params: { section_id: this.sectionId, post_type:post_type, tag_name:tag_name},
+                }).then((result) => {
+                    this.total = result.data.pages * 5;
+                })
+            }
         },
         getSectionInfomation() {
             axios({
@@ -324,7 +356,7 @@ export default {
         this.sectionId = this.$route.params.sectionId;
         //console.log(this.$route.params.sectionId);
         //console.log(this.sortIndex);
-        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         this.getSectionInfomation();
         this.getPopAuthor();
         this.getAuthority();

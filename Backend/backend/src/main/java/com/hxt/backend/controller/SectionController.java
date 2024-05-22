@@ -101,13 +101,32 @@ public class SectionController {
             @RequestParam(name = "section_id", defaultValue = "") String sectionId,
             @RequestParam(name = "sort", defaultValue = "0") String sort,
             @RequestParam(name = "post_type", defaultValue = "0") String postType,
-            @RequestParam(name = "tag_name", defaultValue = "") String tagName
+            @RequestParam(name = "tag_name", defaultValue = "") String tagName,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword
     ) {
         if (sectionId.isEmpty()) {
             return new PostListResponse(false,null);
         }
-        ArrayList<PostElement> list = sectionService.getSectionPosts(Integer.parseInt(sectionId),sort,postType,tagName);
-        return new PostListResponse(true,list);
+        ArrayList<PostElement> list;
+        if (keyword.isEmpty()) {
+            list = sectionService.getSectionPosts(Integer.parseInt(sectionId), sort, postType, tagName, page);
+        } else {
+            list = sectionService.searchSectionPosts(Integer.parseInt(sectionId), sort, postType, tagName, keyword);
+        }
+        return new PostListResponse(true, list);
+    }
+
+    @GetMapping("/section/pages")
+    public SectionPagesResponse getSectionPages(
+            @RequestParam(name = "section_id", defaultValue = "") String sectionId,
+            @RequestParam(name = "post_type", defaultValue = "0") String postType,
+            @RequestParam(name = "tag_name", defaultValue = "") String tagName
+    ) {
+        if (sectionId.isEmpty()) {
+            return new SectionPagesResponse(null);
+        }
+        return new SectionPagesResponse(sectionService.getPageCount(Integer.parseInt(sectionId), postType, tagName));
     }
 
     @GetMapping("/section/info")

@@ -1,7 +1,9 @@
 package com.hxt.backend;
 
+import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.mapper.AdminMapper;
 import com.hxt.backend.mapper.MessageMapper;
+import com.hxt.backend.mapper.PostMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 //  定时任务
 @Configuration
@@ -21,6 +24,9 @@ public class ScheduleTaskConfig {
 
     @Resource
     private MessageMapper messageMapper;
+
+    @Resource
+    private PostMapper postMapper;
 
     @Scheduled(cron = "0 0 0/8 * * *")   //  每天0/8/16时
     private void clearLog() {
@@ -43,6 +49,22 @@ public class ScheduleTaskConfig {
 
     @Scheduled(cron = "0 0 4 * * *")   //  每天4时
     private void setPostReplyTime() {
-        log.info("同步帖子发帖时间...");
+        log.info("同步帖子最新回复时间...");
+        List<Post> posts = postMapper.getAllPost();
+        for (Post post : posts) {
+            Timestamp t1 = postMapper.getLastCommentTime(post.getPost_id());
+            if (t1 != null) {
+                Timestamp t2 = postMapper.getLastReplyTime(post.getPost_id());
+                Timestamp t;
+                if (t2 != null) {
+                    t = t1.after(t2)? t1 : t2;
+                } else {
+                    t = t1;
+                }
+                postMapper.resetReplyTime(post.getPost_id(), t);
+            } else {
+                postMapper.resetReplyTime(post.getPost_id(), post.getPostTime());
+            }
+        }
     }
 }

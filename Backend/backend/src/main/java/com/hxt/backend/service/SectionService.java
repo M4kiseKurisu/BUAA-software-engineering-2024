@@ -125,13 +125,101 @@ public class SectionService {
         return state != 0;
     }
 
-    public ArrayList<PostElement> getSectionPosts(Integer sectionId, String sort, String post_type, String tagName) {
-        List<Post> posts = sectionMapper.selectPostBySectionId(sectionId);
+    public ArrayList<PostElement> getSectionPosts
+            (Integer sectionId, String sort, String post_type, String tagName, Integer page) {
+        Integer offset = (page - 1) * 5;
+        List<Post> posts = null;
         ArrayList<PostElement> list = new ArrayList<>();
-
-        if (!post_type.equals("2")) {
-            posts = posts.stream().filter(e -> e.getCategory().equals(Integer.parseInt(post_type))).collect(Collectors.toList());
+        if (post_type.equals("2")) {
+            switch (sort) {
+                case "0":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetBySendTime(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetBySendTime(sectionId, tagName, offset);
+                    break;
+                case "1":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByFavorite(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByFavorite(sectionId, tagName, offset);
+                    break;
+                case "2":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByLike(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByLike(sectionId, tagName, offset);
+                    break;
+                case "3":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByReplyTime(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByReplyTime(sectionId, tagName, offset);
+                    break;
+            }
+        } else {
+            switch (sort) {
+                case "0":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "1":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "2":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByLike(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByLike(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "3":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByReplyTime(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByReplyTime(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+            }
         }
+        if (posts == null) {
+            return list;
+        }
+        for (Post post: posts) {
+            PostElement element = new PostElement();
+            element.setPost_id(post.getPost_id());
+            element.setAuthor_id(post.getAuthor_id());
+            element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
+            element.setPost_title(post.getTitle());
+            element.setPost_content(post.getContent());
+            String[] time;
+            if (sort.equals("3")) {
+                time = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
+            } else {
+                time = post.getPostTime().toString().split(":");
+            }
+            String postTime = time[0] + ":" + time[1];
+            element.setPost_time(postTime);
+            element.setPost_likes(post.getLike_count());
+            element.setPost_favorites(post.getCollect_count());
+            element.setPost_intro(post.getIntro());
+            List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
+            element.setTag_list(tags);
+            element.setPost_photo(post.getCover());
+
+            list.add(element);
+        }
+        return list;
+    }
+
+    public Integer getPageCount(Integer sectionId, String post_type, String tagName) {
+        Integer postCount = 0;
+        if (post_type.equals("2")) {
+            postCount = (tagName.isEmpty())? postMapper.getPostCountBySection(sectionId)
+                    : postMapper.getPostCountByTagAndSection(sectionId, tagName);
+        } else {
+            postCount = (tagName.isEmpty())? postMapper.getPostCountByCategoryAndSection(sectionId, Integer.parseInt(post_type))
+                    : postMapper.getPostCountByCategoryTagAndSection(sectionId, Integer.parseInt(post_type), tagName);
+        }
+        return (postCount - 1) / 5 + 1;
+    }
+
+    public ArrayList<PostElement> searchSectionPosts(Integer sectionId, String sort, String post_type,
+                                                     String tagName, String keyword) {
+        List<Post> posts;
+        if (!post_type.equals("2")) {
+            posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(sectionId, keyword, tagName, Integer.parseInt(post_type));
+        } else {
+            posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(sectionId, keyword, tagName);
+        }
+        ArrayList<PostElement> list = new ArrayList<>();
 
         for (Post post: posts) {
             PostElement element = new PostElement();
@@ -142,19 +230,7 @@ public class SectionService {
             element.setPost_content(post.getContent());
 
             if (sort.equals("3")) {
-                Timestamp t1 = postMapper.getLastCommentTime(post.getPost_id());
-                if (t1 != null) {
-                    Timestamp t2 = postMapper.getLastReplyTime(post.getPost_id());
-                    Timestamp t;
-                    if (t2 != null) {
-                        t = t1.after(t2)? t1 : t2;
-                    } else {
-                        t = t1;
-                    }
-                    element.setPost_reply_time(t);
-                } else {
-                    element.setPost_reply_time(post.getPostTime());
-                }
+                element.setPost_reply_time(postMapper.getReplyTime(post.getPost_id()));
                 String[] time = element.getPost_reply_time().toString().split(":");
                 String postTime = time[0] + ":" + time[1];
                 element.setPost_time(postTime);
@@ -169,7 +245,7 @@ public class SectionService {
             List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
             element.setTag_list(tags);
             element.setPost_photo(post.getCover());
-            
+
             /*
             List<Integer> imageId = postMapper.getImageIdByPost(element.getPost_id());
             for (Integer id: imageId) {
@@ -178,7 +254,7 @@ public class SectionService {
                     break;
                 }
             }
-            
+
              */
 
             list.add(element);
