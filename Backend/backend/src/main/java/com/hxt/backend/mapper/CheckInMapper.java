@@ -3,7 +3,6 @@ package com.hxt.backend.mapper;
 import com.hxt.backend.entity.checkIn.CheckIn;
 import com.hxt.backend.entity.checkIn.CheckInComment;
 import com.hxt.backend.entity.checkIn.CheckInLike;
-import com.hxt.backend.entity.progression.School;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -50,15 +49,24 @@ public interface CheckInMapper {
     @Select("SELECT * from checkin_comment WHERE check_in_id = #{checkInId}")
     List<CheckInComment> getCommentByCheckInId(Integer checkInId);
     
-    //获取所有打卡（时间倒序）
+    //获取所有打卡（时间倒序、分页查找）
     @Select("select * from check_in where authority = 0 or authority is null or " +
             "(author_id = any (select follow_id from user_follow where user_id = #{user}) and authority = 1) " +
-            "or author_id = #{user} order by time DESC")
-    List<CheckIn> getAllCheckIn(Integer user);
+            "or author_id = #{user} order by time DESC LIMIT 6 OFFSET #{offset}")
+    List<CheckIn> getCheckInWithOffset(Integer user, Integer offset);
 
     @Select("select * from check_in where (author_id = any (select follow_id from user_follow where user_id = #{user}) " +
+            ") and authority != 2 or author_id = #{user} order by time desc LIMIT 6 OFFSET #{offset}")
+    List<CheckIn> getFollowedCheckInWithOffset(Integer user, Integer offset);
+
+    @Select("select COUNT(*) from check_in where authority = 0 or authority is null or " +
+            "(author_id = any (select follow_id from user_follow where user_id = #{user}) and authority = 1) " +
+            "or author_id = #{user}")
+    Integer getSeeCheckInCount(Integer user);
+
+    @Select("select COUNT(*) from check_in where (author_id = any (select follow_id from user_follow where user_id = #{user}) " +
             ") and authority != 2 or author_id = #{user} order by time desc")
-    List<CheckIn> getFollowedCheckIn(Integer user);
+    Integer getFollowedCheckInCount(Integer user);
     
     //查询是否点赞打卡
     @Select("select * from checkin_like " +

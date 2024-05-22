@@ -136,11 +136,11 @@ public class SectionService {
                     posts = tagName.isEmpty()? postMapper.getPostWithOffsetBySendTime(sectionId, offset)
                             : postMapper.getPostWithTagAndOffsetBySendTime(sectionId, tagName, offset);
                     break;
-                case "1":
+                case "2":
                     posts = tagName.isEmpty()? postMapper.getPostWithOffsetByFavorite(sectionId, offset)
                             : postMapper.getPostWithTagAndOffsetByFavorite(sectionId, tagName, offset);
                     break;
-                case "2":
+                case "1":
                     posts = tagName.isEmpty()? postMapper.getPostWithOffsetByLike(sectionId, offset)
                             : postMapper.getPostWithTagAndOffsetByLike(sectionId, tagName, offset);
                     break;
@@ -155,11 +155,11 @@ public class SectionService {
                     posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), offset)
                             : postMapper.getPostWithCategoryTagAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), tagName, offset);
                     break;
-                case "1":
+                case "2":
                     posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), offset)
                             : postMapper.getPostWithCategoryTagAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), tagName, offset);
                     break;
-                case "2":
+                case "1":
                     posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByLike(sectionId, Integer.parseInt(post_type), offset)
                             : postMapper.getPostWithCategoryTagAndOffsetByLike(sectionId, Integer.parseInt(post_type), tagName, offset);
                     break;
@@ -179,14 +179,11 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
-            String[] time;
-            if (sort.equals("3")) {
-                time = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
-            } else {
-                time = post.getPostTime().toString().split(":");
-            }
-            String postTime = time[0] + ":" + time[1];
-            element.setPost_time(postTime);
+            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
+            String[] time_send = post.getPostTime().toString().split(":");
+            String postTime = time_send[0] + ":" + time_send[1];
+            String replyTime = time_reply[0] + ":" + time_reply[1];
+            element.setPost_time("发布于 " + postTime + "   最后回复于 " + replyTime);
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());
@@ -228,17 +225,14 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
+            element.setPost_reply_time(postMapper.getReplyTime(post.getPost_id()));
 
-            if (sort.equals("3")) {
-                element.setPost_reply_time(postMapper.getReplyTime(post.getPost_id()));
-                String[] time = element.getPost_reply_time().toString().split(":");
-                String postTime = time[0] + ":" + time[1];
-                element.setPost_time(postTime);
-            } else {
-                String[] time = post.getPostTime().toString().split(":");
-                String postTime = time[0] + ":" + time[1];
-                element.setPost_time(postTime);
-            }
+            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
+            String[] time_send = post.getPostTime().toString().split(":");
+            String postTime = time_send[0] + ":" + time_send[1];
+            String replyTime = time_reply[0] + ":" + time_reply[1];
+            element.setPost_time("发布于 " + postTime + " / 最后回复于 " + replyTime);
+
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());

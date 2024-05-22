@@ -1,4 +1,4 @@
-package com.hxt.backend.response.sectionResponse;
+package com.hxt.backend.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class SectionPagesResponse {
+public class PagesCountResponse {
     private Integer pages;
 }

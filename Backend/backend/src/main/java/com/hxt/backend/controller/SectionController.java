@@ -2,14 +2,13 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.SectionAuthorityResponse;
+import com.hxt.backend.response.PagesCountResponse;
 import com.hxt.backend.response.sectionResponse.*;
 import com.hxt.backend.service.AdminService;
-import com.hxt.backend.service.ReviewService;
 import com.hxt.backend.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 @RestController
@@ -118,15 +117,15 @@ public class SectionController {
     }
 
     @GetMapping("/section/pages")
-    public SectionPagesResponse getSectionPages(
+    public PagesCountResponse getSectionPages(
             @RequestParam(name = "section_id", defaultValue = "") String sectionId,
             @RequestParam(name = "post_type", defaultValue = "0") String postType,
             @RequestParam(name = "tag_name", defaultValue = "") String tagName
     ) {
         if (sectionId.isEmpty()) {
-            return new SectionPagesResponse(null);
+            return new PagesCountResponse(null);
         }
-        return new SectionPagesResponse(sectionService.getPageCount(Integer.parseInt(sectionId), postType, tagName));
+        return new PagesCountResponse(sectionService.getPageCount(Integer.parseInt(sectionId), postType, tagName));
     }
 
     @GetMapping("/section/info")
