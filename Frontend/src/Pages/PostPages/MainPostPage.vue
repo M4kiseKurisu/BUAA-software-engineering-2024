@@ -16,7 +16,7 @@
 
                     <div style="margin-left: 10px; margin-top: 4px;">
                         <Report  :type="1" :id="this.post_id"/>
-                    </div>       
+                    </div>
                 </div>
 
                 <!-- 帖子头部右侧 -->
@@ -65,7 +65,7 @@
                     <button class="avatar-button" @click="toInformationShow(this.author_id)">
                         <el-avatar shape="square" :size="60" :src="this.author_head" />
                     </button>
-                    
+
 
                     <div class="post-writer-information">
                         <div class="flex-layout">
@@ -181,7 +181,7 @@
                         <button class="avatar-button" @click="toInformationShow(item.comment_author_id)">
                             <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
                         </button>
-                        
+
                         <div class="replyer-username">{{ item.comment_author_name }}</div>
 
                         <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="auth_final_check(item.comment_author_id) === 0">
@@ -202,7 +202,7 @@
 
                         <div style="margin-left: 5px; margin-top: 12px;">
                             <Report  :type="2" :id="item.comment_id"/>
-                        </div>  
+                        </div>
                     </div>
 
                     <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -264,7 +264,7 @@
                                     <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
                                 </div>
                             </button>
-                            
+
                             <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
                             <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="authorityCheck(item2.reply_author_id) === 0">
@@ -289,7 +289,7 @@
 
                             <div style="margin-left: 14px; margin-top: 12px;">
                                 <Report  :type="3" :id="item2.reply_id"/>
-                            </div>  
+                            </div>
                         </div>
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -381,7 +381,7 @@ export default {
                     label: '时间倒序',
                 }
             ],
-            sortValue: 1,
+            sortValue: 0,
             ReplysReplyTextarea: "",  //回复回复内容监听
             post_id: 0,
             title: "",
@@ -451,10 +451,10 @@ export default {
             //console.log(showComments);
 
             // 更改楼中楼信息
-            
+
             for (let j = 0; j < showComments.length; j++) {
                 /*
-                const count = (showComments[j].replies.length % 3 === 0) ? 
+                const count = (showComments[j].replies.length % 3 === 0) ?
                     showComments[j].replies.length / 3 : Math.ceil(showComments[j].replies.length / 3);
                 this.repliesTotalPages[j] = count;
                 */
@@ -472,7 +472,7 @@ export default {
                 console.log(this.isReplyLiked2);
                 */
             }
-            
+
             return showComments;
         },
         repliesArray() {
@@ -517,7 +517,7 @@ export default {
             url: "/api/posts/post",
             params: {
                 post_id: this.post_id,
-                comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                comment_sort: 0,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
                 user_id: JSON.parse(sessionStorage.getItem("id")),
             }
         }).then((result) => {
@@ -541,12 +541,12 @@ export default {
             console.log(result.data.comment_count);
 
             /*
-            const count = (result.data.comments.length % 3 === 0) ? 
+            const count = (result.data.comments.length % 3 === 0) ?
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
             this.commentTotalPages = count;
             // 更改楼中楼信息
             for (let j = 0; j < (this.comments.length >= 3 ? 3 : this.comments.length); j++) {
-                const count = (this.comments[j].replies.length % 3 === 0) ? 
+                const count = (this.comments[j].replies.length % 3 === 0) ?
                     this.comments[j].replies.length / 3 : Math.ceil(this.comments[j].replies.length / 3);
                 this.repliesTotalPages[j] = count;
                 this.repliesCurrentPage[j] = 1;
@@ -802,13 +802,13 @@ export default {
                 url: "/api/posts/post/comments",
                 params: {
                     post_id: this.post_id,
-                    comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                    comment_sort: 0,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
                 }
             }).then((result) => {
                 console.log(result)
                 this.comments = result.data.comments;
 
-                const count = (result.data.comments.length % 3 === 0) ? 
+                const count = (result.data.comments.length % 3 === 0) ?
                     result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
                 this.commentTotalPages = count;
             })
@@ -827,7 +827,7 @@ export default {
                 console.log(result)
                 this.repliesContainter[i] = result.data.replies;
 
-                const count = (this.repliesContainter[i].length % 3 === 0) ? 
+                const count = (this.repliesContainter[i].length % 3 === 0) ?
                     this.repliesContainter[i].length / 3 : Math.ceil(this.repliesContainter[i].length / 3);
                 console.log(count);
                 this.repliesTotalPages[i] = count;
@@ -852,7 +852,7 @@ export default {
             }).then((result) => {
                 this.comments = result.data.comments;
 
-                const count = (result.data.comments.length % 3 === 0) ? 
+                const count = (result.data.comments.length % 3 === 0) ?
                     result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
                 this.commentTotalPages = count;
 
