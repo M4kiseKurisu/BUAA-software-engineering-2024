@@ -60,6 +60,10 @@
             <svg t="1714569453159" style="height: 19px; width: 19px;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3570" width="200" height="200"><path d="M959.04 192.256h-35.84V958.72a64 64 0 0 1-63.936 63.872H160.64a63.872 63.872 0 0 1-63.872-63.872V192.256h-31.872a31.872 31.872 0 1 1 0-63.872h223.552V32.64c0-17.664 14.272-31.936 31.936-31.936h383.168c17.664 0 32 14.272 32 32v95.68h223.488a32 32 0 0 1 0 64z m-287.424-127.744h-319.36v63.872h319.36v-63.872z m191.68 191.616v-63.872H160.64v734.592a32 32 0 0 0 32 31.936h638.72a32 32 0 0 0 31.936-32V256.192z m-191.68 143.744h63.936v407.168h-63.936V399.872zM480.064 336H544v470.976h-63.872v-471.04z m-191.616 63.872h63.872v407.168h-63.872V399.872z" fill="#86909c" p-id="3571"></path></svg>
             <div style="height: 22px; margin-left: 6px; color: #86909c; font-size: 14px;">删除</div>
         </button>
+
+        <div style="font-size: 14px; color: #86909c; margin-left: 2%; height: 22px">
+            {{ this.time }}
+        </div>
     </div>
 
     <div style="margin-top: 10px; margin-left: 2%; margin-right: 3%; background-color: #f7f8fa; 
@@ -151,6 +155,7 @@ export default {
             is_favor: false,
             open_input: false,
             write_comment: "",
+            time: "",
         }
     },
     props: ["social_post_id"],  //帖子id
@@ -173,6 +178,7 @@ export default {
             this.content = result.data.poster_content;
             this.favor_list = result.data.favors_list;
             this.comment_list = result.data.comments_list;
+            this.time = result.data.poster_time;
             console.log(this.favor_list);
             this.getFavorInformation(this.social_post_id, this.poster_id);
         })
