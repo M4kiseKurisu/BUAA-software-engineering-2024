@@ -57,10 +57,10 @@
         </div>
         <div style="width: 100%;height: 60px;display: flex;align-items: center;">
             <span style="margin-left: 20px;font-size: 1.5em;" v-if="applyFeedBack">
-                您加入学习团体<span style="font-weight: bold;">{{ groupName }}</span>的申请已通过
+                您加入学习团体<span style="font-weight: bold;color: black;">{{ groupName }}</span>的申请已通过
             </span>
             <span style="margin-left: 20px;font-size: 1.5em;" v-if="!applyFeedBack">
-                您加入学习团体<span style="font-weight: bold;">{{ groupName }}</span>的申请未通过
+                您加入学习团体<span style="font-weight: bold;color: black;">{{ groupName }}</span>的申请未通过
             </span>
         </div>
     </div>

@@ -87,7 +87,7 @@
                 <el-scrollbar v-if="this.chatKindChose == 2" style="height: 100%;">
                     <div style="width: 100%; " v-for="item in this.groupItemList" class="hover-div">
                         <!-- <GroupItem v-for = "item in this.groupItemList" :groupInfo = "item" @getGroupId="getGroupId"></GroupItem> -->
-                        <div style="width: 90%; margin-left: 5%; padding-top: 11px; padding-bottom: 11px;">
+                        <div style="width: 90%; margin-left: 5%; padding-top: 5px; padding-bottom: 5px;">
                             <GroupItem :groupInfo="item"></GroupItem>
                         </div>
                     </div>
