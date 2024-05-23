@@ -20,15 +20,16 @@ public class RecommendController {
     
     @RequestMapping(value = "/posts/recommend")
     public SearchResponse recommendPost(
-            @CookieValue(name = "user_id", defaultValue = "") String userId
-    ) throws IOException {
+            @CookieValue(name = "user_id", defaultValue = "") String userId,
+            @RequestParam(name = "section_id", required = false) Integer sectionId
+    ) {
         
         if (userId.isEmpty()) {
             return new SearchResponse(false,"用户未登录",null);
         }
         
         //推荐帖子
-        List<PostIntroResponse> list = recommendService.recommendPostsByContent(Integer.parseInt(userId));
+        List<PostIntroResponse> list = recommendService.recommendPostsByContent(Integer.parseInt(userId), sectionId);
         
         if (list.isEmpty()) {
             return new SearchResponse(true,"未找到未浏览帖子",list);
