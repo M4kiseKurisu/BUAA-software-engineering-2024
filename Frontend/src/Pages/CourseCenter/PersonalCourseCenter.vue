@@ -4,8 +4,39 @@
         <!-- 此处为面包屑组件 -->
         <div class="breadcrumb"><BreadcrumbLabel :routeNames="route" /></div>
         <div class="title-button">
-          <div class="personal-course-title">板块广场</div>
-          <button class="submit-button" @click="goToCreateCourseSection">创建课程板块</button>
+            <div class="personal-course-title">板块广场</div>
+            <div style="display: flex;">
+                <button class="submit-button" @click="goToCreateCourseSection">创建课程板块</button>
+                <button class="submit-button" style="margin-right: 120px;" @click="teacher_dialog = true">申请教师权限</button>
+
+                <el-dialog v-model="teacher_dialog" title="申请教师权限" width="500">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">填写申请信息</div>
+                    <el-input
+                        v-model="apply_content"
+                        :autosize="{ minRows: 2, maxRows: 4 }"
+                        type="textarea"
+                        placeholder="请输入申请信息"
+                    />
+
+                    <div style="margin-top: 12px; color: #86909c">注：只能上传一个证明文件，已经选择后再次选择文件会覆盖之前的文件</div>
+                    <div class="flex-layout" style="margin-top: 12px;">
+                        <el-upload
+                            :limit="1"
+                            :auto-upload="false"
+                            v-model:file-list="this.file"
+                        >
+                            <template #trigger>
+                                <el-button type="primary" plain >选择文件</el-button>
+                            </template>
+                            <el-button type="primary" @click="submitUpload" style="margin-left: 16px;"> 
+                                上传文件  
+                            </el-button>
+                        </el-upload>
+                    </div>
+                    <el-button style="margin-top: 4px;" type="primary" @click="sendApply">发送申请</el-button>
+                    <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ content_warning }}</div>
+                </el-dialog>
+            </div>
         </div>
         <!-- 此处为界面标题 -->
 
@@ -211,6 +242,12 @@ export default {
             totalPages: 1,  // 热门板块页码数
             currentPage: 1,  //当前页码
             getSections: [],  // 当前获取课程
+            teacher_dialog: false,
+            apply_content: "",
+            file: [],
+            url: "",
+            is_loading: false,
+            content_warning: "",
         }
     },
     methods: {
@@ -245,6 +282,77 @@ export default {
         },
         changePage(val) {
             this.currentPage = val;
+        },
+        async submitUpload() {
+            try {
+                console.log(this.file);
+                const loadingMessage = this.$message({
+                    showClose: true,
+                    message: '正在上传资源',
+                    type: 'info',
+                    duration: 0, // 设置持续时间为 0，表示不自动关闭
+                });
+                this.is_loading = true;
+
+                const file_upload = this.file[0].raw;
+                const formData = new FormData();
+                formData.append('file', file_upload);
+                formData.append('name', "");
+                formData.append('type', "");
+                formData.append('publisher_id', JSON.parse(sessionStorage.getItem("id")))
+
+                let response = await axios.post("/api/posts/write/uploadResource", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                console.log(response.data);
+                this.url = response.data.url;
+                console.log(this.url);
+
+                loadingMessage.close();
+                this.is_loading = false;
+                this.$message({
+                    showClose: true,
+                    message: '资源上传成功！',
+                    type: 'success',
+                });
+            } catch (error) {
+                console.log("error")
+            }
+        },
+        sendApply() {
+            if (this.is_loading) {
+                this.content_warning = "请等待资源上传完成后再发布帖子"
+                return;
+            } else if (this.url.length == 0 || this.apply_content.length == 0) {
+                this.content_warning = "不能上传空申请"
+                return;
+            } else if (this.apply_content.length > 600) {
+                this.content_warning = "申请文字过长"
+                return;
+            }
+
+            let content = {
+                detail: this.apply_content,
+                file: this.url,
+            }
+            console.log(content);
+            axios({
+                method: "POST",
+                url: "/api/user/apply/global",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if(result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '权限申请信息上传成功！',
+                        type: 'success',
+                    });
+                }
+            })
         }
     },
     computed: {
@@ -363,7 +471,7 @@ export default {
   transition: background-color 0.3s;
   width: 100px;
   height: 35px;
-  margin-right: 200px;
+  margin-right: 30px;
   margin-top: 32px;
   justify-content: center;
   align-items: center;
@@ -534,5 +642,10 @@ export default {
 .avatar-container-120 {
     height: 120px;
     width: 120px;
+}
+
+.warning-css {
+    color: red;
+    font-size: 12px;
 }
 </style>
