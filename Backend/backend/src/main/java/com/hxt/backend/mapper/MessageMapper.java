@@ -136,13 +136,16 @@ public interface MessageMapper {
     @Select("select * from reply_notice where user_id = #{userId};")
     List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
 
-    //  定时任务用，定期删除旧的未读消息
-    @Delete("DELETE FROM user_system_notice WHERE TIMESTAMPDIFF(DAY, pull_time, NOW()) > 15 AND is_read = 1")   //  15天
+    //  定时任务用
+    @Delete("DELETE FROM user_system_notice WHERE TIMESTAMPDIFF(DAY, pull_time, NOW()) > 10 AND is_read = 1")   //  15天
     int deleteOldReadMessage();
 
     @Delete("delete from manager_system_notice where system_notice_id not in " +
             "(select system_notice_id from user_system_notice group by system_notice_id )")
     int deleteNoRefSystemNotice();
+
+    @Delete("DELETE FROM reply_notice WHERE TIMESTAMPDIFF(DAY, reply_time, NOW()) > 10")
+    int deleteOldReplyNotice();
 
     // 新的通知表
 

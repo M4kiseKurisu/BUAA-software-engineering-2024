@@ -98,9 +98,11 @@ public class PostService {
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        messageMapper.sendSystemNoticeToUser("删帖通知",
-                String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
-                p.getAuthor_id());
+        if (!(p.getAuthor_id().equals(userId))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
+                    p.getAuthor_id());
+        }
         for (Integer id : favoriteIds) {
             messageMapper.sendSystemNoticeToUser("删帖通知",
                     String.format("您收藏的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)), id);
@@ -447,6 +449,14 @@ public class PostService {
         postMapper.deleteCommentResource(commentId);
         postMapper.deleteCommentNotice(commentId);
 
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(c.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", c.getContent(), formatter.format(date)),
+                    c.getAuthor_id());
+        }
+
         List<Integer> reports = adminMapper.getSameTargetReports(1, commentId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
@@ -553,6 +563,13 @@ public class PostService {
             adminMapper.handleReport(reportId, 2);
         }
         Integer i = postMapper.deleteReply(replyId);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(r.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", r.getContent(), formatter.format(date)),
+                    r.getAuthor_id());
+        }
         if (!(flag && userId == 0)) {
             Timestamp t1 = postMapper.getLastCommentTime(p.getPost_id());
             Timestamp t2 = postMapper.getLastReplyTime(p.getPost_id());

@@ -44,7 +44,6 @@
         </div>
         <div class="noticeList" v-if="noticeChoice == 2">
             <ReplyNotice v-for="item in selectReplyMessage" :replyInformation="item" :key="item.reply_id"></ReplyNotice>
-            <ReplyNotice></ReplyNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 3">
             <JudgeNotice v-for = "item in selectJudgeMessage" :noticeInfo = "item"></JudgeNotice>

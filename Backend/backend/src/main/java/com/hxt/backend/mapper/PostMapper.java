@@ -32,9 +32,9 @@ public interface PostMapper {
     //插入新帖子
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, intro, content, category, section_id, author_id, like_count, " +
-            "collect_count, comment_count, view_count, time, cover)" +
+            "collect_count, comment_count, view_count, time, cover, reply_time)" +
             " VALUES (#{title}, #{intro}, #{content}, #{category}, #{section_id}, #{author_id}, #{like_count}, " +
-            "#{collect_count}, #{comment_count}, #{view_count}, #{postTime}, #{cover})")
+            "#{collect_count}, #{comment_count}, #{view_count}, #{postTime}, #{cover}, #{postTime})")
     int insertPost(Post post);
     
     
