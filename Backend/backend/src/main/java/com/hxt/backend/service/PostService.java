@@ -83,11 +83,14 @@ public class PostService {
         for (Comment comment : comments) {
             deleteComment(true, 0, comment.getComment_id());
         }
+        //  删除附加信息以防止外键异常
         postMapper.deletePostImage(postId);
         postMapper.deletePostTag(postId);
         postMapper.deletePostLike(postId);
         postMapper.deletePostFavorite(postId);
         postMapper.deletePostResource(postId);
+        postMapper.deletePostNotice(postId);
+
         List<Integer> reports = adminMapper.getSameTargetReports(0, postId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
@@ -95,9 +98,11 @@ public class PostService {
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        messageMapper.sendSystemNoticeToUser("删帖通知",
-                String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
-                p.getAuthor_id());
+        if (!(p.getAuthor_id().equals(userId))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
+                    p.getAuthor_id());
+        }
         for (Integer id : favoriteIds) {
             messageMapper.sendSystemNoticeToUser("删帖通知",
                     String.format("您收藏的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)), id);
@@ -132,6 +137,9 @@ public class PostService {
         User author = userMapper.selectUserById(authorId);
         ans.add(author.getName());
         String headUrl = imageMapper.getImage(author.getHeadId());
+        if (headUrl == null) {
+            headUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
+        }
         ans.add(headUrl);
         return ans;
     }
@@ -396,10 +404,13 @@ public class PostService {
         Timestamp commentTime = new Timestamp(System.currentTimeMillis());
         Comment comment = new Comment(0, postId, authorId, content, commentTime, 0, 0);
         Integer res = postMapper.insertComment(comment);
+        postMapper.updateReplyTime(postId);
         if (res == 0) {
             return 0;
         }
-        messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(),authorId,content,commentTime,true,postId,null);
+        if (postMapper.getPost(postId).getAuthor_id() != authorId) {
+            messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, content, commentTime, true, postId, null);
+        }
         return comment.getComment_id();
     }
     
@@ -428,17 +439,45 @@ public class PostService {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
+        Integer postId = postMapper.getPostIdByCommentId(commentId);
         for (Reply reply : replies) {
             deleteReply(true, 0, reply.getReply_id());
         }
+        //  删除附加消息以消除外键异常
         postMapper.deleteCommentLike(commentId);
         postMapper.deleteCommentImage(commentId);
         postMapper.deleteCommentResource(commentId);
+        postMapper.deleteCommentNotice(commentId);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(c.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", c.getContent(), formatter.format(date)),
+                    c.getAuthor_id());
+        }
+
         List<Integer> reports = adminMapper.getSameTargetReports(1, commentId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteComment(commentId) + replies.size();
+        Integer i = postMapper.deleteComment(commentId) + replies.size();
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(postId);
+            if (t1 != null) {
+                Timestamp t2 = postMapper.getLastReplyTime(postId);
+                Timestamp t;
+                if (t2 != null) {
+                    t = t1.after(t2) ? t1 : t2;
+                } else {
+                    t = t1;
+                }
+                postMapper.resetReplyTime(postId, t);
+            } else {
+                postMapper.resetReplyTime(postId, postMapper.getPost(postId).getPostTime());
+            }
+        }
+        return i;
     }
     
     //通过评论id获取帖子id
@@ -498,7 +537,10 @@ public class PostService {
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
-        messageService.createReplyNotice(repliedAuthorId, authorId,content,replyTime,false,getPostIdByCommentId(commentId),commentId);
+        if (repliedAuthorId != authorId) {
+            messageService.createReplyNotice(repliedAuthorId, authorId, content, replyTime, false, getPostIdByCommentId(commentId), commentId);
+        }
+        postMapper.updateReplyTime(postMapper.getPostIdByCommentId(commentId));
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
     }
     
@@ -520,7 +562,26 @@ public class PostService {
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteReply(replyId);
+        Integer i = postMapper.deleteReply(replyId);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(r.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", r.getContent(), formatter.format(date)),
+                    r.getAuthor_id());
+        }
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(p.getPost_id());
+            Timestamp t2 = postMapper.getLastReplyTime(p.getPost_id());
+            Timestamp t;
+            if (t2 != null) {
+                t = t1.after(t2) ? t1 : t2;
+            } else {
+                t = t1;
+            }
+            postMapper.resetReplyTime(p.getPost_id(), t);
+        }
+        return i;
     }
     
     //点赞评论

@@ -218,10 +218,15 @@ public class UserController {
             return new BasicInfoResponse(false, "图片为空");
         }
         // 上传文件到云服务器并返回图片在云服务器上的 URL
-        String url = obsService.uploadFile(file);
-        
+        String[] res = obsService.uploadFile(file);
+        String url = res[0];
+        String md5 = res[1];
+        Integer response = 1;
+
         // 将图片的 URL 保存到数据库
-        Integer response = imageService.uploadImage(url);
+        if (md5 != null) {
+            response = imageService.uploadImage(url, md5);
+        }
         
         // 将图片id存入 user 表
         Integer headId = imageService.getImageIdByUrl(url);

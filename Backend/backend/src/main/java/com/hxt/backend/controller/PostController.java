@@ -174,10 +174,17 @@ public class PostController {
         //获取帖子封面
         String cover = null;
         if (images != null) {
+            boolean flag = true;
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
-                    cover = imageUrl;
-                    break;
+                    if (flag) {
+                        cover = imageUrl;
+                        flag = false;
+                    }
+                    //审核图片是否合规
+                    if (!reviewService.imageReview(imageUrl)) {
+                        return new WritePostResponse(false, "图片不合规", null);
+                    }
                 }
             }
         }
@@ -195,11 +202,6 @@ public class PostController {
         if (images != null) {
             for (String imageUrl : images) {
                 if (content.contains(imageUrl)) {
-                    
-                    //审核图片是否合规
-                    if (!reviewService.imageReview(imageUrl)) {
-                        return new WritePostResponse(false, "图片不合规", null);
-                    }
                     Integer image_id = imageService.getImageIdByUrl(imageUrl);
                     postService.postInsertImage(post_id, image_id);
                 }
@@ -423,8 +425,8 @@ public class PostController {
             @RequestParam(name = "post_id", required = false) Integer post_id,
             @RequestParam(name = "author_id", required = false) Integer author_id,
             @RequestParam(name = "content", required = false) String content,
-            @RequestParam(name = "images", required = false) List<String> images,
-            @RequestParam(name = "resources", required = false) List<String> resources
+            @RequestParam(name = "images[]", required = false) String[] images,
+            @RequestParam(name = "resources[]", required = false) String[] resources
     ) throws IOException {
         //检查用户是否被封禁
         if (userService.checkGlobalBlocked(author_id)
@@ -445,6 +447,17 @@ public class PostController {
         //审核评论是否合规
         if (!reviewService.textReview(content)) {
             return new BasicInfoResponse(false, "评论违规");
+        }
+
+        if (images != null) {
+            for (String imageUrl : images) {
+                if (content.contains(imageUrl)) {
+                    //审核图片是否合规
+                    if (!reviewService.imageReview(imageUrl)) {
+                        return new BasicInfoResponse(false, "图片不合规");
+                    }
+                }
+            }
         }
         
         Integer comment_id = postService.createComment(content, post_id, author_id);

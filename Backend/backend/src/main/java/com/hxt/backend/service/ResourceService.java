@@ -16,12 +16,12 @@ public class ResourceService {
     private ResourceMapper resourceMapper;
     
     
-    public Integer uploadResource(String name, Integer publisherId, String url, String type) {
+    public Integer uploadResource(String name, Integer publisherId, String url, String type, String md5) {
         if (url == null) {
             return -1;
         }
         Timestamp uploadTime = new Timestamp(System.currentTimeMillis());
-        return resourceMapper.insertResource(name, publisherId, url, type, uploadTime);
+        return resourceMapper.insertResource(name, publisherId, url, type, uploadTime, md5);
     }
     
     public Integer deleteResource(Integer id) {

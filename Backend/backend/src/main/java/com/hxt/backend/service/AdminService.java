@@ -2,14 +2,11 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.Report;
 import com.hxt.backend.entity.User;
-import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
-import com.hxt.backend.response.BasicInfoResponse;
-import com.hxt.backend.response.group.GroupElement;
 import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
@@ -351,49 +348,123 @@ public class AdminService {
         if (report == null) {
             return false;
         }
-        if (choice) {
-            switch (report.getType()) {
-                case 0:
-                    Integer postId = report.getTarget();
-                    postService.deletePost(0, postId, true);
-                    break;
-                case 1:
-                    Integer commentId = report.getTarget();
-                    postService.deleteComment(true, 0, commentId);
-                    break;
-                case 2:
-                    Integer replyId = report.getTarget();
-                    postService.deleteReply(true, 0, replyId);
-                    break;
-                case 3:
-                    Integer userId = report.getTarget();
-                    blockUser(userId, days);
-                    break;
-                case 4:
-                    Integer user = report.getUserId();
-                    Integer sectionId = report.getTarget() / 3;
-                    Integer typeNum = report.getTarget() % 3;
-                    if (sectionId == 0 && typeNum == 0) {
-                        setGlobalAuthority(user);
-                    }
-                    String authorityType = (typeNum == 0)? "teacher" :
-                            (typeNum == 1)? "assistant" : "";
-                    setAuthority(user, sectionId, authorityType);
-                    break;
-                case 5:
-                    Integer groupId = report.getTarget();
-                    groupService.deleteGroup(0, groupId, true);
-                    break;
-            }
-        }
-        if (report.getType() < 4) {
+        Date date = new Date();
+        if (report.getType() < 4 || report.getType() == 5) {
             List<Integer> sameIds = adminMapper.getSameTargetReports(report.getType(), report.getTarget());
             for (Integer sameId : sameIds) {
+                Integer user = adminMapper.getSingleReport(sameId).getUserId();
+                switch (report.getType()) {
+                    case 0:
+                        if (choice) {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("经管理员核实，您对帖子“%s”的举报违规情况属实，已于 %s 予以删帖处理。感谢您对航学通做出的贡献！",
+                                            postMapper.getPost(report.getTarget()).getTitle(), df.format(date)), user);
+                        } else {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("您对帖子“%s”的举报已收到，但经管理员核实暂不构成违规。感谢您对航学通的关注！",
+                                            postMapper.getPost(report.getTarget()).getTitle()), user);
+                        }
+                        break;
+                    case 1:
+                        if (choice) {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("经管理员核实，您对评论“%s”的举报违规情况属实，已于 %s 予以删除处理。感谢您对航学通做出的贡献！",
+                                            postMapper.getCommentById(report.getTarget()).getContent(), df.format(date)), user);
+                        } else {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("您对评论“%s”的举报已收到，但经管理员核实暂不构成违规。感谢您对航学通的关注！",
+                                            postMapper.getCommentById(report.getTarget()).getContent()), user);
+                        }
+                        break;
+                    case 2:
+                        if (choice) {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("经管理员核实，您对回复“%s”的举报违规情况属实，已于 %s 予以删除处理。感谢您对航学通做出的贡献！",
+                                            postMapper.getReplyById(report.getTarget()).getContent(), df.format(date)), user);
+                        } else {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("您对回复“%s”的举报已收到，但经管理员核实暂不构成违规。感谢您对航学通的关注！",
+                                            postMapper.getReplyById(report.getTarget()).getContent()), user);
+                        }
+                        break;
+                    case 3:
+                        if (choice) {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("经管理员核实，您对用户“%s”的举报违规情况属实，已于 %s 予以全局封禁%d天处理。感谢您对航学通做出的贡献！",
+                                            userMapper.getUserNameById(report.getTarget()), df.format(date),
+                                            (days == null ? Integer.MAX_VALUE : days)), user);
+                        } else {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("您对用户“%s”的举报已收到，但经管理员核实暂不构成违规。感谢您对航学通的关注！",
+                                            userMapper.getUserNameById(report.getTarget())), user);
+                        }
+                        break;
+                    case 5:
+                        if (choice) {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("经管理员核实，您对学习团体“%s”的举报违规情况属实，已于 %s 予以解散处理。感谢您对航学通做出的贡献！",
+                                            groupMapper.selectGroupById(report.getTarget()).getName(), df.format(date)), user);
+                        } else {
+                            messageMapper.sendSystemNoticeToUser("举报处理通知",
+                                    String.format("您对学习团体“%s”的举报已收到，但经管理员核实暂不构成违规。感谢您对航学通的关注！",
+                                            groupMapper.selectGroupById(report.getTarget()).getName()), user);
+                        }
+                        break;
+                }
                 adminMapper.handleReport(sameId, (choice? 2 : 0));
             }
         } else {
             adminMapper.handleReport(reportId, (choice? 2 : 0));
         }
+        switch (report.getType()) {
+            case 0:
+                Integer postId = report.getTarget();
+                if (choice) {
+                    postService.deletePost(0, postId, true);
+                }
+                break;
+            case 1:
+                Integer commentId = report.getTarget();
+                if (choice) {
+                    postService.deleteComment(true, -1, commentId);
+                }
+                break;
+            case 2:
+                Integer replyId = report.getTarget();
+                if (choice) {
+                    postService.deleteReply(true, -1, replyId);
+                }
+                break;
+            case 3:
+                Integer userId = report.getTarget();
+                if (choice) {
+                    blockUser(userId, days);
+                }
+                break;
+            case 4:
+                Integer user = report.getUserId();
+                Integer sectionId = report.getTarget() / 3;
+                Integer typeNum = report.getTarget() % 3;
+                if (sectionId == 0 && typeNum == 0) {
+                    setGlobalAuthority(user);
+                }
+                String authorityType = (typeNum == 0)? "teacher" :
+                        (typeNum == 1)? "assistant" : "";
+                if (choice) {
+                    setAuthority(user, sectionId, authorityType);
+                } else {
+                    messageMapper.sendSystemNoticeToUser("权限申请通知",
+                            String.format("您对版块“%s”的 %s 权限申请已收到，但由于管理员暂时无法核实您的身份，因此暂不授予相应权限。感谢您对航学通的关注！",
+                                    sectionMapper.getSectionNameById(sectionId), authorityType), report.getUserId());
+                }
+                break;
+            case 5:
+                Integer groupId = report.getTarget();
+                if (choice) {
+                    groupService.deleteGroup(0, groupId, true);
+                }
+                break;
+            }
         return true;
     }
 

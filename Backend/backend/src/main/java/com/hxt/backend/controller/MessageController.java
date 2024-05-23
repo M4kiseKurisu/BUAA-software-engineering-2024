@@ -132,4 +132,13 @@ public class MessageController {
         }
     }
 
+    public NewNoticeResponse newNotice(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id
+    ) {
+        if (user_id.isEmpty()) {
+            return new NewNoticeResponse(false, "用户未登录",false);
+        }
+        return messageService.hasNewNotice(Integer.parseInt(user_id));
+    }
+
 }

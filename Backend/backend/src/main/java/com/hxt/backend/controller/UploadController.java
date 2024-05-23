@@ -39,10 +39,15 @@ public class UploadController {
             return new UploadResponse(false, "图片为空", "");
         }
         // 上传文件到云服务器并返回图片在云服务器上的 URL
-        String url = obsService.uploadFile(file);
+        String[] res = obsService.uploadFile(file);
+        String url = res[0];
+        String md5 = res[1];
+        Integer response = 1;
         
         // 将图片的 URL 保存到数据库
-        Integer response = imageService.uploadImage(url);
+        if (!md5.isEmpty()) {
+            response = imageService.uploadImage(url, md5);
+        }
         
         // 返回图片 URL 给前端
         boolean isSuccess = (response == 1);
@@ -116,12 +121,17 @@ public class UploadController {
             return new UploadResponse(false, "文件为空", "");
         }
 
-        // 上传文件到云服务器并返回文件在云服务器上的 URL
-        String url = obsService.uploadFile(file);
-        
-        // 将文件的 URL 保存到数据库
-        Integer response = resourceService.uploadResource(name, publisherId, url, type);
-        
+        // 上传文件到云服务器并返回图片在云服务器上的 URL
+        String[] res = obsService.uploadFile(file);
+        String url = res[0];
+        String md5 = res[1];
+        Integer response = 1;
+
+        // 将图片的 URL 保存到数据库
+        if (!md5.isEmpty()) {
+            response = resourceService.uploadResource(name, publisherId, url, type, md5);
+        }
+
         // 返回图片 URL 给前端
         boolean isSuccess = (response == 1);
         String info = isSuccess ? "上传成功！" :

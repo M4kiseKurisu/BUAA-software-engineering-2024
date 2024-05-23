@@ -1,6 +1,7 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.PagesCountResponse;
 import com.hxt.backend.response.checkInResponse.*;
 import com.hxt.backend.service.CheckInService;
 import com.hxt.backend.service.ReviewService;
@@ -87,24 +88,37 @@ public class CheckInController {
     
     @GetMapping (value = "/pyq/square")
     public CheckInSquareResponse getCheckInSquare(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "page", defaultValue = "0") Integer page
     ) {
         if (user_id.equals("")) {
             return new CheckInSquareResponse(null);
         }
-        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare(Integer.parseInt(user_id));
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare(Integer.parseInt(user_id), page);
         return new CheckInSquareResponse(checkIn);
     }
 
     @GetMapping (value = "/pyq/follow")
     public CheckInSquareResponse getFollowedCheckIn(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "page", defaultValue = "0") Integer page
     ) {
         if (user_id.equals("")) {
             return new CheckInSquareResponse(null);
         }
-        List<CheckInSquareIntroResponse> checkIn = checkInService.getFollowedCheckIn(Integer.parseInt(user_id));
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getFollowedCheckIn(Integer.parseInt(user_id), page);
         return new CheckInSquareResponse(checkIn);
+    }
+
+    @GetMapping (value = "/pyq/pages")
+    public PagesCountResponse getCheckInPages(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "limit", defaultValue = "0") Integer limit
+    ) {
+        if (user_id.equals("")) {
+            return new PagesCountResponse(null);
+        }
+        return new PagesCountResponse(checkInService.getCheckInPages(Integer.parseInt(user_id), limit));
     }
     
     //用户是否点赞打卡

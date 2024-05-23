@@ -66,8 +66,9 @@ public class UserService {
 
     public String getUserHead(Integer id) {
         User user = userMapper.selectUserById(id);
-        if (user.getUserId() == null) {
-            return null;
+        if (user.getHeadId() == null) {
+            //return null;  改为返回默认头像
+            return defaultHeadUrl;
         }
         return imageMapper.getImage(user.getHeadId());
     }

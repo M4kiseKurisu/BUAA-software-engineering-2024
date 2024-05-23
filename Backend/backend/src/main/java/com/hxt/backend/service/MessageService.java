@@ -49,6 +49,7 @@ public class MessageService {
     private final int[] move3 = {-1, 2, -3, 4};
 
     public ArrayList<ChatElement> getChatList(Integer id, boolean all) {
+        resetNewNotice(id);
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
         elements.sort(Comparator.comparing(PrivateChat::getLast_message_time).reversed());
@@ -97,6 +98,7 @@ public class MessageService {
     }
 
     public Boolean sendPrivateMessage(Integer senderId, Integer receiverId, String content, boolean is_read, Timestamp time) {
+        insertNewNotice(receiverId);
         messageMapper.insertPrivateMessage(senderId,receiverId,time,content,is_read);
         messageMapper.deletePrivateChatById(senderId,receiverId);
         messageMapper.deletePrivateChatById(receiverId,senderId);
@@ -128,17 +130,19 @@ public class MessageService {
     }
 
     public BasicInfoResponse updateApply(Integer applyId, boolean result) {
+        ApplyNotice apply = messageMapper.selectApplyNoticeById(applyId);
         if (result) {
-            ApplyNotice apply = messageMapper.selectApplyNoticeById(applyId);
             if (!groupService.joinGroup(apply.getUser_id(),apply.getGroup_id())) {
                 return new BasicInfoResponse(false,"用户已在群体中");
             }
         }
+        insertNewNotice(apply.getUser_id());
         messageMapper.updateFeedBack(applyId,result);
         return new BasicInfoResponse(true,"");
     }
 
     public ArrayList<ApplyElement> getApplyMessage(Integer userId) {
+        resetNewNotice(userId);
         ArrayList<ApplyElement> list = new ArrayList<>();
         // 获取申请反馈
         List<ApplyNotice> notices = messageMapper.selectApplyGroupFeedbackByUserId(userId);
@@ -197,6 +201,7 @@ public class MessageService {
 
 
     public ArrayList<ReplyElement> getReplyMessage(Integer userId) {
+        resetNewNotice(userId);
         ArrayList<ReplyElement> list = new ArrayList<>();
         List<ReplyNotice> notices = messageMapper.selectReplyNoticeByUserId(userId);
         Collections.reverse(notices);
@@ -218,10 +223,12 @@ public class MessageService {
     }
 
     public void createReplyNotice(Integer userId, Integer authorId, String content, Timestamp time, boolean isReplyToPost, Integer postId, Integer commentId) {
+        insertNewNotice(userId);
         messageMapper.insertReplyNotice(userId,authorId,content,time,isReplyToPost,postId,commentId);
     }
 
     public ArrayList<NoticeElement> getNoticeMessage(Integer userId) {
+        resetNewNotice(userId);
         List<UserNotice> notices = messageMapper.getNoticeByUserId(userId);
         ArrayList<NoticeElement> list = new ArrayList<>();
 
@@ -232,7 +239,7 @@ public class MessageService {
         messageMapper.updateUserSystemNoticeIsRead(userId);
 
         // 按照推送时间排序
-        notices.sort(Comparator.comparing(UserNotice::getPull_time));
+        //notices.sort(Comparator.comparing(UserNotice::getPull_time));
 
         for (UserNotice notice: notices) {
             ManagerNotice managerNotice = messageMapper.selectManagerSystemNoticeById(notice.getSystem_notice_id());
@@ -255,10 +262,12 @@ public class MessageService {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             if (notice.getIs_public()) {
                 for (Integer id: allUserId) {
+                    insertNewNotice(id);
                     messageMapper.insertUserNotice(notice.getSystem_notice_id(), id, timestamp);
                 }
             }
             else {
+                insertNewNotice(notice.getReceiver_id());
                 messageMapper.insertUserNotice(notice.getSystem_notice_id(), notice.getReceiver_id(), timestamp);
             }
             messageMapper.updateManagerSystemNoticePushed(notice.getSystem_notice_id());
@@ -282,6 +291,25 @@ public class MessageService {
             return sb.toString();
         } else {
             return input;
+        }
+    }
+
+    public NewNoticeResponse hasNewNotice(Integer id) {
+        if (messageMapper.selectNewNotice(id) == 0) {
+            return new NewNoticeResponse(true,"",false);
+        }
+        else {
+            return new NewNoticeResponse(true,"",true);
+        }
+    }
+
+    public void resetNewNotice(Integer id) {
+        messageMapper.deleteNewNotice(id);
+    }
+
+    public void insertNewNotice(Integer id) {
+        if (messageMapper.selectNewNotice(id) == 0) {
+            messageMapper.insertNewNotice(id);
         }
     }
 }

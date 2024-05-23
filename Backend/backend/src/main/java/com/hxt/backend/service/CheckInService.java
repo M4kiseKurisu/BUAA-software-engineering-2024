@@ -4,7 +4,6 @@ import com.hxt.backend.entity.User;
 import com.hxt.backend.entity.checkIn.CheckIn;
 import com.hxt.backend.entity.checkIn.CheckInComment;
 import com.hxt.backend.entity.checkIn.CheckInLike;
-import com.hxt.backend.entity.post.PostLike;
 import com.hxt.backend.mapper.CheckInMapper;
 import com.hxt.backend.mapper.ImageMapper;
 import com.hxt.backend.mapper.UserMapper;
@@ -123,10 +122,10 @@ public class CheckInService {
         return checkInDetailResponse;
     }
     
-    public List<CheckInSquareIntroResponse> getCheckInSquare(Integer user) {
+    public List<CheckInSquareIntroResponse> getCheckInSquare(Integer user, Integer page) {
         List<CheckInSquareIntroResponse> checkInSquareIntroResponses = new ArrayList<>();
         
-        List<CheckIn> checkIns = checkInMapper.getAllCheckIn(user);
+        List<CheckIn> checkIns = checkInMapper.getCheckInWithOffset(user, page * 6);
         for (CheckIn checkIn : checkIns) {
             CheckInSquareIntroResponse checkInSquareIntroResponse = new CheckInSquareIntroResponse(checkIn);
     
@@ -146,9 +145,9 @@ public class CheckInService {
         return checkInSquareIntroResponses;
     }
 
-    public List<CheckInSquareIntroResponse> getFollowedCheckIn(Integer user) {
+    public List<CheckInSquareIntroResponse> getFollowedCheckIn(Integer user, Integer page) {
         List<CheckInSquareIntroResponse> checkInSquareIntroResponses = new ArrayList<>();
-        List<CheckIn> checkIns = checkInMapper.getFollowedCheckIn(user);
+        List<CheckIn> checkIns = checkInMapper.getFollowedCheckInWithOffset(user, page * 6);
         for (CheckIn checkIn : checkIns) {
             CheckInSquareIntroResponse checkInSquareIntroResponse = new CheckInSquareIntroResponse(checkIn);
 
@@ -166,6 +165,11 @@ public class CheckInService {
             checkInSquareIntroResponses.add(checkInSquareIntroResponse);
         }
         return checkInSquareIntroResponses;
+    }
+
+    public Integer getCheckInPages(Integer user, Integer limit) {
+        Integer count = limit == 1? checkInMapper.getFollowedCheckInCount(user) : checkInMapper.getSeeCheckInCount(user);
+        return (count - 1) / 6 + 1;
     }
 
     public Integer getCheckInDays(Integer user) {

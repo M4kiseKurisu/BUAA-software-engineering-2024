@@ -30,7 +30,7 @@ public interface MessageMapper {
 
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO manager_system_notice (title, content, is_public, receiver_id, publish_time, pushed)\n" +
-            "VALUES (#{title}, #{content}, true, 0, NOW(), 0);")
+            "VALUES (#{title}, #{content}, true, 1, NOW(), 0);")
     int sendSystemNoticeToAll(String title, String content);
 
     // 用户系统通知表
@@ -42,7 +42,7 @@ public interface MessageMapper {
     int insertUserNotice(Integer system_notice_id, Integer receiver_id, Timestamp pull_time);
 
     // 根据用户id获取通知
-    @Select("select * from user_system_notice where receiver_id = #{id};")
+    @Select("select * from user_system_notice where receiver_id = #{id} order by user_notice_id desc;")
     List<UserNotice> getNoticeByUserId(Integer id);
 
     // 更新已读状态
@@ -136,4 +136,28 @@ public interface MessageMapper {
     @Select("select * from reply_notice where user_id = #{userId};")
     List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
 
+    //  定时任务用
+    @Delete("DELETE FROM user_system_notice WHERE TIMESTAMPDIFF(DAY, pull_time, NOW()) > 10 AND is_read = 1")   //  15天
+    int deleteOldReadMessage();
+
+    @Delete("delete from manager_system_notice where system_notice_id not in " +
+            "(select system_notice_id from user_system_notice group by system_notice_id )")
+    int deleteNoRefSystemNotice();
+
+    @Delete("DELETE FROM reply_notice WHERE TIMESTAMPDIFF(DAY, reply_time, NOW()) > 10")
+    int deleteOldReplyNotice();
+
+    // 新的通知表
+
+    // 查看用户当前是否有新的通知
+    @Select("select count(*) from new_notice where user_id = #{userId};")
+    int selectNewNotice(Integer userId);
+
+    // 清空用户通知
+    @Delete("delete from new_notice where user_id = #{userId};")
+    int deleteNewNotice(Integer userId);
+
+    // 插入新的通知
+    @Insert("insert into new_notice (user_id) values (#{userId});")
+    int insertNewNotice(Integer userId);
 }

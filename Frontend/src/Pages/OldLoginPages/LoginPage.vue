@@ -114,6 +114,7 @@
 
 <script>
 import axios from 'axios';
+import md5 from 'js-md5';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 export default {

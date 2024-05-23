@@ -32,9 +32,9 @@ public interface PostMapper {
     //插入新帖子
     @Options(useGeneratedKeys = true, keyProperty = "post_id", keyColumn = "post_id")
     @Insert("INSERT INTO post (title, intro, content, category, section_id, author_id, like_count, " +
-            "collect_count, comment_count, view_count, time, cover)" +
+            "collect_count, comment_count, view_count, time, cover, reply_time)" +
             " VALUES (#{title}, #{intro}, #{content}, #{category}, #{section_id}, #{author_id}, #{like_count}, " +
-            "#{collect_count}, #{comment_count}, #{view_count}, #{postTime}, #{cover})")
+            "#{collect_count}, #{comment_count}, #{view_count}, #{postTime}, #{cover}, #{postTime})")
     int insertPost(Post post);
     
     
@@ -91,9 +91,15 @@ public interface PostMapper {
     @Select("SELECT image_id from post_image where post_id = #{id} ORDER BY pi_id ASC")
     List<Integer> getImageIdByPost(Integer id);
     
-    
-    
-    
+    @Update("UPDATE post SET reply_time = NOW() WHERE post_id = #{id}")
+    int updateReplyTime(Integer id);
+
+    @Update("UPDATE post SET reply_time = #{timestamp} WHERE post_id = #{id}")
+    int resetReplyTime(Integer id, Timestamp timestamp);
+
+    @Select("SELECT reply_time FROM post WHERE post_id = #{id}")
+    Timestamp getReplyTime(Integer id);
+
     //帖子-资源
     @Options(useGeneratedKeys = true)
     @Insert("INSERT INTO post_resource (post_id, resource_id) VALUES (#{postId}, #{resourceId})")
@@ -266,6 +272,10 @@ public interface PostMapper {
 
     @Delete("DELETE FROM favorite WHERE post_id = #{id}")
     int deletePostFavorite(Integer id);
+
+    @Delete("DELETE FROM reply_notice WHERE post_id = #{id}")
+    int deletePostNotice(Integer id);
+
     //评论
     
     //添加评论
@@ -282,6 +292,9 @@ public interface PostMapper {
     @Select("SELECT * from comment where comment_id = #{id}")
     @Result(column = "time", property = "commentTime")
     Comment getCommentById(Integer id);
+
+    @Select("SELECT time FROM comment WHERE post_id = #{id} ORDER BY time DESC LIMIT 1")
+    Timestamp getLastCommentTime(Integer id);
     
     //根据评论id获取帖子id
     @Select("SELECT post_id from comment where comment_id = #{id}")
@@ -369,6 +382,9 @@ public interface PostMapper {
 
     @Delete("DELETE FROM comment_resource WHERE comment_id = #{id}")
     int deleteCommentResource(Integer id);
+
+    @Delete("DELETE FROM reply_notice WHERE comment_id = #{id}")
+    int deleteCommentNotice(Integer id);
     
     //回复
     
@@ -393,6 +409,10 @@ public interface PostMapper {
     @Select("SELECT * from reply where reply_id = #{id}")
     @Result(column = "time", property = "replyTime")
     Reply getReplyById(Integer id);
+
+    @Select("SELECT time FROM reply WHERE comment_id in (SELECT comment_id FROM comment WHERE post_id = #{id}) " +
+            "ORDER BY time DESC LIMIT 1")
+    Timestamp getLastReplyTime(Integer id);
     
     //根据回复id获取评论id
     @Select("SELECT comment_id from reply where reply_id = #{id}")
@@ -435,4 +455,135 @@ public interface PostMapper {
     //  以下供管理员使用
     @Update("UPDATE post SET section_id = #{section} WHERE post_id = #{post}")
     int movePostSection(Integer post, Integer section);
+
+    //  分页查询用
+    @Select("select * from post where section_id = #{section} order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetBySendTime(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithCategoryAndOffsetBySendTime(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithTagAndOffsetBySendTime(Integer section, String tag, Integer offset);
+
+    @Select("select * from post where category = #{category} and section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by post_id desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithCategoryTagAndOffsetBySendTime(Integer section, Integer category, String tag, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByReplyTime(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByReplyTime(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithTagAndOffsetByReplyTime(Integer section, String tag, Integer offset);
+
+    @Select("select * from post where category = #{category} and section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by reply_time desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithCategoryTagAndOffsetByReplyTime(Integer section, Integer category, String tag, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByLike(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByLike(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithTagAndOffsetByLike(Integer section, String tag, Integer offset);
+
+    @Select("select * from post where category = #{category} and section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by like_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithCategoryTagAndOffsetByLike(Integer section, Integer category, String tag, Integer offset);
+
+    @Select("select * from post where section_id = #{section} order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithOffsetByFavorite(Integer section, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and category = #{category} " +
+            "order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post>  getPostWithCategoryAndOffsetByFavorite(Integer section, Integer category, Integer offset);
+
+    @Select("select * from post where section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithTagAndOffsetByFavorite(Integer section, String tag, Integer offset);
+
+    @Select("select * from post where category = #{category} and section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" +
+            "order by collect_count desc limit 5 offset #{offset}")
+    @Results({
+            @Result(column = "time", property = "postTime"),
+    })
+    List<Post> getPostWithCategoryTagAndOffsetByFavorite(Integer section, Integer category, String tag, Integer offset);
+
+    @Select("SELECT COUNT(*) FROM post WHERE section_id = #{section}")
+    Integer getPostCountBySection(Integer section);
+
+    @Select("SELECT COUNT(*) FROM post WHERE category = #{category} and section_id = #{section}")
+    Integer getPostCountByCategoryAndSection(Integer section, Integer category);
+
+    @Select("select COUNT(*) from post where section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" )
+    Integer getPostCountByTagAndSection(Integer section, String tag);
+
+    @Select("select COUNT(*) from post where category = #{category} and section_id = #{section} and post_id in" +
+            "(select post_id from post_tag where tag_id = (select tag_id from tag where name = #{tag}))" )
+    Integer getPostCountByCategoryTagAndSection(Integer section, Integer category, String tag);
 }
