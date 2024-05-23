@@ -48,7 +48,7 @@
             <div style="width: 40%; height: 100%;">
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                        <span style="padding-right: 7%;"><el-button text type="primary"
+                        <span style="padding-right: 7%;"><el-button @click="goToCourseSection" text type="primary"
                                 style="font-size: large;">查看相关课程界面</el-button></span>
                     </div>
                 </div>
@@ -221,6 +221,9 @@ export default {
     methods: {
         toggle_Creator() {
             this.show_Creator = true;
+        },
+        goToCourseSection() {
+          this.$router.push({ path: "/CourseSection/" + this.sectionId});
         },
         selectOne() {
             this.kindSelect = 1;
