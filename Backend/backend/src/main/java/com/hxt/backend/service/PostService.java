@@ -11,6 +11,7 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -144,17 +145,19 @@ public class PostService {
         return ans;
     }
     
-    
-    public Integer postInsertImage(Integer postId, Integer imageId) {
-        return postMapper.insertPostImage(postId, imageId);
+    @Async
+    public void postInsertImage(Integer postId, Integer imageId) {
+        postMapper.insertPostImage(postId, imageId);
     }
     
-    public Integer postInsertTag(Integer postId, Integer tagId) {
-        return postMapper.insertPostTag(postId, tagId);
+    @Async
+    public void postInsertTag(Integer postId, Integer tagId) {
+        postMapper.insertPostTag(postId, tagId);
     }
     
-    public Integer postInsertResource(Integer postId, Integer resourceId) {
-        return postMapper.insertPostResource(postId, resourceId);
+    @Async
+    public void postInsertResource(Integer postId, Integer resourceId) {
+        postMapper.insertPostResource(postId, resourceId);
     }
     
     public Integer getCategoryByPostId(Integer postId) {
@@ -330,8 +333,9 @@ public class PostService {
     }
     
     //更新帖子点赞数
-    public Integer updatePostLikeCount(Integer postId, Integer op) {
-        return postMapper.updatePostLikeCount(postId, op);
+    @Async
+    public void updatePostLikeCount(Integer postId, Integer op) {
+        postMapper.updatePostLikeCount(postId, op);
     }
     
     // 收藏帖子
@@ -367,8 +371,9 @@ public class PostService {
     }
     
     //更新帖子收藏数
-    public Integer updatePostFavoriteCount(Integer postId, Integer op) {
-        return postMapper.updatePostFavoriteCount(postId, op);
+    @Async
+    public void updatePostFavoriteCount(Integer postId, Integer op) {
+        postMapper.updatePostFavoriteCount(postId, op);
     }
     
     //搜索帖子
@@ -415,13 +420,15 @@ public class PostService {
     }
     
     //评论插图
-    public Integer commentInsertImage(Integer commentId, Integer imageId) {
-        return postMapper.insertCommentImage(commentId, imageId);
+    @Async
+    public void commentInsertImage(Integer commentId, Integer imageId) {
+        postMapper.insertCommentImage(commentId, imageId);
     }
     
     //评论插资源
-    public Integer commentInsertResource(Integer commentId, Integer resourceId) {
-        return postMapper.insertCommentResource(commentId, resourceId);
+    @Async
+    public void commentInsertResource(Integer commentId, Integer resourceId) {
+        postMapper.insertCommentResource(commentId, resourceId);
     }
     
     //删除评论
@@ -485,14 +492,17 @@ public class PostService {
         return postMapper.getPostIdByCommentId(commentId);
     }
     
+    @Async
     public void updateViewCount(Integer post_id) {
         postMapper.updateViewCount(post_id, 1);
     }
     
+    @Async
     public void updatePostCommentCount(Integer post_id, Integer op) {
         postMapper.updateCommentCount(post_id, op);
     }
     
+    @Async
     public void updateCommentReplyCount(Integer comment_id, Integer op) {
         postMapper.updateReplyCount(comment_id, op);
     }
@@ -526,6 +536,7 @@ public class PostService {
     }
     
     //更新评论点赞数
+    @Async
     public Integer updateCommentLikeCount(Integer commentId, Integer op) {
         return postMapper.updateCommentLikeCount(commentId, op);
         
@@ -609,8 +620,9 @@ public class PostService {
     }
     
     //更新回复点赞数
-    public Integer updateReplyLikeCount(Integer replyId, Integer op) {
-        return postMapper.updateReplyLikeCount(replyId, op);
+    @Async
+    public void updateReplyLikeCount(Integer replyId, Integer op) {
+        postMapper.updateReplyLikeCount(replyId, op);
         
     }
     
