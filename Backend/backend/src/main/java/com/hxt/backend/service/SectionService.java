@@ -340,7 +340,7 @@ public class SectionService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         messageMapper.sendSystemNoticeToUser("授权通知",
                 String.format("您于 %s 被授予 %s 版块的 %s 权限，希望您为板块建设贡献自己的一份力量。",
-                        df.format(date), sectionMapper.getSectionNameById(section), type), assistant);
+                        df.format(date), sectionMapper.getSectionNameById(section), "assistant"), assistant);
         return new BasicInfoResponse(true, "");
     }
 
