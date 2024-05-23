@@ -58,10 +58,10 @@ public interface SectionMapper {
     ArrayList<Post> selectPostBySectionId(Integer id);
 
     //  供管理员使用
-    @Select("SELECT COUNT(*) FROM section WHERE flag = 0")
+    @Select("SELECT COUNT(*) FROM section WHERE flag = 0 AND available = 1")
     int getCourseNum();
 
-    @Select("SELECT COUNT(*) FROM section WHERE flag = 1")
+    @Select("SELECT COUNT(*) FROM section WHERE flag = 1 AND available = 1")
     int getSchoolNum();
 
     @Options(useGeneratedKeys = true)

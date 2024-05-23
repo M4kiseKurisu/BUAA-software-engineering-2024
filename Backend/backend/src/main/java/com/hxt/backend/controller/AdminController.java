@@ -445,7 +445,7 @@ public class AdminController {
     }
 
     @RequestMapping("/admin/message/send")
-    public BasicInfoResponse systemBroadcast(
+    public BasicInfoResponse systemSend(
             @CookieValue(name = "type", defaultValue = "") String type,
             @RequestParam(name = "id", required = false) Integer id,
             @RequestParam(name = "info", required = false) String info
