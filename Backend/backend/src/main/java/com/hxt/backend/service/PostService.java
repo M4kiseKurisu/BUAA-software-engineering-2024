@@ -11,6 +11,10 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -413,8 +417,10 @@ public class PostService {
         if (res == 0) {
             return 0;
         }
+        
         if (postMapper.getPost(postId).getAuthor_id() != authorId) {
-            messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, content, commentTime, true, postId, null);
+            String text = htmlToText(content);
+            messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, text, commentTime, true, postId, null);
         }
         return comment.getComment_id();
     }
@@ -549,7 +555,8 @@ public class PostService {
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
         if (repliedAuthorId != authorId) {
-            messageService.createReplyNotice(repliedAuthorId, authorId, content, replyTime, false, getPostIdByCommentId(commentId), commentId);
+            String text = htmlToText(content);
+            messageService.createReplyNotice(repliedAuthorId, authorId, text, replyTime, false, getPostIdByCommentId(commentId), commentId);
         }
         postMapper.updateReplyTime(postMapper.getPostIdByCommentId(commentId));
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
@@ -680,5 +687,15 @@ public class PostService {
 
     public Integer getPostSection(Integer id) {
         return postMapper.getPost(id).getSection_id();
+    }
+    
+    private String htmlToText(String html) {
+        Document doc = Jsoup.parse(html);
+        Elements imgs = doc.select("img");
+        for (Element img : imgs) {
+            img.replaceWith(new Element("span").text(" 图片 "));
+        }
+        String text = doc.text();
+        return text;
     }
 }
