@@ -5,9 +5,9 @@
     </div>
     <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
         <el-button v-if="this.authority != 'assistant'" type="primary" @click="giveAssistantAuthority">给予用户助教权限</el-button>
-        <el-button v-else type="warning">撤销用户助教权限</el-button>
+        <el-button v-else type="warning" @click="delectAssistantAuthority">撤销用户助教权限</el-button>
         <div style="display: flex; margin-top: 12px;">
-            <el-button v-if="this.authority != 'teacher'" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
+            <el-button v-if="this.authority != 'teacher'" type="danger" @click = "blockPerson">板块内封禁该用户</el-button>
             <el-input v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
         </div>
         <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
@@ -77,7 +77,7 @@ export default {
                 //         this.dialog_visible = true;
                 //     }
                 // }
-                if (this.authority != "teacher") {
+                if (this.authority != "teacher" && selfAuthorith == 'teacher') {
                     this.dialog_visible = true;
                 }
             })
@@ -89,6 +89,65 @@ export default {
                 data: {
                     section: this.sectionId,
                     assistant: this.personId,
+                }
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    ElMessage({
+                        message: '操作成功!',
+                        type: 'success',
+                        plain: true,
+                    })
+                    this.$router.go(0);
+                } else {
+                    ElMessage({
+                        message: '操作失败!',
+                        type: 'error',
+                        plain: true,
+                    })
+                }
+            })
+        },
+        delectAssistantAuthority() {
+            axios({
+                method: "POST",
+                url: 'api/section/delete/assistant',
+                data: {
+                    section: this.sectionId,
+                    assistant: this.personId,
+                }
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    ElMessage({
+                        message: '操作成功!',
+                        type: 'success',
+                        plain: true,
+                    })
+                    this.$router.go(0);
+                } else {
+                    ElMessage({
+                        message: '操作失败!',
+                        type: 'error',
+                        plain: true,
+                    })
+                }
+            })
+        },
+        blockPerson() {
+            var day = this.cancel_days;
+            if(day == ''){
+                day = 100000000000;
+            } else {
+                day = parseInt(this.cancel_days);
+            }
+            axios({
+                method: "POST",
+                url: 'api/section/block',
+                data: {
+                    section: this.sectionId,
+                    id: this.personId,
+                    days: day,
                 }
             }).then((result) => {
                 console.log(result);

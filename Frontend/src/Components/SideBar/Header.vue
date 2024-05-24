@@ -10,61 +10,83 @@
             <el-popover placement="bottom" :width="400" style="margin-left: -20%;" trigger="click">
                 <template #reference>
                     <button class="circle-bound">
-                        <svg t="1714920508420" style="margin-left: -2px;" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2322" width="200" height="200"><path d="M679.039688 749.379825a29.25665 29.25665 0 0 1 46.225506-35.927166l204.796548 263.309847a29.25665 29.25665 0 0 1-46.225507 35.927166l-204.796547-263.309847zM482.727568 789.929541C264.589988 789.929541 87.762798 613.102351 87.762798 394.964771S264.589988 0 482.727568 0 877.692339 176.827191 877.692339 394.964771 700.865148 789.929541 482.727568 789.929541z m0-58.513299C668.53655 731.416242 819.17904 580.773753 819.17904 394.964771S668.53655 58.513299 482.727568 58.513299 146.276097 209.155789 146.276097 394.964771 296.918586 731.416242 482.727568 731.416242z" fill="#86909c" p-id="2323"></path></svg>
+                        <svg t="1714920508420" style="margin-left: -2px;" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                            xmlns="http://www.w3.org/2000/svg" p-id="2322" width="200" height="200">
+                            <path
+                                d="M679.039688 749.379825a29.25665 29.25665 0 0 1 46.225506-35.927166l204.796548 263.309847a29.25665 29.25665 0 0 1-46.225507 35.927166l-204.796547-263.309847zM482.727568 789.929541C264.589988 789.929541 87.762798 613.102351 87.762798 394.964771S264.589988 0 482.727568 0 877.692339 176.827191 877.692339 394.964771 700.865148 789.929541 482.727568 789.929541z m0-58.513299C668.53655 731.416242 819.17904 580.773753 819.17904 394.964771S668.53655 58.513299 482.727568 58.513299 146.276097 209.155789 146.276097 394.964771 296.918586 731.416242 482.727568 731.416242z"
+                                fill="#86909c" p-id="2323"></path>
+                        </svg>
                     </button>
                 </template>
 
                 <!-- 以下为搜索框内容 -->
                 <div class="flex-layout">
                     <el-input size="small" v-model="this.name_input" style="width: 40%" placeholder="输入搜索用户名" />
-                    <el-select v-model="this.sort" placeholder="排列方式" size="small" style="width: 32%; margin-left: 5%;" >
+                    <el-select v-model="this.sort" placeholder="排列方式" size="small" style="width: 32%; margin-left: 5%;">
                         <el-option v-for="item in sort_options" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                     <el-button size="small" style="width: 20%; margin-left: 3%;" @click="searchPerson">搜索用户</el-button>
                 </div>
 
                 <div v-for="item in this.user_list">
-                    <button class="flex-layout" style="margin-top: 6px; width: 100%; margin-bottom: 6px; background-color: white; border: none;"
+                    <button class="flex-layout"
+                        style="margin-top: 6px; width: 100%; margin-bottom: 6px; background-color: white; border: none;"
                         @click="toProfile(item.user_id)">
                         <div style="width: 16%; aspect-ratio: 1/1; margin-left: 3%; margin-top: 2%;">
                             <el-avatar style="width: 100%; height: 100%" :src="item.user_avatar" />
                         </div>
-                        
+
                         <div style="width: 70%; margin-left: 4%;" class="flex-layout-column">
                             <div style="margin-top: 7%;" class="user-id-font">{{ item.name }}</div>
                             <div style="text-align: left; width: 100%;" class="user-sign-font">{{ item.sign }}</div>
                         </div>
                     </button>
 
-                    <el-divider/>
+                    <el-divider />
                 </div>
-                
+
             </el-popover>
-            
+
 
             <button class="circle-bound" @click="logout">
-                <svg t="1713926820556" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4186" width="200" height="200"><path d="M952.7 492.1c-1.4-1.8-3.1-3.4-4.8-4.9l-179-178.9c-12.5-12.5-32.9-12.5-45.4 0s-12.5 32.9 0 45.4l126 126H421.3h-0.1c-18.2 0-32.9 14.8-32.9 33s14.7 33 32.9 33c0.3 0.1 0.5 0 0.7 0h427.8l-126 126c-12.3 12.3-12.3 32.4 0 44.7l0.7 0.7c12.3 12.3 32.4 12.3 44.7 0l182-182c11.7-11.7 12.3-30.6 1.6-43z" fill="#86909c" p-id="4187"></path><path d="M562.3 799c-18 0-32.7 14.7-32.7 32.7v63.8H129.2V128.7h400.4v63.1c0 18 14.7 32.7 32.7 32.7s32.7-14.7 32.7-32.7V96.3c0-3.5-0.6-6.8-1.6-10-4.2-13.3-16.6-23-31.2-23H96.6c-18 0-32.7 14.7-32.7 32.7v831.9c0 14.2 9.2 26.3 21.8 30.8 3.6 1.4 7.5 2.1 11.5 2.1h463.2c0.6 0 1.3 0.1 1.9 0.1 18 0 32.7-14.7 32.7-32.7v-96.5c0-18-14.7-32.7-32.7-32.7z" fill="#86909c" p-id="4188"></path><path d="M256.8 512.7a32.9 33 0 1 0 65.8 0 32.9 33 0 1 0-65.8 0Z" fill="#86909c" p-id="4189"></path></svg>
+                <svg t="1713926820556" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                    p-id="4186" width="200" height="200">
+                    <path
+                        d="M952.7 492.1c-1.4-1.8-3.1-3.4-4.8-4.9l-179-178.9c-12.5-12.5-32.9-12.5-45.4 0s-12.5 32.9 0 45.4l126 126H421.3h-0.1c-18.2 0-32.9 14.8-32.9 33s14.7 33 32.9 33c0.3 0.1 0.5 0 0.7 0h427.8l-126 126c-12.3 12.3-12.3 32.4 0 44.7l0.7 0.7c12.3 12.3 32.4 12.3 44.7 0l182-182c11.7-11.7 12.3-30.6 1.6-43z"
+                        fill="#86909c" p-id="4187"></path>
+                    <path
+                        d="M562.3 799c-18 0-32.7 14.7-32.7 32.7v63.8H129.2V128.7h400.4v63.1c0 18 14.7 32.7 32.7 32.7s32.7-14.7 32.7-32.7V96.3c0-3.5-0.6-6.8-1.6-10-4.2-13.3-16.6-23-31.2-23H96.6c-18 0-32.7 14.7-32.7 32.7v831.9c0 14.2 9.2 26.3 21.8 30.8 3.6 1.4 7.5 2.1 11.5 2.1h463.2c0.6 0 1.3 0.1 1.9 0.1 18 0 32.7-14.7 32.7-32.7v-96.5c0-18-14.7-32.7-32.7-32.7z"
+                        fill="#86909c" p-id="4188"></path>
+                    <path d="M256.8 512.7a32.9 33 0 1 0 65.8 0 32.9 33 0 1 0-65.8 0Z" fill="#86909c" p-id="4189"></path>
+                </svg>
             </button>
 
-            <NoticeCenter :type="1"/>
-
+            <NoticeCenter v-if="haveNotice != null" :newNotice="haveNotice" @delectNewNotice="this.delectNewNotice" />
+            <div v-else class="circle-bound">
+                <svg t="1715050698908" style="width: 80%; height: 80%; margin-left: 3%; margin-top: -2%;"
+                    viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2381" width="200"
+                    height="200">
+                    <path
+                        d="M891.851 813.716L814 701.561V411.873c0-61.969-24.132-120.229-67.951-164.048-43.82-43.82-102.079-67.952-164.049-67.952h-38V153c0-17.673-14.327-32-32-32s-32 14.327-32 32v26.873h-38c-61.97 0-120.23 24.132-164.049 67.952C234.132 291.644 210 349.904 210 411.873v289.688l-77.85 112.155a31.999 31.999 0 0 0 26.288 50.247h245.508C416.92 911.461 460.444 946.48 512 946.48s95.08-35.019 108.054-82.518h245.508a32 32 0 0 0 26.289-50.246zM512 882.48c-15.359 0-29.045-7.259-37.837-18.518h75.675c-8.792 11.259-22.479 18.518-37.838 18.518z m-292.396-82.517l48.684-70.138A32.002 32.002 0 0 0 274 711.578V411.873c0-92.636 75.364-168 168-168h140c92.636 0 168 75.364 168 168v299.705a32.002 32.002 0 0 0 5.712 18.247l48.686 70.138H219.604z"
+                        fill="#86909c" p-id="2382"></path>
+                </svg>
+            </div>
             <!-- 上边栏最右侧为头像 -->
             <div class="avatar">
-                <el-avatar :size="32" :src="avatarPicture"/>
+                <el-avatar :size="32" :src="avatarPicture" />
             </div>
 
         </div>
 
     </div>
-    
 </template>
 
 <script>
 import axios from 'axios';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
 import { Search } from '@element-plus/icons-vue'
 import NoticeCenter from '../Notice/NoticeCenter.vue';
+import { ElMessage } from 'element-plus';
 export default {
     components: {
         Search,
@@ -95,6 +117,7 @@ export default {
                 },
             ],
             user_list: [],
+            haveNotice: null,
         }
     },
     mounted() {
@@ -109,6 +132,10 @@ export default {
             this.avatarPicture = result.data.info;
         })
     },
+    created() {
+        //setInterval(this.getNewNotice, 1000);
+        this.getNewNotice();
+    },
     methods: {
         logout() {
             // 用户登出
@@ -121,7 +148,7 @@ export default {
                 data: content,
             }).then((result) => {
                 console.log(result);
-                if(result.data.success) {
+                if (result.data.success) {
                     this.$message({
                         showClose: true,
                         message: '登出成功！',
@@ -158,6 +185,39 @@ export default {
                     // 强制重新加载当前页面
                     location.reload();
                 });
+            });
+        },
+        getNewNotice() {
+            //新通知
+            axios({
+                method: "GET",
+                url: 'api/message/new',
+                //url: 'http://127.0.0.1:4523/m2/4272722-0-default/175684147',
+            }).then((result) => {
+                console.log(result);
+                // var newResult = result.data.result;
+                // if (!this.haveNotice && newResult == true) {
+                //     //this.haveNotice = null;
+                //     this.$nextTick(() => {
+                //         this.haveNotice = true;
+                //     });
+                // }
+                this.haveNotice = result.data.result;
+                if (this.haveNotice) {
+                    ElMessage({
+                        message: '您有新通知',
+                        type: 'info',
+                        plain: true,
+                        showClose: true,
+                    })
+                }
+            })
+        },
+        delectNewNotice() {
+            //this.haveNotice = null;
+            //console.log("diaoyongl ma");
+            this.$nextTick(() => {
+                this.haveNotice = false;
             });
         }
     }

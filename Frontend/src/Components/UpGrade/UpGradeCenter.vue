@@ -11,7 +11,7 @@
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;margin-left: 7%">
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
-                    <span style="padding-left: 3%;">
+                    <span style="padding-left: 20px;">
                         <el-button-group class="ml-4">
                             <el-button type="primary" plain v-if="kindSelect != 1" @click="selectOne">讨论帖</el-button>
                             <el-button type="primary" v-if="kindSelect == 1" @click="selectOne">讨论帖</el-button>
@@ -21,7 +21,7 @@
                             <el-button type="primary" v-if="kindSelect == 3" @click="selectThree">查看全部</el-button>
                         </el-button-group>
                     </span>
-                    <span style="padding-left:3%;">
+                    <span style="padding-left:20px;">
                         <!-- <el-button-group class="ml-4">
                             <el-button type="primary" plain v-if="kindSelect2 != 1" @click="selectKindOne">保研</el-button>
                             <el-button type="primary" v-if="kindSelect2 == 1" @click="selectKindOne">保研</el-button>
@@ -36,7 +36,7 @@
                             <el-option v-for="item in this.targetKind" :value="item.value" :label="item.label" />
                         </el-select>
                     </span>
-                    <span style="padding-left: 3%;">
+                    <span style="padding-left: 10px;">
                         <el-select v-model="sortKindStr" style="width: 100px" placeholder="排序方式">
                             <el-option v-for="item in this.sortKind" :value="item.value" :label="item.label" />
                         </el-select>
@@ -304,7 +304,7 @@ export default {
 <style scoped>
 .main-postpage-container {
     width: calc(100vw - 220px);
-    min-width: 1280px;
+    min-width: 1080px;
     background-color: rgba(247, 248, 250, 0.7);
 }
 

@@ -78,13 +78,15 @@
             </div>
             <div style="width: 65%;height: 100%;background-color: white;">
                 <div style="width: 100%;height: 100%;">
-                    <el-scrollbar style="height: 100%;width: 100%;">
-                        <div v-if="this.postItemList.length != 0" style="width: 97.8%;height: 100%;">
+                    <div style="height: 100%;width: 100%; overflow-y: auto;overflow-x: hidden;">
+                        <div v-if="this.postItemList.length != 0" style="width: 100%;height: 100%;">
                             <PostItem v-for="item in this.postItemList" :getPostId="item.post_id" :key="item.post_id">
                             </PostItem>
                         </div>
-
-                    </el-scrollbar>
+                        <div v-if = "this.postItemList.length == 0" class="no-posts-container">
+                            <div style="font-size: 1.5em; font-weight: 200;">没有相应帖子或用户设置不可见</div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -232,4 +234,16 @@ export default {
     font-size: 1.2em;
     margin-left: 20px;
 }
+
+.no-posts-container {
+  width: 100%;
+  height: 100%; /* 根据需要调整高度 */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 垂直居中 */
+  background-color: rgba(241, 241, 241, 0.5); /* 灰色背景 */
+  backdrop-filter: blur(20px); /* 20px 模糊半径 */
+  flex-direction: column;
+}
+
 </style>
