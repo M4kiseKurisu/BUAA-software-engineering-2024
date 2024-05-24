@@ -10,7 +10,7 @@
           <div class="first-card-left">
             <div class="inf-tags">
               <div class="course-inf">
-                <span class="course-name">{{course.course_name}}</span>
+                <span class="course-name">{{ course.course_name }}</span>
               </div>
               <div class="course-tags">
                 <span class="tag" v-for="(tag, index) in course.course_tags" :key="index">{{ tag }}</span>
@@ -24,10 +24,10 @@
           </div>
           <div class="first-card-right">
             <div class="first-right-container">
-              <span class="another-info">课程容量:{{course.course_capacity}}</span>
+              <span class="another-info">课程容量:{{ course.course_capacity }}</span>
             </div>
             <div class="first-right-container">
-              <span class="another-info">课程关注:{{course.course_follows}}</span>
+              <span class="another-info">课程关注:{{ course.course_follows }}</span>
             </div>
             <div class="first-right-container">
               <button class="go-to-plate">前往对应板块</button>
@@ -42,21 +42,21 @@
       <div class="second-card">
         <div class="course-description-container">
           <div class="course-description">
-          <span class="cs-title" >
-            课程介绍
-          </span>
+            <span class="cs-title">
+              课程介绍
+            </span>
             <span class="description-of-course">
-            {{course.course_info}}
-          </span>
+              {{ course.course_info }}
+            </span>
           </div>
         </div>
         <div class="course-teacher-container">
           <div class="course-teacher">
 
-          <span class="cs-title">
-            教师介绍
-          </span>
-            <div v-if="teachers.length!==0">
+            <span class="cs-title">
+              教师介绍
+            </span>
+            <div v-if="teachers.length !== 0">
               <div class="pic-name">
                 <div class="teacher-pic-container">
                   <img :src="selectedTeacher.teacher_picture" style="width: auto; height: 100px;" alt="">
@@ -65,15 +65,10 @@
                   <span class="teacher-name">{{ selectedTeacher.teacher_name }}</span>
                 </div>
               </div>
-              <span class="introduction-of-">{{selectedTeacher.teacher_introduction }}</span>
+              <span class="introduction-of-">{{ selectedTeacher.teacher_introduction }}</span>
               <div class="pagination-container">
-                <el-pagination
-                    v-model="currentPage"
-                    :page-size="pageSize"
-                    layout="prev, pager, next"
-                    :total="teachers.length"
-                    @current-change="handleCurrentChange"
-                ></el-pagination>
+                <el-pagination v-model="currentPage" :page-size="pageSize" layout="prev, pager, next"
+                  :total="teachers.length" @current-change="handleCurrentChange"></el-pagination>
               </div>
             </div>
             <div v-else class="pic-name">
@@ -128,7 +123,7 @@
 </template>
 <script>
 
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import BreadcrumbLabel from "@/Components/Tool/BreadcrumbLabel.vue";
 import axios from "axios";
 
@@ -136,42 +131,42 @@ import axios from "axios";
 
 export default defineComponent({
 
-  components: {BreadcrumbLabel},
-  data(){
-    return{
-      route:["学业论坛","课程论坛"],
-      pageSize:1,
+  components: { BreadcrumbLabel },
+  data() {
+    return {
+      route: ["学业论坛", "课程论坛"],
+      pageSize: 1,
       currentPage: 1,
-      currentContent:1,
-      course:{
-        course_name:"软件工程",
-        course_type:"核心专业课",
-        course_tags:["标签一","标签二"],
-        course_college:"计算机学院",
-        course_credit:"114.514",
-        course_capacity:"1919",
-        course_follows:"810",
-        course_info:"太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太没意思了傻软😫👎太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍",
-        course_content:[
+      currentContent: 1,
+      course: {
+        course_name: "软件工程",
+        course_type: "核心专业课",
+        course_tags: ["标签一", "标签二"],
+        course_college: "计算机学院",
+        course_credit: "114.514",
+        course_capacity: "1919",
+        course_follows: "810",
+        course_info: "太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太没意思了傻软😫👎太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍太有意思了软工😁👍",
+        course_content: [
           {
-            pic:"./src/Images/course-content-1.png"
+            pic: "./src/Images/course-content-1.png"
           },
           {
-            pic:"./src/Images/course-content-2.png"
+            pic: "./src/Images/course-content-2.png"
           }
         ],
-        course_outlines:[
+        course_outlines: [
           {
             name: "课程内容A",
-            content:"课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
+            content: "课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
           },
           {
             name: "课程内容A",
-            content:"课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
+            content: "课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
           },
           {
             name: "课程内容A",
-            content:"课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
+            content: "课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容课程内容A的详细内容"
           },
         ]
       },
@@ -217,40 +212,40 @@ export default defineComponent({
   methods: {
     getCourseInfo(sectionId) {
       axios({
-        method:"GET",
-        url:"api/section/info",
-        params:{section_id:sectionId},
+        method: "GET",
+        url: "api/section/info",
+        params: { section_id: sectionId },
 
       })
-          //axios.get(`/section/info/${sectionId}`).
-          .then(response => {
-            console.log(response.data)
-            // 请求成功，将返回的课程信息赋值给组件的 course 对象
-            this.course.course_info = response.data.course_info;
-            this.course.course_name = response.data.course_name;
-            this.course.course_college = response.data.course_college;
-            this.course.course_credit = response.data.course_credit;
-            this.course.course_posts = response.data.course_posts;
-            this.course.course_type = response.data.course_type;
-            this.course.course_capacity = response.data.course_capacity;
-            this.course.course_follows = response.data.course_follows;
-            this.teachers=response.data.teachers;
-            this.course.course_tags=[this.course.course_college,this.course.course_type];
-            /*if (this.teachers.length === 0) {
-              this.teachers = [{
+        //axios.get(`/section/info/${sectionId}`).
+        .then(response => {
+          console.log(response.data)
+          // 请求成功，将返回的课程信息赋值给组件的 course 对象
+          this.course.course_info = response.data.course_info;
+          this.course.course_name = response.data.course_name;
+          this.course.course_college = response.data.course_college;
+          this.course.course_credit = response.data.course_credit;
+          this.course.course_posts = response.data.course_posts;
+          this.course.course_type = response.data.course_type;
+          this.course.course_capacity = response.data.course_capacity;
+          this.course.course_follows = response.data.course_follows;
+          this.teachers = response.data.teachers;
+          this.course.course_tags = [this.course.course_college, this.course.course_type];
+          /*if (this.teachers.length === 0) {
+            this.teachers = [{
 
-                teacher_name: "暂无信息",
-                teacher_introduction: "暂无信息",
-                teacher_picture: ""
-              }];
-            }*/
-            console.log(this.course)
-            console.log(this.teachers)
-          })
-          .catch(error => {
-            // 请求失败，处理错误
-            console.error('Error fetching course information:', error);
-          });
+              teacher_name: "暂无信息",
+              teacher_introduction: "暂无信息",
+              teacher_picture: ""
+            }];
+          }*/
+          console.log(this.course)
+          console.log(this.teachers)
+        })
+        .catch(error => {
+          // 请求失败，处理错误
+          console.error('Error fetching course information:', error);
+        });
     },
     handleCurrentChange(val) {
       // 页面改变时触发的方法
@@ -258,18 +253,19 @@ export default defineComponent({
     },
     handleCurrentContentChange(val) {
       // 页面改变时触发的方法
-      this.currentContent=val;
+      this.currentContent = val;
     }
   }
 })
 </script>
 <style>
-.course-section-container{
+.course-section-container {
   width: calc(99vw - 205px);
 
   //height: calc(100vh - 85px);
 }
-.course-container{
+
+.course-container {
   display: flex;
   //justify-content: center; /* 居中 */
   flex-direction: column;
@@ -278,12 +274,14 @@ export default defineComponent({
   //background: #dbdbdb;
   background: #dcdcdc;
 }
+
 .breadcrumb {
   margin-top: 19px;
   margin-left: 20px;
   margin-bottom: 17px;
 }
-.first-card-container{
+
+.first-card-container {
   width: 100%;
   height: 260px;
   //background: #00b9b8;
@@ -295,7 +293,8 @@ export default defineComponent({
   border-radius: 5px;
 
 }
-.first-card{
+
+.first-card {
   display: flex;
   justify-content: space-between;
   width: 55%;
@@ -306,18 +305,21 @@ export default defineComponent({
   //border-bottom-right-radius: 10px; /* 右下角圆角半径为 10px */
   //border-radius: 13px;
 }
-.first-card-left{
+
+.first-card-left {
   display: flex;
-  flex-direction:column ;
+  flex-direction: column;
   margin-left: 15%;
   margin-top: 20px;
 }
-.inf-tags{
+
+.inf-tags {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
-.course-name{
+
+.course-name {
   font-size: 32px;
 }
 
@@ -329,34 +331,43 @@ export default defineComponent({
 
 .tag {
   font-size: 12px;
-  margin-right: 10px; /* 添加标签之间的间距 */
-  padding: 5px; /* 添加内边距 */
-  color: #007bff; /* 设置蓝色 */
-  border: 1px solid #007bff; /* 添加边框 */
-  border-radius: 5px; /* 圆角边框 */
+  margin-right: 10px;
+  /* 添加标签之间的间距 */
+  padding: 5px;
+  /* 添加内边距 */
+  color: #007bff;
+  /* 设置蓝色 */
+  border: 1px solid #007bff;
+  /* 添加边框 */
+  border-radius: 5px;
+  /* 圆角边框 */
 }
 
 
 .other-inf {
   display: flex;
-  flex-direction: column; /* 每个span单独一行 */
+  flex-direction: column;
+  /* 每个span单独一行 */
   margin-top: 12px;
 }
 
 .other-info {
   margin-top: 8px;
-  font-size: 14px; /* 调整字体大小 */
-  color: #888888 /* 调整颜色为灰色 */
+  font-size: 14px;
+  /* 调整字体大小 */
+  color: #888888
+    /* 调整颜色为灰色 */
 }
 
-.first-card-right{
-   display: flex;
-   flex-direction:column ;
+.first-card-right {
+  display: flex;
+  flex-direction: column;
   width: 25%;
-   //margin-right: 15%;
-   //margin-top: 20px;
- }
-.first-right-container{
+  //margin-right: 15%;
+  //margin-top: 20px;
+}
+
+.first-right-container {
   background: #dcdcdc;
   height: 33%;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -364,29 +375,39 @@ export default defineComponent({
   justify-content: center;
   //margin-top: 18px;
 }
+
 .another-info {
-  margin-top:18px;
-  font-size: 18px; /* 调整字体大小 */
+  margin-top: 18px;
+  font-size: 18px;
+  /* 调整字体大小 */
   color: #4e5969;
 }
 
 .go-to-plate {
-  background-color: #007bff; /* 蓝色背景 */
-  color: #ffffff; /* 白色文字 */
-  border: none; /* 移除边框 */
-  border-radius: 5px; /* 圆角 */
-  padding: 8px 16px; /* 添加内边距 */
-  font-size: 16px; /* 字体大小 */
-  cursor: pointer; /* 光标样式为指针 */
+  background-color: #007bff;
+  /* 蓝色背景 */
+  color: #ffffff;
+  /* 白色文字 */
+  border: none;
+  /* 移除边框 */
+  border-radius: 5px;
+  /* 圆角 */
+  padding: 8px 16px;
+  /* 添加内边距 */
+  font-size: 16px;
+  /* 字体大小 */
+  cursor: pointer;
+  /* 光标样式为指针 */
   height: 60%;
   margin-top: 7.5%;
 }
 
 .go-to-plate:hover {
-  background-color: #0056b3; /* 鼠标悬停时变暗一点 */
+  background-color: #0056b3;
+  /* 鼠标悬停时变暗一点 */
 }
 
-.second-card{
+.second-card {
   margin-top: 40px;
   display: flex;
   justify-content: space-between;
@@ -394,18 +415,21 @@ export default defineComponent({
   margin-bottom: 35px;
 }
 
-.cs-title{
+.cs-title {
   font-size: 22px;
 }
-.course-description-container{
+
+.course-description-container {
   background: white;
   width: 65%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   border-radius: 1px;
 }
-.course-description{
+
+.course-description {
   display: flex;
-  flex-direction: column; /* 每个span单独一行 */
+  flex-direction: column;
+  /* 每个span单独一行 */
   margin-top: 5%;
   width: 90%;
   margin-left: 5%;
@@ -413,18 +437,19 @@ export default defineComponent({
   //margin-left: -100px;
 }
 
-.description-of-course{
+.description-of-course {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-.course-teacher-container{
+
+.course-teacher-container {
   width: 30%;
   background: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   border-radius: 1px;
 }
 
-.course-teacher{
+.course-teacher {
   //margin-left: 60px;
   margin-top: 5%;
   width: 80%;
@@ -433,20 +458,23 @@ export default defineComponent({
 
 }
 
-.pic-name{
+.pic-name {
   display: flex;
   margin-top: 12px;
   justify-content: space-between;
   //align-items: center;
 }
-.teacher-name-container{
+
+.teacher-name-container {
   //height: 100px;
   align-self: center;
   //margin-right: -30px;
 }
-.teacher-name{
+
+.teacher-name {
   font-size: 33px;
-  color: #007bff; /* 蓝色 */
+  color: #007bff;
+  /* 蓝色 */
   //margin-left: 235px;
   //margin-top: 33.5px;
   margin-right: 50px;
@@ -455,23 +483,26 @@ export default defineComponent({
 .pagination-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px; /* 调整上边距 */
+  margin-top: 20px;
+  /* 调整上边距 */
 }
 
-.third-card{
+.third-card {
   display: flex;
   justify-content: space-between;
   margin-top: 60px;
 }
-.course-content{
+
+.course-content {
   //margin-left: -100px;
   width: 500px;
 }
-.content-pic{
+
+.content-pic {
   margin-top: 30px;
 }
-.course-outline{
+
+.course-outline {
   margin-left: 60px;
   width: 250px;
-}
-</style>
+}</style>

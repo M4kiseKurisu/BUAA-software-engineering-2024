@@ -49,7 +49,7 @@
                         <!-- <span style="padding-right: 4%;"><el-button  type="primary"
                                 style="font-size: large;" plain @click = "postRecommend">智能推荐</el-button></span> -->
                         <span style="padding-right: 7%;"><el-button text type="primary"
-                                style="font-size: large;">查看院校信息</el-button></span>
+                                style="font-size: large;" @click = "goToSchoolInfomation">查看院校信息</el-button></span>
                     </div>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;">
@@ -289,6 +289,9 @@ export default {
         toPost() {
             this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + 0 });
         },
+        goToSchoolInfomation(){
+            this.$router.push({ path: "/MainPage/SchoolInformation/Main"});
+        }
     },
     created() {
         this.getPostList();

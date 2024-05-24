@@ -35,7 +35,7 @@
             <el-menu-item index="/CourseSection">课程详情测试</el-menu-item> -->
             <!-- <el-menu-item index="/CourseSection/1">课程详情测试</el-menu-item> -->
             <el-menu-item index="/MainPage/UpGradeCenter">升学论坛</el-menu-item>
-            <el-menu-item index="/MainPage/SchoolInformation/Main">升学学校信息</el-menu-item>
+            <!-- <el-menu-item index="/MainPage/SchoolInformation/Main">升学学校信息</el-menu-item> -->
             <!-- <el-menu-item index="/ShowPersonalInformation">个人信息展示测试</el-menu-item> -->
         </el-sub-menu>
 

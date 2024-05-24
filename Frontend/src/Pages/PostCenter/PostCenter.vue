@@ -49,7 +49,7 @@
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
                         <span style="padding-right: 7%;"><el-button text type="primary"
-                                style="font-size: large;">查看相关课程界面</el-button></span>
+                                style="font-size: large;" @click = "goToCourseSection">查看相关课程界面</el-button></span>
                     </div>
                 </div>
                 <div style="width: 100%;height: 45%;display: flex;align-items: center;">
@@ -59,12 +59,13 @@
                                 <el-option v-for="item in options" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select> -->
-                            <el-input v-model="tagKind" style="width: 160px"
+                            <el-input v-model="tagKind" style="width: 120px"
                                 placeholder="输入标签" />
                         </span>
-                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 160px"
+                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
+                        <span style="padding-right: 3%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "getRecommendPost">智能推荐</el-button></span>
                     </div>
                 </div>
             </div>
@@ -89,7 +90,7 @@
                     </div>
                     <div v-if = "this.techerIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.assitantIdList.length != 0">
@@ -98,7 +99,7 @@
                     </div>
                     <div v-if = "this.assitantIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
@@ -107,7 +108,7 @@
                     </div>
                     <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
@@ -350,7 +351,13 @@ export default {
                 this.techerIdList = result.data.teacher;
                 this.assitantIdList = result.data.assistant;
             })
-        }
+        },
+        goToCourseSection(){
+            this.$router.push({ path: '/MainPage/Course_Center/CourseSection/' + this.sectionId });
+        },
+        getRecommendPost(){
+
+        },
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
