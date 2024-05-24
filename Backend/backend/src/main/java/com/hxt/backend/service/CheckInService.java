@@ -10,6 +10,7 @@ import com.hxt.backend.mapper.UserMapper;
 import com.hxt.backend.response.checkInResponse.*;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -212,6 +213,7 @@ public class CheckInService {
     }
     
     //更新打卡点赞数
+    @Async
     public Integer updateCheckInLikeCount(Integer checkInId, Integer op) {
         return checkInMapper.updateCheckInLikeCount(checkInId, op);
     }
