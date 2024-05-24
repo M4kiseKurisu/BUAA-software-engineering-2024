@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class PostController {
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
     private final ImageService imageService;
     private final TagService tagService;
@@ -56,8 +59,8 @@ public class PostController {
         
         //更新用户浏览偏好和浏览记录
         
-        Map<String, Double> postTFIDF = recommendService.calculatePostTFIDF(post_id);
-        recommendService.updateUserPreference(Integer.parseInt(user_id), postTFIDF);
+        //Map<String, Double> postTFIDF = recommendService.calculatePostTFIDF(post_id);
+        recommendService.updateUserPreference(Integer.parseInt(user_id), post_id);
         recommendService.updateViewHistory(Integer.parseInt(user_id), post_id);
         
         // 获取发帖者名字和头像
@@ -583,7 +586,7 @@ public class PostController {
         } else if (frequencyLogService.checkFrequency(author_id)) {
             return new BasicInfoResponse(false, frequencyResponse);
         }
-        
+
         //审核回复是否违规
         if (!reviewService.textReview(content)) {
             return new BasicInfoResponse(false, "回复内容违规");

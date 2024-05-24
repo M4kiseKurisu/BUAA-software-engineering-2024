@@ -30,7 +30,7 @@
               <span class="another-info">课程关注:{{ course.course_follows }}</span>
             </div>
             <div class="first-right-container">
-              <button class="go-to-plate">前往对应板块</button>
+              <button class="go-to-plate" @click="goToCourseSectionPostCenter">前往对应板块</button>
             </div>
 
 
@@ -200,6 +200,7 @@ export default defineComponent({
         console.error('Error fetching course information:', error);
       }
     },*/
+
     selectedTeacher() {
       // 根据当前页码获取对应的老师信息
       return this.teachers[this.currentPage - 1];
@@ -210,6 +211,9 @@ export default defineComponent({
     }
   },
   methods: {
+    goToCourseSectionPostCenter() {
+      this.$router.push({ path: "/MainPage/Course_Center/PostCenter/" + this.$route.params.section_id});
+    },
     getCourseInfo(sectionId) {
       axios({
         method: "GET",

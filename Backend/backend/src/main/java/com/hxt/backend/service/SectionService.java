@@ -340,7 +340,7 @@ public class SectionService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         messageMapper.sendSystemNoticeToUser("授权通知",
                 String.format("您于 %s 被授予 %s 版块的 %s 权限，希望您为板块建设贡献自己的一份力量。",
-                        df.format(date), sectionMapper.getSectionNameById(section), type), assistant);
+                        df.format(date), sectionMapper.getSectionNameById(section), "assistant"), assistant);
         return new BasicInfoResponse(true, "");
     }
 
@@ -372,6 +372,11 @@ public class SectionService {
         if (userMapper.updateSectionBlock(id, section, days) == 0) {
             userMapper.sectionBlockUser(id, section, days);
         }
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("封禁通知",
+                String.format("您因违反有关规定，被 %s 版块管理员于 %s 在该板块封禁 %d 天（自本通知中的时间点起计算）。",
+                        sectionMapper.getSectionNameById(section) ,df.format(date), days), id);
         return new BasicInfoResponse(true, "");
     }
 
@@ -380,6 +385,11 @@ public class SectionService {
             return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
         }
         userMapper.sectionUnblockUser(id, section);
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("解封通知",
+                String.format("您于 %s 被 %s 版块管理员在该板块手动解封。",
+                        df.format(date), sectionMapper.getSectionNameById(section)), id);
         return new BasicInfoResponse(true, "");
     }
 

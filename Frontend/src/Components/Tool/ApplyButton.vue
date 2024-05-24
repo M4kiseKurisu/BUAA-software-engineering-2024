@@ -31,6 +31,7 @@
         </div>
 
         <el-button type="primary" style="margin-top: 4px;" @click="sendApply">发送申请</el-button>
+        <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ content_warning }}</div>
         
     </el-dialog>
 </template>
@@ -47,6 +48,8 @@ export default {
             url: "",
             apply_type: 0,
             content: "",
+            is_loading: false,
+            content_warning: "",
         }
     },
     props: ["section_id"],
@@ -54,6 +57,14 @@ export default {
         async submitUpload() {
             try {
                 console.log(this.file);
+                const loadingMessage = this.$message({
+                    showClose: true,
+                    message: '正在上传资源',
+                    type: 'info',
+                    duration: 0, // 设置持续时间为 0，表示不自动关闭
+                });
+                this.is_loading = true;
+
                 const file_upload = this.file[0].raw;
                 const formData = new FormData();
                 formData.append('file', file_upload);
@@ -70,11 +81,31 @@ export default {
                 console.log(response.data);
                 this.url = response.data.url;
                 console.log(this.url);
+
+                loadingMessage.close();
+                this.is_loading = false;
+                this.$message({
+                    showClose: true,
+                    message: '资源上传成功！',
+                    type: 'success',
+                });
             } catch (error) {
                 console.log("error")
             }
         },
         sendApply() {
+            if (this.is_loading) {
+                this.content_warning = "请等待资源上传完成后再发布帖子"
+                return;
+            } else if (this.url.length == 0 || this.content.length == 0) {
+                this.content_warning = "不能上传空申请"
+                return;
+            } else if (this.content.length > 600) {
+                this.content_warning = "申请文字过长"
+                return;
+            }
+
+
             let content = {
                 user_id: JSON.parse(sessionStorage.getItem("id")),
                 section_id: parseInt(this.section_id),
@@ -105,5 +136,10 @@ export default {
 <style scoped>
 .flex-layout {
     display: flex;
+}
+
+.warning-css {
+    color: red;
+    font-size: 12px;
 }
 </style>

@@ -62,7 +62,8 @@
 
                 <div class="post-more-information-left">
                     <!-- 作者头像 -->
-                    <button class="avatar-button" @click="toInformationShow(this.author_id)">
+                    <button class="avatar-button" @click="toInformationShow(this.author_id)"
+                        @contextmenu.prevent="handleRightClick(this.author_id)">
                         <el-avatar shape="square" :size="60" :src="this.author_head" />
                     </button>
 
@@ -338,6 +339,15 @@
             </div>
 
         </div>
+
+        <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
+            <el-button type="primary" @click="up_assistant">提升该用户为板块助教</el-button>
+            <div style="display: flex; margin-top: 12px;">
+                <el-button v-if="authority_num == 0" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
+                <el-input v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
+            </div>
+            <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
+        </el-dialog>
     </div>
 </template>
 
@@ -435,6 +445,10 @@ export default {
             isRepliesOpen: [false, false, false],
 
             repliesContainter: [{}, {}, {}],
+
+            dialog_visible: false,
+            op_id: -1,
+            cancel_days: "",
         }
     },
     computed: {
@@ -574,7 +588,7 @@ export default {
     methods: {
         createInformation() {
             //查看权限
-            //this.authorityCheck();
+            this.authorityCheck(this.userId);
 
             //获得用户是否点赞、收藏信息
             axios({
@@ -1025,6 +1039,7 @@ export default {
         async authorityCheck(uid) {
             try {
                 let a = 3;
+                console.log(uid);
                 const result = await axios({
                     method: "GET",
                     url: "/api/user/authority",
@@ -1038,20 +1053,19 @@ export default {
                 if (result.data.success) {
                     console.log(result.data.info);
                     let authority_get = result.data.info;
-                    a = authority_get == "teacher" ? 0 : authority_get == "assistant" ? 1 : 3;
+                    this.authority_num = (authority_get == "teacher") ? 0 : (authority_get == "assistant") ? 1 : 3;
                 }
-                console.log(a);
-                return a;
+                console.log(this.authority_num);
             } catch (error) {
                 //console.error(error);
                 // 处理错误情况
-                return 3; // 返回默认值
+                this.authority_num = 3; // 返回默认值
             }
         },
         async set_auth() {
             try {
                 console.log(this.author_id);
-                this.author_a = await this.authorityCheck(this.author_id);
+                //this.author_a = await this.authorityCheck(this.author_id);
                 console.log(this.author_a);
             } catch (error) {
                 //console.error(error);
@@ -1074,6 +1088,77 @@ export default {
         //         return 3; // 返回默认值
         //     }
         // }
+        handleRightClick(id) {
+            console.log(this.authority_num);
+            console.log(id);
+            if ((this.authority_num != 1 && this.authority_num != 0) || id == this.userId) {
+                this.op_id = -1;
+                return;
+            }
+            this.dialog_visible = true;
+            this.op_id = id;
+            console.log(this.dialog_visible);
+        },
+        up_assistant() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {
+                section: this.section_id,
+                assistant: this.op_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/add/assistant",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '助教设置成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.dialog_visible = false;
+        },
+        cancel_people() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {};
+            if (this.cancel_days) {
+                content = {
+                    section: this.section_id,
+                    id: this.op_id
+                }
+            } else {
+                content = {
+                    section: this.section_id,
+                    id: this.op_id,
+                    days: this.cancel_days,
+                }
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/block",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '用户封禁成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.cancel_days = -1;
+            this.dialog_visible = false;
+        }
     }
 }
 </script>

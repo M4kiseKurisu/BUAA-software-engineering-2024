@@ -1,9 +1,9 @@
 <template>
     <div style="background-color: #f7f8fa; padding-top: 2px; padding-bottom: 12px;">
 
-        <el-radio-group v-model="followLimit" style="display: flex; margin-bottom: 8px" @change="getPosts(1)">
-            <el-radio :value=0 border>查看所有人</el-radio>
-            <el-radio :value=1 border>查看关注的人</el-radio>
+        <el-radio-group v-model="followLimit" style="display: flex; margin-bottom: 8px; margin-top: 12px; margin-left: 3%;" @change="getPosts(1)">
+            <el-radio style="background-color: white;" :value=0 border>查看所有人</el-radio>
+            <el-radio style="background-color: white;" :value=1 border>查看关注的人</el-radio>
         </el-radio-group>
         <div style="width: 94%; margin-left: 3%">
             <el-row v-for="item in showPosts" :gutter="20" style="margin-top: 16px;">

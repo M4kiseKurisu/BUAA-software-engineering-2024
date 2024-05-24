@@ -191,6 +191,9 @@ public class AdminService {
     }
 
     public boolean unblockUser(Integer id) {
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("解封通知",
+                String.format("您于 %s 被管理员手动解封。", df.format(date)), id);
         return userMapper.globalUnblockUser(id) > 0;
     }
 
