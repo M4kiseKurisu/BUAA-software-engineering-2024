@@ -60,7 +60,7 @@
                                 placeholder="输入关键词" /></span>
                         <span style="padding-right: 3%;"><el-button type="primary" plain
                                 @click="this.getSortPostList();">板块内搜索</el-button></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain
+                        <span style="padding-right: 7%;"><el-button type="primary" 
                                 @click="postRecommend">智能推荐</el-button></span>
                     </div>
                 </div>

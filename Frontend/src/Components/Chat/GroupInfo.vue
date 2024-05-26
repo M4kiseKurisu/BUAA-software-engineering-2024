@@ -47,10 +47,12 @@
         </div>
         <div style="width: 100%;height: 20px;display: flex;margin-top: 40px;">
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
-                <el-button v-if="this.selfId != this.groupCreaterId" @click="this.showQuit = true" type="primary" plain>退出团体</el-button>
+                <el-button v-if="this.selfId != this.groupCreaterId" @click="this.showQuit = true" type="primary"
+                    plain>退出团体</el-button>
             </div>
             <div style="width: 50%;height: 100%;display: flex;align-items: center;justify-content: center;">
-                <el-button type="warning" plain v-if="this.selfId != this.groupCreaterId">举报团体</el-button>
+                <el-button type="warning" plain v-if="this.selfId != this.groupCreaterId"
+                    @click="this.showReport = true">举报团体</el-button>
                 <el-button type="warning" plain v-else @click="showDelect = true">解散团体</el-button>
             </div>
         </div>
@@ -64,7 +66,7 @@
                 <el-button type="primary" @click="showQuit = flase">返回</el-button>
             </div>
             <div style="width: 50%;align-items: center;justify-content: center;display: flex;">
-                <el-button type="primary" @click = "exitGroup">确定</el-button>
+                <el-button type="primary" @click="exitGroup">确定</el-button>
             </div>
         </div>
     </el-dialog>
@@ -79,6 +81,13 @@
             <div style="width: 50%;align-items: center;justify-content: center;display: flex;">
                 <el-button type="primary" @click="delectGroup">确定</el-button>
             </div>
+        </div>
+    </el-dialog>
+    <el-dialog v-model="this.showReport" title="举报内容" width="400">
+        <el-input v-model="reportInput" style="width: 100%" :autosize="{ minRows: 3, maxRows: 6 }" type="textarea"
+            placeholder="请输入举报信息" />
+        <div style="display: flex;justify-content: flex-end;">
+            <el-button type="danger" style="margin-top: 12px;" @click="this.reportGroup">发送举报</el-button>
         </div>
     </el-dialog>
 </template>
@@ -107,10 +116,12 @@ export default {
             groupMemberList: [],
             groupCreaterId: 1,
             tags: [],
-            selfId: 1,
+            selfId: JSON.parse(sessionStorage.getItem("id")),
             isExamine: false,
             showQuit: false,
             showDelect: false,
+            showReport: false,
+            reportInput: '',
         }
     },
     components: {
@@ -126,9 +137,16 @@ export default {
                 }
             }).then((result) => {
                 if (result.data.success) {
-
+                    ElMessage({
+                        message: '团体解散成功',
+                        type: 'success',
+                        plain: true,
+                    })
+                    this.$nextTick(() => {
+                        this.$router.go(0);
+                    })
                 }
-                console.log(result);
+                //console.log(result);
             })
         },
         getGroupInfo() {
@@ -148,6 +166,7 @@ export default {
                 this.isExamine = result.data.group[0].is_examine;
                 this.tags = result.data.group[0].tags;
                 this.groupAvatar = result.data.group[0].image;
+                this.getCreaterInfo();
             })
         },
         getCreaterInfo() {
@@ -173,15 +192,40 @@ export default {
                 this.groupMemberList = result.data.member;
             })
         },
-        exitGroup(){
+        reportGroup() {
+            axios({
+                method: "POST",
+                url: 'api/group/report',
+                data: {
+                    id: this.groupId,
+                    detail: this.reportInput,
+                }
+            }).then((result) => {
+                if (result.data.success) {
+                    this.showReport = false;
+                    ElMessage({
+                        message: '举报发送成功',
+                        type: 'success',
+                        plain: true,
+                    })
+                } else {
+                    ElMessage({
+                        message: '举报发送失败',
+                        type: 'danger',
+                        plain: true,
+                    })
+                }
+            })
+        },
+        exitGroup() {
             axios({
                 method: "POST",
                 url: 'api/group/exit',
-                data:{
+                data: {
                     group_id: this.groupId,
                 }
             }).then((result) => {
-                if(result.data.success){
+                if (result.data.success) {
                     ElMessage({
                         message: '退出团体成功',
                         type: 'success',
@@ -198,10 +242,11 @@ export default {
             })
         },
     },
-    created(){
+    created() {
         this.getGroupInfo();
         this.getGroupMemberItem();
-        this.getCreaterInfo();
+        //this.getCreaterInfo();
+        //console.log(this.groupCreaterId);
     }
 }
 </script>

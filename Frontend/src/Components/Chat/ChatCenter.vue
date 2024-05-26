@@ -159,8 +159,8 @@
             <el-divider />
             <div style="height: 29%; width: 100%;">
                 <textarea v-model="textinput" placeholder="输入聊天内容" style="width: 95%; margin-left: 2%; margin-top: 20px; height: 64%;
-                                                                                            border: none;"
-                    @keydown.enter="sendMessage"></textarea>
+                                                                                                border: none;"
+                    @keydown.enter="handleKeyPress"></textarea>
                 <div style="width: 94%; display: flex; justify-content: flex-end; margin-top: 8px;">
                     <el-button type="success" plain @click="sendMessage">发送信息</el-button>
                 </div>
@@ -316,7 +316,13 @@ export default {
             this.scrollToBottom();
 
         },
-        sendMessage() {
+        handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                this.sendMessage(event);
+            }
+        },
+        sendMessage(event) {
+            event.preventDefault();
             var textTest = this.textinput;
             if (textTest.trim() == '') {
                 this.textinput = '';
@@ -333,15 +339,17 @@ export default {
                 };
                 let jsonData = JSON.stringify(messageToSend);
                 this.ws.send(jsonData);
-                console.log(this.messageList);
+                //console.log(this.messageList);
                 if (!this.messageList) {
                     this.messageList = [];
                 }
-                console.log(this.messageList);
+                //console.log(this.messageList);
                 this.messageList.push(messageToSend);
                 //console.log(messageToSend);
                 // 清空消息输入框
-                this.textinput = '';
+                this.$nextTick(() => {
+                    this.textinput = '';
+                })
                 this.scrollToBottom();
             } else {
                 console.error('WebSocket连接未打开或已关闭');
@@ -403,8 +411,8 @@ export default {
         }
     },
     created() {
-        this.ws = new WebSocket('ws://http://122.9.45.57/webSocket/' + this.selfId);
-        //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
+        //this.ws = new WebSocket('ws://http://122.9.45.57/webSocket/' + this.selfId);
+        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
         this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
         this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
         this.ws.addEventListener('error', this.handleWsError.bind(this), false);

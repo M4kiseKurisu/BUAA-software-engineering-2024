@@ -64,7 +64,7 @@
                                 placeholder="输入关键词" /></span>
                         <span style="padding-right: 3%;"><el-button type="primary" plain
                                 @click="searchPost">模块内搜索</el-button></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain
+                        <span style="padding-right: 7%;"><el-button type="primary" 
                                 @click="getRecommendPost">智能推荐</el-button></span>
                     </div>
                 </div>
@@ -134,6 +134,7 @@ import ManagerItem from "./ManagerItem.vue";
 import CreatorOfPostCenter from "@/Pages/PostCenter/CreatorOfPostCenter.vue";
 import axios from 'axios';
 import { result } from "lodash";
+import { ElMessage } from 'element-plus';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 export default {
     components: {
@@ -258,15 +259,18 @@ export default {
         toPost() {
             this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId });
         },
-        followSection() {
-            axios({
-                method: "POST",
-                url: "api/section/focus",
-                data: { section_id: this.sectionId },
-            }).then((result) => {
-                console.log(result);
-            })
-        },
+        // followSection() {
+        //     axios({
+        //         method: "POST",
+        //         url: "api/section/focus",
+        //         data: { section_id: this.sectionId },
+        //     }).then((result) => {
+        //         //console.log(result);
+        //         if (result.data.success) {
+                    
+        //         }
+        //     })
+        // },
         searchPost() {
             this.currentPage = 1;
             this.beforePage = 1;
@@ -304,11 +308,12 @@ export default {
                 url: "/api/section/info",
                 params: { section_id: this.sectionId },
             }).then((result) => {
-                //console.log(result);
+                console.log(result);
                 this.courseName = result.data.course_name;
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
+                this.isFollow = result.data.course_focus;
                 //this.assitantIdList = result.data.assistants;
             })
         },
@@ -333,6 +338,11 @@ export default {
                 console.log(result);
                 if (result.data.success) {
                     this.isFollow = true;
+                    ElMessage({
+                        message: '关注板块成功！',
+                        type: 'success',
+                        plain: true,
+                    })
                 }
             })
         },
@@ -345,6 +355,11 @@ export default {
                 //console.log(result);
                 if (result.data.success) {
                     this.isFollow = false;
+                    ElMessage({
+                        message: '取消关注成功！',
+                        type: 'success',
+                        plain: true,
+                    })
                 }
             })
         },
@@ -362,7 +377,8 @@ export default {
             })
         },
         goToCourseSection() {
-            this.$router.push({ path: '/MainPage/Course_Center/CourseSection/' + this.sectionId });
+            console.log(this.$router);
+            this.$router.push({ path: '/CourseSection/' + this.sectionId });
         },
         getRecommendPost() {
             this.isRecommend = true;
