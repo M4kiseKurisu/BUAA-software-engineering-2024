@@ -179,11 +179,9 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
-            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
             String[] time_send = post.getPostTime().toString().split(":");
             String postTime = time_send[0] + ":" + time_send[1];
-            String replyTime = time_reply[0] + ":" + time_reply[1];
-            element.setPost_time("发布于 " + postTime + "   最后回复于 " + replyTime);
+            element.setPost_time("发布于 " + postTime);
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());
@@ -227,11 +225,9 @@ public class SectionService {
             element.setPost_content(post.getContent());
             element.setPost_reply_time(postMapper.getReplyTime(post.getPost_id()));
 
-            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
             String[] time_send = post.getPostTime().toString().split(":");
             String postTime = time_send[0] + ":" + time_send[1];
-            String replyTime = time_reply[0] + ":" + time_reply[1];
-            element.setPost_time("发布于 " + postTime + " / 最后回复于 " + replyTime);
+            element.setPost_time("发布于 " + postTime);
 
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
@@ -270,28 +266,29 @@ public class SectionService {
 
     public SectionInfoResponse getSectionInfo(Integer sectionId, Integer userId) {
         Section section = sectionMapper.selectSectionById(sectionId);
-        SectionInfoResponse response = new SectionInfoResponse();
+        SectionInfoResponse response;
         if (section == null) {
+            response = new SectionInfoResponse();
             response.setSuccess(false);
             return response;
         }
-        response.setSuccess(true);
-        response.setCourse_focus(getFocusState(userId,sectionId));
-        response.setCourse_name(section.getName());
-        response.setCourse_type(section.getType());
-        response.setCourse_credit(section.getCredit());
-        response.setCourse_capacity(section.getCapacity());
-        response.setCourse_follows(sectionMapper.getFollowCountBySectionId(sectionId));
-        response.setCourse_posts(sectionMapper.getPostCountBySectionId(sectionId));
-        response.setCourse_info(section.getIntro());
-        response.setCourse_college(section.getAcademy());
         ArrayList<Teacher> teachers = sectionMapper.selectTeacherBySectionId(sectionId);
         ArrayList<TeacherElement> t = new ArrayList<>();
         for (Teacher teacher: teachers) {
             t.add(new TeacherElement(teacher.getTeacher_name(),teacher.getTeacher_intro()));
         }
-        response.setTeachers(t);
-        response.setAssistants(sectionMapper.selectAssistantBySectionId(sectionId));
+        response = new SectionInfoResponse(
+                true, getFocusState(userId,sectionId),
+                section.getName(),
+                section.getType(),
+                section.getCredit(),
+                section.getCapacity(),
+                sectionMapper.getFollowCountBySectionId(sectionId),
+                sectionMapper.getPostCountBySectionId(sectionId),
+                section.getIntro(),
+                section.getAcademy(), t,
+                sectionMapper.selectAssistantBySectionId(sectionId)
+        );
         return response;
     }
 

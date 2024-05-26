@@ -108,16 +108,17 @@ public class GroupService {
             if (joined.contains(group.getGroup_id())) {
                 continue;
             }
-            GroupElement element = new GroupElement();
-            element.setGroup_id(group.getGroup_id());
-            element.setName(group.getName());
-            element.setCreater_id(group.getPromoter_id());
-            element.setMember_count(group.getMember_count());
-            element.setContent(group.getContent());
-            element.setPermitted_num(group.getPermitted_num());
-            element.setIs_examine(group.is_examine());
-            element.setImage(group.getImage());
-            element.setTags(groupMapper.selectGroupTag(group.getGroup_id()));
+            GroupElement element = new GroupElement(
+                    group.getGroup_id(),
+                    group.getName(),
+                    group.getPromoter_id(),
+                    group.getMember_count(),
+                    group.getContent(),
+                    group.getPermitted_num(),
+                    group.is_examine(),
+                    group.getImage(),
+                    groupMapper.selectGroupTag(group.getGroup_id())
+            );
             list.add(element);
         }
         if (!tag.isEmpty()) {

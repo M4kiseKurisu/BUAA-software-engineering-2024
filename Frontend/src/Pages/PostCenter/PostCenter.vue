@@ -309,6 +309,7 @@ export default {
                 this.courseType = result.data.course_type;
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
+                this.route[2] = this.courseName
                 //this.assitantIdList = result.data.assistants;
             })
         },
