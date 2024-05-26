@@ -268,7 +268,7 @@ public class SectionService {
         return list;
     }
 
-    public SectionInfoResponse getSectionInfo(Integer sectionId) {
+    public SectionInfoResponse getSectionInfo(Integer sectionId, Integer userId) {
         Section section = sectionMapper.selectSectionById(sectionId);
         SectionInfoResponse response = new SectionInfoResponse();
         if (section == null) {
@@ -276,6 +276,7 @@ public class SectionService {
             return response;
         }
         response.setSuccess(true);
+        response.setCourse_focus(getFocusState(userId,sectionId));
         response.setCourse_name(section.getName());
         response.setCourse_type(section.getType());
         response.setCourse_credit(section.getCredit());
