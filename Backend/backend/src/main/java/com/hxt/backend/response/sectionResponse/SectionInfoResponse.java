@@ -14,6 +14,7 @@ import java.util.ArrayList;
 @Setter
 public class SectionInfoResponse {
     private Boolean success;
+    private Boolean course_focus;
     private String course_name;
     private String course_type;
     private Integer course_credit;
