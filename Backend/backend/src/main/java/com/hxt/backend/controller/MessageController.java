@@ -132,6 +132,7 @@ public class MessageController {
         }
     }
 
+    @GetMapping("/message/new")
     public NewNoticeResponse newNotice(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
