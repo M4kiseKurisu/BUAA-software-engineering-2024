@@ -88,7 +88,16 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(String message) {
-        log.info("[连接ID:{}] 收到消息:{}", this.userId, message);
+        //  log.info("[连接ID:{}] 收到消息:{}", this.userId, message);
+        //  心跳机制保持在页面上长时间连接不断线
+        if (message.equals("ping")) {
+            try {
+                this.session.getBasicRemote().sendText("pong");
+            } catch (Exception e) {
+                log.error("[连接ID:{}] 心跳机制失败:{}", this.userId, e.toString());
+            }
+            return;
+        }
         JSONObject json = new JSONObject(message);
         // json字段包括发送者id，接收者id，接收团体id，内容
         int receiver_id = Integer.parseInt(json.get("receiver_id").toString());
