@@ -2,14 +2,11 @@ package com.hxt.backend.service;
 
 import com.hxt.backend.entity.Report;
 import com.hxt.backend.entity.User;
-import com.hxt.backend.entity.group.Group;
 import com.hxt.backend.entity.post.Comment;
 import com.hxt.backend.entity.post.Post;
 import com.hxt.backend.entity.post.Reply;
 import com.hxt.backend.entity.section.Section;
 import com.hxt.backend.mapper.*;
-import com.hxt.backend.response.BasicInfoResponse;
-import com.hxt.backend.response.group.GroupElement;
 import com.hxt.backend.response.list.TimeInfoResponse;
 import com.hxt.backend.response.list.ReportListResponse;
 import com.hxt.backend.response.list.UserListResponse;
@@ -194,6 +191,9 @@ public class AdminService {
     }
 
     public boolean unblockUser(Integer id) {
+        Date date = new Date();
+        messageMapper.sendSystemNoticeToUser("解封通知",
+                String.format("您于 %s 被管理员手动解封。", df.format(date)), id);
         return userMapper.globalUnblockUser(id) > 0;
     }
 
@@ -429,13 +429,13 @@ public class AdminService {
             case 1:
                 Integer commentId = report.getTarget();
                 if (choice) {
-                    postService.deleteComment(true, 0, commentId);
+                    postService.deleteComment(true, -1, commentId);
                 }
                 break;
             case 2:
                 Integer replyId = report.getTarget();
                 if (choice) {
-                    postService.deleteReply(true, 0, replyId);
+                    postService.deleteReply(true, -1, replyId);
                 }
                 break;
             case 3:

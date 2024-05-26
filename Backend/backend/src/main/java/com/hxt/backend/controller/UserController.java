@@ -6,6 +6,7 @@ import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.sectionResponse.SectionUserAuthorityResponse;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
 import com.hxt.backend.service.FrequencyLogService;
 import com.hxt.backend.service.ImageService;
@@ -379,13 +380,13 @@ public class UserController {
     }
 
     @RequestMapping("/user/authority")
-    public BasicInfoResponse getSectionAuthority(
+    public SectionUserAuthorityResponse getSectionAuthority(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "id", defaultValue = "") Integer id,
             @RequestParam(name = "section", required = false) Integer section
     ) {
         if (user_id.isEmpty()) {
-            return new BasicInfoResponse(false, hasEmptyResponse);
+            return new SectionUserAuthorityResponse(false, hasEmptyResponse, false);
         }
         if (id == null) {
             id = Integer.parseInt(user_id);

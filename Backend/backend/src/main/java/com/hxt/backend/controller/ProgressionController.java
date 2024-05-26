@@ -58,7 +58,7 @@ public class ProgressionController {
             @RequestParam(name = "sort", required = false) Integer sort,
             @RequestParam(name = "recommend", required = false) boolean recommend,
             @CookieValue(name = "user_id", defaultValue = "") String userId
-    ) throws IOException {
+    ) {
     
         if (userId == "") {
             return new PostListResponse(false,null);
@@ -66,7 +66,7 @@ public class ProgressionController {
         
         if (recommend) {
             //推荐帖子
-            List<PostIntroResponse> list = recommendService.recommendPostsByContent(Integer.parseInt(userId));
+            List<PostIntroResponse> list = recommendService.recommendPostsByContent(Integer.parseInt(userId), 0);
             if (list.isEmpty()) {
                 return new PostListResponse(false, list);
             }

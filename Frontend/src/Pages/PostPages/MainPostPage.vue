@@ -16,7 +16,7 @@
 
                     <div style="margin-left: 10px; margin-top: 4px;">
                         <Report  :type="1" :id="this.post_id"/>
-                    </div>       
+                    </div>
                 </div>
 
                 <!-- 帖子头部右侧 -->
@@ -62,10 +62,11 @@
 
                 <div class="post-more-information-left">
                     <!-- 作者头像 -->
-                    <button class="avatar-button" @click="toInformationShow(this.author_id)">
+                    <button class="avatar-button" @click="toInformationShow(this.author_id)"
+                        @contextmenu.prevent="handleRightClick(this.author_id)">
                         <el-avatar shape="square" :size="60" :src="this.author_head" />
                     </button>
-                    
+
 
                     <div class="post-writer-information">
                         <div class="flex-layout">
@@ -181,7 +182,7 @@
                         <button class="avatar-button" @click="toInformationShow(item.comment_author_id)">
                             <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
                         </button>
-                        
+
                         <div class="replyer-username">{{ item.comment_author_name }}</div>
 
                         <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="auth_final_check(item.comment_author_id) === 0">
@@ -202,7 +203,7 @@
 
                         <div style="margin-left: 5px; margin-top: 12px;">
                             <Report  :type="2" :id="item.comment_id"/>
-                        </div>  
+                        </div>
                     </div>
 
                     <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -264,7 +265,7 @@
                                     <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
                                 </div>
                             </button>
-                            
+
                             <div class="replyer-username">{{ item2.reply_author_name }}</div>
 
                             <!-- <div style="margin-left: 6px; height: 22px; width: 22px; margin-top: 13px;" v-if="authorityCheck(item2.reply_author_id) === 0">
@@ -289,7 +290,7 @@
 
                             <div style="margin-left: 14px; margin-top: 12px;">
                                 <Report  :type="3" :id="item2.reply_id"/>
-                            </div>  
+                            </div>
                         </div>
 
                         <!-- 右侧信息：评论时间，去评论，点赞 -->
@@ -338,6 +339,15 @@
             </div>
 
         </div>
+
+        <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
+            <el-button type="primary" @click="up_assistant">提升该用户为板块助教</el-button>
+            <div style="display: flex; margin-top: 12px;">
+                <el-button v-if="authority_num == 0" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
+                <el-input v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
+            </div>
+            <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
+        </el-dialog>
     </div>
 </template>
 
@@ -369,19 +379,19 @@ export default {
             ReplyTextarea: "",  //回复内容监听
             sortOptions: [  //评论排序方式
                 {
-                    value: '0',
+                    value: 0,
                     label: '时间正序',
                 },
                 {
-                    value: '1',
+                    value: 1,
                     label: '热度排序',
                 },
                 {
-                    value: '2',
+                    value: 2,
                     label: '时间倒序',
                 }
             ],
-            sortValue: "",
+            sortValue: 0,
             ReplysReplyTextarea: "",  //回复回复内容监听
             post_id: 0,
             title: "",
@@ -435,6 +445,10 @@ export default {
             isRepliesOpen: [false, false, false],
 
             repliesContainter: [{}, {}, {}],
+
+            dialog_visible: false,
+            op_id: -1,
+            cancel_days: "",
         }
     },
     computed: {
@@ -451,10 +465,10 @@ export default {
             //console.log(showComments);
 
             // 更改楼中楼信息
-            
+
             for (let j = 0; j < showComments.length; j++) {
                 /*
-                const count = (showComments[j].replies.length % 3 === 0) ? 
+                const count = (showComments[j].replies.length % 3 === 0) ?
                     showComments[j].replies.length / 3 : Math.ceil(showComments[j].replies.length / 3);
                 this.repliesTotalPages[j] = count;
                 */
@@ -472,7 +486,7 @@ export default {
                 console.log(this.isReplyLiked2);
                 */
             }
-            
+
             return showComments;
         },
         repliesArray() {
@@ -517,7 +531,7 @@ export default {
             url: "/api/posts/post",
             params: {
                 post_id: this.post_id,
-                comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                comment_sort: 0,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
                 user_id: JSON.parse(sessionStorage.getItem("id")),
             }
         }).then((result) => {
@@ -541,12 +555,12 @@ export default {
             console.log(result.data.comment_count);
 
             /*
-            const count = (result.data.comments.length % 3 === 0) ? 
+            const count = (result.data.comments.length % 3 === 0) ?
                 result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
             this.commentTotalPages = count;
             // 更改楼中楼信息
             for (let j = 0; j < (this.comments.length >= 3 ? 3 : this.comments.length); j++) {
-                const count = (this.comments[j].replies.length % 3 === 0) ? 
+                const count = (this.comments[j].replies.length % 3 === 0) ?
                     this.comments[j].replies.length / 3 : Math.ceil(this.comments[j].replies.length / 3);
                 this.repliesTotalPages[j] = count;
                 this.repliesCurrentPage[j] = 1;
@@ -574,7 +588,7 @@ export default {
     methods: {
         createInformation() {
             //查看权限
-            //this.authorityCheck();
+            this.authorityCheck(this.userId);
 
             //获得用户是否点赞、收藏信息
             axios({
@@ -802,13 +816,13 @@ export default {
                 url: "/api/posts/post/comments",
                 params: {
                     post_id: this.post_id,
-                    comment_sort: 1,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
+                    comment_sort: 0,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
                 }
             }).then((result) => {
                 console.log(result)
                 this.comments = result.data.comments;
 
-                const count = (result.data.comments.length % 3 === 0) ? 
+                const count = (result.data.comments.length % 3 === 0) ?
                     result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
                 this.commentTotalPages = count;
             })
@@ -827,7 +841,7 @@ export default {
                 console.log(result)
                 this.repliesContainter[i] = result.data.replies;
 
-                const count = (this.repliesContainter[i].length % 3 === 0) ? 
+                const count = (this.repliesContainter[i].length % 3 === 0) ?
                     this.repliesContainter[i].length / 3 : Math.ceil(this.repliesContainter[i].length / 3);
                 console.log(count);
                 this.repliesTotalPages[i] = count;
@@ -844,7 +858,7 @@ export default {
             console.log(this.sortValue);
             axios({
                 method: "GET",
-                url: "/api/posts/post",
+                url: "/api/posts/post/comments",
                 params: {
                     post_id: this.post_id,
                     comment_sort: this.sortValue,  //0：时间（正序）；1：热度；2：时间倒序（最新优先）
@@ -852,7 +866,7 @@ export default {
             }).then((result) => {
                 this.comments = result.data.comments;
 
-                const count = (result.data.comments.length % 3 === 0) ? 
+                const count = (result.data.comments.length % 3 === 0) ?
                     result.data.comments.length / 3 : Math.ceil(result.data.comments.length / 3);
                 this.commentTotalPages = count;
 
@@ -1025,6 +1039,7 @@ export default {
         async authorityCheck(uid) {
             try {
                 let a = 3;
+                console.log(uid);
                 const result = await axios({
                     method: "GET",
                     url: "/api/user/authority",
@@ -1038,20 +1053,19 @@ export default {
                 if (result.data.success) {
                     console.log(result.data.info);
                     let authority_get = result.data.info;
-                    a = authority_get == "teacher" ? 0 : authority_get == "assistant" ? 1 : 3;
+                    this.authority_num = (authority_get == "teacher") ? 0 : (authority_get == "assistant") ? 1 : 3;
                 }
-                console.log(a);
-                return a;
+                console.log(this.authority_num);
             } catch (error) {
                 //console.error(error);
                 // 处理错误情况
-                return 3; // 返回默认值
+                this.authority_num = 3; // 返回默认值
             }
         },
         async set_auth() {
             try {
                 console.log(this.author_id);
-                this.author_a = await this.authorityCheck(this.author_id);
+                //this.author_a = await this.authorityCheck(this.author_id);
                 console.log(this.author_a);
             } catch (error) {
                 //console.error(error);
@@ -1074,6 +1088,77 @@ export default {
         //         return 3; // 返回默认值
         //     }
         // }
+        handleRightClick(id) {
+            console.log(this.authority_num);
+            console.log(id);
+            if ((this.authority_num != 1 && this.authority_num != 0) || id == this.userId) {
+                this.op_id = -1;
+                return;
+            }
+            this.dialog_visible = true;
+            this.op_id = id;
+            console.log(this.dialog_visible);
+        },
+        up_assistant() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {
+                section: this.section_id,
+                assistant: this.op_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/add/assistant",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '助教设置成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.dialog_visible = false;
+        },
+        cancel_people() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {};
+            if (this.cancel_days) {
+                content = {
+                    section: this.section_id,
+                    id: this.op_id
+                }
+            } else {
+                content = {
+                    section: this.section_id,
+                    id: this.op_id,
+                    days: this.cancel_days,
+                }
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/block",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '用户封禁成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.cancel_days = -1;
+            this.dialog_visible = false;
+        }
     }
 }
 </script>

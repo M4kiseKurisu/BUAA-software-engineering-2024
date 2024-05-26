@@ -2,14 +2,13 @@ package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
 import com.hxt.backend.response.SectionAuthorityResponse;
+import com.hxt.backend.response.PagesCountResponse;
 import com.hxt.backend.response.sectionResponse.*;
 import com.hxt.backend.service.AdminService;
-import com.hxt.backend.service.ReviewService;
 import com.hxt.backend.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 @RestController
@@ -101,13 +100,32 @@ public class SectionController {
             @RequestParam(name = "section_id", defaultValue = "") String sectionId,
             @RequestParam(name = "sort", defaultValue = "0") String sort,
             @RequestParam(name = "post_type", defaultValue = "0") String postType,
-            @RequestParam(name = "tag_name", defaultValue = "") String tagName
+            @RequestParam(name = "tag_name", defaultValue = "") String tagName,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "keyword", defaultValue = "") String keyword
     ) {
         if (sectionId.isEmpty()) {
             return new PostListResponse(false,null);
         }
-        ArrayList<PostElement> list = sectionService.getSectionPosts(Integer.parseInt(sectionId),sort,postType,tagName);
-        return new PostListResponse(true,list);
+        ArrayList<PostElement> list;
+        if (keyword.isEmpty()) {
+            list = sectionService.getSectionPosts(Integer.parseInt(sectionId), sort, postType, tagName, page);
+        } else {
+            list = sectionService.searchSectionPosts(Integer.parseInt(sectionId), sort, postType, tagName, keyword);
+        }
+        return new PostListResponse(true, list);
+    }
+
+    @GetMapping("/section/pages")
+    public PagesCountResponse getSectionPages(
+            @RequestParam(name = "section_id", defaultValue = "") String sectionId,
+            @RequestParam(name = "post_type", defaultValue = "0") String postType,
+            @RequestParam(name = "tag_name", defaultValue = "") String tagName
+    ) {
+        if (sectionId.isEmpty()) {
+            return new PagesCountResponse(null);
+        }
+        return new PagesCountResponse(sectionService.getPageCount(Integer.parseInt(sectionId), postType, tagName));
     }
 
     @GetMapping("/section/info")

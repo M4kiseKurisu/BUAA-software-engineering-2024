@@ -1,5 +1,6 @@
 import Vue from '@/main.js';
 import axios from 'axios';
+import md5 from 'js-md5';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 export function login(username_e, password_e) {
@@ -20,7 +21,7 @@ export function login(username_e, password_e) {
         url: "/api/user/login",
         data: content,
     }).then((result) => {
-        if(result.data.success) {
+        if (result.data.success) {
             Vue.$message({ showClose: true, message: "登录成功！", type: 'success' });
             Vue.$store.commit("userLogin", result.data);
             Vue.$router.push({ path: "MainPage/Personal_Center" });
@@ -54,7 +55,7 @@ export function register(username_e, email_e, tel_e, password_e) {
         url: "/api/user/register",
         data: content,
     }).then((result) => {
-        if(result.data.success) {
+        if (result.data.success) {
             Vue.$message({ showClose: true, message: "注册成功！", type: 'success' });
         } else {
             Vue.$message({ showClose: true, message: result.data.info, type: 'error' });
@@ -83,7 +84,7 @@ export function change(username_e, email_e, password_1_e, password_2_e) {
         url: "/api/user/password/forget",
         data: content,
     }).then((result) => {
-        if(result.data.success) {
+        if (result.data.success) {
             Vue.$message({ showClose: true, message: "密码更改成功！", type: 'success' });
         } else {
             Vue.$message({ showClose: true, message: result.data.info, type: 'error' });

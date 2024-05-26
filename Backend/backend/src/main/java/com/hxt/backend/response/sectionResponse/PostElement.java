@@ -1,5 +1,6 @@
 package com.hxt.backend.response.sectionResponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,6 @@ public class PostElement {
     private List<String> tag_list;
     private String post_photo;
     private String post_time;
+    @JsonIgnore
+    private Timestamp post_reply_time;
 }

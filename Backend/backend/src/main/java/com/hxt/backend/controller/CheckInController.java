@@ -1,7 +1,9 @@
 package com.hxt.backend.controller;
 
 import com.hxt.backend.response.BasicInfoResponse;
+import com.hxt.backend.response.PagesCountResponse;
 import com.hxt.backend.response.checkInResponse.*;
+import com.hxt.backend.response.postResponse.WritePostResponse;
 import com.hxt.backend.service.CheckInService;
 import com.hxt.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class CheckInController {
     private final ReviewService reviewService;
     
     //获取用户所有打卡简略信息
-    @GetMapping (value = "/pyq/userInfo")
+    @GetMapping(value = "/pyq/userInfo")
     public CheckInIntroListResponse userPyqInfo(
             @CookieValue(name = "user_id", defaultValue = "") String user_id
     ) {
@@ -28,9 +30,9 @@ public class CheckInController {
         //获取pyq列表
         return new CheckInIntroListResponse(checkInService.getPyqList(Integer.parseInt(user_id)));
     }
-
+    
     //  获取连续打卡天数
-    @GetMapping (value = "/pyq/days")
+    @GetMapping(value = "/pyq/days")
     public CheckInDaysResponse userCheckInDays(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "id", required = false) Integer id
@@ -44,27 +46,39 @@ public class CheckInController {
     }
     
     
-    @PostMapping (value = "/pyq/send")
+    @PostMapping(value = "/pyq/send")
     public BasicInfoResponse sendCheckIn(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "image_urls[]", required = false) List<String> image_urls,
             @RequestParam(name = "content", required = false) String content,
             @RequestParam(name = "authority", required = false) Integer authority
-    ) {
+    ) throws IOException {
         if (user_id.equals("")) {
             return new BasicInfoResponse(false, "用户未登录");
         }
         
-        if(image_urls.isEmpty() || content == null) {
+        if (image_urls.isEmpty() || content == null) {
             return new BasicInfoResponse(false, "打卡内容不完整");
         }
-
+        
         if (authority == null) {
             authority = 0;  //  默认权限为0（所有人均可见）
         }
         
         if (image_urls.size() > 9) {
             return new BasicInfoResponse(false, "打卡图片最多为9张！");
+        }
+        
+        //审核打卡内容
+        if (!reviewService.textReview(content)) {
+            return new BasicInfoResponse(false, "打卡内容违规");
+        }
+        
+        for (String imageUrl : image_urls) {
+            //审核图片是否合规
+            if (!reviewService.imageReview(imageUrl)) {
+                return new BasicInfoResponse(false, "图片不合规");
+            }
         }
         
         Integer res = checkInService.insertCheckIn(Integer.parseInt(user_id), image_urls, content, authority);
@@ -74,7 +88,7 @@ public class CheckInController {
         return new BasicInfoResponse(true, "打卡成功");
     }
     
-    @GetMapping (value = "/pyq/detail")
+    @GetMapping(value = "/pyq/detail")
     public CheckInDetailResponse getCheckInDetail(
             @RequestParam(name = "post_id", required = false) Integer post_id
     ) {
@@ -85,30 +99,43 @@ public class CheckInController {
         return checkInService.getCheckInDetail(post_id);
     }
     
-    @GetMapping (value = "/pyq/square")
+    @GetMapping(value = "/pyq/square")
     public CheckInSquareResponse getCheckInSquare(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "page", defaultValue = "0") Integer page
     ) {
         if (user_id.equals("")) {
             return new CheckInSquareResponse(null);
         }
-        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare(Integer.parseInt(user_id));
-        return new CheckInSquareResponse(checkIn);
-    }
-
-    @GetMapping (value = "/pyq/follow")
-    public CheckInSquareResponse getFollowedCheckIn(
-            @CookieValue(name = "user_id", defaultValue = "") String user_id
-    ) {
-        if (user_id.equals("")) {
-            return new CheckInSquareResponse(null);
-        }
-        List<CheckInSquareIntroResponse> checkIn = checkInService.getFollowedCheckIn(Integer.parseInt(user_id));
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getCheckInSquare(Integer.parseInt(user_id), page);
         return new CheckInSquareResponse(checkIn);
     }
     
+    @GetMapping(value = "/pyq/follow")
+    public CheckInSquareResponse getFollowedCheckIn(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "page", defaultValue = "0") Integer page
+    ) {
+        if (user_id.equals("")) {
+            return new CheckInSquareResponse(null);
+        }
+        List<CheckInSquareIntroResponse> checkIn = checkInService.getFollowedCheckIn(Integer.parseInt(user_id), page);
+        return new CheckInSquareResponse(checkIn);
+    }
+    
+    @GetMapping(value = "/pyq/pages")
+    public PagesCountResponse getCheckInPages(
+            @CookieValue(name = "user_id", defaultValue = "") String user_id,
+            @RequestParam(name = "limit", defaultValue = "0") Integer limit
+    ) {
+        if (user_id.equals("")) {
+            return new PagesCountResponse(null);
+        }
+        return new PagesCountResponse(checkInService.getCheckInPages(Integer.parseInt(user_id), limit));
+    }
+    
     //用户是否点赞打卡
-    @GetMapping (value = "/pyq/isLike")
+    @GetMapping(value = "/pyq/isLike")
     public IsLikeResponse isLikeCheckIn(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
@@ -128,7 +155,7 @@ public class CheckInController {
     }
     
     //用户点赞打卡
-    @RequestMapping (value="/pyq/like")
+    @RequestMapping(value = "/pyq/like")
     public IsSuccessResponse likePost(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
@@ -156,7 +183,7 @@ public class CheckInController {
     
     
     //用户评论打卡
-    @PostMapping (value = "/pyq/comment")
+    @PostMapping(value = "/pyq/comment")
     public IsSuccessResponse checkInComment(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id,
@@ -180,7 +207,7 @@ public class CheckInController {
     }
     
     //删除评论
-    @RequestMapping (value = "/pyq/comment/delete")
+    @RequestMapping(value = "/pyq/comment/delete")
     public IsSuccessResponse deleteComment(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "comment_id", required = false) Integer comment_id
@@ -198,7 +225,7 @@ public class CheckInController {
     }
     
     //删除打卡
-    @RequestMapping (value = "/pyq/delete")
+    @RequestMapping(value = "/pyq/delete")
     public IsSuccessResponse deleteCheckIn(
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "post_id", required = false) Integer post_id
@@ -206,7 +233,7 @@ public class CheckInController {
         if (user_id.equals("")) {
             return new IsSuccessResponse(false);
         }
-
+        
         //删除打卡
         Integer res = checkInService.deleteCheckIn(post_id, Integer.parseInt(user_id));
         if (res == 0) {

@@ -62,44 +62,44 @@
                 <div class="information-change-left-row">
                     <div class="information-sign">用户昵称</div>
                     <input type="text"
-                        :class="{'input-type-1': true, 'red-border': username_warning.length > 0}" 
+                        :class="{'input-type-1': true, 'red-border': username_warning.length > 0}"
                         v-model="inputUsername" :placeholder=this.username>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <div v-if="username_warning.length > 0" class="warning-css" 
+                    <div v-if="username_warning.length > 0" class="warning-css"
                     style="margin-top: -18px; margin-bottom: 18px;">{{ username_warning }}</div>
                 </div>
 
-                
+
 
                 <div class="information-change-left-row">
                     <div class="information-sign">手机号码</div>
                     <input type="text"
-                        :class="{'input-type-1': true, 'red-border': phone_warning.length > 0}" 
+                        :class="{'input-type-1': true, 'red-border': phone_warning.length > 0}"
                         v-model="inputPhone" :placeholder=this.phoneNumber>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <div v-if="phone_warning.length > 0" class="warning-css" 
+                    <div v-if="phone_warning.length > 0" class="warning-css"
                     style="margin-top: -18px; margin-bottom: 18px;">{{ phone_warning }}</div>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">专业</div>
-                    <input type="text" :class="{'input-type-1': true, 'red-border': major_warning.length > 0}" 
+                    <input type="text" :class="{'input-type-1': true, 'red-border': major_warning.length > 0}"
                         v-model="inputMajority" :placeholder=this.majority>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <div v-if="major_warning.length > 0" class="warning-css" 
+                    <div v-if="major_warning.length > 0" class="warning-css"
                     style="margin-top: -18px; margin-bottom: 18px;">{{ major_warning }}</div>
                 </div>
 
                 <div class="information-change-left-row">
                     <div class="information-sign">入学时间</div>
-                    <input type="text" :class="{'input-type-1': true, 'red-border': enroll_warning.length > 0}" 
+                    <input type="text" :class="{'input-type-1': true, 'red-border': enroll_warning.length > 0}"
                         v-model="inputEntryTime" :placeholder=this.signTime>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <div v-if="enroll_warning.length > 0" class="warning-css" 
+                    <div v-if="enroll_warning.length > 0" class="warning-css"
                     style="margin-top: -18px; margin-bottom: 18px;">{{ enroll_warning }}</div>
                 </div>
 
@@ -109,7 +109,7 @@
                         v-model="inputSignature" :placeholder=this.signature />
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <div v-if="sign_warning.length > 0" class="warning-css" 
+                    <div v-if="sign_warning.length > 0" class="warning-css"
                     style="margin-top: -18px; margin-bottom: 18px;">{{ sign_warning }}</div>
                 </div>
 
@@ -156,12 +156,12 @@
 
                     <div class="information-change-left-row">
                         <div class="information-sign">再次输入密码</div>
-                        <input type="password" 
-                            :class="{'input-type-1': true, 'red-border': pwd_diff_warning.length > 0}" 
+                        <input type="password"
+                            :class="{'input-type-1': true, 'red-border': pwd_diff_warning.length > 0}"
                             v-model="this.inputNewPassword2">
                     </div>
                     <div style="display: flex; justify-content: flex-end;">
-                        <div v-if="pwd_diff_warning.length > 0" class="warning-css" 
+                        <div v-if="pwd_diff_warning.length > 0" class="warning-css"
                         style="margin-top: -18px; margin-bottom: 18px;">{{ pwd_diff_warning }}</div>
                     </div>
 
@@ -183,6 +183,7 @@
 
 <script>
 import axios from 'axios';
+import md5 from 'js-md5';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 // 引入面包屑组件
@@ -362,7 +363,7 @@ export default {
                 this.sign_warning = "";
             }
 
-            if (this.username_warning.length > 0 || this.phone_warning.length > 0 
+            if (this.username_warning.length > 0 || this.phone_warning.length > 0
                 || this.enroll_warning.length > 0 || this.sign_warning.length > 0) {
                 return;
             }

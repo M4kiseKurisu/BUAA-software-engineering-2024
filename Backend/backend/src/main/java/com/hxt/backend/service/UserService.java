@@ -8,6 +8,7 @@ import com.hxt.backend.response.UserInfoResponse;
 import com.hxt.backend.response.list.PostListResponse;
 import com.hxt.backend.response.list.SectionListResponse;
 import com.hxt.backend.response.list.UserListResponse;
+import com.hxt.backend.response.sectionResponse.SectionUserAuthorityResponse;
 import com.hxt.backend.response.singleInfo.PostResponse;
 import com.hxt.backend.response.singleInfo.UserAuthorityInfo;
 import com.hxt.backend.response.singleInfo.UserSocialInfoResponse;
@@ -200,11 +201,14 @@ public class UserService {
         return sectionListResponse;
     }
 
-    public BasicInfoResponse getSectionAuthority(Integer userid, Integer sectionId) {
+    public SectionUserAuthorityResponse getSectionAuthority(Integer userid, Integer sectionId) {
         String info = adminMapper.checkAuthorityType(userid, sectionId);
         boolean res = (info != null);
         info = info == null? "" : info;
-        return new BasicInfoResponse(res, info);
+        Integer globalBlock = userMapper.isGlobalBlocked(userid);
+        Integer sectionBlock = userMapper.isSectionBlocked(userid, sectionId);
+        return new SectionUserAuthorityResponse(res, info,
+                (globalBlock != null && globalBlock > 0) || (sectionBlock != null && sectionBlock > 0));
     }
 
     public void resetPassword(Integer id, String password) {

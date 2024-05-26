@@ -75,13 +75,15 @@ public class SectionService {
                 continue;
             }
             if (type != 0) {
-                if (section.getType() == null) {
-                    continue;
-                }
-                if (type == 1 && !section.getType().equals("一般专业课")) {
-                    continue;
-                }
-                if (type == 2 && !section.getType().equals("核心专业课")) {
+                if (section.getType() == null
+                        || (type == 1 && !section.getType().equals("一般专业课"))
+                        || (type == 2 && !section.getType().equals("核心专业课"))
+                        || (type == 3 && !section.getType().equals("一般通识课"))
+                        || (type == 4 && !section.getType().equals("核心通识课"))
+                        || (type == 5 && !section.getType().equals("基础类课程"))
+                        || (type == 6 && !section.getType().equals("体育课"))
+                        || (type == 7 && !section.getType().equals("其它课程"))
+                        || (type == 8 && !section.getType().equals("板块通知"))) {
                     continue;
                 }
             }
@@ -123,13 +125,98 @@ public class SectionService {
         return state != 0;
     }
 
-    public ArrayList<PostElement> getSectionPosts(Integer sectionId, String sort, String post_type, String tagName) {
-        List<Post> posts = sectionMapper.selectPostBySectionId(sectionId);
+    public ArrayList<PostElement> getSectionPosts
+            (Integer sectionId, String sort, String post_type, String tagName, Integer page) {
+        Integer offset = (page - 1) * 5;
+        List<Post> posts = null;
         ArrayList<PostElement> list = new ArrayList<>();
-
-        if (!post_type.equals("2")) {
-            posts = posts.stream().filter(e -> e.getCategory().equals(Integer.parseInt(post_type))).collect(Collectors.toList());
+        if (post_type.equals("2")) {
+            switch (sort) {
+                case "0":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetBySendTime(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetBySendTime(sectionId, tagName, offset);
+                    break;
+                case "2":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByFavorite(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByFavorite(sectionId, tagName, offset);
+                    break;
+                case "1":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByLike(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByLike(sectionId, tagName, offset);
+                    break;
+                case "3":
+                    posts = tagName.isEmpty()? postMapper.getPostWithOffsetByReplyTime(sectionId, offset)
+                            : postMapper.getPostWithTagAndOffsetByReplyTime(sectionId, tagName, offset);
+                    break;
+            }
+        } else {
+            switch (sort) {
+                case "0":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetBySendTime(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "2":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByFavorite(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "1":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByLike(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByLike(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+                case "3":
+                    posts = tagName.isEmpty()? postMapper.getPostWithCategoryAndOffsetByReplyTime(sectionId, Integer.parseInt(post_type), offset)
+                            : postMapper.getPostWithCategoryTagAndOffsetByReplyTime(sectionId, Integer.parseInt(post_type), tagName, offset);
+                    break;
+            }
         }
+        if (posts == null) {
+            return list;
+        }
+        for (Post post: posts) {
+            PostElement element = new PostElement();
+            element.setPost_id(post.getPost_id());
+            element.setAuthor_id(post.getAuthor_id());
+            element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
+            element.setPost_title(post.getTitle());
+            element.setPost_content(post.getContent());
+            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
+            String[] time_send = post.getPostTime().toString().split(":");
+            String postTime = time_send[0] + ":" + time_send[1];
+            String replyTime = time_reply[0] + ":" + time_reply[1];
+            element.setPost_time("发布于 " + postTime + "   最后回复于 " + replyTime);
+            element.setPost_likes(post.getLike_count());
+            element.setPost_favorites(post.getCollect_count());
+            element.setPost_intro(post.getIntro());
+            List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
+            element.setTag_list(tags);
+            element.setPost_photo(post.getCover());
+
+            list.add(element);
+        }
+        return list;
+    }
+
+    public Integer getPageCount(Integer sectionId, String post_type, String tagName) {
+        Integer postCount = 0;
+        if (post_type.equals("2")) {
+            postCount = (tagName.isEmpty())? postMapper.getPostCountBySection(sectionId)
+                    : postMapper.getPostCountByTagAndSection(sectionId, tagName);
+        } else {
+            postCount = (tagName.isEmpty())? postMapper.getPostCountByCategoryAndSection(sectionId, Integer.parseInt(post_type))
+                    : postMapper.getPostCountByCategoryTagAndSection(sectionId, Integer.parseInt(post_type), tagName);
+        }
+        return (postCount - 1) / 5 + 1;
+    }
+
+    public ArrayList<PostElement> searchSectionPosts(Integer sectionId, String sort, String post_type,
+                                                     String tagName, String keyword) {
+        List<Post> posts;
+        if (!post_type.equals("2")) {
+            posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(sectionId, keyword, tagName, Integer.parseInt(post_type));
+        } else {
+            posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(sectionId, keyword, tagName);
+        }
+        ArrayList<PostElement> list = new ArrayList<>();
 
         for (Post post: posts) {
             PostElement element = new PostElement();
@@ -138,17 +225,21 @@ public class SectionService {
             element.setAuthor_name(userMapper.getUserNameById(element.getAuthor_id()));
             element.setPost_title(post.getTitle());
             element.setPost_content(post.getContent());
-            
-            String[] time = post.getPostTime().toString().split(":");
-            String postTime = time[0] + ":" + time[1];
-            element.setPost_time(postTime);
+            element.setPost_reply_time(postMapper.getReplyTime(post.getPost_id()));
+
+            String[] time_reply = postMapper.getReplyTime(post.getPost_id()).toString().split(":");
+            String[] time_send = post.getPostTime().toString().split(":");
+            String postTime = time_send[0] + ":" + time_send[1];
+            String replyTime = time_reply[0] + ":" + time_reply[1];
+            element.setPost_time("发布于 " + postTime + " / 最后回复于 " + replyTime);
+
             element.setPost_likes(post.getLike_count());
             element.setPost_favorites(post.getCollect_count());
             element.setPost_intro(post.getIntro());
             List<String> tags = postMapper.getTagNameByPost(element.getPost_id());
             element.setTag_list(tags);
             element.setPost_photo(post.getCover());
-            
+
             /*
             List<Integer> imageId = postMapper.getImageIdByPost(element.getPost_id());
             for (Integer id: imageId) {
@@ -157,7 +248,7 @@ public class SectionService {
                     break;
                 }
             }
-            
+
              */
 
             list.add(element);
@@ -171,6 +262,7 @@ public class SectionService {
             case "0" -> Collections.reverse(list);
             case "1" -> list.sort((o1, o2) -> o2.getPost_likes().compareTo(o1.getPost_likes()));
             case "2" -> list.sort((o1, o2) -> o2.getPost_favorites().compareTo(o1.getPost_favorites()));
+            case "3" -> list.sort((o1, o2) -> o2.getPost_reply_time().compareTo(o1.getPost_reply_time()));
         }
 
         return list;
@@ -248,7 +340,7 @@ public class SectionService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         messageMapper.sendSystemNoticeToUser("授权通知",
                 String.format("您于 %s 被授予 %s 版块的 %s 权限，希望您为板块建设贡献自己的一份力量。",
-                        df.format(date), sectionMapper.getSectionNameById(section), type), assistant);
+                        df.format(date), sectionMapper.getSectionNameById(section), "assistant"), assistant);
         return new BasicInfoResponse(true, "");
     }
 
@@ -280,6 +372,11 @@ public class SectionService {
         if (userMapper.updateSectionBlock(id, section, days) == 0) {
             userMapper.sectionBlockUser(id, section, days);
         }
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("封禁通知",
+                String.format("您因违反有关规定，被 %s 版块管理员于 %s 在该板块封禁 %d 天（自本通知中的时间点起计算）。",
+                        sectionMapper.getSectionNameById(section) ,df.format(date), days), id);
         return new BasicInfoResponse(true, "");
     }
 
@@ -288,6 +385,11 @@ public class SectionService {
             return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
         }
         userMapper.sectionUnblockUser(id, section);
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        messageMapper.sendSystemNoticeToUser("解封通知",
+                String.format("您于 %s 被 %s 版块管理员在该板块手动解封。",
+                        df.format(date), sectionMapper.getSectionNameById(section)), id);
         return new BasicInfoResponse(true, "");
     }
 

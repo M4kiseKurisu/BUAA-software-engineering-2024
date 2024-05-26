@@ -11,6 +11,11 @@ import com.hxt.backend.response.postResponse.PostResponse;
 import com.hxt.backend.response.postResponse.ReplyResponse;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -83,11 +88,14 @@ public class PostService {
         for (Comment comment : comments) {
             deleteComment(true, 0, comment.getComment_id());
         }
+        //  删除附加信息以防止外键异常
         postMapper.deletePostImage(postId);
         postMapper.deletePostTag(postId);
         postMapper.deletePostLike(postId);
         postMapper.deletePostFavorite(postId);
         postMapper.deletePostResource(postId);
+        postMapper.deletePostNotice(postId);
+
         List<Integer> reports = adminMapper.getSameTargetReports(0, postId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
@@ -95,9 +103,11 @@ public class PostService {
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        messageMapper.sendSystemNoticeToUser("删帖通知",
-                String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
-                p.getAuthor_id());
+        if (!(p.getAuthor_id().equals(userId))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)),
+                    p.getAuthor_id());
+        }
         for (Integer id : favoriteIds) {
             messageMapper.sendSystemNoticeToUser("删帖通知",
                     String.format("您收藏的帖子 “%s” 于 %s 被删除", p.getTitle(), formatter.format(date)), id);
@@ -139,17 +149,19 @@ public class PostService {
         return ans;
     }
     
-    
-    public Integer postInsertImage(Integer postId, Integer imageId) {
-        return postMapper.insertPostImage(postId, imageId);
+    @Async
+    public void postInsertImage(Integer postId, Integer imageId) {
+        postMapper.insertPostImage(postId, imageId);
     }
     
-    public Integer postInsertTag(Integer postId, Integer tagId) {
-        return postMapper.insertPostTag(postId, tagId);
+    @Async
+    public void postInsertTag(Integer postId, Integer tagId) {
+        postMapper.insertPostTag(postId, tagId);
     }
     
-    public Integer postInsertResource(Integer postId, Integer resourceId) {
-        return postMapper.insertPostResource(postId, resourceId);
+    @Async
+    public void postInsertResource(Integer postId, Integer resourceId) {
+        postMapper.insertPostResource(postId, resourceId);
     }
     
     public Integer getCategoryByPostId(Integer postId) {
@@ -325,8 +337,9 @@ public class PostService {
     }
     
     //更新帖子点赞数
-    public Integer updatePostLikeCount(Integer postId, Integer op) {
-        return postMapper.updatePostLikeCount(postId, op);
+    @Async
+    public void updatePostLikeCount(Integer postId, Integer op) {
+        postMapper.updatePostLikeCount(postId, op);
     }
     
     // 收藏帖子
@@ -362,8 +375,9 @@ public class PostService {
     }
     
     //更新帖子收藏数
-    public Integer updatePostFavoriteCount(Integer postId, Integer op) {
-        return postMapper.updatePostFavoriteCount(postId, op);
+    @Async
+    public void updatePostFavoriteCount(Integer postId, Integer op) {
+        postMapper.updatePostFavoriteCount(postId, op);
     }
     
     //搜索帖子
@@ -399,21 +413,28 @@ public class PostService {
         Timestamp commentTime = new Timestamp(System.currentTimeMillis());
         Comment comment = new Comment(0, postId, authorId, content, commentTime, 0, 0);
         Integer res = postMapper.insertComment(comment);
+        postMapper.updateReplyTime(postId);
         if (res == 0) {
             return 0;
         }
-        messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(),authorId,content,commentTime,true,postId,null);
+        
+        if (postMapper.getPost(postId).getAuthor_id() != authorId) {
+            String text = htmlToText(content);
+            messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, text, commentTime, true, postId, null);
+        }
         return comment.getComment_id();
     }
     
     //评论插图
-    public Integer commentInsertImage(Integer commentId, Integer imageId) {
-        return postMapper.insertCommentImage(commentId, imageId);
+    @Async
+    public void commentInsertImage(Integer commentId, Integer imageId) {
+        postMapper.insertCommentImage(commentId, imageId);
     }
     
     //评论插资源
-    public Integer commentInsertResource(Integer commentId, Integer resourceId) {
-        return postMapper.insertCommentResource(commentId, resourceId);
+    @Async
+    public void commentInsertResource(Integer commentId, Integer resourceId) {
+        postMapper.insertCommentResource(commentId, resourceId);
     }
     
     //删除评论
@@ -431,17 +452,45 @@ public class PostService {
             return -2;
         }
         List<Reply> replies = postMapper.getReplyByCommentId(commentId);
+        Integer postId = postMapper.getPostIdByCommentId(commentId);
         for (Reply reply : replies) {
             deleteReply(true, 0, reply.getReply_id());
         }
+        //  删除附加消息以消除外键异常
         postMapper.deleteCommentLike(commentId);
         postMapper.deleteCommentImage(commentId);
         postMapper.deleteCommentResource(commentId);
+        postMapper.deleteCommentNotice(commentId);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(c.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", c.getContent(), formatter.format(date)),
+                    c.getAuthor_id());
+        }
+
         List<Integer> reports = adminMapper.getSameTargetReports(1, commentId);
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteComment(commentId) + replies.size();
+        Integer i = postMapper.deleteComment(commentId) + replies.size();
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(postId);
+            if (t1 != null) {
+                Timestamp t2 = postMapper.getLastReplyTime(postId);
+                Timestamp t;
+                if (t2 != null) {
+                    t = t1.after(t2) ? t1 : t2;
+                } else {
+                    t = t1;
+                }
+                postMapper.resetReplyTime(postId, t);
+            } else {
+                postMapper.resetReplyTime(postId, postMapper.getPost(postId).getPostTime());
+            }
+        }
+        return i;
     }
     
     //通过评论id获取帖子id
@@ -449,14 +498,17 @@ public class PostService {
         return postMapper.getPostIdByCommentId(commentId);
     }
     
+    @Async
     public void updateViewCount(Integer post_id) {
         postMapper.updateViewCount(post_id, 1);
     }
     
+    @Async
     public void updatePostCommentCount(Integer post_id, Integer op) {
         postMapper.updateCommentCount(post_id, op);
     }
     
+    @Async
     public void updateCommentReplyCount(Integer comment_id, Integer op) {
         postMapper.updateReplyCount(comment_id, op);
     }
@@ -490,6 +542,7 @@ public class PostService {
     }
     
     //更新评论点赞数
+    @Async
     public Integer updateCommentLikeCount(Integer commentId, Integer op) {
         return postMapper.updateCommentLikeCount(commentId, op);
         
@@ -501,7 +554,11 @@ public class PostService {
             return -1;
         }
         Timestamp replyTime = new Timestamp(System.currentTimeMillis());
-        messageService.createReplyNotice(repliedAuthorId, authorId,content,replyTime,false,getPostIdByCommentId(commentId),commentId);
+        if (repliedAuthorId != authorId) {
+            String text = htmlToText(content);
+            messageService.createReplyNotice(repliedAuthorId, authorId, text, replyTime, false, getPostIdByCommentId(commentId), commentId);
+        }
+        postMapper.updateReplyTime(postMapper.getPostIdByCommentId(commentId));
         return postMapper.insertReply(commentId, repliedAuthorId, authorId, content, replyTime, 0);
     }
     
@@ -523,7 +580,26 @@ public class PostService {
         for (Integer reportId : reports) {
             adminMapper.handleReport(reportId, 2);
         }
-        return postMapper.deleteReply(replyId);
+        Integer i = postMapper.deleteReply(replyId);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (!(r.getAuthor_id().equals(userId) || (flag && userId == 0))) {   //  自删不发通知
+            messageMapper.sendSystemNoticeToUser("删帖通知",
+                    String.format("您发表的回复 “%s” 于 %s 被删除", r.getContent(), formatter.format(date)),
+                    r.getAuthor_id());
+        }
+        if (!(flag && userId == 0)) {
+            Timestamp t1 = postMapper.getLastCommentTime(p.getPost_id());
+            Timestamp t2 = postMapper.getLastReplyTime(p.getPost_id());
+            Timestamp t;
+            if (t2 != null) {
+                t = t1.after(t2) ? t1 : t2;
+            } else {
+                t = t1;
+            }
+            postMapper.resetReplyTime(p.getPost_id(), t);
+        }
+        return i;
     }
     
     //点赞评论
@@ -551,8 +627,9 @@ public class PostService {
     }
     
     //更新回复点赞数
-    public Integer updateReplyLikeCount(Integer replyId, Integer op) {
-        return postMapper.updateReplyLikeCount(replyId, op);
+    @Async
+    public void updateReplyLikeCount(Integer replyId, Integer op) {
+        postMapper.updateReplyLikeCount(replyId, op);
         
     }
     
@@ -610,5 +687,15 @@ public class PostService {
 
     public Integer getPostSection(Integer id) {
         return postMapper.getPost(id).getSection_id();
+    }
+    
+    private String htmlToText(String html) {
+        Document doc = Jsoup.parse(html);
+        Elements imgs = doc.select("img");
+        for (Element img : imgs) {
+            img.replaceWith(new Element("span").text(" 图片 "));
+        }
+        String text = doc.text();
+        return text;
     }
 }

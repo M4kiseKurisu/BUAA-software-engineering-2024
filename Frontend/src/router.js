@@ -36,28 +36,28 @@ const router = createRouter({
         {
             path: '',
             redirect: '/LoginPage',
-            meta: { 
+            meta: {
                 requireAuth: false,
-            }   
+            }
         },
         {
             path: '/LoginPage',
             component:LoginPage,
-            meta: { 
+            meta: {
                 requireAuth: false,
-            }  
+            }
         },
         {
             path:'/NoticeCenter',
             component:NoticeCenter,
-            meta: { 
+            meta: {
                 requireAuth: true,
-            } 
+            }
         },
         {
             path: '/MainPage',
             component: MainPage,
-            meta: { 
+            meta: {
                 requireAuth: true,
             },
             children: [
@@ -131,7 +131,7 @@ const router = createRouter({
                     component: UpGradeCenter,
                 },
                 {
-                    
+
                     path: 'SchoolInformation',
                     redirect: '/MainPage/SchoolInformation/Main',
                     children: [

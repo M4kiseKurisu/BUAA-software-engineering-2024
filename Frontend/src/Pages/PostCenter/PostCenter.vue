@@ -30,12 +30,12 @@
                     <span><el-button type="primary" @click="toPost">去发帖</el-button></span>
                     <span style="padding-left: 3%;">
                         <el-button-group class="ml-4">
+                            <el-button type="primary" plain v-if="kindSelect != 3" @click="selectThree">查看全部</el-button>
+                            <el-button type="primary" v-if="kindSelect == 3" @click="selectThree">查看全部</el-button>
                             <el-button type="primary" plain v-if="kindSelect != 1" @click="selectOne">讨论帖</el-button>
                             <el-button type="primary" v-if="kindSelect == 1" @click="selectOne">讨论帖</el-button>
                             <el-button type="primary" plain v-if="kindSelect != 2" @click="selectTwo">资源帖</el-button>
                             <el-button type="primary" v-if="kindSelect == 2" @click="selectTwo">资源帖</el-button>
-                            <el-button type="primary" plain v-if="kindSelect != 3" @click="selectThree">查看全部</el-button>
-                            <el-button type="primary" v-if="kindSelect == 3" @click="selectThree">查看全部</el-button>
                         </el-button-group>
                     </span>
                     <span style="padding-left: 3%;">
@@ -48,7 +48,7 @@
             <div style="width: 40%; height: 100%;">
                 <div style="width: 100%;height: 55%;display: flex;align-items: center;">
                     <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
-                        <span style="padding-right: 7%;"><el-button text type="primary"
+                        <span style="padding-right: 7%;"><el-button @click="goToCourseSection" text type="primary"
                                 style="font-size: large;">查看相关课程界面</el-button></span>
                     </div>
                 </div>
@@ -59,12 +59,13 @@
                                 <el-option v-for="item in options" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select> -->
-                            <el-input v-model="tagKind" style="width: 160px"
+                            <el-input v-model="tagKind" style="width: 120px"
                                 placeholder="输入标签" />
                         </span>
-                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 160px"
+                        <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
+                        <span style="padding-right: 3%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "getRecommendPost">智能推荐</el-button></span>
                     </div>
                 </div>
             </div>
@@ -89,7 +90,7 @@
                     </div>
                     <div v-if = "this.techerIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.assitantIdList.length != 0">
@@ -98,7 +99,7 @@
                     </div>
                     <div v-if = "this.assitantIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
@@ -107,7 +108,7 @@
                     </div>
                     <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item"></ManagerItem>
+                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
@@ -141,8 +142,13 @@ export default {
     computed: {
         selectPostList() {
             var begin, end;
-            begin = this.currentPage * 5 - 5;
-            end = this.currentPage * 5;
+            if (this.searchWordNow == "") {
+                begin = 0;
+                end = 5;
+            } else {
+                begin = this.currentPage * 5 - 5;
+                end = this.currentPage * 5;
+            }
             if (end > this.total) {
                 end = this.total;
             }
@@ -150,11 +156,13 @@ export default {
         },
         sortIndex(){
             var sort = 0;
-            if(this.sortKindStr == '' ||this.sortKind == '最新' ){
+            if(this.sortKindStr == '' ||this.sortKindStr == '最新回复'){
+                sort = 3;
+            } else if (this.sortKindStr == '最新发布'){
                 sort = 0;
-            } else if(this.sortKindStr == '点赞数') {
+            } else if(this.sortKindStr == '点赞最多') {
                 sort = 1;
-            } else if(this.sortKindStr == '收藏数') {
+            } else if(this.sortKindStr == '收藏最多') {
                 sort = 2;
             }
             return sort;
@@ -169,24 +177,31 @@ export default {
             postNum: '',
             subscripNum: 30,
             courseType: '',
-            kindSelect: 1,
+            kindSelect: 3,
             searchWord: "",
+            searchWordNow: "",
             total: 20,
             currentPage: 1,
+            beforePage: 1,
             updateTime: "2077.7.7.77",
             sectionId: 1,
             postList: "",
-            sortKind: [{
-                value: '点赞数',
-                label: '点赞数',
+            sortKind: [
+            {
+                value: '',
+                label: '最新回复'
             },
             {
-                value: '最新',
-                label: '最新',
+                value: '最新发布',
+                label: '最新发布',
             },
             {
-                value: '收藏数',
-                label: '收藏数',
+                value: '点赞最多',
+                label: '点赞最多',
+            },
+            {
+                value: '收藏最多',
+                label: '收藏最多',
             }],
             sortKindStr: '',
             tagKind: '',
@@ -199,27 +214,41 @@ export default {
     watch:{
         sortKindStr(newValue,oldValue){
             console.log(newValue);
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         }
     },
     methods: {
         toggle_Creator() {
             this.show_Creator = true;
         },
+        goToCourseSection() {
+          this.$router.push({ path: "/CourseSection/" + this.sectionId});
+        },
         selectOne() {
             this.kindSelect = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         selectTwo() {
             this.kindSelect = 2;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         selectThree() {
             this.kindSelect = 3;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
+            if (this.searchWordNow == "") {
+                this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
+            }
         },
         toPost() {
             this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId});
@@ -234,20 +263,34 @@ export default {
             })
         },
         searchPost(){
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+            this.currentPage = 1;
+            this.beforePage = 1;
+            this.searchWordNow = this.searchWord
+            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
         },
-        getPostList(sort,post_type,tag_name,keyword) {
+        getPostList(sort,post_type,tag_name,page,keyword) {
             //console.log(keyword);
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: { section_id: this.sectionId,sort: sort,post_type:post_type,tag_name:tag_name,keyword:keyword},
+                params: { section_id: this.sectionId, sort: sort, post_type:post_type, tag_name:tag_name,page:page, keyword:keyword},
             }).then((result) => {
-                //console.log(result);
+                console.log(result);
                 this.postList = result.data.posts;
-                this.total = result.data.posts.length;
+                if (this.searchWord != "") {
+                    this.total = result.data.posts.length;
+                }
                 //console.log(this.postList[0].post_id);
             })
+            if (this.searchWord == "") {
+                axios({
+                    method: "GET",
+                    url: "api/section/pages",
+                    params: { section_id: this.sectionId, post_type:post_type, tag_name:tag_name},
+                }).then((result) => {
+                    this.total = result.data.pages * 5;
+                })
+            }
         },
         getSectionInfomation() {
             axios({
@@ -311,13 +354,19 @@ export default {
                 this.techerIdList = result.data.teacher;
                 this.assitantIdList = result.data.assistant;
             })
-        }
+        },
+        goToCourseSection(){
+            this.$router.push({ path: '/MainPage/Course_Center/CourseSection/' + this.sectionId });
+        },
+        getRecommendPost(){
+
+        },
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
         //console.log(this.$route.params.sectionId);
         //console.log(this.sortIndex);
-        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.searchWord);
+        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
         this.getSectionInfomation();
         this.getPopAuthor();
         this.getAuthority();

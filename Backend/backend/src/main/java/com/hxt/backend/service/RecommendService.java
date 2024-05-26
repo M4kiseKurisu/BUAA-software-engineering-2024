@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,7 +33,7 @@ import java.io.*;
 @RequiredArgsConstructor
 public class RecommendService {
     
-    private static final int MAX_KEYWORDS = 1000;
+    private static final int MAX_KEYWORDS = 800;
     private static final int MAX_HISTORY = 300;
     private static final double TITLE_WEIGHT = 1.0;
     private static final double INTRO_WEIGHT = 0.5;
@@ -61,7 +62,10 @@ public class RecommendService {
     
     
     //更新用户偏好
-    public void updateUserPreference(Integer userId, Map<String, Double> keywordTfIdf) {
+    @Async
+    public void updateUserPreference(Integer userId, Integer postId) {
+        List<Post> posts = postMapper.getAllPost();
+        Map<String, Double> keywordTfIdf = calculateTFIDF(postId, posts);
         
         List<String> existKeywords = recommendMapper.getUserPreferenceBYUserId(userId);
         
@@ -90,6 +94,7 @@ public class RecommendService {
     }
     
     // 获取浏览帖子的TF-IDF特征
+    
     public Map<String, Double> calculatePostTFIDF(Integer postId) {
         List<Post> posts = postMapper.getAllPost();
         return calculateTFIDF(postId, posts);
@@ -97,7 +102,7 @@ public class RecommendService {
     
     
     // 基于内容的帖子推荐
-    public List<PostIntroResponse> recommendPostsByContent(Integer userId) {
+    public List<PostIntroResponse> recommendPostsByContent(Integer userId, Integer sectionId) {
         Map<Post, Double> postScores = new HashMap<>();
         
         /*获取所有的帖子
@@ -105,7 +110,7 @@ public class RecommendService {
         */
         
         //获取升学版块所有帖子
-        List<Post> posts = sectionMapper.selectPostBySectionId(0);
+        List<Post> posts = sectionMapper.selectPostBySectionId(sectionId);
         
         //获取该用户浏览记录
         List<Integer> viewedPosts = recommendMapper.getViewedPostIdByUserId(userId);
@@ -157,6 +162,7 @@ public class RecommendService {
     
     
     //更新用户浏览记录
+    @Async
     public void updateViewHistory(Integer userId, Integer postId) {
         // 获取用户浏览记录
         ViewHistory viewHistory = recommendMapper.getViewHistoryBYUserIdPostId(userId, postId);
@@ -183,7 +189,8 @@ public class RecommendService {
     }
     
     //提取帖子的关键词并存入表中
-    public Integer extractPostKeywords(Integer postId) throws IOException {
+    @Async
+    public void extractPostKeywords(Integer postId) throws IOException {
         
         //读取停用词
         /*
@@ -208,7 +215,7 @@ public class RecommendService {
         //关键词列表
         List<String> titleKeywords = extractKeywords(title);
         List<String> introKeywords = extractKeywords(intro);
-        List<String> contentKeywords = extractKeywordBaidu(content, 10);
+        List<String> contentKeywords = extractKeywordBaidu(content, 8);
         if (contentKeywords.isEmpty()) {
             contentKeywords = extractKeywords(content);
         }
@@ -235,7 +242,7 @@ public class RecommendService {
             }
         }
         
-        return recommendMapper.insertPostKeyword(postId, titleKeywordSepByCommas.toString(),
+        recommendMapper.insertPostKeyword(postId, titleKeywordSepByCommas.toString(),
                 introKeywordSepByCommas.toString(), contentKeywordSepByCommas.toString());
         
     }
@@ -345,7 +352,7 @@ public class RecommendService {
             return new ArrayList<>();
         }
         
-        int size = 10;
+        int size = 8;
         if (content.length() >= 400) {
             size = content.length() / 50;
         }
