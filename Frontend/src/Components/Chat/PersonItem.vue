@@ -95,5 +95,7 @@ export default {
     min-width: 300px;
 }
 
-
+.personItemContainer:hover {
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); */
+}
 </style>
