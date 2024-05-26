@@ -403,8 +403,8 @@ export default {
         }
     },
     created() {
+        this.ws = new WebSocket('ws://http://122.9.45.57/webSocket/' + this.selfId);
         //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
-        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
         this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
         this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
         this.ws.addEventListener('error', this.handleWsError.bind(this), false);

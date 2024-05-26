@@ -12,10 +12,10 @@
                 {{ content }}
             </div>
         </div>
-        <div v-if="this.isRead != true"
+        <!-- <div v-if="this.isRead != true"
             style="width: 20%;height: 100%;display: flex;justify-content: end;align-items: center;">
             <el-tag type="danger">未读</el-tag>
-        </div>
+        </div> -->
     </div>
 </template>
 
