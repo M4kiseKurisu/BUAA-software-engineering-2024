@@ -196,6 +196,7 @@ export default {
             groupItemList: [],
             titleName: '',
             ws: null,
+            timer: '',
         }
     },
     methods: {
@@ -311,10 +312,13 @@ export default {
         },
         handleWsMessage(rawData) {
             //console.log(rawData.data);
-            var message = JSON.parse(rawData.data);
-            this.messageList.push(message);
-            this.scrollToBottom();
-
+            if (rawData.data == "pong") {
+                console.log("心跳！");
+            } else {
+                var message = JSON.parse(rawData.data);
+                this.messageList.push(message);
+                this.scrollToBottom();
+            }
         },
         handleKeyPress(event) {
             if (event.key === 'Enter') {
@@ -411,8 +415,8 @@ export default {
         }
     },
     created() {
-        //this.ws = new WebSocket('ws://http://122.9.45.57/webSocket/' + this.selfId);
-        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
+        this.ws = new WebSocket('/api/webSocket/' + this.selfId);
+        //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
         this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
         this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
         this.ws.addEventListener('error', this.handleWsError.bind(this), false);
@@ -432,10 +436,20 @@ export default {
             this.getGroupMessageList();
             this.getGroupInfo();
         }
+        window.onbeforeunload = function() {
+            this.ws.close()
+        }
+        this.timer = setInterval(() => {
+            console.log('发出心跳！');
+            this.ws.send('ping');
+        }, 30000);
         //console.log(this.groupId);
         //console.log(this.personId);
         //this.scrollToBottom();
-    }
+    },
+    beforeDestroy() {
+        clearInterval(this.timer);
+    },
 }
 </script>
 <style scoped>
