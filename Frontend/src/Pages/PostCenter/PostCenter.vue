@@ -6,8 +6,7 @@
     <div class="main-postpage-container">
         <!-- 管理界面弹出窗 -->
         <div class="creator_dialog">
-            <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%"
-                       >
+            <el-dialog class="c_dialog" title="管理信息" v-model="show_Creator" :visible.sync="show_Creator" width="40%">
                 <div class="creator_container">
                     <CreatorOfPostCenter :section_id="this.sectionId"></CreatorOfPostCenter>
                 </div>
@@ -59,13 +58,14 @@
                                 <el-option v-for="item in options" :key="item.value" :label="item.label"
                                     :value="item.value" />
                             </el-select> -->
-                            <el-input v-model="tagKind" style="width: 120px"
-                                placeholder="输入标签" />
+                            <el-input v-model="tagKind" style="width: 120px" placeholder="输入标签" />
                         </span>
                         <span style="padding-right: 3% ;"><el-input v-model="searchWord" style="width: 120px"
                                 placeholder="输入关键词" /></span>
-                        <span style="padding-right: 3%;"><el-button type="primary" plain @click = "searchPost">模块内搜索</el-button></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" plain @click = "getRecommendPost">智能推荐</el-button></span>
+                        <span style="padding-right: 3%;"><el-button type="primary" plain
+                                @click="searchPost">模块内搜索</el-button></span>
+                        <span style="padding-right: 7%;"><el-button type="primary" plain
+                                @click="getRecommendPost">智能推荐</el-button></span>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,8 @@
         <div style="width: 100%;height: 785px;background-color: white;display: flex;">
             <div style="width: 80%;height: 100%;border-right: 1px solid darkgray;">
                 <div style="width: 100%;height: 735px;">
-                    <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id" :getSectionId="this.sectionId"></PostItem>
+                    <PostItem v-for="item in selectPostList" :postInfo="item" :key="item.post_id"
+                        :getSectionId="this.sectionId"></PostItem>
                 </div>
                 <div style="width: 100%; position: relative; height: 40px;display: flex;align-items: center;">
                     <el-pagination background layout="prev, pager, next" :page-size="5" :total="total"
@@ -84,31 +85,34 @@
                 <!-- <div style="margin-left: 5%;margin-top: 20px;font-size: 1.5em;font-weight: bold;color: darkgrey;">
                     板块更新时间:&ensp;{{ updateTime }}
                 </div> -->
-                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.techerIdList.length != 0">
+                <div style="margin-left: 5%;margin-top: 20px;" v-if="this.techerIdList.length != 0">
                     <div style="font-size: larger;font-weight: bold;">
                         相关教师
                     </div>
-                    <div v-if = "this.techerIdList.length === 0" style="font-size: larger;">无</div>
+                    <div v-if="this.techerIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.techerIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
+                        <ManagerItem v-for="item in this.techerIdList" :personId="item" :sectionId="this.sectionId">
+                        </ManagerItem>
                     </div>
                 </div>
-                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.assitantIdList.length != 0">
+                <div style="margin-left: 5%;margin-top: 20px;" v-if="this.assitantIdList.length != 0">
                     <div style="font-size: larger;font-weight: bold;">
                         相关助教
                     </div>
-                    <div v-if = "this.assitantIdList.length === 0" style="font-size: larger;">无</div>
+                    <div v-if="this.assitantIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.assitantIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
+                        <ManagerItem v-for="item in this.assitantIdList" :personId="item" :sectionId="this.sectionId">
+                        </ManagerItem>
                     </div>
                 </div>
-                <div style="margin-left: 5%;margin-top: 20px;" v-if = "this.popAuthorIdList.length != 0">
+                <div style="margin-left: 5%;margin-top: 20px;" v-if="this.popAuthorIdList.length != 0">
                     <div style="font-size: larger;font-weight: bold;">
                         热门作者
                     </div>
-                    <div v-if = "this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
+                    <div v-if="this.popAuthorIdList.length === 0" style="font-size: larger;">无</div>
                     <div v-else style="width:100%; display: grid; grid-template-columns: repeat(3, 1fr);">
-                        <ManagerItem v-for = "item in this.popAuthorIdList" :personId = "item" :sectionId = "this.sectionId"></ManagerItem>
+                        <ManagerItem v-for="item in this.popAuthorIdList" :personId="item" :sectionId="this.sectionId">
+                        </ManagerItem>
                     </div>
                 </div>
                 <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
@@ -142,7 +146,7 @@ export default {
     computed: {
         selectPostList() {
             var begin, end;
-            if (this.searchWordNow == "") {
+            if (this.searchWordNow == "" && this.isRecommend == false) {
                 begin = 0;
                 end = 5;
             } else {
@@ -154,15 +158,15 @@ export default {
             }
             return this.postList.slice(begin, end);
         },
-        sortIndex(){
+        sortIndex() {
             var sort = 0;
-            if(this.sortKindStr == '' ||this.sortKindStr == '最新回复'){
+            if (this.sortKindStr == '' || this.sortKindStr == '最新回复') {
                 sort = 3;
-            } else if (this.sortKindStr == '最新发布'){
+            } else if (this.sortKindStr == '最新发布') {
                 sort = 0;
-            } else if(this.sortKindStr == '点赞最多') {
+            } else if (this.sortKindStr == '点赞最多') {
                 sort = 1;
-            } else if(this.sortKindStr == '收藏最多') {
+            } else if (this.sortKindStr == '收藏最多') {
                 sort = 2;
             }
             return sort;
@@ -187,36 +191,37 @@ export default {
             sectionId: 1,
             postList: "",
             sortKind: [
-            {
-                value: '',
-                label: '最新回复'
-            },
-            {
-                value: '最新发布',
-                label: '最新发布',
-            },
-            {
-                value: '点赞最多',
-                label: '点赞最多',
-            },
-            {
-                value: '收藏最多',
-                label: '收藏最多',
-            }],
+                {
+                    value: '',
+                    label: '最新回复'
+                },
+                {
+                    value: '最新发布',
+                    label: '最新发布',
+                },
+                {
+                    value: '点赞最多',
+                    label: '点赞最多',
+                },
+                {
+                    value: '收藏最多',
+                    label: '收藏最多',
+                }],
             sortKindStr: '',
             tagKind: '',
             isFollow: false,
             techerIdList: [],
             assitantIdList: [],
             popAuthorIdList: [],
+            isRecommend: false,
         }
     },
-    watch:{
-        sortKindStr(newValue,oldValue){
+    watch: {
+        sortKindStr(newValue, oldValue) {
             console.log(newValue);
             this.currentPage = 1;
             this.beforePage = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
+            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         }
     },
     methods: {
@@ -224,34 +229,34 @@ export default {
             this.show_Creator = true;
         },
         goToCourseSection() {
-          this.$router.push({ path: "/CourseSection/" + this.sectionId});
+            this.$router.push({ path: "/CourseSection/" + this.sectionId });
         },
         selectOne() {
             this.kindSelect = 1;
             this.currentPage = 1;
             this.beforePage = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
+            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         },
         selectTwo() {
             this.kindSelect = 2;
             this.currentPage = 1;
             this.beforePage = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
+            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         },
         selectThree() {
             this.kindSelect = 3;
             this.currentPage = 1;
             this.beforePage = 1;
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
+            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         },
         handleCurrentChange(val) {
             this.currentPage = val;
-            if (this.searchWordNow == "") {
-                this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
+            if (this.searchWordNow == "" && this.isRecommend == false) {
+                this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
             }
         },
         toPost() {
-            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId});
+            this.$router.push({ path: "/MainPage/Course_Center/CreatePost/" + this.sectionId });
         },
         followSection() {
             axios({
@@ -262,18 +267,19 @@ export default {
                 console.log(result);
             })
         },
-        searchPost(){
+        searchPost() {
             this.currentPage = 1;
             this.beforePage = 1;
             this.searchWordNow = this.searchWord
-            this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind, this.currentPage, this.searchWord);
+            this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         },
-        getPostList(sort,post_type,tag_name,page,keyword) {
+        getPostList(sort, post_type, tag_name, page, keyword) {
+            this.isRecommend = false;
             //console.log(keyword);
             axios({
                 method: "GET",
                 url: "api/section/posts",
-                params: { section_id: this.sectionId, sort: sort, post_type:post_type, tag_name:tag_name,page:page, keyword:keyword},
+                params: { section_id: this.sectionId, sort: sort, post_type: post_type, tag_name: tag_name, page: page, keyword: keyword },
             }).then((result) => {
                 console.log(result);
                 this.postList = result.data.posts;
@@ -286,7 +292,7 @@ export default {
                 axios({
                     method: "GET",
                     url: "api/section/pages",
-                    params: { section_id: this.sectionId, post_type:post_type, tag_name:tag_name},
+                    params: { section_id: this.sectionId, post_type: post_type, tag_name: tag_name },
                 }).then((result) => {
                     this.total = result.data.pages * 5;
                 })
@@ -306,12 +312,12 @@ export default {
                 //this.assitantIdList = result.data.assistants;
             })
         },
-        getPopAuthor(){
+        getPopAuthor() {
             axios({
                 method: "GET",
                 url: 'api/progression/discussion',
                 params: {
-                    section_id : this.sectionId,
+                    section_id: this.sectionId,
                 }
             }).then((result) => {
                 console.log(result);
@@ -342,7 +348,7 @@ export default {
                 }
             })
         },
-        getAuthority(){
+        getAuthority() {
             axios({
                 method: "GET",
                 url: 'api/section/authority',
@@ -350,23 +356,34 @@ export default {
                     id: this.sectionId,
                 }
             }).then((result) => {
-                console.log(result);
+                //console.log(result);
                 this.techerIdList = result.data.teacher;
                 this.assitantIdList = result.data.assistant;
             })
         },
-        goToCourseSection(){
+        goToCourseSection() {
             this.$router.push({ path: '/MainPage/Course_Center/CourseSection/' + this.sectionId });
         },
-        getRecommendPost(){
-
+        getRecommendPost() {
+            this.isRecommend = true;
+            //console.log();
+            axios({
+                method: "GET",
+                url: 'api/posts/recommend',
+                params: {
+                    section_id: this.sectionId,
+                }
+            }).then((result) => {
+                this.postList = result.data.posts;
+                this.total = this.postList.length;
+            })
         },
     },
     created() {
         this.sectionId = this.$route.params.sectionId;
         //console.log(this.$route.params.sectionId);
         //console.log(this.sortIndex);
-        this.getPostList(this.sortIndex,this.kindSelect - 1,this.tagKind,this.currentPage, this.searchWord);
+        this.getPostList(this.sortIndex, this.kindSelect - 1, this.tagKind, this.currentPage, this.searchWord);
         this.getSectionInfomation();
         this.getPopAuthor();
         this.getAuthority();
