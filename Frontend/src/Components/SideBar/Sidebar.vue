@@ -44,7 +44,7 @@
             <!-- 设置学业模块子菜单的表头信息 -->
             <template #title>
                 <el-icon><View /></el-icon>
-                <span>展示模块</span>
+                <span>学习团体</span>
             </template>
 
             <!-- 设置学业模块子菜单内容：学习团体，打卡信息 -->

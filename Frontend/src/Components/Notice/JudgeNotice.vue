@@ -122,8 +122,10 @@ export default {
                         type: 'success',
                         plain: true,
                     })
+
                 }
                 this.showDetail = false;
+                this.$emit('updateNotice');
             })
         },
         refuseApply() {
@@ -142,6 +144,7 @@ export default {
                         plain: true,
                     })
                     this.showDetail = false;
+                    this.$emit('updateNotice');
                 }
             })
         }

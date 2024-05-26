@@ -49,7 +49,7 @@
             <ReplyNotice v-for="item in selectReplyMessage" :replyInformation="item" :key="item.reply_id"></ReplyNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 3">
-            <JudgeNotice v-for = "item in selectJudgeMessage" :noticeInfo = "item"></JudgeNotice>
+            <JudgeNotice v-for = "item in selectJudgeMessage" :noticeInfo = "item" :key = "item.apply_id" @updateNotice = "getJudgeMessage"></JudgeNotice>
         </div>
         <div class="noticeList" v-if="noticeChoice == 4">
             <SystemNotice v-for = "item in selectSystemMessage" :noticeInfo = "item" :key = "item.notice_id"></SystemNotice>
