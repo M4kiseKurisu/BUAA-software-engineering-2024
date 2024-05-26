@@ -130,14 +130,15 @@ public class SectionController {
 
     @GetMapping("/section/info")
     public SectionInfoResponse getSectionInfo(
+            @CookieValue(name = "user_id", defaultValue = "") String userId,
             @RequestParam(name = "section_id", defaultValue = "") String sectionId
     ) {
-        if (sectionId.isEmpty()) {
+        if (sectionId.isEmpty() || userId.isEmpty()) {
             SectionInfoResponse response = new SectionInfoResponse();
             response.setSuccess(false);
             return response;
         }
-        return sectionService.getSectionInfo(Integer.parseInt(sectionId));
+        return sectionService.getSectionInfo(Integer.parseInt(sectionId),Integer.parseInt(userId));
     }
 
     @RequestMapping("/section/authority")
