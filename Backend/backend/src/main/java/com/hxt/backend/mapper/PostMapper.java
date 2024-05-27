@@ -215,6 +215,16 @@ public interface PostMapper {
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTimeDesc(Integer sectionId, String keyword, String tag);
     
+    
+    @Select("SELECT p.* from post p " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "ORDER BY p.time DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTimeDesc(Integer sectionId, String keyword);
+    
     //根据关键词、tag、type在特定版块搜索帖子(时间倒序)
     @Select("SELECT p.* from post p " +
             "join post_tag pt on p.post_id = pt.post_id " +
@@ -228,6 +238,16 @@ public interface PostMapper {
             "ORDER BY p.time DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTypeTimeDesc(Integer sectionId, String keyword, String tag, Integer type);
+    
+    @Select("SELECT p.* from post p " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and p.category = #{type} " +
+            "ORDER BY p.time DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTypeTimeDesc(Integer sectionId, String keyword, Integer type);
     
     //根据关键词和tag在特定版块搜索帖子(热度)
     @Select("SELECT p.* from post p " +
@@ -243,6 +263,16 @@ public interface PostMapper {
     List<Post> searchPostInSectionByKeywordTagHotDesc(Integer sectionId, String keyword, String tag);
     
     
+    @Select("SELECT p.* from post p " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordHotDesc(Integer sectionId, String keyword);
+    
+    
     //根据关键词、tag、type在特定版块搜索帖子(热度)
     @Select("SELECT p.* from post p " +
             "join post_tag pt on p.post_id = pt.post_id " +
@@ -256,6 +286,17 @@ public interface PostMapper {
             "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
     @Result(column = "time", property = "postTime")
     List<Post> searchPostInSectionByKeywordTagTypeHotDesc(Integer sectionId, String keyword, String tag, Integer type);
+    
+    
+    @Select("SELECT p.* from post p " +
+            "where (p.title like concat('%', #{keyword}, '%') " +
+            "or p.intro like concat('%', #{keyword}, '%') " +
+            "or p.content like concat('%', #{keyword}, '%')) " +
+            "and p.section_id = #{sectionId} " +
+            "and p.category = #{type} " +
+            "ORDER BY (p.like_count + p.collect_count * 2 + p.comment_count * 3) DESC, p.post_id DESC")
+    @Result(column = "time", property = "postTime")
+    List<Post> searchPostInSectionByKeywordTypeHotDesc(Integer sectionId, String keyword, Integer type);
 
     //  以下为删除帖子时删除附加信息用
     @Delete("DELETE FROM post_like WHERE post_id = #{id}")

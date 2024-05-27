@@ -72,6 +72,7 @@ public class ProgressionController {
             }
             return new PostListResponse(true, list);
         }
+        
         //筛选帖子
         List<PostIntroResponse> list = progressionService.filterPost(target + "升学", type, keyword, sort);
         
