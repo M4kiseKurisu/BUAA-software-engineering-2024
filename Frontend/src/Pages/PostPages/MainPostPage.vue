@@ -341,10 +341,12 @@
         </div>
 
         <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
-            <el-button type="primary" @click="up_assistant">提升该用户为板块助教</el-button>
+            <el-button type="primary" v-if="op_situation != 1" @click="up_assistant">给予用户助教权限</el-button>
+            <el-button type="warning" v-else @click="down_assistant">撤销用户助教权限</el-button>
             <div style="display: flex; margin-top: 12px;">
-                <el-button v-if="authority_num == 0" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
-                <el-input v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
+                <el-button v-if="authority_num == 0 && op_situation != 2" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
+                <el-input v-if="authority_num == 0 && op_situation != 2" v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
+                <el-button v-else type="primary" plain @click="decancel_people">板块内解封该用户</el-button>
             </div>
             <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
         </el-dialog>
@@ -448,6 +450,7 @@ export default {
 
             dialog_visible: false,
             op_id: -1,
+            op_situation: 3,
             cancel_days: "",
         }
     },
@@ -487,6 +490,10 @@ export default {
                 */
             }
 
+            for (let j = 0; j < 3; j++) {
+                this.isRepliesOpen[j] = false;
+            }
+
             return showComments;
         },
         repliesArray() {
@@ -503,7 +510,8 @@ export default {
                 let showReplies = [];
 
                 if (!replies || replies.length === 0) {
-                    return replies;
+                    console.log(showReplies.length)
+                    return showReplies;
                 }
                 // 测试用
                 // if (!replies) {
@@ -517,6 +525,7 @@ export default {
                     this.isReplyLiked2[commentIndex][j] = showReplies[j].reply_isLike;
                     this.replyLikes[commentIndex][j] = showReplies[j].reply_like_count;
                 }
+                console.log(showReplies.length)
                 return showReplies;
             };
         }
@@ -552,6 +561,7 @@ export default {
             this.view_count = result.data.view_count;
             this.section_id = result.data.section_id;
             this.all_comment_num = result.data.commentCount;
+            this.route[2] = this.title;
             console.log(result.data.comment_count);
 
             /*
@@ -933,6 +943,7 @@ export default {
                 comment_id: comment_id,
                 user_id: JSON.parse(sessionStorage.getItem("id"))
             }
+            console.log(content);
             axios({
                 method: "POST",
                 url: "/api/posts/comment/like",
@@ -1097,12 +1108,26 @@ export default {
             }
             this.dialog_visible = true;
             this.op_id = id;
-            console.log(this.dialog_visible);
+
+            axios({
+                method: "GET",
+                url: "/api/user/authority",
+                params: {
+                    id: this.op_id,
+                    section: this.section_id,
+                }
+            }).then((result) => {
+                this.op_situation = (result.data.info == "teacher") ? 0 :
+                                    (result.data.info == "assistant") ? 1 : 3;
+                if (result.data.blocked) {
+                    this.op_situation = 2;
+                }
+            })
         },
         up_assistant() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {
                 section: this.section_id,
                 assistant: this.op_id,
@@ -1122,12 +1147,39 @@ export default {
                 }
             })
             this.op_id = -1;
+            this.op_situation = 3;
+            this.dialog_visible = false;
+        },
+        down_assistant() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {
+                section: this.section_id,
+                assistant: this.op_id,
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/delete/assistant",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '助教删除成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.op_situation = 3;
             this.dialog_visible = false;
         },
         cancel_people() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {};
             if (this.cancel_days) {
                 content = {
@@ -1156,6 +1208,34 @@ export default {
                 }
             })
             this.op_id = -1;
+            this.op_situation = 3;
+            this.cancel_days = -1;
+            this.dialog_visible = false;
+        },
+        decancel_people() {
+            if (this.op_id <= 0) {
+                return;
+            } 
+            let content = {
+                section: this.section_id,
+                id: this.op_id
+            }
+            axios({
+                method: "POST",
+                url: "/api/section/unblock",
+                data: content,
+            }).then((result) => {
+                console.log(result);
+                if (result.data.success) {
+                    this.$message({
+                        showClose: true,
+                        message: '用户解封成功！',
+                        type: 'success',
+                    });
+                }
+            })
+            this.op_id = -1;
+            this.op_situation = 3;
             this.cancel_days = -1;
             this.dialog_visible = false;
         }

@@ -543,9 +543,8 @@ public class PostService {
     
     //更新评论点赞数
     @Async
-    public Integer updateCommentLikeCount(Integer commentId, Integer op) {
-        return postMapper.updateCommentLikeCount(commentId, op);
-        
+    public void updateCommentLikeCount(Integer commentId, Integer op) {
+        postMapper.updateCommentLikeCount(commentId, op);
     }
     
     // 创建回复
