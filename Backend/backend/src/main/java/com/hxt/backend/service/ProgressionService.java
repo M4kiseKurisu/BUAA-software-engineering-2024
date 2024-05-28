@@ -56,18 +56,38 @@ public class ProgressionService {
     //筛选帖子
     public List<PostIntroResponse> filterPost(String target, Integer type, String keyword, Integer sort) {
         List<Post> posts;
-        
+        if (target.equals("全部升学")) {
+            target = "";
+        }
+        type = type - 1;
+       
         if (sort == 0) {
-            if (type == 1 || type == 2) {
-                posts = postMapper.searchPostInSectionByKeywordTagTypeHotDesc(0, keyword, target, type - 1);
+            if (type == 0 || type == 1) {
+                if (!target.equals("")) {
+                    posts = postMapper.searchPostInSectionByKeywordTagTypeHotDesc(0, keyword, target, type);
+                } else {
+                    posts = postMapper.searchPostInSectionByKeywordTypeHotDesc(0, keyword, type);
+                }
             } else {
-                posts = postMapper.searchPostInSectionByKeywordTagHotDesc(0, keyword, target);
+                if (!target.equals("")) {
+                    posts = postMapper.searchPostInSectionByKeywordTagHotDesc(0, keyword, target);
+                } else {
+                    posts = postMapper.searchPostInSectionByKeywordHotDesc(0, keyword);
+                }
             }
         } else {
-            if (type == 1 || type == 2) {
-                posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(0, keyword, target, type - 1);
+            if (type == 0 || type == 1) {
+                if (!target.equals("")) {
+                    posts = postMapper.searchPostInSectionByKeywordTagTypeTimeDesc(0, keyword, target, type);
+                } else {
+                    posts = postMapper.searchPostInSectionByKeywordTypeTimeDesc(0, keyword, type);
+                }
             } else {
-                posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(0, keyword, target);
+                if (!target.equals("")) {
+                    posts = postMapper.searchPostInSectionByKeywordTagTimeDesc(0, keyword, target);
+                } else {
+                    posts = postMapper.searchPostInSectionByKeywordTimeDesc(0, keyword);
+                }
             }
         }
         
