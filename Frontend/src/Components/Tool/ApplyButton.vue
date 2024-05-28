@@ -31,7 +31,8 @@
         </div>
 
         <el-button type="primary" style="margin-top: 4px;" @click="sendApply">发送申请</el-button>
-        <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ content_warning }}</div>
+        <div v-if="content_warning.length > 0" style="margin-top: 2px; font-size: 12px; color: #86909c">若您已经在板块广场中申请了全局教师权限，此时可以不填写申请内容直接点击申请</div>
+        <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px; ">{{ content_warning }}</div>
         
     </el-dialog>
 </template>
@@ -97,8 +98,8 @@ export default {
             if (this.is_loading) {
                 this.content_warning = "请等待资源上传完成后再发布帖子"
                 return;
-            } else if (this.url.length == 0 || this.content.length == 0) {
-                this.content_warning = "不能上传空申请"
+            } else if (this.apply_type != 0 && ( this.url.length == 0 || this.content.length == 0)) {
+                this.content_warning = "申请助教时不能上传空申请"
                 return;
             } else if (this.content.length > 600) {
                 this.content_warning = "申请文字过长"

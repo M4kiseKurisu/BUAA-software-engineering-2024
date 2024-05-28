@@ -191,8 +191,8 @@ export default {
 
             //注册账号信息打包
 
-            if (this.inputTitle.length > 30) {
-                this.title_warning = "标题内容不能大于30个字";
+            if (this.inputTitle.length > 25) {
+                this.title_warning = "标题内容不能大于25个字";
             } else if (!this.inputTitle || this.inputTitle.length == 0){
                 this.title_warning = "标题内容不能为空";
             } else {
