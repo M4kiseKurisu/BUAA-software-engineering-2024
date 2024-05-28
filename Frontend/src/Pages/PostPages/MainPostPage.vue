@@ -561,6 +561,7 @@ export default {
             this.view_count = result.data.view_count;
             this.section_id = result.data.section_id;
             this.all_comment_num = result.data.commentCount;
+            this.route[2] = this.title;
             console.log(result.data.comment_count);
 
             /*
@@ -1126,7 +1127,7 @@ export default {
         up_assistant() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {
                 section: this.section_id,
                 assistant: this.op_id,
@@ -1178,7 +1179,7 @@ export default {
         cancel_people() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {};
             if (this.cancel_days) {
                 content = {
