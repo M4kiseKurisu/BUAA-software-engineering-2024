@@ -552,7 +552,7 @@ export default {
 
 <style scoped>
 .personal-course-page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
 }
 

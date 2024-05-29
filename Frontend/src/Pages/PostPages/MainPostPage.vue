@@ -1267,7 +1267,7 @@ export default {
 }
 
 .main-postpage-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     background-color: rgba(247, 248, 250, 0.7);
     padding-top: 29px;
     padding-bottom: 81px;

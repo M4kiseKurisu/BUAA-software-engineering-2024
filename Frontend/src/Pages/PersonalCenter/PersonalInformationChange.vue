@@ -34,11 +34,13 @@
             <!-- 第二列信息 -->
             <div class="second-row-container">
 
+                <!--
                 <div class="line-container-1">
                     <div class="grey-card-information">认证邮箱：</div>
                     <div class="grey-card-information2">{{ this.email }}</div>
-                    <!-- <div class="grey-card-changee-link">修改</div> -->
+                    <div class="grey-card-changee-link">修改</div>
                 </div>
+                -->
 
                 <div class="line-container-1">
                     <div class="grey-card-information">手机号码：</div>
@@ -476,7 +478,7 @@ export default {
 
 <style scoped>
 .page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
     height: calc(100vh - 85px);
 }
