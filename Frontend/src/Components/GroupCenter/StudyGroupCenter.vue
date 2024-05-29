@@ -42,8 +42,8 @@
                         可加入团体数:{{ groupCount }}
                     </span>
                     <div style="margin-left: auto;">
-                        <el-input v-model="inputTag" style="width: 180px;margin-right: 5px;" placeholder="输入标签" />
-                        <el-input v-model="inputKeyWord" style="width: 180px;margin-right: 5px;" placeholder="输入关键字" />
+                        <el-input v-model="inputTag" style="width: 120px;margin-right: 5px;" placeholder="输入标签" />
+                        <el-input v-model="inputKeyWord" style="width: 120px;margin-right: 5px;" placeholder="输入关键字" />
                         <el-button style="margin-right: 5px;" type="primary" plain @click='searchGroup'>搜索</el-button>
                         <el-button style="margin-right: 10px;" type="primary" @click="goToCreatGroup">创建团体</el-button>
                     </div>
@@ -186,7 +186,7 @@ export default {
 .study_group_center_container {
     width: calc(100vw - 220px);
     /* min-width: 1080px; */
-    min-width: 1300px;
+    min-width: 1080px;
     /* background-color: rgba(247, 248, 250, 0.7); */
     background-color: white;
     height: calc(100vh - 120px);
@@ -233,7 +233,7 @@ export default {
     width: 77%;
     height: 100%;
     background-color: white;
-    min-width: 900px;
+    min-width: 800px;
 }
 
 .study_group_center_groupcontainer {
@@ -242,7 +242,7 @@ export default {
     background-color: white;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(calc(50% - 10px), 1fr));
-    gap: 20px;
+    gap: 10px;
 }
 
 .hover-div:hover {

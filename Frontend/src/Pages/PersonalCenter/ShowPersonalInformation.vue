@@ -8,7 +8,7 @@
                 <div
                     style="height: 100%; aspect-ratio: 1/1 ; background-color: white;display: flex;justify-content: center;align-items: center;">
                     <img :src="userAvatar"
-                        style="max-width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 50%;">
+                        style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 50%;">
                 </div>
                 <div style="flex-grow: 1;height: 100%;background-color:white;">
                     <div style="width: 100%;height: 25%; display: flex;align-items: center;">
