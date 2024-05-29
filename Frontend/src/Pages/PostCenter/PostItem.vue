@@ -73,7 +73,7 @@ export default {
         },
         getSectionId: {
             type: Number,
-            default: 1,
+            default: 0,
         },
         noCover:{
             type: Number,
@@ -130,6 +130,9 @@ export default {
                 }
             }).then((result) => {
                 this.authority = result.data.info;
+                // console.log(this.authorId);
+                // console.log(this.sectionId);
+                // console.log(this.authority);
             })
         },
         goToPost() {
