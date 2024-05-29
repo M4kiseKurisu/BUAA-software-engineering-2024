@@ -1,6 +1,6 @@
 <template>
     <div v-if="senderId != meId" class="container-o">
-        <div class="" style="padding-right: 5px;padding-top: 5px;">
+        <div class="" style="padding-right: 5px;padding-top: 5px;" @click = "goToShowPersonInfomation">
             <el-avatar :size="55" :src="headImg" />
         </div>
         <div style="width: 100%;">
@@ -77,7 +77,14 @@ export default {
                     this.senderName = result.data.name;
                 })
             }
-        }
+        },
+        goToShowPersonInfomation(){
+            //this.$router.push({ path: "/MainPage/Course_Center/ShowPersonalInformation/" + this.memberId});
+            let routeUrl = this.$router.resolve({
+                path: "/MainPage/Course_Center/ShowPersonalInformation/"+ this.senderId,
+            });
+            window.open(routeUrl.href, '_blank');
+        },
     },
     created() {
         if(this.messageInfomation != null){

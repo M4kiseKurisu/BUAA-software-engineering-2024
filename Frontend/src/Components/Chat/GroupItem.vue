@@ -37,7 +37,7 @@
                 </div>
             </div>
         </el-dialog> -->
-        <el-dialog v-model="showGroupInfo" title="团体信息" width="650" v-if="this.showGroupInfo">
+        <el-dialog v-model="showGroupInfo" title="团体信息" width="600" v-if="this.showGroupInfo">
             <GroupInfo :groupId="this.groupId"></GroupInfo>
         </el-dialog>
         <!-- <div style="margin-left: auto;">
@@ -73,7 +73,7 @@ export default {
     },
     methods: {
         giveGroupId() {
-            console.log(this.groupId);
+            //console.log(this.groupId);
             this.$emit('getGroupId', this.groupId);
         },
         goToChatCenter() {
