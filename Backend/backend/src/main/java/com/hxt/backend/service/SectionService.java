@@ -82,7 +82,7 @@ public class SectionService {
                         || (type == 4 && !section.getType().equals("核心通识课"))
                         || (type == 5 && !section.getType().equals("基础类课程"))
                         || (type == 6 && !section.getType().equals("体育课"))
-                        || (type == 7 && !section.getType().equals("其它课程"))
+                        || (type == 7 && !section.getType().equals("其他课程"))
                         || (type == 8 && !section.getType().equals("板块通知"))) {
                     continue;
                 }

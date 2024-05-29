@@ -197,7 +197,14 @@ export default {
     },
     data() {
         return {
-            route: ["个人中心", "用户设置"],  //本界面要显示的面包屑信息
+            route: [
+                {
+                    name: "个人中心",
+                    route: "/MainPage/Personal_Center/Personal_Information"
+                }, {
+                    name: "用户设置",
+                    route: ""
+                }],  //本界面要显示的面包屑信息
             avatarPicture: "",  //测试的头像信息
             username: "", //测试的昵称信息
             loginNumber: "", //测试的账号信息

@@ -184,12 +184,13 @@ public class AdminController {
 
     @GetMapping("/admin/list/section/block")
     public UserSectionBlockListResponse getSectionBlockList(
-            @RequestParam(name = "order", required = false) Integer order
+            @RequestParam(name = "order", required = false) Integer order,
+            @RequestParam(name = "section", defaultValue = "0") Integer section
     ) {
         if (order == null || order < 0 || order > 2) {
             order = 0;
         }
-        return adminService.getSectionBlockList(order);
+        return adminService.getSectionBlockList(order, section);
     }
 
     @GetMapping("/admin/list/group")

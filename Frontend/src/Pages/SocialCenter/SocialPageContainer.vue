@@ -24,9 +24,9 @@
                 <div v-if="this.detail_post_id != 0"><SocialPostDetail :social_post_id="this.detail_post_id"/></div>
                 <!-- <div v-if="true"><SocialPostDetail :social_post_id="1"/></div> -->
             </div>
-        </div>    
-        
-        
+        </div>
+
+
 
         <!-- 以下为弹出的发布打卡框 -->
         <el-dialog v-model="dialogTableVisible" title="编辑新打卡" width="75%">
@@ -39,13 +39,13 @@
                         :autosize="{ minRows: 8, maxRows: 8 }"
                         type="textarea"
                         placeholder="输入打卡文字"
-                    />   
+                    />
                 </div>
 
                 <el-divider direction="vertical"/>
 
                 <div style="width: 36%; margin-right: 4%; margin-left: 3%;">
-                    
+
 
                     <div class="flex-container" style="margin-top: 15px;">
                         <div class="title-for-dialog-font">上传打卡图片(最多只能上传9张)</div>
@@ -71,8 +71,8 @@
                             </div>
                         </el-col>
                     </el-row>
-                    
-                    
+
+
                 </div>
 
             </div>
@@ -114,7 +114,15 @@ export default {
     },
     data(){
         return {
-            route: ["展示模块", "打卡信息"],
+            route: [
+                {
+                    name: "展示模块",
+                    route: "",
+                },
+                {
+                    name: "打卡信息",
+                    route: "",
+                }],
             detail_post_id: 0,
             radio: "0",
             dialogTableVisible: false,
@@ -198,7 +206,7 @@ export default {
             this.image_list = fileList;
             //console.log(this.image_list);
             this.presee(this.image_list);
-            
+
             //console.log(this.preview_urls);
         },
         presee(image_list) {
@@ -206,7 +214,7 @@ export default {
             // 遍历文件列表
             for (let i = 0; i < image_list.length; i++) {
                 const file = image_list[i];
-                
+
                 if (file.raw instanceof Blob) {
                     // 使用FileReader对象读取文件
                     const reader = new FileReader();
