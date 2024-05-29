@@ -28,8 +28,8 @@
                             <template #trigger>
                                 <el-button type="primary" plain >选择文件</el-button>
                             </template>
-                            <el-button type="primary" @click="submitUpload" style="margin-left: 16px;"> 
-                                上传文件  
+                            <el-button type="primary" @click="submitUpload" style="margin-left: 16px;">
+                                上传文件
                             </el-button>
                         </el-upload>
                     </div>
@@ -171,7 +171,8 @@ export default {
     },
     data() {
         return {
-            route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
+            route: [{name: "学业板块", route: ""},
+            {name: "课程论坛", route: ""}],  //本界面要显示的面包屑信息
             avatarPicture: "",  //本界面要展示的头像图片测试
             username: "",  //本界面要展示的昵称信息
             courseNumber: 0,  //本用户关注板块数

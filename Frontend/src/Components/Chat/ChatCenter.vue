@@ -449,9 +449,11 @@ export default {
     },
     beforeDestroy() {
         clearInterval(this.timer);
+        this.ws.close();
     },
     beforeRouteLeave() {
         clearInterval(this.timer);
+        this.ws.close();
     },
 }
 </script>

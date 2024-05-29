@@ -60,7 +60,7 @@
                                 placeholder="输入关键词" /></span>
                         <span style="padding-right: 3%;"><el-button type="primary" plain
                                 @click="this.getSortPostList();">板块内搜索</el-button></span>
-                        <span style="padding-right: 7%;"><el-button type="primary" 
+                        <span style="padding-right: 7%;"><el-button type="primary"
                                 @click="postRecommend">智能推荐</el-button></span>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export default {
     data() {
         return {
             show_Creator: false,
-            route: ["升学板块"],  //本界面要显示的面包屑信息
+            route: [{name: "升学板块", route: ""}],  //本界面要显示的面包屑信息
             courseName: "软件工程",
             courseId: 1,
             postNum: '',

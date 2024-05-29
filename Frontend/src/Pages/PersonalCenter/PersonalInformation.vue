@@ -219,7 +219,7 @@
                 <div v-if="this.divided_posts.length != 0" class="no-favorate-card-tip" style="margin-bottom: 12px; margin-top: -5px;">您已经连续打卡{{ continue_post }}天！</div>
                 <PosterCard v-if="this.divided_posts.length != 0" :item="this.divided_posts[0].posts[0]"/>
                 <div v-else class="no-favorate-card-tip">您目前还没有打卡信息~</div>
-            </div> 
+            </div>
 
             <!-- 站内通知信息 -->
             <div class="notices-container">
@@ -284,7 +284,8 @@ export default {
     },
     data() {
         return {
-            route: ["个人中心", "用户信息"],  //本界面要显示的面包屑信息
+            route: [{name: "个人中心", route: ""},
+            {name: "用户信息", route: ""}],  //本界面要显示的面包屑信息
             avatarPicture: "",  //头像信息
             username: "", //昵称信息
             signTime: "",  //测试的学届信息

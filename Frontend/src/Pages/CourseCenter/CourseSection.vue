@@ -134,7 +134,8 @@ export default defineComponent({
   components: { BreadcrumbLabel },
   data() {
     return {
-      route: ["学业论坛", "课程论坛"],
+      route: [{name: "学业板块", route: "/MainPage/Course_Center/Personal_Course"},
+            {name: "课程论坛", route: "/MainPage/Course_Center/Personal_Course"}],
       pageSize: 1,
       currentPage: 1,
       currentContent: 1,
@@ -235,6 +236,10 @@ export default defineComponent({
           this.course.course_follows = response.data.course_follows;
           this.teachers = response.data.teachers;
           this.course.course_tags = [this.course.course_college, this.course.course_type];
+          this.route[2] = {
+            name: response.data.course_name,
+            route: "/MainPage/Course_Center/PostCenter/" + sectionId
+          }
           /*if (this.teachers.length === 0) {
             this.teachers = [{
 

@@ -83,7 +83,8 @@ export default {
     },
     data() {
         return {
-            route: ["学业团体", "团体广场"],
+            route: [{name: "学习团体", route: ""},
+            {name: "团体广场", route: ""}],
             groupCount: 20,
             selfAvatar: '',
             selfName: 'hhhhhhhhhhhh',
