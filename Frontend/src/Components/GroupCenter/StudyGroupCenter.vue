@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <div class="study_group_center_groupcontainer" v-if="groupInfoList.length != 0">
+                <div class="study_group_center_groupcontainer" v-if="groupInfoList != []">
                     <div v-for="item in selectGroupList" style="display: grid;place-items: center;">
                         <GroupCard :groupInfo="item" :key='item.group_id'></GroupCard>
                     </div>
