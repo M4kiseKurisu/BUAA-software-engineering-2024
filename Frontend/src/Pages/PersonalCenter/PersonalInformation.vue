@@ -227,7 +227,7 @@
                 <div class="notices-header-container">
                     <div class="favorates-header-1">系统通知</div>
                     <!-- <div class="favorates-header-2">查看更多</div> -->
-                    <NoticeCenter :type="2" />
+                    <!-- <NoticeCenter :type="2" /> -->
                 </div>
 
                 <div v-for="item in noticeListSort">
@@ -609,7 +609,7 @@ export default {
 }
 /* 设定界面宽度真实值 */
 .page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
 }
 

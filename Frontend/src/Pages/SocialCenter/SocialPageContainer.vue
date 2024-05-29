@@ -278,7 +278,7 @@ export default {
 
 <style scoped>
 .page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
 }
 
