@@ -158,6 +158,7 @@ export default {
                         type: 'success',
                     });
                     this.$store.commit("userLogin", result.data);
+                    sessionStorage.setItem("token", result.data.token)
                     this.$router.push({ path: "MainPage/Personal_Center" });
                 } else {
                     // 登录失败

@@ -23,6 +23,7 @@ export function login(username_e, password_e) {
     }).then((result) => {
         if (result.data.success) {
             Vue.$message({ showClose: true, message: "登录成功！", type: 'success' });
+            sessionStorage.setItem("token", result.data.token)
             Vue.$store.commit("userLogin", result.data);
             Vue.$router.push({ path: "MainPage/Personal_Center" });
         } else {
