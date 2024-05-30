@@ -214,8 +214,8 @@ public class CheckInService {
     
     //更新打卡点赞数
     @Async
-    public Integer updateCheckInLikeCount(Integer checkInId, Integer op) {
-        return checkInMapper.updateCheckInLikeCount(checkInId, op);
+    public void updateCheckInLikeCount(Integer checkInId, Integer op) {
+        checkInMapper.updateCheckInLikeCount(checkInId, op);
     }
     
     //评论打卡
