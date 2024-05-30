@@ -241,14 +241,24 @@ public class AdminService {
         return list;
     }
 
-    public UserSectionBlockListResponse getSectionBlockList(Integer order) {
+    public UserSectionBlockListResponse getSectionBlockList(Integer order, Integer section) {
         List<UserSectionBlockResponse> response = new ArrayList<>();
-        if (order == 0) {
-            response = userMapper.getSectionBlockListOrderByTime();
-        } else if (order == 1) {
-            response = userMapper.getSectionBlockListOrderByUser();
-        } else if (order == 2) {
-            response = userMapper.getSectionBlockListOrderBySection();
+        if (section == 0) {
+            if (order == 0) {
+                response = userMapper.getGlobalSectionBlockListOrderByTime();
+            } else if (order == 1) {
+                response = userMapper.getGlobalSectionBlockListOrderByUser();
+            } else if (order == 2) {
+                response = userMapper.getGlobalSectionBlockListOrderBySection();
+            }
+        } else {
+            if (order == 0) {
+                response = userMapper.getSectionBlockListOrderByTime(section);
+            } else if (order == 1) {
+                response = userMapper.getSectionBlockListOrderByUser(section);
+            } else if (order == 2) {
+                response = userMapper.getSectionBlockListOrderBySection(section);
+            }
         }
         for (UserSectionBlockResponse u : response) {
             u.setSection_name(sectionMapper.getSectionNameById(u.getSection_id()));

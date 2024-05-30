@@ -282,7 +282,7 @@ export default {
     border: 1px solid rgb(242, 237, 237);
 } */
 .group_card_container {
-    width: 440px;
+    width: 400px;
     height: 160px;
     background-color: rgb(244, 250, 250);
     border-radius: 2%;

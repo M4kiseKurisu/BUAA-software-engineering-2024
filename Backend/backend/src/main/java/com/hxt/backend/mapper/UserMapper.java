@@ -127,19 +127,37 @@ public interface UserMapper {
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
-    List<UserSectionBlockResponse> getSectionBlockListOrderByUser();
+    List<UserSectionBlockResponse> getGlobalSectionBlockListOrderByUser();
 
     @Select("SELECT * from section_block order by section_id")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
-    List<UserSectionBlockResponse> getSectionBlockListOrderBySection();
+    List<UserSectionBlockResponse> getGlobalSectionBlockListOrderBySection();
 
     @Select("SELECT * from section_block order by block_time desc")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
-    List<UserSectionBlockResponse> getSectionBlockListOrderByTime();
+    List<UserSectionBlockResponse> getGlobalSectionBlockListOrderByTime();
+
+    @Select("SELECT * from section_block WHERE section_id = #{section} order by user_id")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderByUser(Integer section);
+
+    @Select("SELECT * from section_block WHERE section_id = #{section} order by section_id")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderBySection(Integer section);
+
+    @Select("SELECT * from section_block WHERE section_id = #{section} order by block_time desc")
+    @Results({
+            @Result(column = "block_time", property = "block_timestamp")
+    })
+    List<UserSectionBlockResponse> getSectionBlockListOrderByTime(Integer section);
 
     //  用户关注表
     @Options(useGeneratedKeys = true)

@@ -87,7 +87,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 export default {
     data() {
         return {
-            route: ['学习团体', '创建团体'],
+            route: [{name: "学习团体", route: "/MainPage/StudyGroupCenter"},
+            {name: "创建团体", route: ""}],
             coverList: [],
             inputTitle: '',
             inputContent: '',

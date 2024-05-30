@@ -376,7 +376,16 @@ export default {
     data() {
         return {
             userId: JSON.parse(sessionStorage.getItem("id")),
-            route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
+            route: [
+                {
+                    name: "学业板块",
+                    route: "/MainPage/Course_Center/Personal_Course"
+                },
+                {
+                    name: "课程论坛",
+                    route: "/MainPage/Course_Center/Personal_Course"
+                }
+            ],  //本界面要显示的面包屑信息
             avatarPicture: "",  //作者头像
             ReplyTextarea: "",  //回复内容监听
             sortOptions: [  //评论排序方式
@@ -561,7 +570,14 @@ export default {
             this.view_count = result.data.view_count;
             this.section_id = result.data.section_id;
             this.all_comment_num = result.data.commentCount;
-            this.route[2] = this.title;
+            this.route[2] = {
+                name: "帖子板块",
+                route: "/MainPage/Course_Center/PostCenter/" + this.section_id,
+            }
+            this.route[3] = {
+                name: this.title,
+                route: "",
+            }
             console.log(result.data.comment_count);
 
             /*
@@ -1153,7 +1169,7 @@ export default {
         down_assistant() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {
                 section: this.section_id,
                 assistant: this.op_id,
@@ -1215,7 +1231,7 @@ export default {
         decancel_people() {
             if (this.op_id <= 0) {
                 return;
-            } 
+            }
             let content = {
                 section: this.section_id,
                 id: this.op_id
@@ -1251,7 +1267,7 @@ export default {
 }
 
 .main-postpage-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     background-color: rgba(247, 248, 250, 0.7);
     padding-top: 29px;
     padding-bottom: 81px;

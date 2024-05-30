@@ -134,7 +134,8 @@ export default defineComponent({
   components: { BreadcrumbLabel },
   data() {
     return {
-      route: ["学业论坛", "课程论坛"],
+      route: [{name: "学业板块", route: "/MainPage/Course_Center/Personal_Course"},
+            {name: "课程论坛", route: "/MainPage/Course_Center/Personal_Course"}],
       pageSize: 1,
       currentPage: 1,
       currentContent: 1,
@@ -235,6 +236,10 @@ export default defineComponent({
           this.course.course_follows = response.data.course_follows;
           this.teachers = response.data.teachers;
           this.course.course_tags = [this.course.course_college, this.course.course_type];
+          this.route[2] = {
+            name: response.data.course_name,
+            route: "/MainPage/Course_Center/PostCenter/" + sectionId
+          }
           /*if (this.teachers.length === 0) {
             this.teachers = [{
 
@@ -264,18 +269,18 @@ export default defineComponent({
 </script>
 <style>
 .course-section-container {
-  width: calc(99vw - 205px);
+  width: calc(100vw - 220px);
 
-  //height: calc(100vh - 85px);
+  height: calc(100vh - 85px);
 }
 
 .course-container {
   display: flex;
-  //justify-content: center; /* 居中 */
+  /*justify-content: center;*/ /* 居中 */
   flex-direction: column;
   align-items: center;
-  //margin-left: -500px;
-  //background: #dbdbdb;
+  /*margin-left: -500px;*/
+  /*background: #dbdbdb;*/
   background: #dcdcdc;
 }
 
@@ -305,9 +310,11 @@ export default defineComponent({
   margin-top: 30px;
   height: 200px;
   background: white;
-  //border-top-left-radius: 10px; /* 左上角圆角半径为 10px */
-  //border-bottom-right-radius: 10px; /* 右下角圆角半径为 10px */
-  //border-radius: 13px;
+  /*
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px; 
+  border-radius: 13px;
+  */
 }
 
 .first-card-left {

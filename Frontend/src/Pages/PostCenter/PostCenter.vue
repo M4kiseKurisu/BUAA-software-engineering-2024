@@ -176,7 +176,16 @@ export default {
     data() {
         return {
             show_Creator: false,
-            route: ["学业板块", "课程论坛"],  //本界面要显示的面包屑信息
+            route: [
+                {
+                    name: "学业板块",
+                    route: "/MainPage/Course_Center/Personal_Course"
+                },
+                {
+                    name: "课程论坛",
+                    route: "/MainPage/Course_Center/Personal_Course"
+                }
+                ],  //本界面要显示的面包屑信息
             courseName: "软件工程",
             courseId: 1,
             postNum: '',
@@ -314,7 +323,9 @@ export default {
                 this.subscripNum = result.data.course_follows;
                 this.postNum = result.data.course_posts;
                 this.isFollow = result.data.course_focus;
-                this.route[2] = this.courseName
+                this.route[2] = {
+                    name: this.courseName,
+                    route: ""}
                 //this.assitantIdList = result.data.assistants;
             })
         },

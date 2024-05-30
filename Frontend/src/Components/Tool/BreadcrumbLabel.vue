@@ -7,9 +7,9 @@
         <!-- 将父元素传入的路径数组循环展示成为面包屑 -->
         <div v-for="(item, index) in routeNames" class="link-loop">
             <div class="seperator">/</div>
-            <div class="link" :class="{ 'last-item': index === routeNames.length - 1 }">{{ item }}</div>
+            <div class="link" :class="{ 'last-item': index === routeNames.length - 1 }" @click="jump(item.route)">{{ item.name }}</div>
         </div>
-        
+
     </div>
 </template>
 
@@ -20,7 +20,14 @@ export default {
     components: {
         House,
     },
-    props: ["routeNames"]
+    props: ["routeNames"],
+    methods: {
+        jump(route) {
+            if (route != "") {
+                this.$router.push({ path: route });
+            }
+        }
+    }
 }
 </script>
 

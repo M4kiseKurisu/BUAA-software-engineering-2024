@@ -41,7 +41,7 @@
             <!-- 蓝色卡片内部信息存储组件 -->
             <div class="blue-card-container">
                 <!-- 头像信息 -->
-                <el-avatar :size="86" :src="avatarPicture"/>
+                <el-avatar :size="86" :src="avatarPicture" @click="jump"/>
                 <!-- 昵称信息 -->
                 <div class="nickname">{{ this.username }}</div>
 
@@ -219,7 +219,7 @@
                 <div v-if="this.divided_posts.length != 0" class="no-favorate-card-tip" style="margin-bottom: 12px; margin-top: -5px;">您已经连续打卡{{ continue_post }}天！</div>
                 <PosterCard v-if="this.divided_posts.length != 0" :item="this.divided_posts[0].posts[0]"/>
                 <div v-else class="no-favorate-card-tip">您目前还没有打卡信息~</div>
-            </div> 
+            </div>
 
             <!-- 站内通知信息 -->
             <div class="notices-container">
@@ -227,7 +227,7 @@
                 <div class="notices-header-container">
                     <div class="favorates-header-1">系统通知</div>
                     <!-- <div class="favorates-header-2">查看更多</div> -->
-                    <NoticeCenter :type="2" />
+                    <!-- <NoticeCenter :type="2" /> -->
                 </div>
 
                 <div v-for="item in noticeListSort">
@@ -284,7 +284,8 @@ export default {
     },
     data() {
         return {
-            route: ["个人中心", "用户信息"],  //本界面要显示的面包屑信息
+            route: [{name: "个人中心", route: ""},
+            {name: "用户信息", route: ""}],  //本界面要显示的面包屑信息
             avatarPicture: "",  //头像信息
             username: "", //昵称信息
             signTime: "",  //测试的学届信息
@@ -328,7 +329,7 @@ export default {
         changeView() {
             const content = {};
             content.show_post = (this.view_radio2 == 0) ? true : false;
-            content.show_favorite = (this.view_radio2 == 0) ? true : false;
+            content.show_favorite = (this.view_radio1 == 0) ? true : false;
             console.log(content);
 
             axios({
@@ -442,6 +443,9 @@ export default {
         },
         choose_visible() {
 
+        },
+        jump() {
+            this.$router.push("/MainPage/Course_Center/ShowPersonalInformation/" + JSON.parse(sessionStorage.getItem('id')))
         }
     },
     computed: {
@@ -608,7 +612,7 @@ export default {
 }
 /* 设定界面宽度真实值 */
 .page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
 }
 

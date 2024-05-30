@@ -111,7 +111,8 @@ export default defineComponent({
 
   data() {
     return {
-      route: ["学业板块", "创建课程"],
+      route: [{name: "学业板块", route: "/MainPage/Course_Center/Personal_Course"},
+            {name: "创建课程", route: ""}],
       inputValue: '',
       dynamicTags: ['Tag 1', 'Tag 2', 'Tag 3'],
       inputVisible: false,

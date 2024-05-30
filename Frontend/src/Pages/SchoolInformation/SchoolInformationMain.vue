@@ -5,7 +5,7 @@
     <div class="container-css">
         <el-row style="width: 94%; margin-left: 3%; margin-top: 16px;" v-for="item in groups" :gutter="60">
             <el-col v-for="item2 in item" :span="12">
-                <SchoolInformationCard 
+                <SchoolInformationCard
                     :school_avatar="item2.school_badge"
                     :school_name="item2.school_name"
                     :school_id="item2.school_id"
@@ -25,7 +25,14 @@ import SchoolInformationCard from "./SchoolInformationCard.vue"
 export default {
     data(){
         return {
-            route: ["升学中心", "学校信息"],
+            route: [
+                {
+                    name: "升学中心",
+                    route: "/MainPage/UpGradeCenter"
+                }, {
+                    name: "学校信息",
+                    route: ""
+                }],
             school_list: [],
         }
     },

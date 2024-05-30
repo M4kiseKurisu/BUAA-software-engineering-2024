@@ -10,7 +10,7 @@
                 <div v-if="title_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ title_warning }}</div>
             </div>
         </div>
-        
+
         <div class="first-line-1">
             <div class="post-title-font">帖子类型：</div>
             <div>
@@ -54,14 +54,14 @@
         </div>
 
         <div style="margin-left: 20px; margin-right: -10px;" class="post-title-font">附加资源：</div>
-        <el-upload v-model:file-list="this.fileList" :show-file-list="true" :auto-upload="false" 
+        <el-upload v-model:file-list="this.fileList" :show-file-list="true" :auto-upload="false"
             action="/api/posts/write/uploadResource" :data="getUploadData" @change="handleFileChange">
             <el-button v-if="parseInt(this.PostcategoryValue) === 1" class="button-upload-file">选择资源</el-button>
             <el-button v-else disabled class="button-upload-file">选择资源</el-button>
         </el-upload>
 
         <div>
-            <el-button v-if="parseInt(this.PostcategoryValue) === 1" 
+            <el-button v-if="parseInt(this.PostcategoryValue) === 1"
                 :class="{'button-upload-file': true, 'red-border': upload_warning.length > 0}" @click="uploadFile">上传资源</el-button>
             <el-button v-else disabled class="button-upload-file">上传资源</el-button>
             <div v-if="upload_warning.length > 0" class="warning-css" style="margin-top: 2px; margin-left: 20px;">{{ upload_warning }}</div>
@@ -101,8 +101,8 @@
 
         <div class="post-title-font">帖子摘要：</div>
         <div>
-            <el-input v-model="this.inputContent" style="width: 600px" 
-                :autosize="{ minRows: 1, maxRows: 2 }" type="textarea" placeholder="输入摘要内容" 
+            <el-input v-model="this.inputContent" style="width: 600px"
+                :autosize="{ minRows: 1, maxRows: 2 }" type="textarea" placeholder="输入摘要内容"
                 :class="{'red-border': content_warning.length > 0}"/>
             <div v-if="content_warning.length > 0" class="warning-css" style="margin-top: 2px;">{{ content_warning }}</div>
         </div>
@@ -234,7 +234,7 @@ export default {
             } else {
                 this.upload_warning = "";
             }
-            
+
             if (this.title_warning.length > 0 || this.post_category_warning.length > 0
                 || this.tag_warning.length > 0 || this.content_warning.lnegth > 0
                 || this.upload_warning.length > 0) {
@@ -289,7 +289,7 @@ export default {
                         type: 'success',
                     });
                     //location.reload();
-                    this.$router.push({ path: "/MainPage/Course_Center/PostCenter/" + this.sectionId});
+                    this.$router.push({ path: "/MainPage/Course_Center/PostPage/" + result.data.postId});
                 } else {
                     this.$message({
                         showClose: true,
@@ -492,8 +492,8 @@ export default {
 
         const images = ref([]);
 
-        const editorConfig = { 
-            placeholder: '请输入内容', 
+        const editorConfig = {
+            placeholder: '请输入内容',
             MENU_CONF: {
                 uploadImage: {
                 // 自定义上传
@@ -509,7 +509,7 @@ export default {
                                 insertFn(message.url, message.alt, message.href)  //success
                             }
                         )
-                    }     
+                    }
                 }
             }
         }
@@ -524,7 +524,7 @@ export default {
                     success(data, data.isSuccess)
                 }
             })
-        }   
+        }
 
         // 组件销毁时，也及时销毁编辑器
         onBeforeUnmount(() => {
@@ -552,7 +552,7 @@ export default {
 
 <style scoped>
 .personal-course-page-container {
-    width: calc(100vw - 205px);
+    width: calc(100vw - 220px);
     min-width: 1174px;
 }
 
@@ -589,7 +589,7 @@ export default {
 
 .tag-in-container {
     display: inline;
-    
+
 }
 
 .tag-in-container-content {

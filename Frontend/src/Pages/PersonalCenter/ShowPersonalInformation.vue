@@ -8,7 +8,7 @@
                 <div
                     style="height: 100%; aspect-ratio: 1/1 ; background-color: white;display: flex;justify-content: center;align-items: center;">
                     <img :src="userAvatar"
-                        style="max-width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 50%;">
+                        style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 50%;">
                 </div>
                 <div style="flex-grow: 1;height: 100%;background-color:white;">
                     <div style="width: 100%;height: 25%; display: flex;align-items: center;">
@@ -122,7 +122,7 @@ export default {
             postCount: 1,
             likeCount: 20,
             followerCount: 15,
-            route: ['他人信息'],
+            route: [{ name: "个人信息", route: "" }],
             jieshu: '2021',
             academy: '计算机学院',
             isFollow: true,
@@ -148,6 +148,7 @@ export default {
                 this.sign = result.data.sign;
                 this.isFollow = result.data.flag_follow;
                 this.isBlock = result.data.flag_blocked;
+                this.route[1] = {name: this.userName, route: ""};
             });
         },
         followOther() {

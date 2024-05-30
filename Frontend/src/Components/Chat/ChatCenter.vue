@@ -415,8 +415,8 @@ export default {
         }
     },
     created() {
-        //this.ws = new WebSocket('/api/webSocket/' + this.selfId);
-        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
+        this.ws = new WebSocket('/api/webSocket/' + this.selfId);
+        //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId);
         this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
         this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
         this.ws.addEventListener('error', this.handleWsError.bind(this), false);
@@ -449,9 +449,11 @@ export default {
     },
     beforeDestroy() {
         clearInterval(this.timer);
+        this.ws.close();
     },
     beforeRouteLeave() {
         clearInterval(this.timer);
+        this.ws.close();
     },
 }
 </script>

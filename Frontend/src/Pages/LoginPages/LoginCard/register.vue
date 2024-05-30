@@ -5,7 +5,7 @@
         </div>
     </div>
 
-    <form>
+    <form @keydown.enter="this.register_click">
         <information_input :input_title="'输入用户名'" :input_type="'username_create'" ref="username"/>
         <information_input :input_title="'输入邮箱'" :input_type="'email'" ref="email"/>
         <information_input :input_title="'输入手机号'" :input_type="'tel'" ref="tel"/>
@@ -28,6 +28,7 @@ export default {
     methods: {
         register_click() {
             register(this.$refs.username, this.$refs.email, this.$refs.tel, this.$refs.password);
+            this.$emit('click-link', 1);
         },
         to_login() {
             this.$emit('click-link', 1);

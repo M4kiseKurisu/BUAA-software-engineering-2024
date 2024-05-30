@@ -3,11 +3,11 @@
         @contextmenu.prevent="handleRightClick">
         <img :src="headImg" style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
     </div>
-    <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
+    <el-dialog v-model="dialog_visible" title="进行权限操作" width="360" v-if="this.authority != 'blocked'">
         <el-button v-if="this.authority != 'assistant'" type="primary" @click="giveAssistantAuthority">给予用户助教权限</el-button>
         <el-button v-else type="warning" @click="delectAssistantAuthority">撤销用户助教权限</el-button>
         <div style="display: flex; margin-top: 12px;">
-            <el-button v-if="this.authority != 'teacher'" type="danger" @click = "blockPerson">板块内封禁该用户</el-button>
+            <el-button v-if="this.authority != 'teacher'" type="danger" @click="blockPerson">板块内封禁该用户</el-button>
             <el-input v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
         </div>
         <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
@@ -136,7 +136,7 @@ export default {
         },
         blockPerson() {
             var day = this.cancel_days;
-            if(day == ''){
+            if (day == '') {
                 day = 100000000000;
             } else {
                 day = parseInt(this.cancel_days);
@@ -176,7 +176,7 @@ export default {
                     section: this.sectionId,
                 }
             }).then((result) => {
-                console.log(result.data.info);
+                //console.log(result.data.info);
                 this.authority = result.data.info;
             })
         }
