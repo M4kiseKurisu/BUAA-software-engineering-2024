@@ -50,13 +50,13 @@
             <div class="personal-course-left-container">
 
                 <div class="left-first-row-container">
-                    <div class="avatar-container-120">
+                    <div class="avatar-container-120" @click="returnUserInfo">
                         <el-avatar shape="square" :size="120" :src="this.avatarPicture" />
                     </div>
 
 
                     <div class="left-first-row-right-container">
-                        <div class="personal-course-username">{{ this.username }}</div>
+                        <div class="personal-course-username" @click="returnUserInfo">{{ this.username }}</div>
                         <div class="personal-course-courseNumber">关注板块数：{{ this.courseNumber }}</div>
                     </div>
                 </div>
@@ -171,8 +171,7 @@ export default {
     },
     data() {
         return {
-            route: [{name: "学业板块", route: ""},
-            {name: "课程论坛", route: ""}],  //本界面要显示的面包屑信息
+            route: [{name: "学业板块", route: ""}, {name: "课程论坛", route: ""}],  //本界面要显示的面包屑信息
             avatarPicture: "",  //本界面要展示的头像图片测试
             username: "",  //本界面要展示的昵称信息
             courseNumber: 0,  //本用户关注板块数
@@ -373,6 +372,9 @@ export default {
                 showMyCourses.push(this.followingCourseList.slice(i, i + 2));
             }
             return showMyCourses;
+        },
+        returnUserInfo() {
+            this.$router.push("/MainPage/Personal_Center/Personal_Information")
         }
     },
     created() {

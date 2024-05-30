@@ -215,6 +215,7 @@ export default {
                     });
                 }
             })
+            this.loginOrRegister = 1;
         },
         change() {
             if (this.changePassword === "" || this.changePassword2 === "") {
@@ -255,6 +256,7 @@ export default {
                     });
                 }
             })
+            this.loginOrRegister = 1;
         }
     }
 }

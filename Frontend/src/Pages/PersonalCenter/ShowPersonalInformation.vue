@@ -122,7 +122,7 @@ export default {
             postCount: 1,
             likeCount: 20,
             followerCount: 15,
-            route: [{ name: "他人信息", route: "" }],
+            route: [{ name: "个人信息", route: "" }],
             jieshu: '2021',
             academy: '计算机学院',
             isFollow: true,

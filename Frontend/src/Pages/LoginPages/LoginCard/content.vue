@@ -5,7 +5,7 @@
         </div>
     </div>
 
-    <form>
+    <form @keydown.enter="this.login_click">
         <information_input :input_title="'输入用户名'" :input_type="'username'" ref="username"/>
         <information_input :input_title="'输入密码'" :input_type="'password'" ref="password"/>
     </form>
@@ -37,7 +37,7 @@ export default {
         to_findback() {
             this.$emit('click-link', 3);
         }
-    }
+    },
 }
 </script>
 

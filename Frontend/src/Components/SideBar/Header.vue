@@ -72,7 +72,7 @@
                 </svg>
             </div>
             <!-- 上边栏最右侧为头像 -->
-            <div class="avatar">
+            <div class="avatar" @click="headRouter">
                 <el-avatar :size="32" :src="avatarPicture" />
             </div>
 
@@ -219,6 +219,9 @@ export default {
             this.$nextTick(() => {
                 this.haveNotice = false;
             });
+        },
+        headRouter() {
+            this.$router.push("/MainPage/Personal_Center/Personal_Information");
         }
     }
 }

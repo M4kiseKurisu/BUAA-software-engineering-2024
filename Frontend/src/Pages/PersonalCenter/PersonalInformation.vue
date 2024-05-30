@@ -41,7 +41,7 @@
             <!-- 蓝色卡片内部信息存储组件 -->
             <div class="blue-card-container">
                 <!-- 头像信息 -->
-                <el-avatar :size="86" :src="avatarPicture"/>
+                <el-avatar :size="86" :src="avatarPicture" @click="jump"/>
                 <!-- 昵称信息 -->
                 <div class="nickname">{{ this.username }}</div>
 
@@ -329,7 +329,7 @@ export default {
         changeView() {
             const content = {};
             content.show_post = (this.view_radio2 == 0) ? true : false;
-            content.show_favorite = (this.view_radio2 == 0) ? true : false;
+            content.show_favorite = (this.view_radio1 == 0) ? true : false;
             console.log(content);
 
             axios({
@@ -443,6 +443,9 @@ export default {
         },
         choose_visible() {
 
+        },
+        jump() {
+            this.$router.push("/MainPage/Course_Center/ShowPersonalInformation/" + JSON.parse(sessionStorage.getItem('id')))
         }
     },
     computed: {
