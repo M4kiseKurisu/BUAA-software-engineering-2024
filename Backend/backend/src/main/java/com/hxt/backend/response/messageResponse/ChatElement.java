@@ -10,9 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatElement {
+    private Integer id;
     private Integer sender_id;
     private Integer receiver_id;
     private String last_message_content;
     private String last_message_time;
-    private Boolean isRead;
+    private Boolean is_read;
 }
