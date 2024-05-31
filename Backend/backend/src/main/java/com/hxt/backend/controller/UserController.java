@@ -284,16 +284,28 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/user/password/forget/request")
+    public BasicInfoResponse getResetPassword(
+            @RequestParam(name = "account", required = false) String account,
+            @RequestParam(name = "email", required = false) String email
+    ) {
+        if (account == null || email == null) {
+            return new BasicInfoResponse(false, hasEmptyResponse);
+        } else {
+            return userService.sendCheckEmail(account, email);
+        }
+    }
+
     @RequestMapping("/user/password/forget")
     public BasicInfoResponse setForgottenPassword(
             @RequestParam(name = "account", required = false) String account,
-            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "password", required = false) String np
     ) {
-        if (account == null || email == null || np == null) {
+        if (account == null || code == null || np == null) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         } else {
-            return userService.resetForgottenPassword(account, email, np);
+            return userService.resetForgottenPassword(account, code, np);
         }
     }
 

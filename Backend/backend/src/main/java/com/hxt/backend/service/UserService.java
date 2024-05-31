@@ -17,6 +17,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -216,13 +218,50 @@ public class UserService {
         userMapper.resetPassword(id, password);
     }
 
-    public BasicInfoResponse resetForgottenPassword
-            (String account, String email, String np) {
+    public BasicInfoResponse sendCheckEmail(String account, String email) {
         User user = userMapper.selectUserByAccount(account);
         if (!user.getEmail().equals(email)) {
             return new BasicInfoResponse(false, "信息验证不通过！");
+        } else {
+            Integer res = userMapper.checkHasResetCode(user.getUserId());
+            if (res != null && res > 0) {
+                return new BasicInfoResponse(false, "操作频率过高！");
+            }
+        }
+        Random random = new Random();
+        String code = "";
+        for(int i = 0; i < 6; i++){
+            code += random.nextInt(10);
+        }
+        userMapper.setResetCode(user.getUserId(), code);
+        try {
+            HtmlEmail mail = new HtmlEmail();
+            mail.setCharset("utf-8");
+            mail.setHostName("smtp-mail.outlook.com");
+            mail.setSmtpPort(587);
+            mail.setStartTLSEnabled(true);
+            mail.setFrom("miqlbk@outlook.com", "航学通重置密码服务");
+            mail.setAuthentication("miqlbk@outlook.com", "qiqi20030111");
+            mail.addTo(email);
+            mail.setSubject("航学通重置密码验证");
+            mail.setMsg("验证码：" + code + " 该验证码仅用于航学通重置密码验证，有效期10分钟，回复该邮件无效，若非本人操作请无视！");
+            mail.send();
+            return new BasicInfoResponse(true, "");
+        } catch (EmailException e) {
+            e.printStackTrace();
+            return new BasicInfoResponse(false, "邮件服务异常");
+        }
+    }
+
+    public BasicInfoResponse resetForgottenPassword
+            (String account, String code, String np) {
+        User user = userMapper.selectUserByAccount(account);
+        Integer res = userMapper.checkResetCode(user.getUserId(), code);
+        if (res == null || res <= 0) {
+            return new BasicInfoResponse(false, "信息验证不通过！");
         }
         resetPassword(user.getUserId(), np);
+        userMapper.deleteResetCode(user.getUserId());
         return new BasicInfoResponse(true, "");
     }
 

@@ -207,4 +207,19 @@ public interface UserMapper {
     //  用户帖子列表
     @Select("SELECT post_id FROM post WHERE author_id = #{userId} ORDER BY post_id DESC")
     List<Integer> getPosts(Integer userId);
+
+    //  找回密码
+    @Insert("INSERT INTO user_reset (user_id, code, user_time) VALUES (#{userId}, #{resetCode}, NOW())")
+    int setResetCode(Integer userId, String resetCode);
+
+    @Insert("SELECT ur_id FROM user_reset WHERE user_id = #{userId} " +
+            "AND timestampdiff(minute, user_time, now()) < 1")
+    Integer checkHasResetCode(Integer userId);
+
+    @Select("SELECT ur_id FROM user_reset WHERE user_id = #{userId} AND code = #{resetCode} " +
+            "AND timestampdiff(minute, user_time, now()) < 10")
+    Integer checkResetCode(Integer userId, String resetCode);
+
+    @Delete("DELETE FROM user_reset WHERE user_id = #{userId}")
+    int deleteResetCode(Integer userId);
 }

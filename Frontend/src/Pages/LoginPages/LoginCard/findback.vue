@@ -8,6 +8,7 @@
     <form @keydown.enter="this.change_click">
         <information_input :input_title="'输入用户名'" :input_type="'username'" ref="username"/>
         <information_input :input_title="'输入邮箱'" :input_type="'email'" ref="email"/>
+        <information_input :input_title="'输入验证码'" :input_type="'email'" ref="email"/>
         <information_input :input_title="'新设密码'" :input_type="'password'" ref="password_1"/>
         <information_input :input_title="'确认密码'" :input_type="'password'" ref="password_2"/>
     </form>

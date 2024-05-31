@@ -65,6 +65,8 @@ export function register(username_e, email_e, tel_e, password_e) {
 
 }
 
+export function sendEmail()
+
 export function change(username_e, email_e, password_1_e, password_2_e) {
     username_e.checkContent();
     email_e.checkContent();
