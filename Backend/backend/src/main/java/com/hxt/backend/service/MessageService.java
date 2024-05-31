@@ -1,7 +1,6 @@
 package com.hxt.backend.service;
 
 import com.hxt.backend.entity.User;
-import com.hxt.backend.entity.group.GroupApply;
 import com.hxt.backend.entity.message.*;
 import com.hxt.backend.mapper.GroupMapper;
 import com.hxt.backend.mapper.MessageMapper;
@@ -53,27 +52,37 @@ public class MessageService {
         ArrayList<ChatElement> list = new ArrayList<>();
         List<PrivateChat> elements = messageMapper.selectPrivateChatListByUserId(id);
         elements.sort(Comparator.comparing(PrivateChat::getLast_message_time).reversed());
+
+        if (!all) {
+            for (PrivateChat element: elements) {
+                if (!element.getSender_id().equals(id)) {
+                    list.add(new ChatElement(element.getPrivate_chat_id(),element.getSender_id(),element.getPrivate_chat_id(),
+                            decodeMessage(element.getLast_message_content()),
+                            element.getLast_message_time().toString(), element.getIs_read()));
+                }
+            }
+            return list;
+        }
+
         for (PrivateChat element: elements) {
             if (element.getSender_id().equals(id)) {
-                list.add(new ChatElement(element.getSender_id(),element.getReceiver_id(),
+                list.add(new ChatElement(element.getPrivate_chat_id(),element.getSender_id(),element.getReceiver_id(),
                         decodeMessage(element.getLast_message_content()),
                         element.getLast_message_time().toString(), false));
             }
             else {
-                list.add(new ChatElement(element.getSender_id(),element.getPrivate_chat_id(),
+                list.add(new ChatElement(element.getPrivate_chat_id(),element.getSender_id(),element.getPrivate_chat_id(),
                         decodeMessage(element.getLast_message_content()),
                         element.getLast_message_time().toString(), element.getIs_read()));
             }
         }
-        if (!all) {
-            return list;
-        }
+        // 关注但还没有聊过天
         List<Integer> follows = userMapper.getFollow(id);
         for (Integer follow: follows) {
             PrivateChat chat1 = messageMapper.selectPrivateChatItem(follow, id);
             PrivateChat chat2 = messageMapper.selectPrivateChatItem(id, follow);
             if (chat1 == null && chat2 == null){
-                list.add(new ChatElement(id, follow,"","",false));
+                list.add(new ChatElement(list.size() + 10086, id, follow,"","",false));
             }
         }
         return list;
