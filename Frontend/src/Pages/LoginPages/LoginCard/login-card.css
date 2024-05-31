@@ -70,6 +70,19 @@
     border: none;
 }
 
+.disabled-login-button {
+    min-width: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #c0c0c0;
+    color: #ffffff;
+    border: none;
+}
+
 .change-page-link-container {
     margin-top: 16px;
 }

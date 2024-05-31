@@ -220,7 +220,9 @@ public class UserService {
 
     public BasicInfoResponse sendCheckEmail(String account, String email) {
         User user = userMapper.selectUserByAccount(account);
-        if (!user.getEmail().equals(email)) {
+        if (user == null) {
+            return new BasicInfoResponse(false, "用户不存在！");
+        } else if (!user.getEmail().equals(email)) {
             return new BasicInfoResponse(false, "信息验证不通过！");
         } else {
             Integer res = userMapper.checkHasResetCode(user.getUserId());
@@ -256,6 +258,9 @@ public class UserService {
     public BasicInfoResponse resetForgottenPassword
             (String account, String code, String np) {
         User user = userMapper.selectUserByAccount(account);
+        if (user == null) {
+            return new BasicInfoResponse(false, "用户不存在！");
+        }
         Integer res = userMapper.checkResetCode(user.getUserId(), code);
         if (res == null || res <= 0) {
             return new BasicInfoResponse(false, "信息验证不通过！");

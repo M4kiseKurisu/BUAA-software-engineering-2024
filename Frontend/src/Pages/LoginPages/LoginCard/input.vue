@@ -1,7 +1,7 @@
 <template>
     <div class="line-container flex-layout">
         <label class="input-title">{{ this.input_title }}</label>
-        <input v-model="this.content" 
+        <input v-model="this.content"
             :class="{ 'input-box': true, 'input-box-warning': this.is_warning }" @blur="this.checkContent"
             :type="this.input_type"/>
     </div>

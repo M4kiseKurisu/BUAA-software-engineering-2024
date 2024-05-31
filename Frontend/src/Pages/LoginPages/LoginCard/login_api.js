@@ -62,14 +62,32 @@ export function register(username_e, email_e, tel_e, password_e) {
             Vue.$message({ showClose: true, message: result.data.info, type: 'error' });
         }
     })
-
 }
 
-export function sendEmail()
-
-export function change(username_e, email_e, password_1_e, password_2_e) {
+export function sendEmail(username_e, email_e) {
     username_e.checkContent();
     email_e.checkContent();
+    let content = {
+        account: username_e.content,
+        email: email_e.content,
+    }
+    axios({
+        method: "POST",
+        url: "/api/user/password/forget/request",
+        data: content,
+    }).then((result) => {
+        if (result.data.success) {
+            Vue.$message({ showClose: true, message: "验证码已发送至邮箱！", type: 'success' });
+        } else {
+            Vue.$message({ showClose: true, message: result.data.info, type: 'error' });
+        }
+        return result.data.success
+    })
+}
+
+export function change(username_e, code_e, password_1_e, password_2_e) {
+    username_e.checkContent();
+    code_e.checkContent();
     password_1_e.checkContent();
     password_2_e.checkContent();
 
@@ -79,7 +97,7 @@ export function change(username_e, email_e, password_1_e, password_2_e) {
 
     let content = {
         account: username_e.content,
-        email: email_e.content,
+        code: code_e.content,
         password: md5(password_1_e.content),
     }
     axios({
