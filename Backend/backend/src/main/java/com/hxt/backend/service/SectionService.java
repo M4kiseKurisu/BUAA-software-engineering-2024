@@ -356,8 +356,8 @@ public class SectionService {
         return new BasicInfoResponse(true, "");
     }
 
-    public BasicInfoResponse tryBlockUser(Integer user, Integer section, Integer id, Integer days) {
-        if (adminMapper.checkAuthorityType(user, section) == null) {
+    public BasicInfoResponse tryBlockUser(boolean isAdmin, Integer user, Integer section, Integer id, Integer days) {
+        if ((adminMapper.checkAuthorityType(user, section) == null) && !isAdmin) {
             return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
         }
         if (days == null) {

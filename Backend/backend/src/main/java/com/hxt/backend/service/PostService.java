@@ -64,6 +64,15 @@ public class PostService {
         if (res == 0) {
             return 0;
         }
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (Integer user : userMapper.getFollower(authorId)) {
+            if (user != authorId) {
+                messageMapper.sendSystemNoticeToUser("关注用户发帖通知",
+                        String.format("您关注的用户 “%s” 在 %s 发布了新的帖子 “%s” ，快去查看吧",
+                                userMapper.getUserNameById(authorId), formatter.format(date), title), user);
+            }
+        }
         return post.getPost_id();
     }
     
@@ -407,6 +416,7 @@ public class PostService {
     
     //创建评论
     public Integer createComment(String content, Integer postId, Integer authorId) {
+        Post p = postMapper.getPost(postId);
         if (postId == null || authorId == null) {
             return -1;
         }
@@ -421,6 +431,16 @@ public class PostService {
         if (postMapper.getPost(postId).getAuthor_id() != authorId) {
             String text = htmlToText(content);
             messageService.createReplyNotice(postMapper.getPost(postId).getAuthor_id(), authorId, text, commentTime, true, postId, null);
+        } else {
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (Integer user : postMapper.getFavoriteUsersByPost(postId)) {
+                if (user != authorId) {
+                    messageMapper.sendSystemNoticeToUser("收藏更新通知",
+                            String.format("您收藏的帖子 “%s” 的作者在 %s 发布了新的楼层，快去查看吧", p.getTitle(), formatter.format(date)),
+                            user);
+                }
+            }
         }
         return comment.getComment_id();
     }

@@ -42,7 +42,7 @@ public class ScheduleTaskConfig {
 
     @Scheduled(cron = "0 0 4 * * *")   //  每天4时
     private void clearPushedMessage() {
-        log.info("清理10天前的已推送已读系统通知...");
+        log.info("清理7天前的已推送已读系统通知...");
         messageMapper.deleteOldReadMessage();
         messageMapper.deleteNoRefSystemNotice();
         log.info("清理10天前的回复通知...");

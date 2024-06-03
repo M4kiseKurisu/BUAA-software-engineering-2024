@@ -137,7 +137,7 @@ public interface MessageMapper {
     List<ReplyNotice> selectReplyNoticeByUserId(Integer userId);
 
     //  定时任务用
-    @Delete("DELETE FROM user_system_notice WHERE TIMESTAMPDIFF(DAY, pull_time, NOW()) > 10 AND is_read = 1")   //  15天
+    @Delete("DELETE FROM user_system_notice WHERE TIMESTAMPDIFF(DAY, pull_time, NOW()) > 7 AND is_read = 1")   //  15天
     int deleteOldReadMessage();
 
     @Delete("delete from manager_system_notice where system_notice_id not in " +

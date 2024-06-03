@@ -226,17 +226,18 @@ public class SectionController {
 
     @RequestMapping("/section/block")
     public BasicInfoResponse tryBlockUser(
+            @CookieValue(name = "type", defaultValue = "") String type,
             @CookieValue(name = "user_id", defaultValue = "") String user_id,
             @RequestParam(name = "section", required = false) Integer section,
             @RequestParam(name = "id", required = false) Integer user,
             @RequestParam(name = "days", required = false) Integer days
     ) {
-        if (user_id.isEmpty() || section == null || user == null) {
+        if (!type.equals("admin") && (user_id.isEmpty() || section == null || user == null)) {
             return new BasicInfoResponse(false, hasEmptyResponse);
         } else if (days != null && days <= 0) {
             return new BasicInfoResponse(false, "填写的天数非法！");
         }
-        return sectionService.tryBlockUser(Integer.parseInt(user_id), section, user, days);
+        return sectionService.tryBlockUser(type.equals("admin"), Integer.parseInt(user_id), section, user, days);
     }
 
     @RequestMapping("/section/unblock")
