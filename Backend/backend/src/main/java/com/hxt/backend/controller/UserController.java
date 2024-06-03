@@ -461,7 +461,7 @@ public class UserController {
         } else if (frequencyLogService.checkFrequency(Integer.parseInt(user_id))) {
             return new BasicInfoResponse(false, frequencyResponse);
         }
-        boolean res = userService.applyForAuthority(Integer.parseInt(user_id), 0, 0, detail, file);
+        boolean res = userService.applyForAuthority(Integer.parseInt(user_id), 0, 2, detail, file);
         String info = res? "" : "服务器错误！";
         if (res) {
             frequencyLogService.setLog(Integer.parseInt(user_id), 4);

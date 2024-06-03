@@ -1,7 +1,12 @@
 <template>
     <div style="width: (100/3)%; margin-top : 5px" @click="goToShowPersonInfomation()"
         @contextmenu.prevent="handleRightClick">
-        <img :src="headImg" style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
+        <div style="width: 100%;aspect-ratio: 1/1 ;display: flex;align-items: center;justify-content: center;flex-direction: column;">
+            <img :src="headImg" style="width: 80%;aspect-ratio: 1/1 ; border: 1px solid darkgray;border-radius: 10%;">
+            <div style="color: dimgray;font-size: 0.9em;">
+                {{ partName }}
+            </div>
+        </div>
     </div>
     <el-dialog v-model="dialog_visible" title="进行权限操作" width="360" v-if="this.authority != 'blocked'">
         <el-button v-if="this.authority != 'assistant'" type="primary" @click="giveAssistantAuthority">给予用户助教权限</el-button>
@@ -30,11 +35,20 @@ export default {
             default: 1,
         },
     },
+    computed:{
+        partName(){
+            if(this.personName.length > 3){
+                return this.personName.substring(0,4) + '...';
+            } else {
+                return this.personName;
+            }
+        }
+    },
     data() {
         return {
             headImg: '',
             //personId: '',
-            personName: '博酱',
+            personName: '',
             dialog_visible: false,
             //sectionId: 1,
             authority: null,

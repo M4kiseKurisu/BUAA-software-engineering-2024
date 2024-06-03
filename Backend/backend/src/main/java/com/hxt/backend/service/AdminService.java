@@ -458,7 +458,7 @@ public class AdminService {
                 Integer user = report.getUserId();
                 Integer sectionId = report.getTarget() / 3;
                 Integer typeNum = report.getTarget() % 3;
-                if (sectionId == 0 && typeNum == 0) {
+                if (sectionId == 0 && typeNum == 2) {
                     setGlobalAuthority(user);
                 }
                 String authorityType = (typeNum == 0)? "teacher" :
@@ -466,9 +466,16 @@ public class AdminService {
                 if (choice) {
                     setAuthority(user, sectionId, authorityType);
                 } else {
-                    messageMapper.sendSystemNoticeToUser("权限申请通知",
-                            String.format("您对版块“%s”的 %s 权限申请已收到，但由于管理员暂时无法核实您的身份，因此暂不授予相应权限。感谢您对航学通的关注！",
-                                    sectionMapper.getSectionNameById(sectionId), authorityType), report.getUserId());
+                    if (sectionId == 0 && typeNum == 2) {
+                        messageMapper.sendSystemNoticeToUser("权限申请通知",
+                                "您的全局教师权限申请已收到，但由于管理员暂时无法核实您的身份，因此暂不授予相应权限。感谢您对航学通的关注！",
+                                report.getUserId());
+                    } else {
+                        messageMapper.sendSystemNoticeToUser("权限申请通知",
+                                String.format("您对版块“%s”的 %s 权限申请已收到，但由于管理员暂时无法核实您的身份，因此暂不授予相应权限。感谢您对航学通的关注！",
+                                        sectionMapper.getSectionNameById(sectionId), authorityType), report.getUserId());
+                    }
+
                 }
                 break;
             case 5:

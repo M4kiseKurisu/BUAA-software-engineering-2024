@@ -43,7 +43,7 @@
                 </div>
             </template> -->
         <div class="noticeList" v-if="noticeChoice == 1">
-            <DirectMessage v-for="item in selectDirectMessage" :messageInfomation="item" ></DirectMessage>
+            <DirectMessage v-for="item in selectDirectMessage" :messageInfomation="item" :key = "item.id"></DirectMessage>
         </div>
         <div class="noticeList" v-if="noticeChoice == 2">
             <ReplyNotice v-for="item in selectReplyMessage" :replyInformation="item" :key="item.reply_id"></ReplyNotice>

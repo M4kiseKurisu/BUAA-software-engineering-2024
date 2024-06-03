@@ -197,6 +197,8 @@ export default {
             titleName: '',
             ws: null,
             timer: '',
+            reopen_timer: '',
+            close_sign: false,
         }
     },
     methods: {
@@ -302,12 +304,15 @@ export default {
             })
         },
         handleWsOpen() {
+            this.$message({showClose: false, message: '服务连接成功！', type: 'success'});
             console.log("ws 打开了！");
         },
         handleWsClose() {
+            this.close_sign = true;
             console.log("ws 关闭了！");
         },
         handleWsError() {
+            this.close_sign = true;
             console.log("ws 爆炸了！");
         },
         handleWsMessage(rawData) {
@@ -356,7 +361,9 @@ export default {
                 })
                 this.scrollToBottom();
             } else {
+                this.$message({showClose: true, message: '服务断线，操作失败！', type: 'error',});
                 console.error('WebSocket连接未打开或已关闭');
+                this.close_sign = true;
             }
         },
         getPersonInfo() {
@@ -415,8 +422,8 @@ export default {
         }
     },
     created() {
-        this.ws = new WebSocket('/api/webSocket/' + this.selfId);   //  服务器用这个
-        //this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId); 本地调试请用这个
+        //this.ws = new WebSocket('/api/webSocket/' + this.selfId);   //  服务器用这个
+        this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId); //本地调试请用这个
         this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
         this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
         this.ws.addEventListener('error', this.handleWsError.bind(this), false);
@@ -443,16 +450,30 @@ export default {
             console.log('发出心跳！');
             this.ws.send('ping');
         }, 30000);
+        this.reopen_timer = setInterval(() => {
+            if (this.close_sign == true) {
+                this.close_sign = false;
+                this.$message({showClose: false, message: '服务断线，正在尝试重连...', type: 'error'});
+                //this.ws = new WebSocket('/api/webSocket/' + this.selfId);   //  服务器用这个
+                this.ws = new WebSocket('ws://localhost:8080/webSocket/' + this.selfId); //本地调试请用这个
+                this.ws.addEventListener('open', this.handleWsOpen.bind(this), false);
+                this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
+                this.ws.addEventListener('error', this.handleWsError.bind(this), false);
+                this.ws.addEventListener('message', this.handleWsMessage.bind(this), false);
+            }
+        }, 1000);
         //console.log(this.groupId);
         //console.log(this.personId);
         //this.scrollToBottom();
     },
     beforeDestroy() {
         clearInterval(this.timer);
+        clearInterval(this.reopen_timer);
         this.ws.close();
     },
     beforeRouteLeave() {
         clearInterval(this.timer);
+        clearInterval(this.reopen_timer);
         this.ws.close();
     },
 }

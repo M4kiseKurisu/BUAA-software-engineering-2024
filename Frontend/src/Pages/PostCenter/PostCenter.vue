@@ -338,7 +338,7 @@ export default {
                 }
             }).then((result) => {
                 console.log(result);
-                this.popAuthorIdList = result.data.author_id;
+                this.popAuthorIdList = result.data.author_id.slice(0,9);
             })
         },
         followSection() {

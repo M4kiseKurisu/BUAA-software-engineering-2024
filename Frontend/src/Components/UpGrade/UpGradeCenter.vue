@@ -89,10 +89,10 @@
                         <ManagerItem v-for="item in this.popAuthorIdList" :personId="item"></ManagerItem>
                     </div>
                 </div>
-                <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
+                <!-- <div style="width: 100%;height: fit-content;display: flex;justify-content: end;">
                     <span style="padding-right: 3%;margin-top: 20px;"><el-button text type="primary"
                             @click="toggle_Creator()" style="font-size: large;">查看详情</el-button></span>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -251,7 +251,7 @@ export default {
                 }
             }).then((result) => {
                 console.log(result);
-                this.popAuthorIdList = result.data.author_id;
+                this.popAuthorIdList = result.data.author_id.slice(0,15);
                 this.postNum = result.data.totalPosts;
             })
         },
