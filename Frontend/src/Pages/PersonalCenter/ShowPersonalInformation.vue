@@ -129,6 +129,7 @@ export default {
             isBlock: true,
             postItemList: [],
             showNum: 0,
+            selfId: JSON.parse(sessionStorage.getItem("id")),
         }
     },
     methods: {
@@ -152,6 +153,13 @@ export default {
             });
         },
         followOther() {
+            if(this.selfId == this.userId){
+                ElMessage({
+                    message: '无法关注自己！',
+                    type: 'warning',
+                })
+                return;
+            }
             axios({
                 method: "POST",
                 url: "/api/user/follow",
