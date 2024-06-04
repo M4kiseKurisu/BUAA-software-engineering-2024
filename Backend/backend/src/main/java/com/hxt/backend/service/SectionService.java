@@ -357,16 +357,17 @@ public class SectionService {
     }
 
     public BasicInfoResponse tryBlockUser(boolean isAdmin, Integer user, Integer section, Integer id, Integer days) {
-        if ((adminMapper.checkAuthorityType(user, section) == null) && !isAdmin) {
+        if (!isAdmin && (adminMapper.checkAuthorityType(user, section) == null)) {
             return new BasicInfoResponse(false, "您没有该板块的教师或助教身份！");
         }
         if (days == null) {
             days = Integer.MAX_VALUE;
         }
-        String type = adminMapper.checkAuthorityType(user, section);
-        if (type == null || !type.equals("teacher")) {
-            return new BasicInfoResponse(false, "您没有该板块的教师身份！");
-        }
+        //  我都不知道我当时怎么想的，先注释掉，有用再改回来
+        //String type = adminMapper.checkAuthorityType(user, section);
+        //if (type == null || !type.equals("teacher")) {
+        //    return new BasicInfoResponse(false, "您没有该板块的教师身份！");
+        //}
         if (userMapper.updateSectionBlock(id, section, days) == 0) {
             userMapper.sectionBlockUser(id, section, days);
         }

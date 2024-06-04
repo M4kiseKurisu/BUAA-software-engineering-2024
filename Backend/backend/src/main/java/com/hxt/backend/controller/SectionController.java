@@ -237,7 +237,8 @@ public class SectionController {
         } else if (days != null && days <= 0) {
             return new BasicInfoResponse(false, "填写的天数非法！");
         }
-        return sectionService.tryBlockUser(type.equals("admin"), Integer.parseInt(user_id), section, user, days);
+        return sectionService.tryBlockUser(type.equals("admin"), type.equals("admin")? null : Integer.parseInt(user_id),
+                section, user, days);
     }
 
     @RequestMapping("/section/unblock")

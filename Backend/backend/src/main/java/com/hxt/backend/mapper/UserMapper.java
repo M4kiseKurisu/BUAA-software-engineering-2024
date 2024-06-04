@@ -123,37 +123,37 @@ public interface UserMapper {
     @Delete("DELETE FROM section_block WHERE user_id = #{user} and section_id = #{section}")
     int sectionUnblockUser(Integer user, Integer section);
 
-    @Select("SELECT * from section_block order by user_id")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days order by user_id")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
     List<UserSectionBlockResponse> getGlobalSectionBlockListOrderByUser();
 
-    @Select("SELECT * from section_block order by section_id")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days order by section_id")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
     List<UserSectionBlockResponse> getGlobalSectionBlockListOrderBySection();
 
-    @Select("SELECT * from section_block order by block_time desc")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days order by block_time desc")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
     List<UserSectionBlockResponse> getGlobalSectionBlockListOrderByTime();
 
-    @Select("SELECT * from section_block WHERE section_id = #{section} order by user_id")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days AND section_id = #{section} order by user_id")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
     List<UserSectionBlockResponse> getSectionBlockListOrderByUser(Integer section);
 
-    @Select("SELECT * from section_block WHERE section_id = #{section} order by section_id")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days AND section_id = #{section} order by section_id")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
     List<UserSectionBlockResponse> getSectionBlockListOrderBySection(Integer section);
 
-    @Select("SELECT * from section_block WHERE section_id = #{section} order by block_time desc")
+    @Select("SELECT * from section_block WHERE TIMESTAMPDIFF(DAY, block_time, NOW()) < block_days AND section_id = #{section} order by block_time desc")
     @Results({
             @Result(column = "block_time", property = "block_timestamp")
     })
