@@ -18,6 +18,9 @@ public interface MessageMapper {
     @Update("UPDATE manager_system_notice SET pushed = true WHERE system_notice_id = #{systemNoticeId};")
     int updateManagerSystemNoticePushed(Integer systemNoticeId);
 
+    @Update("UPDATE manager_system_notice SET pushed = true WHERE pushed = false;")
+    int setAllManagerSystemNoticePushed();
+
     @Select("select * from manager_system_notice where system_notice_id = #{id};")
     ManagerNotice selectManagerSystemNoticeById(Integer id);
 

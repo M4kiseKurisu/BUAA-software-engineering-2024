@@ -497,7 +497,7 @@ public class AdminService {
     }
 
     public boolean setAuthority(Integer id, Integer section, String type) {
-        if (checkAuthority(id, section)) {
+        if (adminMapper.checkAuthority(id, section) != null) {
             return true;
         }
         Date date = new Date();

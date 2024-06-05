@@ -255,7 +255,6 @@ public class SectionService {
         }
 
         switch (sort) {
-            case "0" -> Collections.reverse(list);
             case "1" -> list.sort((o1, o2) -> o2.getPost_likes().compareTo(o1.getPost_likes()));
             case "2" -> list.sort((o1, o2) -> o2.getPost_favorites().compareTo(o1.getPost_favorites()));
             case "3" -> list.sort((o1, o2) -> o2.getPost_reply_time().compareTo(o1.getPost_reply_time()));
