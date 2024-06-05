@@ -100,6 +100,10 @@ export default {
     },
     computed: {
         selectGroupList() {
+            if(this.groupInfoList == null){
+                this.groupInfoList = [];
+                return this.groupInfoList;
+            }
             var begin, end;
             begin = this.currentPage * 6 - 6;
             end = this.currentPage * 6;
