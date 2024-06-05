@@ -42,19 +42,19 @@
                     <div
                         style="height: 25%;width: 100%;display: flex; align-items: center;margin-left: 20px;justify-content: space-between;">
                         <div style="width: 25%;display: flex;">
-                            <el-button v-if="!isFollow && !isBlock" type="primary" plain @click="followOther"><span
+                            <el-button v-if="!isFollow && !isBlock && !isSelf" type="primary" plain @click="followOther"><span
                                     style="font-size: 1.2em;">关注</span></el-button>
-                            <el-button v-if="!isFollow && isBlock" type="primary" plain disabled><span
+                            <el-button v-if="!isFollow && (isBlock || isSelf)" type="primary" plain disabled><span
                                     style="font-size: 1.2em;">关注</span></el-button>
                             <el-button v-if="isFollow" type="primary" plain @click="cancleFollow"><span
                                     style="font-size: 1.2em;">取消关注</span></el-button>
-                            <el-button v-if="!isBlock" type="primary" plain style="margin-left: 50px;"
+                            <el-button v-if="!isBlock && !isSelf" type="primary" plain style="margin-left: 50px;"
                                 @click="goToChatCenter"><span style="font-size: 1.2em;">私信</span></el-button>
-                            <el-button v-if="isBlock" type="primary" plain style="margin-left: 50px;" disabled><span
+                            <el-button v-if="isBlock || isSelf" type="primary" plain style="margin-left: 50px;" disabled><span
                                     style="font-size: 1.2em;">私信</span></el-button>
                         </div>
                         <div style="margin-right: 50px;">
-                            <Report :type="0" :id="this.userId" />
+                            <Report v-if="!isSelf" :type="0" :id="this.userId" />
                         </div>
                     </div>
                 </div>
@@ -129,6 +129,7 @@ export default {
             isBlock: true,
             postItemList: [],
             showNum: 0,
+            isSelf: true,
         }
     },
     methods: {
@@ -149,6 +150,9 @@ export default {
                 this.isFollow = result.data.flag_follow;
                 this.isBlock = result.data.flag_blocked;
                 this.route[1] = {name: this.userName, route: ""};
+                if (this.userName == undefined) {
+                    this.$message({showClose: false, message: '该用户不存在！', type: 'error'});
+                }
             });
         },
         followOther() {
@@ -218,6 +222,7 @@ export default {
     },
     created() {
         this.userId = this.$route.params.userId;
+        this.isSelf = (this.userId == JSON.parse(sessionStorage.getItem('id')));
         this.GetInfomation();
         this.getPersonalPostList();
     }

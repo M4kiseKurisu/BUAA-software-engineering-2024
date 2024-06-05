@@ -136,7 +136,7 @@ public class GroupService {
             groupMapper.updateGroupMember(groupId,1);
             return new BasicInfoResponse(true,"已成功加入");
         }
-        if (messageMapper.selectApplyCount(groupId,userId) != 0) {
+        if (messageMapper.selectUnhandledApplyCount(groupId,userId) != 0) {
             return new BasicInfoResponse(false, "请勿重复申请");
         }
         Integer promoterId = groupMapper.selectPromoterIdByGroupId(groupId);

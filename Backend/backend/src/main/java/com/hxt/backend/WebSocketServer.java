@@ -117,7 +117,7 @@ public class WebSocketServer {
         JSONObject receive = new JSONObject(raw);
 
         String encodeResult = encodeMessage((String) receive.get("content"));
-
+        
         if (webSocketServer != null){
             JSONObject send = new JSONObject();
             send.put("sender_id",receive.get("sender_id"));
@@ -148,7 +148,7 @@ public class WebSocketServer {
         JSONObject send = new JSONObject();
         send.put("sender_id",receive.get("sender_id"));
         send.put("content",receive.get("content"));
-        send.put("group_id",-1);
+        send.put("group_id",groupId);
         send.put("sender_avatar",userService.getUserHead(senderId));
         send.put("sender_name",userMapper.getUserNameById(senderId));
         send.put("time",time);

@@ -1,7 +1,6 @@
 package com.hxt.backend.mapper;
 
 import com.hxt.backend.entity.message.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -121,8 +120,8 @@ public interface MessageMapper {
             "values (#{groupId},#{user_id},#{content},#{promoter_id},false,false)")
     int insertApplyNotice(Integer groupId, Integer user_id, String content, Integer promoter_id);
 
-    @Select("SELECT COUNT(*) FROM apply_notice WHERE group_id = #{groupId} AND user_id = #{userId};")
-    int selectApplyCount(Integer groupId, Integer userId);
+    @Select("SELECT COUNT(*) FROM apply_notice WHERE group_id = #{groupId} AND user_id = #{userId} AND processed = 0;")
+    int selectUnhandledApplyCount(Integer groupId, Integer userId);
 
 
     // 回复通知表

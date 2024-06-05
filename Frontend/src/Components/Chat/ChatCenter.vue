@@ -321,8 +321,10 @@ export default {
                 console.log("心跳！");
             } else {
                 var message = JSON.parse(rawData.data);
-                this.messageList.push(message);
-                this.scrollToBottom();
+                if (this.groupId == message.group_id) {
+                    this.messageList.push(message);
+                    this.scrollToBottom();
+                }
             }
         },
         handleKeyPress(event) {
@@ -396,6 +398,9 @@ export default {
                 messageContainer.scrollTop = messageContainer.scrollHeight;
                 //console.log(messageContainer.scrollTop);
             })
+        },
+        tryReload() {
+
         }
     },
     components: {
@@ -444,6 +449,8 @@ export default {
             this.getGroupInfo();
         }
         window.onbeforeunload = function() {
+            clearInterval(this.timer);
+            clearInterval(this.reopen_timer);
             this.ws.close()
         }
         this.timer = setInterval(() => {
@@ -460,8 +467,15 @@ export default {
                 this.ws.addEventListener('close', this.handleWsClose.bind(this), false);
                 this.ws.addEventListener('error', this.handleWsError.bind(this), false);
                 this.ws.addEventListener('message', this.handleWsMessage.bind(this), false);
+                if (this.groupId == -1) {
+                    this.getPersonItemList();
+                    this.getPersonMessageList();
+                } else if (this.personId == -1) {
+                    this.getGroupItemList();
+                    this.getGroupMessageList();
+                }
             }
-        }, 1000);
+        }, 2000);
         //console.log(this.groupId);
         //console.log(this.personId);
         //this.scrollToBottom();
