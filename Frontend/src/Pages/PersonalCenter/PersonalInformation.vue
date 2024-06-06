@@ -377,7 +377,7 @@ export default {
                 if (posts[i].year != now_year) {
                     if (month_posts.length != 0) {
                         let element1 = {
-                            year: posts[i].year,
+                            year: posts[i - 1].year,
                             posts: month_posts,
                         }
                         this.divided_posts.push(element1);
@@ -392,7 +392,7 @@ export default {
                         // console.log(posts[i].month);
                         // console.log(now_month);
                         let element2 = {
-                            month: posts[i].month,
+                            month: posts[i - 1].month,
                             posts: date_posts,
                         }
                         month_posts.push(element2);

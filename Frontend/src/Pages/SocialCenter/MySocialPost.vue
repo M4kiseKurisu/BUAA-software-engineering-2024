@@ -11,9 +11,9 @@
             <div class="flex-layout-for-sign">
                 <div class="usersign-font-style" style="max-width: 94%">{{ this.user_sign }}</div>
                 <div class="usersign-font-style-ellipsis">...</div>
-            </div>   
+            </div>
         </div>
-        
+
     </div>
 
     <div style="margin-top: 24px; margin-left: 5%; color: #86909c" v-if="this.divided_posts.length === 0">您当前还没有打卡信息~</div>
@@ -65,7 +65,7 @@ export default {
             }
             //console.log(pic_show_list);
             return pic_show_list;
-        },       
+        },
     },
     mounted() {
         // 获取用户基本信息
@@ -125,7 +125,7 @@ export default {
                 if (posts[i].year != now_year) {
                     if (month_posts.length != 0) {
                         let element1 = {
-                            year: posts[i].year,
+                            year: posts[i - 1].year,
                             posts: month_posts,
                         }
                         this.divided_posts.push(element1);
@@ -140,7 +140,7 @@ export default {
                         // console.log(posts[i].month);
                         // console.log(now_month);
                         let element2 = {
-                            month: posts[i].month,
+                            month: posts[i - 1].month,
                             posts: date_posts,
                         }
                         month_posts.push(element2);
@@ -231,7 +231,7 @@ export default {
     font-size: 16px;
     color: #86909c;
 
-    
+
     position: absolute;
     bottom: 0;
     right: 0;
