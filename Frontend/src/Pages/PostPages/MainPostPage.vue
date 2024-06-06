@@ -179,7 +179,8 @@
                     <!-- 左侧信息：头像，昵称，tag，删除 -->
                     <div class="reply-first-line-left-content">
                         <!-- 回复者头像 -->
-                        <button class="avatar-button" @click="toInformationShow(item.comment_author_id)">
+                        <button class="avatar-button" @click="toInformationShow(item.comment_author_id)"
+                            @contextmenu.prevent="handleRightClick(item.comment_author_id)">
                             <el-avatar shape="square" :size="50" :src="item.comment_author_head" />
                         </button>
 
@@ -260,7 +261,8 @@
                         <!-- 左侧信息：头像，昵称，tag，删除 -->
                         <div class="reply-first-line-left-content">
                             <!-- 回复者头像 -->
-                            <button class="avatar-button" @click="toInformationShow(item2.reply_author_id)">
+                            <button class="avatar-button" @click="toInformationShow(item2.reply_author_id)"
+                                @contextmenu.prevent="handleRightClick(item2.reply_author_id)">
                                 <div class="replys-reply-avatar">
                                     <el-avatar shape="square" :size="40" :src="item2.reply_author_head" />
                                 </div>
@@ -341,12 +343,12 @@
         </div>
 
         <el-dialog v-model="dialog_visible" title="进行权限操作" width="360">
-            <el-button type="primary" v-if="op_situation != 1" @click="up_assistant">给予用户助教权限</el-button>
-            <el-button type="warning" v-else @click="down_assistant">撤销用户助教权限</el-button>
+            <el-button type="primary" v-if="authority_num == 0 && op_situation == 3" @click="up_assistant">给予用户助教权限</el-button>
+            <el-button type="warning" v-if="authority_num == 0 && op_situation == 1" @click="down_assistant">撤销用户助教权限</el-button>
             <div style="display: flex; margin-top: 12px;">
-                <el-button v-if="authority_num == 0 && op_situation != 2" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
-                <el-input v-if="authority_num == 0 && op_situation != 2" v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
-                <el-button v-else type="primary" plain @click="decancel_people">板块内解封该用户</el-button>
+                <el-button v-if="(authority_num == 0 || authority_num == 1) && op_situation != 2" type="danger" @click="cancel_people">板块内封禁该用户</el-button>
+                <el-input v-if="(authority_num == 0 || authority_num == 1) && op_situation != 2" v-model="cancel_days" style="width: 80px; margin-left: 16px;" placeholder="输入天数" />
+                <el-button v-if="(authority_num == 0 || authority_num == 1) && op_situation == 2" type="primary" plain @click="decancel_people">板块内解封该用户</el-button>
             </div>
             <div style="font-size: 14px; color: #86909c; margin-top: 12px;">注：若不填写封禁天数，则默认永久板块内封禁</div>
         </el-dialog>

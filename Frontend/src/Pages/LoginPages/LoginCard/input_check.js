@@ -25,6 +25,7 @@ function username_check(content) {
 
 function email_check(content) {
     var string_reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    string_reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
     return string_reg.test(content) ? true : "输入邮箱格式不合法！";
 }
 
