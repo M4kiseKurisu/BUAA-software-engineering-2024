@@ -260,9 +260,11 @@ public class MessageService {
     }
 
     // 每分钟执行一次，将管理员通知推送给每个用户
-    @Scheduled(cron = "0 * * * * *")
+    //@Scheduled(cron = "55 * * * * *") // 服务器实际使用，错开时间以绕过多线程冲突
+    @Scheduled(cron = "0 * * * * *") // 后端调试用
     public void updateUserNotice() {
         List<ManagerNotice> unpushedNotices= messageMapper.selectUnpushedNotice();
+        messageMapper.setAllManagerSystemNoticePushed();
         if (unpushedNotices.isEmpty()) {
             return;
         }
@@ -279,7 +281,7 @@ public class MessageService {
                 insertNewNotice(notice.getReceiver_id());
                 messageMapper.insertUserNotice(notice.getSystem_notice_id(), notice.getReceiver_id(), timestamp);
             }
-            messageMapper.updateManagerSystemNoticePushed(notice.getSystem_notice_id());
+            //messageMapper.updateManagerSystemNoticePushed(notice.getSystem_notice_id());
         }
     }
 

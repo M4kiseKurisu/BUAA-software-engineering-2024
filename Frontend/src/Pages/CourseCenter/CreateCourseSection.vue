@@ -26,7 +26,7 @@
               <div class="form-group">
                 <span class="prompt-before-input">学分:</span>
                 <div style="max-width: 80px">
-                  <el-input v-model="course.credits" placeholder="输入学分"></el-input>
+                  <el-input-number v-model="course.credits" :min="0" :max="99" placeholder="输入学分"></el-input-number>
                 </div>
               </div>
               <div class="form-group">
@@ -37,7 +37,7 @@
               </div>
               <div class="form-group">
                 <span class="prompt-before-input">课程容量:</span>
-                <el-input-number v-model="course.capacity" placeholder="输入容量"></el-input-number>
+                <el-input-number v-model="course.capacity" :min="0" :max="9999" placeholder="输入容量"></el-input-number>
               </div>
 
               <div class="form-group">
@@ -116,6 +116,7 @@ export default defineComponent({
       inputValue: '',
       dynamicTags: ['Tag 1', 'Tag 2', 'Tag 3'],
       inputVisible: false,
+      before: 114,
       course:{
         name:"",
         type:"",
@@ -162,6 +163,25 @@ export default defineComponent({
       this.dialogVisible = true
     },
     handleCreateSection() {
+      var str = "" + this.course.capacity;
+      var flag = false;
+      if (this.course.name == null || this.course.name.length > 20 || this.course.name == '') {
+        this.$message({showClose: true, message: '请正确输入课程名称！', type: 'error',});
+        flag = true;
+      }
+      if (!str.match('^[0-9]+$')) {
+        this.$message({showClose: true, message: '请输入正确格式的课程容量！', type: 'error',});
+        flag = true;
+      }
+      str = "" + this.course.credits;
+      if (!str.match('^[0-9]+$')) {
+        this.$message({showClose: true, message: '请输入正确格式的学分！', type: 'error',});
+        flag = true;
+      }
+      if (flag) {
+        return;
+      }
+
       let content = {
         name:this.course.name,
         intro:this.course.description,
