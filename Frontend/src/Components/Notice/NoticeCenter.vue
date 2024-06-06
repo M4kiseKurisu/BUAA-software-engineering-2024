@@ -231,12 +231,13 @@ export default {
             //console.log("rudiao")
             this.haveNotice = false;
             this.$emit('delectNewNotice');
+            this.getDirectMessage();
+            this.noticeChoice = 1;
         },
     },
     created() {
         this.haveNotice = this.newNotice;
         //console.log(this.haveNotice);
-        this.getDirectMessage();
     },
     components: {
         DirectMessage,
