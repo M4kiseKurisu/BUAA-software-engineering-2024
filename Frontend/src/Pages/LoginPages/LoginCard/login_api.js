@@ -33,13 +33,18 @@ export function login(username_e, password_e) {
 
 }
 
-export function register(username_e, email_e, tel_e, password_e) {
+export function register(username_e, email_e, tel_e, password_e, agreed_e) {
     username_e.checkContent();
     email_e.checkContent();
     tel_e.checkContent();
     password_e.checkContent();
 
     if (username_e.is_warning || email_e.is_warning || tel_e.is_warning || password_e.is_warning) {
+        return;
+    }
+
+    if (agreed_e != true) {
+        Vue.$message({ showClose: true, message: '清先同意《航学通用户守则》！', type: 'error' });
         return;
     }
 
@@ -57,7 +62,10 @@ export function register(username_e, email_e, tel_e, password_e) {
         data: content,
     }).then((result) => {
         if (result.data.success) {
-            Vue.$message({ showClose: true, message: "注册成功！", type: 'success' });
+            Vue.$message({ showClose: true, message: "注册成功！即将自动刷新...", type: 'success' });
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         } else {
             Vue.$message({ showClose: true, message: result.data.info, type: 'error' });
         }

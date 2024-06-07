@@ -50,6 +50,8 @@ public class PostService {
 
     @Resource
     private MessageService messageService;
+
+    private final String defaultHead = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
     
     // 创建帖子
     public Integer createPost(String title, String intro, String content,
@@ -152,7 +154,7 @@ public class PostService {
         ans.add(author.getName());
         String headUrl = imageMapper.getImage(author.getHeadId());
         if (headUrl == null) {
-            headUrl = "https://hxt-2024.obs.cn-north-4.myhuaweicloud.com:443/6059d059-907d-4b80-a351-4549cdaf6ce6-R-C.jpg";
+            headUrl = defaultHead;
         }
         ans.add(headUrl);
         return ans;
@@ -254,7 +256,7 @@ public class PostService {
             String authorName = author.getName();
             String authorHead = imageMapper.getImage(author.getHeadId());
             commentResponse.setComment_author_name(authorName);
-            commentResponse.setComment_author_head(authorHead);
+            commentResponse.setComment_author_head((authorHead == null)? defaultHead : authorHead);
             
             //获取用户是否点赞评论
             Integer status = commentLikeStatus(comment.getComment_id(), userId);
@@ -301,7 +303,7 @@ public class PostService {
             String replyAuthorName = replyAuthor.getName();
             String replyAuthorHead = imageMapper.getImage(replyAuthor.getHeadId());
             replyResponse.setReply_author_name(replyAuthorName);
-            replyResponse.setReply_author_head(replyAuthorHead);
+            replyResponse.setReply_author_head((replyAuthorHead == null)? defaultHead : replyAuthorHead);
         
             //获取用户是否点赞回复
             Integer replyStatus = replyLikeStatus(reply.getReply_id(), userId);
