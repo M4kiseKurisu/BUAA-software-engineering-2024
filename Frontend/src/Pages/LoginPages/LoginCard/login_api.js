@@ -3,7 +3,7 @@ import axios from 'axios';
 import md5 from 'js-md5';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-export function login(username_e, password_e) {
+export function login(username_e, password_e, p) {
     username_e.checkContent();
     password_e.checkContent();
 
@@ -25,7 +25,11 @@ export function login(username_e, password_e) {
             Vue.$message({ showClose: true, message: "登录成功！", type: 'success' });
             sessionStorage.setItem("token", result.data.token)
             Vue.$store.commit("userLogin", result.data);
-            Vue.$router.push({ path: "MainPage/Personal_Center" });
+            if (p != null && p != undefined) {
+                Vue.$router.push({ path: p });
+            } else {
+                Vue.$router.push({ path: "MainPage/Personal_Center" });
+            }
         } else {
             Vue.$message({ showClose: true, message: result.data.info, type: 'error' });
         }

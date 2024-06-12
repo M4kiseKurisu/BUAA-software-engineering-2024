@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         login_click() {
-            login(this.$refs.username, this.$refs.password);
+            login(this.$refs.username, this.$refs.password, this.$route.query.redirect);
         },
         to_register() {
             this.$emit('click-link', 2);

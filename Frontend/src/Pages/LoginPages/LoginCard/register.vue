@@ -20,9 +20,10 @@
         <div class="change-page-link" @click="to_login">返回登录界面</div>
     </div>
 
-    <el-dialog title="航学通用户守则" v-model="visible" destroy-on-close>
-        <div style="display:flex;justify-content: center;">
-            <p>1.在注册过程中点击“我同意《航学通用户守则》”并注册航学通账号，即表示您已阅读过航学通用户守则，并知悉您在航学通平台中所拥有的权利及义务。</p>
+    <el-dialog title="航学通用户守则" v-model="visible">
+        <div style="justify-content: center;">
+            <p>1.在注册过程中点击“我同意《航学通用户守则》”并注册航学通账号，即代表您已阅读过航学通用户守则，并知悉您在航学通平台中所拥有的权利及义务。</p>
+            <p>2.航学通——北航学习互助平台（以下简称“航学通”）是一个兼具论坛、打卡、交流等功能的平台</p>
         </div>
         <div style="display:flex;justify-content: center;margin-top: 20px">
           <el-button type="primary" @click="hide">确认</el-button>
